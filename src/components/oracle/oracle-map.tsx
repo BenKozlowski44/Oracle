@@ -53,13 +53,18 @@ const OracleMap = ({ onLocationSelect, selectedLocation }: OracleMapProps) => {
         <div className="w-full rounded-md border bg-card p-4 relative overflow-hidden" style={{ height: "400px" }}>
             <MapContainer
                 center={[25, 0]}
-                zoom={2}
+                zoom={3}
+                minZoom={3}
+                maxBounds={[[-90, -180], [90, 180]]}
+                maxBoundsViscosity={1.0}
                 scrollWheelZoom={true}
                 style={{ height: "100%", width: "100%", borderRadius: "inherit", zIndex: 0 }}
             >
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    noWrap={true}
+                    bounds={[[-90, -180], [90, 180]]}
                 />
                 {markers.map(({ name, coordinates }) => (
                     <Marker
