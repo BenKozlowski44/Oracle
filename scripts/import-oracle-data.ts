@@ -1,8 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { parseOracleExcel } from './src/lib/excel-parser';
-import { oracleData as existingOracleData } from './src/lib/data';
-import type { OracleCommand } from './src/lib/types';
+import { parseOracleExcel } from '../src/lib/excel-parser';
+import { oracleData as existingOracleData } from '../src/lib/data';
+import type { OracleCommand } from '../src/lib/types';
 
 async function main() {
     const filePath = path.join(process.cwd(), "oracle_data.xlsx");
@@ -30,7 +30,7 @@ async function main() {
     // Log actions
     console.log(`Replaced ${existingOracleData.length - nonCosmCommands.length} existing CO-SM commands with ${cosmCommands.length} new ones.`);
 
-    const { officers, slates, metrics, billets } = await import('./src/lib/data');
+    const { officers, slates, metrics, billets } = await import('../src/lib/data');
 
     const fileContent = [
         `import type { Officer, Billet, OracleCommand, Slate, Metrics } from "./types"`,

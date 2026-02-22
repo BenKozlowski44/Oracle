@@ -1,4 +1,4 @@
-import type { OracleCommand } from "./types";
+import type { OracleCommand } from "../lib/types";
 
 export const cosmCommandData: OracleCommand[] = [
     {

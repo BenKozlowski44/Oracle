@@ -39,3 +39,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# --- Enterprise Data Hygiene ---
+/data/
+*.xlsx
+*.csv
+*.bak
+*.docx
+
+# --- Ghost Output & Test Coverage ---
+template_debug/

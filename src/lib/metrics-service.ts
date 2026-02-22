@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { Metrics } from './types';
 
-const metricsPath = path.join(process.cwd(), 'src', 'lib', 'metrics.json');
+const metricsPath = path.join(process.cwd(), 'src', 'data', 'metrics.json');
 
 export function getMetrics(): Metrics {
     try {

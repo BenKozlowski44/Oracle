@@ -1,5 +1,5 @@
-import { parseBankExcel } from "./src/lib/excel-parser";
-import { officers, slates, metrics, oracleData, billets } from "./src/lib/data";
+import { parseBankExcel } from "../src/lib/excel-parser";
+import { officers, slates, metrics, oracleData, billets } from "../src/lib/data";
 import * as fs from "fs";
 import * as path from "path";
 

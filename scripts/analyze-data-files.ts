@@ -1,4 +1,4 @@
-import { parseBankExcel } from "./src/lib/excel-parser";
+import { parseBankExcel } from "../src/lib/excel-parser";
 import * as fs from "fs";
 import * as path from "path";
 

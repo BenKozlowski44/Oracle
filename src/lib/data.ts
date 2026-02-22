@@ -1,5 +1,5 @@
 import type { Officer, Billet, OracleCommand, Slate, Metrics } from "./types"
-import { cosmCommandData } from "./cosm-data"
+import { cosmCommandData } from "../data/cosm-data"
 
 export const slates: Slate[] = [
     {
