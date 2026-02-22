@@ -1,9 +1,8 @@
-
 import { parseBankExcel } from "./src/lib/excel-parser";
 import * as fs from "fs";
 import * as path from "path";
 
-const analyzeFile = (filename: string) => {
+const analyzeFile = async (filename: string) => {
     try {
         const filePath = path.join(process.cwd(), filename);
         if (!fs.existsSync(filePath)) {
@@ -11,7 +10,7 @@ const analyzeFile = (filename: string) => {
             return;
         }
         const buffer = fs.readFileSync(filePath);
-        const officers = parseBankExcel(buffer.buffer as ArrayBuffer);
+        const officers = await parseBankExcel(buffer.buffer as ArrayBuffer);
 
         const count = officers.length;
         const firefighters = officers.filter(o => {
@@ -29,5 +28,9 @@ const analyzeFile = (filename: string) => {
     }
 }
 
-analyzeFile("mock_bank_data.xlsx");
-analyzeFile("data/Adding Bank Officers FF.xlsx");
+async function main() {
+    await analyzeFile("mock_bank_data.xlsx");
+    await analyzeFile("data/Adding Bank Officers FF.xlsx");
+}
+
+main();

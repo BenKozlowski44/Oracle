@@ -11,7 +11,7 @@ import { Loader2, FileSpreadsheet } from "lucide-react"
 interface DataImportCardProps {
     title: string
     description: string
-    onParse: (buffer: ArrayBuffer) => any[]
+    onParse: (buffer: ArrayBuffer) => Promise<any[]> | any[]
     dataKey: "oracleData" | "officers"
 }
 
@@ -34,7 +34,7 @@ function DataImportCard({ title, description, onParse, dataKey }: DataImportCard
         try {
             setStatus("parsing")
             const buffer = await file.arrayBuffer()
-            const data = onParse(buffer)
+            const data = await onParse(buffer)
 
             if (data.length === 0) {
                 setStatus("error")

@@ -1,8 +1,7 @@
-
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 import { SlateCandidateProfile, Officer } from '@/lib/types';
 import { slates, officers as existingOfficers } from '@/lib/data'; // We need access to current data to match officers
 
@@ -30,97 +29,47 @@ export async function POST(request: Request) {
         }
 
         const arrayBuffer = await file.arrayBuffer();
-        const workbook = XLSX.read(arrayBuffer, { type: 'buffer' });
+
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.load(arrayBuffer);
 
         // Assume "Input" sheet
-        const sheetName = workbook.SheetNames.find(n => n === "Input") || workbook.SheetNames[0];
-        const sheet = workbook.Sheets[sheetName];
+        const sheet = workbook.getWorksheet("Input") || workbook.worksheets[0];
 
-        // Parse basic details (Cell extraction)
-        // B2 = Name, B3 = Rank, B4 = Designator are placeholders in row 1? 
-        // Let's re-check the generator script:
-        // Rows:
-        // 0: Headers
-        // 1: [Name, Rank, Desig, Email] <- User inputs here
-        // 2: Spacer
-        // 3: Headers
-        // 4-8: Preferences
-        // So User Input for Name is B2 (R1, C0..3)
+        if (!sheet) return NextResponse.json({ error: 'File appears empty' }, { status: 400 });
 
-        // Wait, "Input" keys were: ["Officer Name", "Rank", "Designator", "Email"] at Row 0.
-        // User inputs at Row 1 (Index 1).
-
-        const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 }) as any[][];
-        if (jsonData.length < 2) return NextResponse.json({ error: 'File appears empty' }, { status: 400 });
-
-        const nameRow = jsonData[1]; // Row 1: [Name, Rank, Desig, Email]
-        const rawName = nameRow[0];
+        // User inputs at Row 2 (Index 2 in 1-based indexing for ExcelJS).
+        const nameRow = sheet.getRow(2);
+        const rawName = nameRow.getCell(1).value?.toString() || "";
 
         if (!rawName) return NextResponse.json({ error: 'Officer Name is required in cell A2' }, { status: 400 });
 
         const officerId = findOfficerId(rawName);
         if (!officerId) return NextResponse.json({ error: `Officer '${rawName}' not found in system.` }, { status: 404 });
 
-        // Parse Preferences (Rows 4-8, Indices 4-8)
-        // Columns: A=Label, B=Dropdown Value (Platform-Location), C=Narrative
-        // C is at Index 2 ? Wait, generator had "Preference 1" at A5. Input B5.
-        // A=0, B=1.
-        // Narrative was column "Narrative / Notes" at D? No.
-        // Let's check generator:
-        // ["Preferences (Select from Dropdown)", "Narrative / Notes"] at Row 3 (Index 3).
-        // Row 4: ["Preference 1", "", "", ""] ? 
-        // wsInput['!cols'] defined 4 cols.
-        // Headers: ["Preferences...", "Narrative..."]
-        // So B5 is preference, C5 (or B5's neighbor?) is Narrative?
-        // Actually the generator script:
-        // ["Preference 1", ""] -> This puts label in A, empty in B. 
-        // "Narrative" header is at B4? No, Row 3 is: ["Preferences...", "Narrative..."].
-        // This likely puts "Preferences..." in A4. "Narrative..." in B4.
-        // So Preference Value is in A5? No, A5 is "Preference 1".
-        // B5 is empty (Input).
-        // C5 is ?? 
-        // Let's look at the Generator script logic for Row 3:
-        // `["Preferences (Select from Dropdown)", "Narrative / Notes"]`
-        // Takes A4 and B4.
-        // Row 4: `["Preference 1", ""]` -> A5="Preference 1", B5=Input.
-        // So Narrative is likely missing a specific column or user puts it in C?
-        // Wait, `wsInput['!cols']` has 4 columns.
-        // Use logic: 
-        // Preferences: B5..B9 (Indices: R4..R8, C1)
-
+        // Parse Preferences (Rows 5-9)
+        // A=Label, B=Dropdown Value (Platform-Location), C=Narrative
         const preferences: { key: string, rank: number }[] = [];
-        for (let r = 4; r <= 8; r++) {
-            const row = jsonData[r];
-            if (row && row[1]) {
-                const val = row[1].toString().trim();
-                // Expect format: "PLATFORM - LOCATION"
-                if (val && val.includes(" - ")) {
-                    preferences.push({ key: val, rank: r - 3 }); // Row 4 = Rank 1
-                }
+        for (let r = 5; r <= 9; r++) {
+            const row = sheet.getRow(r);
+            const val = row.getCell(2).value?.toString().trim(); // Column B
+            if (val && val.includes(" - ")) {
+                preferences.push({ key: val, rank: r - 4 }); // Row 5 = Rank 1
             }
         }
-
-        // Parse Experience / Narrative
-        // Row 10: "Experience", "Value" (Index 10)
-        // Row 11: "Total Months U/W", Value (B12)
-        // Row 12: "Total Months Deployed", Value (B13)
-        // Row 16: "Considerations", "Notes"
-        // Row 17: Co-Location (B18)
 
         let experienceSummary = "";
 
         // Collect narrative text if found. 
-        // Maybe in C column for preferences? User might naturally type there.
-        // Or gather experience fields.
-        const monthsUW = jsonData[11]?.[1] || "0";
-        const monthsDep = jsonData[12]?.[1] || "0";
-        const currentRole = jsonData[13]?.[1] || "";
-        const pastRoles = jsonData[14]?.[1] || "";
+        const monthsUW = sheet.getRow(12).getCell(2).value?.toString() || "0";
+        const monthsDep = sheet.getRow(13).getCell(2).value?.toString() || "0";
+        const currentRole = sheet.getRow(14).getCell(2).value?.toString() || "";
+        const pastRoles = sheet.getRow(15).getCell(2).value?.toString() || "";
 
         experienceSummary = `U/W: ${monthsUW}mo, Deployed: ${monthsDep}mo.\nCurrent: ${currentRole}\nPast: ${pastRoles}`;
 
         // Co-Location / Notes
-        const notes = jsonData[17]?.[1] ? `Co-Lo: ${jsonData[17][1]}` : "";
+        const notes = sheet.getRow(18).getCell(2).value ? `Co-Lo: ${sheet.getRow(18).getCell(2).value}` : "";
 
         // Construct Profile
         const newProfile: SlateCandidateProfile = {

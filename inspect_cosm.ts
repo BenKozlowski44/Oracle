@@ -1,28 +1,45 @@
-
-import * as XLSX from 'xlsx';
-import * as fs from 'fs';
+import ExcelJS from 'exceljs';
 import * as path from 'path';
+import * as fs from 'fs';
 
-const filePath = path.join(process.cwd(), "oracle_data.xlsx");
-const fileBuffer = fs.readFileSync(filePath);
-const workbook = XLSX.read(fileBuffer, { type: 'buffer' });
+async function main() {
+    const filePath = path.join(process.cwd(), "oracle_data.xlsx");
 
-// List sheet names to find CO-SM
-console.log("Sheet Names:", workbook.SheetNames);
+    if (!fs.existsSync(filePath)) {
+        console.error(`File not found: ${filePath}`);
+        return;
+    }
 
-const cosmSheetName = workbook.SheetNames.find(name => name.includes("CO-SM") || name.includes("CO SM"));
-if (cosmSheetName) {
-    console.log(`Found CO-SM sheet: ${cosmSheetName}`);
-    const worksheet = workbook.Sheets[cosmSheetName];
-    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-    if (jsonData.length > 0) {
-        console.log("Dumping first 20 rows:");
-        for (let i = 0; i < Math.min(20, jsonData.length); i++) {
-            console.log(`Row ${i}:`, JSON.stringify(jsonData[i]));
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.readFile(filePath);
+
+    // List sheet names to find CO-SM
+    const sheetNames = workbook.worksheets.map(ws => ws.name);
+    console.log("Sheet Names:", sheetNames);
+
+    const cosmSheetName = sheetNames.find(name => name.includes("CO-SM") || name.includes("CO SM"));
+    if (cosmSheetName) {
+        console.log(`Found CO-SM sheet: ${cosmSheetName}`);
+        const worksheet = workbook.getWorksheet(cosmSheetName);
+
+        if (worksheet && worksheet.rowCount > 0) {
+            console.log("Dumping first 20 rows:");
+            const limit = Math.min(20, worksheet.rowCount);
+            for (let i = 1; i <= limit; i++) {
+                const row = worksheet.getRow(i);
+                // Convert row to array for simple dumping
+                const rowValues: any[] = [];
+                row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+                    rowValues[colNumber - 1] = cell.value;
+                });
+                console.log(`Row ${i}:`, JSON.stringify(rowValues));
+            }
+        } else {
+            console.log("Sheet is empty");
         }
     } else {
-        console.log("Sheet is empty");
+        console.log("CO-SM sheet not found");
     }
-} else {
-    console.log("CO-SM sheet not found");
 }
+
+main().catch(console.error);

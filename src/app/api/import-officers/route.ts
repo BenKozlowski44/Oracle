@@ -15,7 +15,7 @@ export async function POST(request: Request) {
         }
 
         const arrayBuffer = await file.arrayBuffer();
-        const newOfficers = parseBankExcel(arrayBuffer);
+        const newOfficers = await parseBankExcel(arrayBuffer);
 
         if (!newOfficers || newOfficers.length === 0) {
             return NextResponse.json({ error: 'No officers found in file' }, { status: 400 });

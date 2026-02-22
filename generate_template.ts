@@ -1,107 +1,83 @@
-
-import * as fs from 'fs';
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 import { oracleData } from './src/lib/data';
 
-// 1. Extract Platform-Location Pairs
-const options = Array.from(new Set(
-    oracleData
-        .filter(cmd => cmd.platform && cmd.location)
-        .map(cmd => `${cmd.platform} - ${cmd.location}`)
-)).sort();
+async function generateTemplate() {
+    // 1. Extract Platform-Location Pairs
+    const options = Array.from(new Set(
+        oracleData
+            .filter(cmd => cmd.platform && cmd.location)
+            .map(cmd => `${cmd.platform} - ${cmd.location}`)
+    )).sort();
 
-console.log(`Found ${options.length} unique platform-location options.`);
+    console.log(`Found ${options.length} unique platform-location options.`);
 
-// 2. Create Workbook
-const wb = XLSX.utils.book_new();
+    // 2. Create Workbook
+    const workbook = new ExcelJS.Workbook();
 
-// --- Sheet 1: Instructions ---
-const instructionsData = [
-    ["Candidate Slate Input - Instructions"],
-    [""],
-    ["1. Please fill out the 'Input' tab completely."],
-    ["2. Select your top 5 preferences from the dropdown menus."],
-    ["3. Provide a narrative explanation for your preferences."],
-    ["4. Enter your experience details and operational months."],
-    ["5. Save this file and upload it back to the Slate Manager."],
-];
-const wsInstructions = XLSX.utils.aoa_to_sheet(instructionsData);
-XLSX.utils.book_append_sheet(wb, wsInstructions, "Instructions");
+    // --- Sheet 1: Instructions ---
+    const wsInstructions = workbook.addWorksheet('Instructions');
+    wsInstructions.addRow(["Candidate Slate Input - Instructions"]);
+    wsInstructions.addRow([]);
+    wsInstructions.addRow(["1. Please fill out the 'Input' tab completely."]);
+    wsInstructions.addRow(["2. Select your top 5 preferences from the dropdown menus."]);
+    wsInstructions.addRow(["3. Provide a narrative explanation for your preferences."]);
+    wsInstructions.addRow(["4. Enter your experience details and operational months."]);
+    wsInstructions.addRow(["5. Save this file and upload it back to the Slate Manager."]);
 
-// --- Sheet 2: Input ---
-const inputHeaders = [
-    ["Officer Name", "Rank", "Designator", "Email"],
-    ["", "", "", ""], // Placeholder for user input
-    [""],
-    ["Preferences (Select from Dropdown)", "Narrative / Notes"],
-    ["Preference 1", ""],
-    ["Preference 2", ""],
-    ["Preference 3", ""],
-    ["Preference 4", ""],
-    ["Preference 5", ""],
-    [""],
-    ["Experience", "Value"],
-    ["Total Months U/W", ""],
-    ["Total Months Deployed", ""],
-    ["Current Role", ""],
-    ["Past Roles", ""],
-    [""],
-    ["Considerations", "Notes"],
-    ["Co-Location", ""],
-    ["EFM", ""],
-    ["Education", ""]
-];
+    // --- Sheet 2: Input ---
+    const wsInput = workbook.addWorksheet('Input');
 
-const wsInput = XLSX.utils.aoa_to_sheet(inputHeaders);
+    wsInput.columns = [
+        { width: 30 }, // A
+        { width: 50 }, // B
+        { width: 20 }, // C
+        { width: 30 }  // D
+    ];
 
-// Set column widths
-wsInput['!cols'] = [
-    { wch: 30 }, // A
-    { wch: 50 }, // B
-    { wch: 20 }, // C
-    { wch: 30 }  // D
-];
+    const inputData = [
+        ["Officer Name", "Rank", "Designator", "Email"],
+        ["", "", "", ""], // Placeholder for user input
+        [""],
+        ["Preferences (Select from Dropdown)", "Narrative / Notes"],
+        ["Preference 1", ""],
+        ["Preference 2", ""],
+        ["Preference 3", ""],
+        ["Preference 4", ""],
+        ["Preference 5", ""],
+        [""],
+        ["Experience", "Value"],
+        ["Total Months U/W", ""],
+        ["Total Months Deployed", ""],
+        ["Current Role", ""],
+        ["Past Roles", ""],
+        [""],
+        ["Considerations", "Notes"],
+        ["Co-Location", ""],
+        ["EFM", ""],
+        ["Education", ""]
+    ];
 
-// Add Data Validation for Preferences (Cells B5:B9 - assuming 0-indexed: rows 4-8, col 1)
-// We need to reference the Data sheet.
-// Excel limit for list validation is 255 chars, so we must use a named range or reference the range directly.
-// Since we are generating this, we'll put data in a hidden sheet and reference it.
+    inputData.forEach(row => wsInput.addRow(row));
 
-// --- Sheet 3: Data (Hidden) ---
-const wsData = XLSX.utils.aoa_to_sheet(options.map(o => [o]));
-XLSX.utils.book_append_sheet(wb, wsData, "Data");
+    // --- Sheet 3: Data (Hidden) ---
+    const wsData = workbook.addWorksheet('Data', { state: 'hidden' });
+    options.forEach(opt => wsData.addRow([opt]));
 
-// Apply Validation
-// Range B5:B9 (Indices: R4C1 to R8C1)
-const range = { s: { r: 4, c: 0 }, e: { r: 8, c: 0 } }; // Column A is labels ("Preference 1"), Column B is Input. Wait.
-// Row 4 is "Preference 1", "Input here". So it's Column 1 (B).
-// Let's correct the range.
-// "Preference 1" is at A5 (R4, C0). Input is at B5 (R4, C1).
-const inputRange = { s: { r: 4, c: 1 }, e: { r: 8, c: 1 } };
+    // Add Data Validation for Preferences (Cells B5:B9)
+    // In exceljs, validation needs a comma-separated list if not using a formula range directly
+    const validationFormula = `Data!$A$1:$A$${options.length}`;
 
-// Construct validation object
-// Note: sheetJS writing validation is complex and sometimes not fully supported in community edition for all formats.
-// However, creating the Name range is safer.
-// Let's define the name 'PreferenceOptions' for Data!$A$1:$A$N
-wb.Workbook = {
-    Names: [
-        { Name: 'PreferenceOptions', Ref: `Data!$A$1:$A$${options.length}` }
-    ]
-};
+    for (let r = 5; r <= 9; r++) { // Rows 5-9 in 1-based indexing for Input sheet
+        wsInput.getCell(`B${r}`).dataValidation = {
+            type: 'list',
+            allowBlank: true,
+            formulae: [validationFormula]
+        };
+    }
 
-// We manually enforce validation if possible, or just trust the user will see the dropdown if opened in Excel.
-// Actually, basic validation is supported.
-for (let r = 4; r <= 8; r++) {
-    const cellRef = XLSX.utils.encode_cell({ r, c: 1 });
-    if (!wsInput[cellRef]) wsInput[cellRef] = { t: 's', v: '' }; // Ensure cell exists
-
-    // This is the tricky part with SheetJS community. Sometimes it doesn't write validation.
-    // We will try to set the type. if it fails, we assume user can copy-paste or we implement fuzzy matching on import.
-    wsInput[cellRef].l = { Target: 'PreferenceOptions' };
+    // Write File
+    await workbook.xlsx.writeFile('Unified_Candidate_Input_Template.xlsx');
+    console.log('Generated Unified_Candidate_Input_Template.xlsx');
 }
 
-XLSX.utils.book_append_sheet(wb, wsInput, "Input");
-
-// Write File
-XLSX.writeFile(wb, 'Unified_Candidate_Input_Template.xlsx');
-console.log('Generated Unified_Candidate_Input_Template.xlsx');
+generateTemplate().catch(console.error);
