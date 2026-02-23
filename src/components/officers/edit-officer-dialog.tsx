@@ -81,7 +81,7 @@ export function EditOfficerDialog({ officer, open, onOpenChange }: EditOfficerDi
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+            <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto" aria-describedby={undefined}>
                 <DialogHeader>
                     <DialogTitle>Edit Officer: {officer.name}</DialogTitle>
                 </DialogHeader>
@@ -179,6 +179,7 @@ export function EditOfficerDialog({ officer, open, onOpenChange }: EditOfficerDi
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="Available">Available</SelectItem>
+                                    <SelectItem value="Verify PD2">Verify PD2</SelectItem>
                                     <SelectItem value="Slated">Slated</SelectItem>
                                     <SelectItem value="Defer">Defer</SelectItem>
                                     <SelectItem value="Ready FF">Ready FF</SelectItem>

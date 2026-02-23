@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import { OracleCommand, Officer, Metrics } from "@/lib/types"
 import {
     Table,
@@ -40,7 +41,8 @@ interface OracleTableProps {
 export function OracleTable({ data: initialData, selectedLocation, onLocationChange, officers, setOfficers, initialMetrics }: OracleTableProps) {
     const [data, setData] = useState<OracleCommand[]>(initialData)
     const [metrics, setMetrics] = useState<Metrics>(initialMetrics || { resolvedConflicts: 0 })
-    const [search, setSearch] = useState("")
+    const searchParams = useSearchParams()
+    const [search, setSearch] = useState(searchParams.get("search") || "")
 
     // Sorting State
     const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null)

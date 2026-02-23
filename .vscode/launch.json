@@ -5,19 +5,37 @@
             "name": "Next.js: debug server-side",
             "type": "node-terminal",
             "request": "launch",
-            "command": "npm run dev"
+            "command": "npm run dev",
+            "resolveSourceMapLocations": [
+                "${workspaceFolder}/**",
+                "!**/node_modules/**",
+                "!**/.next/**",
+                "!**/_next/**"
+            ]
         },
         {
             "name": "Next.js: debug client-side",
             "type": "chrome",
             "request": "launch",
-            "url": "http://localhost:3000"
+            "url": "http://localhost:3000",
+            "resolveSourceMapLocations": [
+                "${workspaceFolder}/**",
+                "!**/node_modules/**",
+                "!**/.next/**",
+                "!**/_next/**"
+            ]
         },
         {
             "name": "Next.js: debug full stack",
             "type": "node-terminal",
             "request": "launch",
             "command": "npm run dev",
+            "resolveSourceMapLocations": [
+                "${workspaceFolder}/**",
+                "!**/node_modules/**",
+                "!**/.next/**",
+                "!**/_next/**"
+            ],
             "serverReadyAction": {
                 "pattern": "Ready in|started server on",
                 "uriFormat": "http://localhost:3000",

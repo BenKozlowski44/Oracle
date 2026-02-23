@@ -6,6 +6,7 @@ export type BilletRole = "CO" | "XO" | "CO-SM"
 
 export type OfficerStatus =
     | "Available"
+    | "Verify PD2"
     | "Slated"
     | "Defer"
     | "PCC"

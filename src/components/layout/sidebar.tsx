@@ -71,6 +71,7 @@ export function Sidebar() {
                         src="/PERS-41 Logo.jpg"
                         alt="PERS-41 Logo"
                         fill
+                        sizes="(max-width: 768px) 100vw, 256px"
                         className="object-contain"
                         priority
                     />

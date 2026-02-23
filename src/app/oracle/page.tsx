@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, Suspense } from "react"
 import dynamic from 'next/dynamic'
 import { OracleTable } from "@/components/oracle/oracle-table"
 import { oracleData, officers as initialOfficers } from "@/lib/data"
@@ -49,13 +49,15 @@ export default function OraclePage() {
                 </CardContent>
             </Card>
 
-            <OracleTable
-                data={oracleData}
-                selectedLocation={selectedLocation}
-                onLocationChange={setSelectedLocation}
-                officers={officers}
-                setOfficers={setOfficers}
-            />
+            <Suspense fallback={<div>Loading Oracle Table...</div>}>
+                <OracleTable
+                    data={oracleData}
+                    selectedLocation={selectedLocation}
+                    onLocationChange={setSelectedLocation}
+                    officers={officers}
+                    setOfficers={setOfficers}
+                />
+            </Suspense>
         </div>
     )
 }

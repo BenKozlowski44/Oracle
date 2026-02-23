@@ -8,6 +8,7 @@ import {
 } from "@/components/dashboard/stats-cards"
 
 import { CommandAlerts } from "@/components/dashboard/command-alerts"
+import { PersonnelAlerts } from "@/components/dashboard/personnel-alerts"
 import { officers, billets, oracleData, metrics } from "@/lib/data"
 
 export default function DashboardPage() {
@@ -35,7 +36,10 @@ export default function DashboardPage() {
             <ActiveIssuesCard oracleData={oracleData} />
             <ResolvedIssuesCard metrics={metrics} />
           </div>
-          <CommandAlerts commands={oracleData} />
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 h-full items-stretch">
+            <CommandAlerts commands={oracleData} />
+            <PersonnelAlerts officers={officers} />
+          </div>
         </div>
       </div>
     </div>

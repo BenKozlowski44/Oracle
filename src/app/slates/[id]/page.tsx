@@ -283,7 +283,7 @@ export default function SlateDetailPage({ params }: SlateDetailPageProps) {
                                     Add Requirement
                                 </Button>
                             </DialogTrigger>
-                            <DialogContent className="sm:max-w-[600px]">
+                            <DialogContent className="sm:max-w-[600px]" aria-describedby={undefined}>
                                 <DialogHeader>
                                     <DialogTitle>Add Command to Slate</DialogTitle>
                                 </DialogHeader>
@@ -459,7 +459,7 @@ export default function SlateDetailPage({ params }: SlateDetailPageProps) {
                                     <UserPlus className="h-4 w-4" />
                                 </Button>
                             </DialogTrigger>
-                            <DialogContent className="sm:max-w-[500px]">
+                            <DialogContent className="sm:max-w-[500px]" aria-describedby={undefined}>
                                 <DialogHeader>
                                     <DialogTitle>Manage Candidates</DialogTitle>
                                 </DialogHeader>
@@ -579,7 +579,7 @@ export default function SlateDetailPage({ params }: SlateDetailPageProps) {
 
             {/* Candidate Profile Dialog */}
             <Dialog open={!!editingOfficerId} onOpenChange={(open) => !open && setEditingOfficerId(null)}>
-                <DialogContent className="sm:max-w-2xl">
+                <DialogContent className="sm:max-w-2xl" aria-describedby={undefined}>
                     {editingOfficerId && (() => {
                         const officer = officers.find(o => o.id === editingOfficerId);
                         if (!officer) return null;
@@ -603,7 +603,7 @@ export default function SlateDetailPage({ params }: SlateDetailPageProps) {
 
             {/* Assign Dialog */}
             <Dialog open={isAssignDialogOpen} onOpenChange={setIsAssignDialogOpen}>
-                <DialogContent className="sm:max-w-[425px]">
+                <DialogContent className="sm:max-w-[425px]" aria-describedby={undefined}>
                     <DialogHeader>
                         <DialogTitle>Assign Candidate</DialogTitle>
                     </DialogHeader>

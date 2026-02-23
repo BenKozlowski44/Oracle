@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import { TheBank } from "@/components/bank/the-bank"
 import { officers } from "@/lib/data"
 
@@ -10,7 +11,9 @@ export default function BankPage() {
                     Master Talent Inventory (Slated & Unslated).
                 </p>
             </div>
-            <TheBank data={officers} />
+            <Suspense fallback={<div>Loading Bank...</div>}>
+                <TheBank data={officers} />
+            </Suspense>
         </div>
     )
 }

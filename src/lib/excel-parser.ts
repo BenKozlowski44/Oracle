@@ -280,6 +280,7 @@ export async function parseBankExcel(fileData: ArrayBuffer): Promise<Officer[]> 
 
         if (statusRaw === "FF" || statusRaw === "Ready FF") status = "Ready FF";
         else if (statusRaw === "Available") status = "Available";
+        else if (statusRaw === "Verify PD2") status = "Verify PD2";
         else if (statusRaw === "Defer") status = "Defer";
         else if (statusRaw === "Family Planning") status = "Family Planning";
         else if (statusRaw === "War College") status = "War College";

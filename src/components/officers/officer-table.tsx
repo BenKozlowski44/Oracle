@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Officer, Rank, Designator } from "@/lib/types"
 import {
     Table,
@@ -30,7 +30,8 @@ interface OfficerTableProps {
 }
 
 export function OfficerTable({ data, variant = "default" }: OfficerTableProps) {
-    const [search, setSearch] = useState("")
+    const searchParams = useSearchParams()
+    const [search, setSearch] = useState(searchParams.get("search") || "")
     const [rankFilter, setRankFilter] = useState<string>("all")
     const [sortConfig, setSortConfig] = useState<{ key: keyof Officer; direction: "asc" | "desc" } | null>(null)
     const [editingOfficer, setEditingOfficer] = useState<Officer | null>(null)
@@ -114,14 +115,15 @@ export function OfficerTable({ data, variant = "default" }: OfficerTableProps) {
             const statusOrder: Record<string, number> = {
                 "Ready FF": 1,
                 "Available": 2,
-                "Defer": 3,
-                "Family Planning": 4,
-                "War College": 5,
-                "Joint Lock": 6,
-                "Hold": 7,
+                "Verify PD2": 3,
+                "Defer": 4,
+                "Family Planning": 5,
+                "War College": 6,
+                "Joint Lock": 7,
+                "Hold": 8,
                 "Retire": 99,
                 "Policy": 98,
-                "List Shift": 8
+                "List Shift": 9
             }
             const orderA = statusOrder[String(a.status)] || 99
             const orderB = statusOrder[String(b.status)] || 99
@@ -148,6 +150,7 @@ export function OfficerTable({ data, variant = "default" }: OfficerTableProps) {
     const getStatusColor = (status: string) => {
         switch (status) {
             case "Available": return "bg-green-500 hover:bg-green-600"
+            case "Verify PD2": return "bg-green-500 hover:bg-green-600"
             case "Joint Lock":
                 return "bg-purple-500 hover:bg-purple-600"
             case "War College":
