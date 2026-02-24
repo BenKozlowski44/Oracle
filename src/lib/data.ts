@@ -1030,9 +1030,19 @@ export const officers: Officer[] = [
         "billet": "PERS DIST OFF/NUC DTLR",
         "csr": "6AGAZ",
         "assignedSlate": "FY26 1st Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "NF",
+            "PH",
+            "SD",
+            "MP",
+            "EV"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LCS",
+            "LSD"
+        ],
+        "preferencePriority": "Homeport",
         "listShift": "",
         "tentativeSlate": "26-2"
     },
