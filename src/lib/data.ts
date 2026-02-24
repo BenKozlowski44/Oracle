@@ -252,7 +252,7 @@ export const officers: Officer[] = [
         "currentCommand": "ATG NORFOLK",
         "prd": "2027-12-01",
         "preferences": [],
-        "status": "Ready FF",
+        "status": "Slated",
         "notes": "",
         "yearGroup": 20090,
         "billet": "STF REDI GEN",
@@ -260,7 +260,9 @@ export const officers: Officer[] = [
         "assignedSlate": "3rd Look CO Afloat",
         "preferredLocations": [],
         "preferredPlatforms": [],
-        "preferencePriority": null
+        "preferencePriority": null,
+        "tentativeSlate": "USS TRUXTUN (DDG 103)",
+        "listShift": "Slated"
     },
     {
         "id": "jonesantoniot_15",
@@ -1468,9 +1470,19 @@ export const officers: Officer[] = [
         "billet": "POL-MIL PLNR/00001146",
         "csr": "6AGAZ",
         "assignedSlate": "FY26 2nd Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "NF",
+            "MP",
+            "SD",
+            "RS",
+            "EV"
+        ],
+        "preferredPlatforms": [
+            "LSD",
+            "LCS",
+            "DDG"
+        ],
+        "preferencePriority": "Homeport",
         "listShift": "",
         "tentativeSlate": "26-3"
     },
@@ -1628,9 +1640,19 @@ export const officers: Officer[] = [
         "billet": "CH, THEATHER EXERCISES BR/00041546/",
         "csr": "5AGAZ",
         "assignedSlate": "FY25 2nd Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "PH",
+            "SD",
+            "YJ",
+            "MP",
+            "NF"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LCS",
+            "LSD"
+        ],
+        "preferencePriority": "Homeport",
         "listShift": "",
         "tentativeSlate": "26-3"
     },
@@ -5083,7 +5105,8 @@ export const officers: Officer[] = [
             "DDG"
         ],
         "preferencePriority": "Homeport",
-        "listShift": ""
+        "listShift": "",
+        "tentativeSlate": "26-3"
     },
     {
         "id": "richardsonemmanueljosep_25",
@@ -5295,7 +5318,7 @@ export const officers: Officer[] = [
         "currentCommand": "AFTGWESTPAC YOKO",
         "prd": "2028-10-01",
         "preferences": [],
-        "status": "Verify PD2",
+        "status": "Available",
         "notes": "",
         "yearGroup": 20110,
         "billet": "XO SHR ACT",
@@ -5304,8 +5327,8 @@ export const officers: Officer[] = [
         "preferredLocations": [
             "YJ",
             "PH",
-            "SD",
             "RS",
+            "SD",
             "MP"
         ],
         "preferredPlatforms": [
@@ -5314,7 +5337,8 @@ export const officers: Officer[] = [
             "LCS"
         ],
         "preferencePriority": "Homeport",
-        "listShift": ""
+        "listShift": "",
+        "tentativeSlate": "26-3"
     },
     {
         "id": "vanderzwetjonm_17",
@@ -5430,7 +5454,8 @@ export const officers: Officer[] = [
             "LCS"
         ],
         "preferencePriority": "Homeport",
-        "listShift": ""
+        "listShift": "",
+        "tentativeSlate": "26-3"
     },
     {
         "id": "weiseimirmatthew_19",
@@ -5469,8 +5494,21 @@ export const officers: Officer[] = [
         "preferredPlatforms": [],
         "preferencePriority": null,
         "listShift": ""
+    },
+    {
+        "id": "pcc-1771877067961",
+        "name": "Ringo, Brett",
+        "rank": "CDR",
+        "designator": "1110",
+        "currentCommand": "PCC (Post-Command)",
+        "prd": "N/A",
+        "preferences": [],
+        "status": "PCC",
+        "notes": "CMD Tour: USS WICHITA",
+        "yearGroup": 0
     }
-];
+]
+
 export const billets = []
 
 export const oracleData: OracleCommand[] = [
@@ -5775,7 +5813,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "26-3",
+            "targetBoardDate": "26-1",
             "requirement": "XO"
         },
         "timeline": {
@@ -5839,7 +5877,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-2",
+            "targetBoardDate": "26-3",
             "requirement": "XO"
         },
         "timeline": {
@@ -6656,16 +6694,6 @@ export const oracleData: OracleCommand[] = [
         "uic": "20142",
         "location": "Mayport, FL",
         "currentCO": {
-            "name": "Ringo, Brett",
-            "prd": "Unknown",
-            "timelineData": {
-                "i": null,
-                "k": null,
-                "m": null,
-                "q": "2024-05-24"
-            }
-        },
-        "currentXO": {
             "name": "SNOVER TRAVIS MICHAEL",
             "prd": "2025-01-23",
             "timelineData": {
@@ -6675,9 +6703,9 @@ export const oracleData: OracleCommand[] = [
                 "q": "2026-11-23"
             }
         },
-        "inboundXO": {
+        "currentXO": {
             "name": "DUNN RICHARD THOMAS",
-            "reportDate": "2025-03-25",
+            "prd": "TBD",
             "timelineData": {
                 "i": "2025-03-25",
                 "k": "2026-08-25",
@@ -6705,6 +6733,17 @@ export const oracleData: OracleCommand[] = [
                 "m": "2029-06-01",
                 "q": "2030-12-01"
             }
+        },
+        "prospectiveCO": {
+            "name": "VACANT",
+            "prd": "TBD"
+        },
+        "fleetUpProgress": {
+            "isic": false,
+            "tycom": false,
+            "pco": true,
+            "orders": false,
+            "coc": false
         }
     },
     {
@@ -8863,6 +8902,13 @@ export const oracleData: OracleCommand[] = [
                 "m": "SEP29",
                 "q": "MAR31"
             }
+        },
+        "fleetUpProgress": {
+            "isic": true,
+            "tycom": true,
+            "pco": true,
+            "orders": true,
+            "coc": true
         }
     },
     {

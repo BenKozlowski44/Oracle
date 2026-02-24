@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import { OfficerTable } from "@/components/officers/officer-table"
 import { Officer } from "@/lib/types"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -26,13 +27,41 @@ export function TheBank({ data }: BankProps) {
     const cosmOfficers = data.filter(o => o.listShift === "CO-SM" || o.screened?.includes("CO-SM"))
     const firefighters = data.filter(o => isFirefighter(o))
 
+    const searchParams = useSearchParams()
+
     const [activeTab, setActiveTab] = useState(() => {
+        const query = searchParams.get("search")?.toLowerCase()
+        if (query) {
+            const inFirefighters = firefighters.some(o => o.name.toLowerCase().includes(query))
+            if (inFirefighters) return "firefighters"
+
+            const inSlated = slatedOfficers.some(o => o.name.toLowerCase().includes(query))
+            if (inSlated) return "slated"
+
+            const inCosm = cosmOfficers.some(o => o.name.toLowerCase().includes(query))
+            if (inCosm) return "cosm"
+
+            // Default to bank if found there or not found at all
+            return "bank"
+        }
+
         if (bankOfficers.length > 0) return "bank"
         if (firefighters.length > 0) return "firefighters"
         if (slatedOfficers.length > 0) return "slated"
         if (cosmOfficers.length > 0) return "cosm"
         return "bank"
     })
+
+    // Listen for URL changes if navigating from within the page
+    useEffect(() => {
+        const query = searchParams.get("search")?.toLowerCase()
+        if (query) {
+            if (firefighters.some(o => o.name.toLowerCase().includes(query))) setActiveTab("firefighters")
+            else if (slatedOfficers.some(o => o.name.toLowerCase().includes(query))) setActiveTab("slated")
+            else if (cosmOfficers.some(o => o.name.toLowerCase().includes(query))) setActiveTab("cosm")
+            else setActiveTab("bank")
+        }
+    }, [searchParams, firefighters, slatedOfficers, cosmOfficers])
 
     return (
         <div className="space-y-4">

@@ -1,7 +1,7 @@
 "use client"
 
 import { Officer, Billet, OracleCommand, Metrics } from "@/lib/types"
-import { getAllAlerts } from "@/lib/alerts"
+import { getAllAlerts, getAllPersonnelAlerts } from "@/lib/alerts"
 
 export function CommandInventoryCard({ oracleData }: { oracleData: OracleCommand[] }) {
     return (
@@ -28,6 +28,7 @@ export function BankOfficersCard({ officers }: { officers: Officer[] }) {
     const validOfficers = officers.filter(o =>
         o.status !== "PCC" &&
         o.status !== "Slated" &&
+        o.listShift !== "Slated" &&
         !o.screened?.includes("CO-SM")
     )
     const totalCount = validOfficers.length
@@ -101,7 +102,8 @@ export function CosmBankOfficersCard({ officers }: { officers: Officer[] }) {
     const validOfficers = officers.filter(o =>
         o.screened?.includes("CO-SM") &&
         o.status !== "PCC" &&
-        o.status !== "Slated"
+        o.status !== "Slated" &&
+        o.listShift !== "Slated"
     )
     const totalCount = validOfficers.length
 
@@ -136,8 +138,10 @@ export function CosmBankOfficersCard({ officers }: { officers: Officer[] }) {
     )
 }
 
-export function ActiveIssuesCard({ oracleData }: { oracleData: OracleCommand[] }) {
-    const count = getAllAlerts(oracleData).length
+export function ActiveIssuesCard({ oracleData, officers }: { oracleData: OracleCommand[], officers: Officer[] }) {
+    const commandAlertsCount = getAllAlerts(oracleData).length
+    const personnelAlertsCount = getAllPersonnelAlerts(officers).length
+    const count = commandAlertsCount + personnelAlertsCount
     return (
         <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
             <div className="flex flex-col space-y-1.5">
@@ -163,6 +167,7 @@ export function ResolvedIssuesCard({ metrics }: { metrics: Metrics }) {
 
 export function FirefighterStatsCard({ officers }: { officers: Officer[] }) {
     const isFirefighter = (o: Officer) => {
+        if (o.status === "Slated" || o.listShift === "Slated") return false;
         const slate = o.assignedSlate?.toLowerCase() || ""
         return o.status === "Ready FF" ||
             slate.includes("3rd look") ||

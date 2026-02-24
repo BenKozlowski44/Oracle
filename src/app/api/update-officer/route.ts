@@ -3,6 +3,8 @@ import fs from 'fs';
 import path from 'path';
 import { Officer } from '@/lib/types';
 import { updateOfficerInExcel } from '@/lib/excel-writer';
+import { getPersonnelAlerts } from '@/lib/alerts';
+import { getMetrics, saveMetrics } from '@/lib/metrics-service';
 
 export async function POST(request: Request) {
     try {
@@ -77,7 +79,26 @@ export async function POST(request: Request) {
         // Update in memory
         const index = officers.findIndex(o => o.id === updatedOfficer.id);
         if (index !== -1) {
-            officers[index] = { ...officers[index], ...updatedOfficer };
+            const originalOfficer = officers[index];
+            const newOfficerObj = { ...originalOfficer, ...updatedOfficer };
+
+            // Metrics Tracking: Check if we resolved any personnel issues
+            try {
+                const originalAlerts = getPersonnelAlerts(originalOfficer).length;
+                const newAlerts = getPersonnelAlerts(newOfficerObj).length;
+
+                if (originalAlerts > newAlerts) {
+                    const diff = originalAlerts - newAlerts;
+                    const metrics = getMetrics();
+                    metrics.resolvedConflicts += diff;
+                    saveMetrics(metrics);
+                    console.log(`[API] Resolved ${diff} personnel issues for ${newOfficerObj.name}`);
+                }
+            } catch (e) {
+                console.error("Failed to update metrics for officer", e);
+            }
+
+            officers[index] = newOfficerObj;
         } else {
             return NextResponse.json({ error: 'Officer not found' }, { status: 404 });
         }
