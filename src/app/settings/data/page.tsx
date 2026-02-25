@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { parseOracleExcel, parseBankExcel, parseCosmExcel } from "@/lib/excel-parser"
+import { parseBankExcel, parseCosmExcel } from "@/lib/excel-parser"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -121,13 +121,7 @@ export default function DataSettingsPage() {
                 </p>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                <DataImportCard
-                    title="Import 'The Oracle' (Commands)"
-                    description="Upload the Annual Command Succession Tracker (.xlsx). Replaces current command list."
-                    onParse={parseOracleExcel}
-                    dataKey="oracleData"
-                />
+            <div className="grid gap-6 md:grid-cols-2">
 
                 <DataImportCard
                     title="Import Officer Bank"
