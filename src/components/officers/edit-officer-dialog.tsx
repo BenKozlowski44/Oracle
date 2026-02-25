@@ -79,6 +79,8 @@ export function EditOfficerDialog({ officer, open, onOpenChange }: EditOfficerDi
 
     if (!officer) return null
 
+    const isCosm = formData.screened?.includes("CO-SM") || formData.listShift === "CO-SM";
+
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto" aria-describedby={undefined}>
@@ -227,55 +229,81 @@ export function EditOfficerDialog({ officer, open, onOpenChange }: EditOfficerDi
                     <div className="space-y-4 pt-4 border-t">
                         <h3 className="font-medium">Detailed Preferences</h3>
 
-                        <div className="space-y-2">
-                            <Label>Priority</Label>
-                            <Select
-                                value={formData.preferencePriority || ""}
-                                onValueChange={(v) => handleChange("preferencePriority", v === "null" ? null : v)}
-                            >
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select Priority" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="null">None</SelectItem>
-                                    <SelectItem value="Homeport">Homeport</SelectItem>
-                                    <SelectItem value="Platform">Platform</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
+                        {isCosm ? (
+                            <div className="space-y-4">
+                                <p className="text-sm text-muted-foreground">CO-SM officers require 15 specific ranked preferences.</p>
+                                <div className="grid grid-cols-2 gap-4">
+                                    {Array.from({ length: 15 }).map((_, i) => (
+                                        <div key={`cosm-pref-${i}`} className="space-y-2">
+                                            <Label>Choice {i + 1}</Label>
+                                            <Input
+                                                value={formData.cosmPreferences?.[i] || ""}
+                                                onChange={(e) => {
+                                                    const newPrefs = [...(formData.cosmPreferences || [])];
+                                                    // Ensure array is large enough
+                                                    while (newPrefs.length <= i) newPrefs.push("");
+                                                    newPrefs[i] = e.target.value;
+                                                    handleChange("cosmPreferences", newPrefs);
+                                                }}
+                                                placeholder={`Preference ${i + 1}`}
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ) : (
+                            <>
+                                <div className="space-y-2">
+                                    <Label>Priority</Label>
+                                    <Select
+                                        value={formData.preferencePriority || ""}
+                                        onValueChange={(v) => handleChange("preferencePriority", v === "null" ? null : v)}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select Priority" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="null">None</SelectItem>
+                                            <SelectItem value="Homeport">Homeport</SelectItem>
+                                            <SelectItem value="Platform">Platform</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label>Preferred Locations (In Order)</Label>
-                                {[0, 1, 2, 3, 4].map((index) => (
-                                    <Input
-                                        key={`loc-${index}`}
-                                        placeholder={`Location ${index + 1}`}
-                                        value={formData.preferredLocations?.[index] || ""}
-                                        onChange={(e) => {
-                                            const newLocs = [...(formData.preferredLocations || [])];
-                                            newLocs[index] = e.target.value;
-                                            handleChange("preferredLocations", newLocs);
-                                        }}
-                                    />
-                                ))}
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Preferred Platforms (In Order)</Label>
-                                {[0, 1, 2].map((index) => (
-                                    <Input
-                                        key={`plat-${index}`}
-                                        placeholder={`Platform ${index + 1}`}
-                                        value={formData.preferredPlatforms?.[index] || ""}
-                                        onChange={(e) => {
-                                            const newPlats = [...(formData.preferredPlatforms || [])];
-                                            newPlats[index] = e.target.value;
-                                            handleChange("preferredPlatforms", newPlats);
-                                        }}
-                                    />
-                                ))}
-                            </div>
-                        </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label>Preferred Locations (In Order)</Label>
+                                        {[0, 1, 2, 3, 4].map((index) => (
+                                            <Input
+                                                key={`loc-${index}`}
+                                                placeholder={`Location ${index + 1}`}
+                                                value={formData.preferredLocations?.[index] || ""}
+                                                onChange={(e) => {
+                                                    const newLocs = [...(formData.preferredLocations || [])];
+                                                    newLocs[index] = e.target.value;
+                                                    handleChange("preferredLocations", newLocs);
+                                                }}
+                                            />
+                                        ))}
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Preferred Platforms (In Order)</Label>
+                                        {[0, 1, 2].map((index) => (
+                                            <Input
+                                                key={`plat-${index}`}
+                                                placeholder={`Platform ${index + 1}`}
+                                                value={formData.preferredPlatforms?.[index] || ""}
+                                                onChange={(e) => {
+                                                    const newPlats = [...(formData.preferredPlatforms || [])];
+                                                    newPlats[index] = e.target.value;
+                                                    handleChange("preferredPlatforms", newPlats);
+                                                }}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+                            </>
+                        )}
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="notes">Notes</Label>

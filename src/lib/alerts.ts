@@ -72,12 +72,22 @@ export function getPersonnelAlerts(officer: Officer): PersonnelAlert[] {
     const alerts: PersonnelAlert[] = []
 
     // Rule 1: Missing Preference Inputs
-    // Check if priority is missing, or if both location and platform preferences are empty
-    const hasPriority = !!officer.preferencePriority;
-    const hasLocations = officer.preferredLocations && officer.preferredLocations.length > 0;
-    const hasPlatforms = officer.preferredPlatforms && officer.preferredPlatforms.length > 0;
+    const isCosm = officer.screened?.includes("CO-SM") || officer.listShift === "CO-SM";
+    let hasPreferences = false;
 
-    if (!hasPriority || (!hasLocations && !hasPlatforms)) {
+    if (isCosm) {
+        // CO-SM needs at least one preference filled out
+        hasPreferences = !!(officer.cosmPreferences && officer.cosmPreferences.some(p => typeof p === 'string' && p.trim() !== ""));
+    } else {
+        // Standard needs priority and either location or platform
+        const hasPriority = !!officer.preferencePriority;
+        const hasLocations = !!(officer.preferredLocations && officer.preferredLocations.length > 0);
+        const hasPlatforms = !!(officer.preferredPlatforms && officer.preferredPlatforms.length > 0);
+
+        hasPreferences = hasPriority && (hasLocations || hasPlatforms);
+    }
+
+    if (!hasPreferences) {
         alerts.push({
             id: officer.id,
             name: officer.name,

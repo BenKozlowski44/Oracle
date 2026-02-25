@@ -107,6 +107,7 @@ export interface Officer {
     preferencePriority?: "Homeport" | "Platform" | null
     tentativeSlate?: string
     listShift?: string // Dedicated routing for the UI tabs
+    cosmPreferences?: string[] // Up to 15 specific ranked preferences for CO-SM
 }
 
 export interface Metrics {
