@@ -314,6 +314,11 @@ export async function parseBankExcel(fileData: ArrayBuffer): Promise<Officer[]> 
             billet,
             csr,
             assignedSlate,
+            cosmPreferences: Array.from({ length: 15 }, (_, i) => {
+                // Columns N through AB are indices 14 through 28 in ExcelJS (1-based)
+                const val = getCellValue(row.getCell(i + 14));
+                return val !== null && val !== undefined ? String(val).trim() : "";
+            }),
             preferredLocations: [
                 getVal('hp1', 'location 1', 'loc1'),
                 getVal('hp2', 'location 2', 'loc2'),
