@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { parseOracleExcel, parseBankExcel } from "@/lib/excel-parser"
+import { parseOracleExcel, parseBankExcel, parseCosmExcel } from "@/lib/excel-parser"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -12,7 +12,7 @@ interface DataImportCardProps {
     title: string
     description: string
     onParse: (buffer: ArrayBuffer) => Promise<any[]> | any[]
-    dataKey: "oracleData" | "officers"
+    dataKey: "oracleData" | "officers" | "mergeBank" | "mergeCosm"
 }
 
 function DataImportCard({ title, description, onParse, dataKey }: DataImportCardProps) {
@@ -121,7 +121,7 @@ export default function DataSettingsPage() {
                 </p>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 <DataImportCard
                     title="Import 'The Oracle' (Commands)"
                     description="Upload the Annual Command Succession Tracker (.xlsx). Replaces current command list."
@@ -130,10 +130,17 @@ export default function DataSettingsPage() {
                 />
 
                 <DataImportCard
-                    title="Import 'The Bank' (Officers)"
-                    description="Upload the Officer Roster (.xlsx). Replaces the current officer pool."
+                    title="Import Officer Bank"
+                    description="Upload the standard Officer Roster (.xlsx). Safely merges with existing CO-SM officers."
                     onParse={parseBankExcel}
-                    dataKey="officers"
+                    dataKey="mergeBank"
+                />
+
+                <DataImportCard
+                    title="Import CO-SM Bank"
+                    description="Upload the CO-SM Roster (.xlsx) with 1-15 preferences. Safely merges with standard bank officers."
+                    onParse={parseCosmExcel}
+                    dataKey="mergeCosm"
                 />
             </div>
         </div>

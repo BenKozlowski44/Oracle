@@ -225,7 +225,7 @@ export async function parseOracleExcel(fileData: ArrayBuffer): Promise<OracleCom
     return commands;
 }
 
-export async function parseBankExcel(fileData: ArrayBuffer): Promise<Officer[]> {
+export async function parseBankExcel(fileData: ArrayBuffer, importType: "bank" | "cosm" = "bank"): Promise<Officer[]> {
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.load(fileData);
 
@@ -278,7 +278,9 @@ export async function parseBankExcel(fileData: ArrayBuffer): Promise<Officer[]> 
         let statusRaw = String(getVal('status', 'co-a milestone') || "Available");
         let status: any = "Available";
 
-        if (statusRaw === "FF" || statusRaw === "Ready FF") status = "Ready FF";
+        if (importType === "cosm") {
+            status = "Available"; // Force to available for CO-SM bank
+        } else if (statusRaw === "FF" || statusRaw === "Ready FF") status = "Ready FF";
         else if (statusRaw === "Available") status = "Available";
         else if (statusRaw === "Verify PD2") status = "Verify PD2";
         else if (statusRaw === "Defer") status = "Defer";
@@ -290,6 +292,11 @@ export async function parseBankExcel(fileData: ArrayBuffer): Promise<Officer[]> 
         else if (statusRaw === "Policy") status = "Policy";
         else if (statusRaw === "List Shift") status = "List Shift";
         else status = statusRaw || "Available";
+
+        let parsedListShift = String(getVal('list shift') || "");
+        if (importType === "cosm") {
+            parsedListShift = "CO-SM"; // Force routing to CO-SM tab
+        }
 
         const priorityVal = getVal('h/p', 'priority');
         const preferencePriority = (function (val) {
@@ -314,11 +321,11 @@ export async function parseBankExcel(fileData: ArrayBuffer): Promise<Officer[]> 
             billet,
             csr,
             assignedSlate,
-            cosmPreferences: Array.from({ length: 15 }, (_, i) => {
+            cosmPreferences: importType === "cosm" ? Array.from({ length: 15 }, (_, i) => {
                 // Columns N through AB are indices 14 through 28 in ExcelJS (1-based)
                 const val = getCellValue(row.getCell(i + 14));
                 return val !== null && val !== undefined ? String(val).trim() : "";
-            }),
+            }) : undefined,
             preferredLocations: [
                 getVal('hp1', 'location 1', 'loc1'),
                 getVal('hp2', 'location 2', 'loc2'),
@@ -332,9 +339,13 @@ export async function parseBankExcel(fileData: ArrayBuffer): Promise<Officer[]> 
                 getVal('p3', 'platform 3', 'plat3')
             ].map(String).filter(v => v !== "null" && v !== ""),
             preferencePriority,
-            listShift: listShift || undefined
+            listShift: parsedListShift || undefined
         });
     });
 
     return officers;
+}
+
+export async function parseCosmExcel(fileData: ArrayBuffer): Promise<Officer[]> {
+    return parseBankExcel(fileData, "cosm");
 }
