@@ -169,6 +169,8 @@ export function OfficerTable({ data, variant = "default" }: OfficerTableProps) {
                 return "bg-red-500 hover:bg-red-600"
             case "Policy":
                 return "bg-red-500 hover:bg-red-600"
+            case "Declined":
+                return "bg-red-500 hover:bg-red-600"
             case "Slated": return "bg-blue-500 hover:bg-blue-600"
             case "Defer": return "bg-yellow-500 hover:bg-yellow-600"
             case "PCC": return "bg-green-500 hover:bg-green-600"

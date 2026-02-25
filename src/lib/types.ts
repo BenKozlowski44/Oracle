@@ -18,6 +18,7 @@ export type OfficerStatus =
     | "List Shift"
     | "Retire"
     | "Policy"
+    | "Declined"
     | "FF (EAST COAST)"
     | "FF (SDGO/Pearl/YOKO/ROTA)"
     | "FF (YOKO)"
