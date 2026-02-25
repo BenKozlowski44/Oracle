@@ -22,6 +22,12 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ArrowUpDown, Search, Edit2 } from "lucide-react"
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { EditOfficerDialog } from "./edit-officer-dialog"
 
 interface OfficerTableProps {
@@ -361,27 +367,68 @@ export function OfficerTable({ data, variant = "default" }: OfficerTableProps) {
                                     <TableCell>{formatPrd(officer.prd)}</TableCell>
                                     {variant === "default" && (
                                         <TableCell>
-                                            <div className="flex flex-col text-xs" title={`Priority: ${officer.preferencePriority || "None"}`}>
-                                                {officer.preferencePriority === "Platform" ? (
-                                                    <>
-                                                        <span className={`truncate max-w-[150px] ${officer.preferencePriority === "Platform" ? "font-medium text-foreground" : "text-muted-foreground"}`}>
-                                                            🚢 {officer.preferredPlatforms?.join(", ") || "-"}
-                                                        </span>
-                                                        <span className="text-muted-foreground truncate max-w-[150px]">
-                                                            🏠 {officer.preferredLocations?.join(", ") || "-"}
-                                                        </span>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <span className={`truncate max-w-[150px] ${officer.preferencePriority === "Homeport" ? "font-medium text-foreground" : "text-muted-foreground"}`}>
-                                                            🏠 {officer.preferredLocations?.join(", ") || "-"}
-                                                        </span>
-                                                        <span className="text-muted-foreground truncate max-w-[150px]">
-                                                            🚢 {officer.preferredPlatforms?.join(", ") || "-"}
-                                                        </span>
-                                                    </>
-                                                )}
-                                            </div>
+                                            {officer.screened?.includes("CO-SM") || officer.listShift === "CO-SM" ? (
+                                                <TooltipProvider>
+                                                    <Tooltip>
+                                                        <TooltipTrigger className="cursor-help text-left w-full">
+                                                            <div className="flex flex-col text-xs space-y-1">
+                                                                {officer.cosmPreferences && officer.cosmPreferences.some(p => p?.trim()) ? (
+                                                                    <>
+                                                                        {officer.cosmPreferences.filter(p => p?.trim()).slice(0, 3).map((pref, i) => (
+                                                                            <span key={i} className="truncate max-w-[150px]">{i + 1}. {pref}</span>
+                                                                        ))}
+                                                                        {officer.cosmPreferences.filter(p => p?.trim()).length > 3 && (
+                                                                            <span className="text-muted-foreground text-[10px] italic">
+                                                                                +{officer.cosmPreferences.filter(p => p?.trim()).length - 3} more
+                                                                            </span>
+                                                                        )}
+                                                                    </>
+                                                                ) : (
+                                                                    <span className="text-muted-foreground italic">No preferences</span>
+                                                                )}
+                                                            </div>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent side="right" className="max-w-[300px] max-h-[400px] overflow-y-auto">
+                                                            <div className="space-y-1 text-sm">
+                                                                <div className="font-semibold border-b pb-1 mb-2">CO-SM Preferences</div>
+                                                                {officer.cosmPreferences?.map((pref, i) => (
+                                                                    pref?.trim() ? (
+                                                                        <div key={i} className="grid grid-cols-[20px_1fr] gap-2">
+                                                                            <span className="text-muted-foreground text-right">{i + 1}.</span>
+                                                                            <span>{pref}</span>
+                                                                        </div>
+                                                                    ) : null
+                                                                ))}
+                                                                {(!officer.cosmPreferences || !officer.cosmPreferences.some(p => p?.trim())) && (
+                                                                    <div className="text-muted-foreground italic">No preferences set</div>
+                                                                )}
+                                                            </div>
+                                                        </TooltipContent>
+                                                    </Tooltip>
+                                                </TooltipProvider>
+                                            ) : (
+                                                <div className="flex flex-col text-xs" title={`Priority: ${officer.preferencePriority || "None"}`}>
+                                                    {officer.preferencePriority === "Platform" ? (
+                                                        <>
+                                                            <span className={`truncate max-w-[150px] ${officer.preferencePriority === "Platform" ? "font-medium text-foreground" : "text-muted-foreground"}`}>
+                                                                🚢 {officer.preferredPlatforms?.join(", ") || "-"}
+                                                            </span>
+                                                            <span className="text-muted-foreground truncate max-w-[150px]">
+                                                                🏠 {officer.preferredLocations?.join(", ") || "-"}
+                                                            </span>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <span className={`truncate max-w-[150px] ${officer.preferencePriority === "Homeport" ? "font-medium text-foreground" : "text-muted-foreground"}`}>
+                                                                🏠 {officer.preferredLocations?.join(", ") || "-"}
+                                                            </span>
+                                                            <span className="text-muted-foreground truncate max-w-[150px]">
+                                                                🚢 {officer.preferredPlatforms?.join(", ") || "-"}
+                                                            </span>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            )}
                                         </TableCell>
                                     )}
                                     {variant === "pcc" && (
