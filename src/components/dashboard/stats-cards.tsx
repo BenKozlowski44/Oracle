@@ -29,6 +29,8 @@ export function BankOfficersCard({ officers }: { officers: Officer[] }) {
         o.status !== "PCC" &&
         o.status !== "Slated" &&
         o.listShift !== "Slated" &&
+        o.status !== "Declined" &&
+        o.status !== "No Opportunity" &&
         !o.screened?.includes("CO-SM")
     )
     const totalCount = validOfficers.length
@@ -103,7 +105,9 @@ export function CosmBankOfficersCard({ officers }: { officers: Officer[] }) {
         o.screened?.includes("CO-SM") &&
         o.status !== "PCC" &&
         o.status !== "Slated" &&
-        o.listShift !== "Slated"
+        o.listShift !== "Slated" &&
+        o.status !== "Declined" &&
+        o.status !== "No Opportunity"
     )
     const totalCount = validOfficers.length
 
@@ -167,7 +171,7 @@ export function ResolvedIssuesCard({ metrics }: { metrics: Metrics }) {
 
 export function FirefighterStatsCard({ officers }: { officers: Officer[] }) {
     const isFirefighter = (o: Officer) => {
-        if (o.status === "Slated" || o.listShift === "Slated") return false;
+        if (o.status === "Slated" || o.listShift === "Slated" || o.status === "Declined" || o.status === "No Opportunity") return false;
         const slate = o.assignedSlate?.toLowerCase() || ""
         return o.status === "Ready FF" ||
             slate.includes("3rd look") ||

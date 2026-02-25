@@ -21,13 +21,17 @@ export function TheBank({ data }: BankProps) {
             slate.includes("no command")
     }
 
+    const isDeclined = (o: Officer) => o.status === "Declined" || o.status === "No Opportunity"
+
     const bankOfficers = data.filter(o => {
+        if (isDeclined(o)) return false;
         const shift = o.listShift || ""
         return shift !== "CO-SM" && shift !== "Slated" && o.status !== "PCC" && !isFirefighter(o)
     })
-    const slatedOfficers = data.filter(o => o.listShift === "Slated")
-    const cosmOfficers = data.filter(o => o.listShift === "CO-SM" || o.screened?.includes("CO-SM"))
-    const firefighters = data.filter(o => isFirefighter(o))
+    const slatedOfficers = data.filter(o => o.listShift === "Slated" && !isDeclined(o))
+    const cosmOfficers = data.filter(o => (o.listShift === "CO-SM" || o.screened?.includes("CO-SM")) && !isDeclined(o))
+    const firefighters = data.filter(o => isFirefighter(o) && !isDeclined(o))
+    const declinedOfficers = data.filter(o => isDeclined(o))
 
     const searchParams = useSearchParams()
 
@@ -43,6 +47,9 @@ export function TheBank({ data }: BankProps) {
             const inCosm = cosmOfficers.some(o => o.name.toLowerCase().includes(query))
             if (inCosm) return "cosm"
 
+            const inDeclined = declinedOfficers.some(o => o.name.toLowerCase().includes(query))
+            if (inDeclined) return "declined"
+
             // Default to bank if found there or not found at all
             return "bank"
         }
@@ -51,6 +58,7 @@ export function TheBank({ data }: BankProps) {
         if (firefighters.length > 0) return "firefighters"
         if (slatedOfficers.length > 0) return "slated"
         if (cosmOfficers.length > 0) return "cosm"
+        if (declinedOfficers.length > 0) return "declined"
         return "bank"
     })
 
@@ -61,9 +69,10 @@ export function TheBank({ data }: BankProps) {
             if (firefighters.some(o => o.name.toLowerCase().includes(query))) setActiveTab("firefighters")
             else if (slatedOfficers.some(o => o.name.toLowerCase().includes(query))) setActiveTab("slated")
             else if (cosmOfficers.some(o => o.name.toLowerCase().includes(query))) setActiveTab("cosm")
+            else if (declinedOfficers.some(o => o.name.toLowerCase().includes(query))) setActiveTab("declined")
             else setActiveTab("bank")
         }
-    }, [searchParams, firefighters, slatedOfficers, cosmOfficers])
+    }, [searchParams, firefighters, slatedOfficers, cosmOfficers, declinedOfficers])
 
     return (
         <div className="space-y-4">
@@ -74,6 +83,7 @@ export function TheBank({ data }: BankProps) {
                         <TabsTrigger value="firefighters">Firefighters ({firefighters.length})</TabsTrigger>
                         <TabsTrigger value="slated">Slated ({slatedOfficers.length})</TabsTrigger>
                         <TabsTrigger value="cosm">CO-SM ({cosmOfficers.length})</TabsTrigger>
+                        <TabsTrigger value="declined">Declined/Descreened ({declinedOfficers.length})</TabsTrigger>
                     </TabsList>
                 </div>
 
@@ -118,6 +128,17 @@ export function TheBank({ data }: BankProps) {
                             </p>
                         </div>
                         <OfficerTable data={cosmOfficers} />
+                    </div>
+                </TabsContent>
+
+                <TabsContent value="declined" className="mt-4">
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                            <p className="text-sm text-muted-foreground">
+                                Historical inventory of officers who are ineligible for command.
+                            </p>
+                        </div>
+                        <OfficerTable data={declinedOfficers} />
                     </div>
                 </TabsContent>
             </Tabs>
