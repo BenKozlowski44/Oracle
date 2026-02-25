@@ -24,13 +24,14 @@ export function CommandInventoryCard({ oracleData }: { oracleData: OracleCommand
 }
 
 export function BankOfficersCard({ officers }: { officers: Officer[] }) {
-    // Filter out PCCs and Slated officers as requested, AND CO-SM screened (mutually exclusive)
+    // Filter out PCCs and Slated officers as requested, AND CO-SM screened/listShift
     const validOfficers = officers.filter(o =>
         o.status !== "PCC" &&
         o.status !== "Slated" &&
         o.listShift !== "Slated" &&
         o.status !== "Declined" &&
         o.status !== "No Opportunity" &&
+        o.listShift !== "CO-SM" &&
         !o.screened?.includes("CO-SM")
     )
     const totalCount = validOfficers.length
@@ -100,9 +101,9 @@ export function BankOfficersCard({ officers }: { officers: Officer[] }) {
 }
 
 export function CosmBankOfficersCard({ officers }: { officers: Officer[] }) {
-    // Filter for CO-SM screened, and not PCC/Slated
+    // Filter for CO-SM screened or listShift
     const validOfficers = officers.filter(o =>
-        o.screened?.includes("CO-SM") &&
+        (o.screened?.includes("CO-SM") || o.listShift === "CO-SM") &&
         o.status !== "PCC" &&
         o.status !== "Slated" &&
         o.listShift !== "Slated" &&
