@@ -5525,7 +5525,7 @@ export const officers: Officer[] = [
         "currentCommand": "JCS WASH DC",
         "prd": "2026-06-01",
         "preferences": [],
-        "status": "Available",
+        "status": "Declined",
         "notes": "",
         "yearGroup": 20090,
         "billet": "POL MIL PLANNER/JNT STRAT P&P/00001095",
@@ -5623,7 +5623,8 @@ export const officers: Officer[] = [
         "preferredLocations": [],
         "preferredPlatforms": [],
         "preferencePriority": null,
-        "listShift": "CO-SM"
+        "listShift": "CO-SM",
+        "tentativeSlate": "26-2"
     },
     {
         "id": "dietzelmorganmichelle_23",
@@ -5659,7 +5660,8 @@ export const officers: Officer[] = [
         "preferredLocations": [],
         "preferredPlatforms": [],
         "preferencePriority": null,
-        "listShift": "CO-SM"
+        "listShift": "CO-SM",
+        "tentativeSlate": "26-2"
     },
     {
         "id": "schimpfrandallgerard_22",
@@ -5731,7 +5733,8 @@ export const officers: Officer[] = [
         "preferredLocations": [],
         "preferredPlatforms": [],
         "preferencePriority": null,
-        "listShift": "CO-SM"
+        "listShift": "CO-SM",
+        "tentativeSlate": "26-2"
     },
     {
         "id": "samardzicsrdan_15",
@@ -5767,7 +5770,8 @@ export const officers: Officer[] = [
         "preferredLocations": [],
         "preferredPlatforms": [],
         "preferencePriority": null,
-        "listShift": "CO-SM"
+        "listShift": "CO-SM",
+        "tentativeSlate": "26-2"
     },
     {
         "id": "wilkinsdouglasc_17",
@@ -5803,7 +5807,8 @@ export const officers: Officer[] = [
         "preferredLocations": [],
         "preferredPlatforms": [],
         "preferencePriority": null,
-        "listShift": "CO-SM"
+        "listShift": "CO-SM",
+        "tentativeSlate": "26-2"
     },
     {
         "id": "eastonryanj_13",
@@ -5839,7 +5844,8 @@ export const officers: Officer[] = [
         "preferredLocations": [],
         "preferredPlatforms": [],
         "preferencePriority": null,
-        "listShift": "CO-SM"
+        "listShift": "CO-SM",
+        "tentativeSlate": "26-2"
     },
     {
         "id": "shinegogregorymichael_23",
@@ -5875,7 +5881,8 @@ export const officers: Officer[] = [
         "preferredLocations": [],
         "preferredPlatforms": [],
         "preferencePriority": null,
-        "listShift": "CO-SM"
+        "listShift": "CO-SM",
+        "tentativeSlate": "26-2"
     },
     {
         "id": "johnsonrobertojose_20",
@@ -5911,7 +5918,8 @@ export const officers: Officer[] = [
         "preferredLocations": [],
         "preferredPlatforms": [],
         "preferencePriority": null,
-        "listShift": "CO-SM"
+        "listShift": "CO-SM",
+        "tentativeSlate": "26-2"
     },
     {
         "id": "harneyseanmichael_19",
@@ -5947,7 +5955,8 @@ export const officers: Officer[] = [
         "preferredLocations": [],
         "preferredPlatforms": [],
         "preferencePriority": null,
-        "listShift": "CO-SM"
+        "listShift": "CO-SM",
+        "tentativeSlate": "26-2"
     },
     {
         "id": "steppnathant_14",
@@ -5983,7 +5992,8 @@ export const officers: Officer[] = [
         "preferredLocations": [],
         "preferredPlatforms": [],
         "preferencePriority": null,
-        "listShift": "CO-SM"
+        "listShift": "CO-SM",
+        "tentativeSlate": "26-2"
     },
     {
         "id": "swoggerloganmatthew_21",
@@ -6019,7 +6029,8 @@ export const officers: Officer[] = [
         "preferredLocations": [],
         "preferredPlatforms": [],
         "preferencePriority": null,
-        "listShift": "CO-SM"
+        "listShift": "CO-SM",
+        "tentativeSlate": "26-2"
     },
     {
         "id": "kachmanricharda_17",
@@ -6055,7 +6066,8 @@ export const officers: Officer[] = [
         "preferredLocations": [],
         "preferredPlatforms": [],
         "preferencePriority": null,
-        "listShift": "CO-SM"
+        "listShift": "CO-SM",
+        "tentativeSlate": "26-2"
     },
     {
         "id": "rossichristopherdavid_23",
@@ -6199,7 +6211,8 @@ export const officers: Officer[] = [
         "preferredLocations": [],
         "preferredPlatforms": [],
         "preferencePriority": null,
-        "listShift": "CO-SM"
+        "listShift": "CO-SM",
+        "tentativeSlate": "26-2"
     },
     {
         "id": "woodsdanielmccarthy_21",
@@ -6235,7 +6248,8 @@ export const officers: Officer[] = [
         "preferredLocations": [],
         "preferredPlatforms": [],
         "preferencePriority": null,
-        "listShift": "CO-SM"
+        "listShift": "CO-SM",
+        "tentativeSlate": "26-2"
     }
 ]
 

@@ -194,6 +194,7 @@ export function EditOfficerDialog({ officer, open, onOpenChange }: EditOfficerDi
                                     <SelectItem value="Retire">Retire</SelectItem>
                                     <SelectItem value="Policy">Policy</SelectItem>
                                     <SelectItem value="Declined">Declined</SelectItem>
+                                    <SelectItem value="No Opportunity">No Opportunity</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
