@@ -15,6 +15,7 @@ import {
     GraduationCap,
     CalendarRange,
     Archive,
+    FileWarning,
 } from "lucide-react"
 
 const navItems = [
@@ -57,6 +58,11 @@ const navItems = [
         title: "Reports",
         href: "/reports",
         icon: BarChart3,
+    },
+    {
+        title: "Missing Inputs",
+        href: "/reports/missing-inputs",
+        icon: FileWarning,
     },
 ]
 
