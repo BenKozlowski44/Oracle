@@ -13,6 +13,7 @@ interface BankProps {
 export function TheBank({ data }: BankProps) {
     const isFirefighter = (o: Officer) => {
         if (o.status === "Slated" || o.listShift === "Slated") return false;
+        if (o.listShift === "CO-SM" || o.screened?.includes("CO-SM")) return false;
 
         const slate = o.assignedSlate?.toLowerCase() || ""
         const shift = o.listShift || ""

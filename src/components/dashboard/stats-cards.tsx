@@ -172,6 +172,7 @@ export function ResolvedIssuesCard({ metrics }: { metrics: Metrics }) {
 export function FirefighterStatsCard({ officers }: { officers: Officer[] }) {
     const isFirefighter = (o: Officer) => {
         if (o.status === "Slated" || o.listShift === "Slated" || o.status === "Declined" || o.status === "No Opportunity") return false;
+        if (o.listShift === "CO-SM" || o.screened?.includes("CO-SM")) return false;
         const slate = o.assignedSlate?.toLowerCase() || ""
         return o.status === "Ready FF" ||
             slate.includes("3rd look") ||
