@@ -61,9 +61,17 @@ export async function POST(request: Request) {
                                 const cosmOfficers = currentOfficers.filter(o => o.listShift === 'CO-SM' || o.screened?.includes('CO-SM'));
                                 finalOfficers = [...cosmOfficers, ...mergeBank];
                             } else if (mergeCosm) {
-                                // Keep standard bank, replace CO-SM officers
+                                // Keep standard bank
                                 const standardOfficers = currentOfficers.filter(o => !(o.listShift === 'CO-SM' || o.screened?.includes('CO-SM')));
-                                finalOfficers = [...standardOfficers, ...mergeCosm];
+
+                                // Also keep existing CO-SM officers that ARE NOT natively in the new mergeCosm upload
+                                const newCosmIds = new Set(mergeCosm.map((o: any) => o.id));
+                                const existingCosmToKeep = currentOfficers.filter(o =>
+                                    (o.listShift === 'CO-SM' || o.screened?.includes('CO-SM')) &&
+                                    !newCosmIds.has(o.id)
+                                );
+
+                                finalOfficers = [...standardOfficers, ...existingCosmToKeep, ...mergeCosm];
                             }
                         } catch (e) {
                             console.error("Failed to parse existing officers for merge", e);
