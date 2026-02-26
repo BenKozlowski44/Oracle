@@ -15,6 +15,7 @@ import { Printer } from "lucide-react"
 import { AlignmentMatrixReport } from "@/components/reports/alignment-matrix"
 import { CommandsReport } from "@/components/reports/commands-report"
 import { MissingInputsReport } from "@/components/reports/missing-inputs-report"
+import { PreferenceSummaryReport } from "@/components/reports/preference-summary-report"
 
 export default function ReportsPage() {
     const [selectedReport, setSelectedReport] = useState("alignment")
@@ -32,7 +33,7 @@ export default function ReportsPage() {
                         Generate global reports across your slates and officers.
                     </p>
                 </div>
-                {selectedReport && (selectedReport === "missing" || slate) && (
+                {selectedReport && (selectedReport === "missing" || selectedReport === "preferences" || slate) && (
                     <Button variant="outline" onClick={() => window.print()}>
                         <Printer className="mr-2 h-4 w-4" />
                         Print Report
@@ -50,6 +51,7 @@ export default function ReportsPage() {
                         <SelectContent>
                             <SelectItem value="alignment">Alignment Matrix</SelectItem>
                             <SelectItem value="commands">Commands on Slate</SelectItem>
+                            <SelectItem value="preferences">Preference Summary</SelectItem>
                             <SelectItem value="missing">Missing Inputs</SelectItem>
                         </SelectContent>
                     </Select>
@@ -93,6 +95,12 @@ export default function ReportsPage() {
             {selectedReport === "missing" && (
                 <div className="animate-in fade-in duration-300 pt-6">
                     <MissingInputsReport />
+                </div>
+            )}
+
+            {selectedReport === "preferences" && (
+                <div className="animate-in fade-in duration-300 pt-6">
+                    <PreferenceSummaryReport />
                 </div>
             )}
         </div>
