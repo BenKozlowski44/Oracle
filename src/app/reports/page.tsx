@@ -1,108 +1,58 @@
-"use client"
-
-import { useState } from "react"
+import fs from 'fs'
+import path from 'path'
 import { slates } from "@/lib/data"
-import { formatToMMMyy } from "@/lib/utils"
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
-import { Button } from "@/components/ui/button"
-import { Printer } from "lucide-react"
-import { AlignmentMatrixReport } from "@/components/reports/alignment-matrix"
-import { CommandsReport } from "@/components/reports/commands-report"
-import { MissingInputsReport } from "@/components/reports/missing-inputs-report"
-import { PreferenceSummaryReport } from "@/components/reports/preference-summary-report"
+import { Officer } from "@/lib/types"
+import { ReportsClient } from "@/components/reports/reports-client"
 
-export default function ReportsPage() {
-    const [selectedReport, setSelectedReport] = useState("alignment")
-    const [selectedSlateId, setSelectedSlateId] = useState<string>("")
+export const dynamic = 'force-dynamic'
 
-    const activeSlates = slates.filter(s => s.status !== "Archived")
-    const slate = slates.find(s => s.id === selectedSlateId)
+function getOfficers(): Officer[] {
+    try {
+        const dataFilePath = path.join(process.cwd(), 'src', 'lib', 'data.ts')
+        const fileContent = fs.readFileSync(dataFilePath, 'utf8')
+        const startMarker = 'export const officers: Officer[] ='
+        const searchStartIndex = fileContent.indexOf(startMarker)
 
-    return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between print:hidden">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Reports</h1>
-                    <p className="text-muted-foreground">
-                        Generate global reports across your slates and officers.
-                    </p>
-                </div>
-                {selectedReport && (selectedReport === "missing" || selectedReport === "preferences" || slate) && (
-                    <Button variant="outline" onClick={() => window.print()}>
-                        <Printer className="mr-2 h-4 w-4" />
-                        Print Report
-                    </Button>
-                )}
-            </div>
+        if (searchStartIndex === -1) return []
 
-            <div className="flex gap-4 p-4 border rounded-md bg-muted/20 items-end print:hidden">
-                <div className="space-y-2 flex-1 max-w-[300px]">
-                    <label className="text-sm font-medium">Report Type</label>
-                    <Select value={selectedReport} onValueChange={setSelectedReport}>
-                        <SelectTrigger>
-                            <SelectValue placeholder="Select Report Type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="alignment">Alignment Matrix</SelectItem>
-                            <SelectItem value="commands">Commands on Slate</SelectItem>
-                            <SelectItem value="preferences">Preference Summary</SelectItem>
-                            <SelectItem value="missing">Missing Inputs</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
+        const openBracketIndex = fileContent.indexOf('[', searchStartIndex + startMarker.length)
+        if (openBracketIndex === -1) return []
 
-                {["alignment", "commands"].includes(selectedReport) && (
-                    <div className="space-y-2 flex-1 max-w-[300px]">
-                        <label className="text-sm font-medium">Target Slate</label>
-                        <Select value={selectedSlateId} onValueChange={setSelectedSlateId}>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select an Active Slate" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {activeSlates.map(s => (
-                                    <SelectItem key={s.id} value={s.id}>{s.name} ({formatToMMMyy(s.windowStart)})</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-                )}
-            </div>
+        let depth = 0
+        let inString = false
+        let quoteChar = ''
+        let closeBracketIndex = -1
 
-            {["alignment", "commands"].includes(selectedReport) && !slate && (
-                <div className="p-8 text-center text-muted-foreground border border-dashed rounded-md print:hidden">
-                    Please select a Slate to generate the report.
-                </div>
-            )}
+        for (let i = openBracketIndex; i < fileContent.length; i++) {
+            const char = fileContent[i]
+            if (inString) {
+                if (char === quoteChar && fileContent[i - 1] !== '\\') inString = false
+            } else {
+                if (char === '"' || char === "'" || char === '`') {
+                    inString = true
+                    quoteChar = char
+                } else if (char === '[') depth++
+                else if (char === ']') {
+                    depth--
+                    if (depth === 0) {
+                        closeBracketIndex = i
+                        break
+                    }
+                }
+            }
+        }
 
-            {selectedReport === "alignment" && slate && (
-                <div className="animate-in fade-in duration-300">
-                    <AlignmentMatrixReport slateId={slate.id} />
-                </div>
-            )}
+        if (closeBracketIndex === -1) return []
+        const jsonString = fileContent.substring(openBracketIndex, closeBracketIndex + 1)
 
-            {selectedReport === "commands" && slate && (
-                <div className="animate-in fade-in duration-300">
-                    <CommandsReport slateId={slate.id} />
-                </div>
-            )}
+        const parseFn = new Function(`return ${jsonString}`)
+        return parseFn() as Officer[]
+    } catch (e) {
+        return []
+    }
+}
 
-            {selectedReport === "missing" && (
-                <div className="animate-in fade-in duration-300 pt-6">
-                    <MissingInputsReport />
-                </div>
-            )}
-
-            {selectedReport === "preferences" && (
-                <div className="animate-in fade-in duration-300 pt-6">
-                    <PreferenceSummaryReport />
-                </div>
-            )}
-        </div>
-    )
+export default async function ReportsPage() {
+    const currentOfficers = getOfficers()
+    return <ReportsClient officers={currentOfficers} slates={slates} />
 }

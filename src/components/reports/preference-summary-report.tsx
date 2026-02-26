@@ -1,7 +1,6 @@
 "use client"
 
 import { useMemo } from "react"
-import { officers } from "@/lib/data"
 import { Officer } from "@/lib/types"
 import {
     BarChart,
@@ -17,7 +16,11 @@ import {
     Legend
 } from "recharts"
 
-export function PreferenceSummaryReport() {
+interface PreferenceSummaryReportProps {
+    officers: Officer[]
+}
+
+export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportProps) {
     const data = useMemo(() => {
         // Group Officers
         const cosmOfficers = officers.filter(o => o.screened?.includes("CO-SM") || o.listShift === "CO-SM")
@@ -37,7 +40,7 @@ export function PreferenceSummaryReport() {
         standardOfficers.forEach(o => {
             if (o.preferencePriority) {
                 const lp = o.preferencePriority.toLowerCase()
-                if (lp.includes("location")) locPriority++
+                if (lp.includes("location") || lp.includes("homeport")) locPriority++
                 else if (lp.includes("platform")) platPriority++
                 else doesntMatter++
             }

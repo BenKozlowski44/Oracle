@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { officers } from "@/lib/data"
+
 import { getAllPersonnelAlerts } from "@/lib/alerts"
 import { Officer } from "@/lib/types"
 import {
@@ -17,7 +17,11 @@ import { Input } from "@/components/ui/input"
 import { Search } from "lucide-react"
 import { EditOfficerDialog } from "@/components/officers/edit-officer-dialog"
 
-export function MissingInputsReport() {
+interface MissingInputsReportProps {
+    officers: Officer[]
+}
+
+export function MissingInputsReport({ officers }: MissingInputsReportProps) {
     const [search, setSearch] = useState("")
     const [editingOfficer, setEditingOfficer] = useState<Officer | null>(null)
 

@@ -6019,7 +6019,8 @@ export const officers: Officer[] = [
         "preferredLocations": [],
         "preferredPlatforms": [],
         "preferencePriority": null,
-        "listShift": "CO-SM"
+        "listShift": "CO-SM",
+        "tentativeSlate": "26-2"
     },
     {
         "id": "zicarellidavidlee_19",
@@ -6451,7 +6452,8 @@ export const officers: Officer[] = [
         "preferredLocations": [],
         "preferredPlatforms": [],
         "preferencePriority": null,
-        "listShift": "CO-SM"
+        "listShift": "CO-SM",
+        "tentativeSlate": "26-2"
     },
     {
         "id": "dietzelmorganmichelle_23",
@@ -6487,7 +6489,8 @@ export const officers: Officer[] = [
         "preferredLocations": [],
         "preferredPlatforms": [],
         "preferencePriority": null,
-        "listShift": "CO-SM"
+        "listShift": "CO-SM",
+        "tentativeSlate": "26-2"
     },
     {
         "id": "schimpfrandallgerard_22",
@@ -6559,7 +6562,8 @@ export const officers: Officer[] = [
         "preferredLocations": [],
         "preferredPlatforms": [],
         "preferencePriority": null,
-        "listShift": "CO-SM"
+        "listShift": "CO-SM",
+        "tentativeSlate": "26-2"
     },
     {
         "id": "samardzicsrdan_15",
@@ -6595,7 +6599,8 @@ export const officers: Officer[] = [
         "preferredLocations": [],
         "preferredPlatforms": [],
         "preferencePriority": null,
-        "listShift": "CO-SM"
+        "listShift": "CO-SM",
+        "tentativeSlate": "26-2"
     },
     {
         "id": "wilkinsdouglasc_17",
@@ -6631,7 +6636,8 @@ export const officers: Officer[] = [
         "preferredLocations": [],
         "preferredPlatforms": [],
         "preferencePriority": null,
-        "listShift": "CO-SM"
+        "listShift": "CO-SM",
+        "tentativeSlate": "26-2"
     },
     {
         "id": "eastonryanj_13",
@@ -6667,7 +6673,8 @@ export const officers: Officer[] = [
         "preferredLocations": [],
         "preferredPlatforms": [],
         "preferencePriority": null,
-        "listShift": "CO-SM"
+        "listShift": "CO-SM",
+        "tentativeSlate": "26-2"
     },
     {
         "id": "shinegogregorymichael_23",
@@ -6739,7 +6746,8 @@ export const officers: Officer[] = [
         "preferredLocations": [],
         "preferredPlatforms": [],
         "preferencePriority": null,
-        "listShift": "CO-SM"
+        "listShift": "CO-SM",
+        "tentativeSlate": "26-2"
     },
     {
         "id": "harneyseanmichael_19",
@@ -6775,7 +6783,8 @@ export const officers: Officer[] = [
         "preferredLocations": [],
         "preferredPlatforms": [],
         "preferencePriority": null,
-        "listShift": "CO-SM"
+        "listShift": "CO-SM",
+        "tentativeSlate": "26-2"
     },
     {
         "id": "steppnathant_14",
@@ -6883,7 +6892,8 @@ export const officers: Officer[] = [
         "preferredLocations": [],
         "preferredPlatforms": [],
         "preferencePriority": null,
-        "listShift": "CO-SM"
+        "listShift": "CO-SM",
+        "tentativeSlate": "26-2"
     },
     {
         "id": "rossichristopherdavid_23",
