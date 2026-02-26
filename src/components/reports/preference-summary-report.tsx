@@ -13,7 +13,8 @@ import {
     PieChart,
     Pie,
     Cell,
-    Legend
+    Legend,
+    LabelList
 } from "recharts"
 
 interface PreferenceSummaryReportProps {
@@ -162,7 +163,9 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                                 <XAxis type="number" allowDecimals={false} />
                                 <YAxis type="category" dataKey="name" width={100} tick={{ fontSize: 12 }} />
                                 <Tooltip />
-                                <Bar dataKey="count" fill="#3b82f6" radius={[0, 4, 4, 0]} />
+                                <Bar dataKey="count" fill="#3b82f6" radius={[0, 4, 4, 0]}>
+                                    <LabelList dataKey="count" position="right" fontSize={11} fill="#6b7280" />
+                                </Bar>
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
@@ -177,7 +180,9 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                                 <XAxis dataKey="name" tick={{ fontSize: 12 }} angle={-45} textAnchor="end" height={60} />
                                 <YAxis allowDecimals={false} />
                                 <Tooltip />
-                                <Bar dataKey="count" fill="#ef4444" radius={[4, 4, 0, 0]} maxBarSize={60} />
+                                <Bar dataKey="count" fill="#ef4444" radius={[4, 4, 0, 0]} maxBarSize={60}>
+                                    <LabelList dataKey="count" position="top" fontSize={11} fill="#6b7280" />
+                                </Bar>
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
@@ -199,7 +204,9 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                                 <XAxis type="number" allowDecimals={false} />
                                 <YAxis type="category" dataKey="name" width={140} tick={{ fontSize: 11 }} />
                                 <Tooltip cursor={{ fill: 'transparent' }} />
-                                <Bar dataKey="count" fill="#10b981" radius={[0, 4, 4, 0]} />
+                                <Bar dataKey="count" fill="#10b981" radius={[0, 4, 4, 0]}>
+                                    <LabelList dataKey="count" position="right" fontSize={11} fill="#6b7280" />
+                                </Bar>
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
@@ -214,7 +221,9 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                                 <XAxis type="number" allowDecimals={false} />
                                 <YAxis type="category" dataKey="name" width={140} tick={{ fontSize: 11 }} />
                                 <Tooltip cursor={{ fill: 'transparent' }} />
-                                <Bar dataKey="count" fill="#8b5cf6" radius={[0, 4, 4, 0]} />
+                                <Bar dataKey="count" fill="#8b5cf6" radius={[0, 4, 4, 0]}>
+                                    <LabelList dataKey="count" position="right" fontSize={11} fill="#6b7280" />
+                                </Bar>
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
