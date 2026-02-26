@@ -65,13 +65,15 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
             { name: "Doesn't Matter", value: doesntMatter, color: "#6b7280", pct: totalStandardWithPriority ? Math.round((doesntMatter / totalStandardWithPriority) * 100) : 0 }
         ].filter(d => d.value > 0)
 
+        const totalLocationVotes = Object.values(locationCounts).reduce((sum, count) => sum + count, 0)
         const topLocations = Object.entries(locationCounts)
-            .map(([name, count]) => ({ name, count, pct: Math.round((count / standardOfficers.length) * 100) }))
+            .map(([name, count]) => ({ name, count, pct: totalLocationVotes ? Math.round((count / totalLocationVotes) * 100) : 0 }))
             .sort((a, b) => b.count - a.count)
             .slice(0, 10)
 
+        const totalPlatformVotes = Object.values(platformCounts).reduce((sum, count) => sum + count, 0)
         const topPlatforms = Object.entries(platformCounts)
-            .map(([name, count]) => ({ name, count, pct: Math.round((count / standardOfficers.length) * 100) }))
+            .map(([name, count]) => ({ name, count, pct: totalPlatformVotes ? Math.round((count / totalPlatformVotes) * 100) : 0 }))
             .sort((a, b) => b.count - a.count)
             .slice(0, 10)
 
@@ -114,8 +116,11 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
             }
         })
 
+        // Count how many CO-SM actually submitted a preferences list so the % is accurate
+        const votingCosmCount = cosmOfficers.filter(o => o.cosmPreferences && o.cosmPreferences.length > 0).length
+
         const top3Choices = Object.entries(top3ChoiceCounts)
-            .map(([name, counts]) => ({ name, ...counts, pct: Math.round((counts.total / cosmOfficers.length) * 100) }))
+            .map(([name, counts]) => ({ name, ...counts, pct: votingCosmCount ? Math.round((counts.total / votingCosmCount) * 100) : 0 }))
             .sort((a, b) => b.total - a.total)
             .slice(0, 10)
 
