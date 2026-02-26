@@ -72,15 +72,30 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
 
         // --- CO-SM METRICS ---
 
-        const firstChoiceCounts: Record<string, number> = {}
+        const top3ChoiceCounts: Record<string, { total: number, rank1: number, rank2: number, rank3: number }> = {}
         const allChoiceCounts: Record<string, number> = {}
 
         cosmOfficers.forEach(o => {
             if (o.cosmPreferences && o.cosmPreferences.length > 0) {
-                // Rank 1
-                const firstChoice = o.cosmPreferences[0]?.trim()
-                if (firstChoice) {
-                    firstChoiceCounts[firstChoice] = (firstChoiceCounts[firstChoice] || 0) + 1
+                // Top 3 Ranks
+                const p1 = o.cosmPreferences[0]?.trim()
+                const p2 = o.cosmPreferences[1]?.trim()
+                const p3 = o.cosmPreferences[2]?.trim()
+
+                if (p1) {
+                    if (!top3ChoiceCounts[p1]) top3ChoiceCounts[p1] = { total: 0, rank1: 0, rank2: 0, rank3: 0 }
+                    top3ChoiceCounts[p1].rank1++
+                    top3ChoiceCounts[p1].total++
+                }
+                if (p2) {
+                    if (!top3ChoiceCounts[p2]) top3ChoiceCounts[p2] = { total: 0, rank1: 0, rank2: 0, rank3: 0 }
+                    top3ChoiceCounts[p2].rank2++
+                    top3ChoiceCounts[p2].total++
+                }
+                if (p3) {
+                    if (!top3ChoiceCounts[p3]) top3ChoiceCounts[p3] = { total: 0, rank1: 0, rank2: 0, rank3: 0 }
+                    top3ChoiceCounts[p3].rank3++
+                    top3ChoiceCounts[p3].total++
                 }
 
                 // All 15 Ranks
@@ -93,9 +108,9 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
             }
         })
 
-        const topFirstChoices = Object.entries(firstChoiceCounts)
-            .map(([name, count]) => ({ name, count }))
-            .sort((a, b) => b.count - a.count)
+        const top3Choices = Object.entries(top3ChoiceCounts)
+            .map(([name, counts]) => ({ name, ...counts }))
+            .sort((a, b) => b.total - a.total)
             .slice(0, 10)
 
         const topAllChoices = Object.entries(allChoiceCounts)
@@ -109,7 +124,7 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
             priorityData,
             topLocations,
             topPlatforms,
-            topFirstChoices,
+            top3Choices,
             topAllChoices
         }
     }, [officers])
@@ -197,16 +212,19 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                 </div>
 
                 <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
-                    <h3 className="font-semibold mb-4 text-center">#1 Ranked Command (Top 10)</h3>
+                    <h3 className="font-semibold mb-4 text-center">Top 3 Command Preferences</h3>
                     <div className="h-[300px]">
                         <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={data.topFirstChoices} layout="vertical" margin={{ left: 80, right: 30, top: 0, bottom: 0 }}>
+                            <BarChart data={data.top3Choices} layout="vertical" margin={{ left: 80, right: 30, top: 0, bottom: 0 }}>
                                 <CartesianGrid strokeDasharray="3 3" horizontal={false} />
                                 <XAxis type="number" allowDecimals={false} />
                                 <YAxis type="category" dataKey="name" width={140} tick={{ fontSize: 11 }} />
                                 <Tooltip cursor={{ fill: 'transparent' }} />
-                                <Bar dataKey="count" fill="#10b981" radius={[0, 4, 4, 0]}>
-                                    <LabelList dataKey="count" position="right" fontSize={11} fill="#6b7280" />
+                                <Legend />
+                                <Bar dataKey="rank1" name="#1 Choice" stackId="a" fill="#22c55e" />
+                                <Bar dataKey="rank2" name="#2 Choice" stackId="a" fill="#eab308" />
+                                <Bar dataKey="rank3" name="#3 Choice" stackId="a" fill="#f97316" radius={[0, 4, 4, 0]}>
+                                    <LabelList dataKey="total" position="right" fontSize={11} fill="#6b7280" />
                                 </Bar>
                             </BarChart>
                         </ResponsiveContainer>
