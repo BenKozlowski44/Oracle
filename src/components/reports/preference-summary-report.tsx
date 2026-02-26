@@ -45,15 +45,11 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                 else doesntMatter++
             }
 
-            o.preferredLocations?.forEach(loc => {
-                const neatLoc = loc.trim()
-                if (neatLoc) locationCounts[neatLoc] = (locationCounts[neatLoc] || 0) + 1
-            })
+            const firstLoc = o.preferredLocations?.[0]?.trim()
+            if (firstLoc) locationCounts[firstLoc] = (locationCounts[firstLoc] || 0) + 1
 
-            o.preferredPlatforms?.forEach(plat => {
-                const neatPlat = plat.trim()
-                if (neatPlat) platformCounts[neatPlat] = (platformCounts[neatPlat] || 0) + 1
-            })
+            const firstPlat = o.preferredPlatforms?.[0]?.trim()
+            if (firstPlat) platformCounts[firstPlat] = (platformCounts[firstPlat] || 0) + 1
         })
 
         const priorityData = [
@@ -158,7 +154,7 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                 </div>
 
                 <div className="rounded-xl border bg-card text-card-foreground shadow p-6 lg:col-span-2">
-                    <h3 className="font-semibold mb-4 text-center">Top 10 Locations</h3>
+                    <h3 className="font-semibold mb-4 text-center">Top 10 #1 Location Choices</h3>
                     <div className="h-[250px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={data.topLocations} layout="vertical" margin={{ left: 50, right: 30, top: 0, bottom: 0 }}>
@@ -173,7 +169,7 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                 </div>
 
                 <div className="rounded-xl border bg-card text-card-foreground shadow p-6 col-span-full">
-                    <h3 className="font-semibold mb-4 text-center">Top 10 Platforms (Hulls)</h3>
+                    <h3 className="font-semibold mb-4 text-center">Top 10 #1 Platform Choices</h3>
                     <div className="h-[250px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={data.topPlatforms}>

@@ -3240,7 +3240,7 @@ export const officers: Officer[] = [
         ],
         "preferredPlatforms": [
             "DDG",
-            "LDS",
+            "LSD",
             "LCS"
         ],
         "preferencePriority": "Homeport",
@@ -4881,7 +4881,7 @@ export const officers: Officer[] = [
         "csr": "7AGAZ",
         "assignedSlate": "FY27 2nd Look",
         "preferredLocations": [
-            "SDGO",
+            "SD",
             "MP",
             "PH",
             "SJ",
