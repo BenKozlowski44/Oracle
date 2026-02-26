@@ -6710,7 +6710,8 @@ export const officers: Officer[] = [
         "preferredLocations": [],
         "preferredPlatforms": [],
         "preferencePriority": null,
-        "listShift": "CO-SM"
+        "listShift": "CO-SM",
+        "tentativeSlate": "26-2"
     },
     {
         "id": "johnsonrobertojose_20",
@@ -6820,7 +6821,8 @@ export const officers: Officer[] = [
         "preferredLocations": [],
         "preferredPlatforms": [],
         "preferencePriority": null,
-        "listShift": "CO-SM"
+        "listShift": "CO-SM",
+        "tentativeSlate": "26-2"
     },
     {
         "id": "swoggerloganmatthew_21",
@@ -7073,7 +7075,8 @@ export const officers: Officer[] = [
         "preferredLocations": [],
         "preferredPlatforms": [],
         "preferencePriority": null,
-        "listShift": "CO-SM"
+        "listShift": "CO-SM",
+        "tentativeSlate": "26-2"
     }
 ]
 

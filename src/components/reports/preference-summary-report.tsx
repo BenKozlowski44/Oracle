@@ -23,9 +23,14 @@ interface PreferenceSummaryReportProps {
 
 export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportProps) {
     const data = useMemo(() => {
+        // Filter out officers who are no longer actively seeking choices
+        const activeOfficers = officers.filter(
+            o => !["Slated", "PCC", "Declined", "No Opportunity"].includes(o.status)
+        )
+
         // Group Officers
-        const cosmOfficers = officers.filter(o => o.screened?.includes("CO-SM") || o.listShift === "CO-SM")
-        const standardOfficers = officers.filter(o => !(o.screened?.includes("CO-SM") || o.listShift === "CO-SM"))
+        const cosmOfficers = activeOfficers.filter(o => o.screened?.includes("CO-SM") || o.listShift === "CO-SM")
+        const standardOfficers = activeOfficers.filter(o => !(o.screened?.includes("CO-SM") || o.listShift === "CO-SM"))
 
         // --- STANDARD METRICS ---
 
