@@ -108,13 +108,14 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
 
         return {
             totalOfficers: officers.length,
+            standardOfficersCount: standardOfficers.length,
             priorityData,
             topLocations,
             topPlatforms,
             topFirstChoices,
             topAllChoices
         }
-    }, [])
+    }, [officers])
 
     return (
         <div className="space-y-8">
