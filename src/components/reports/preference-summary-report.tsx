@@ -188,7 +188,8 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                                 <Bar dataKey="count" fill="#3b82f6" radius={[0, 4, 4, 0]}>
                                     <LabelList
                                         content={(props: any) => {
-                                            const { x, y, width, height, value, payload } = props
+                                            const { x, y, width, height, value, index } = props
+                                            const item = data.topLocations[index]
                                             return (
                                                 <text
                                                     x={x + width + 5}
@@ -198,7 +199,7 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                                                     fontSize={11}
                                                     textAnchor="start"
                                                 >
-                                                    {`${value} (${payload.pct}%)`}
+                                                    {`${value} (${item?.pct || 0}%)`}
                                                 </text>
                                             )
                                         }}
@@ -221,7 +222,8 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                                 <Bar dataKey="count" fill="#ef4444" radius={[4, 4, 0, 0]} maxBarSize={60}>
                                     <LabelList
                                         content={(props: any) => {
-                                            const { x, y, width, value, payload } = props
+                                            const { x, y, width, value, index } = props
+                                            const item = data.topPlatforms[index]
                                             return (
                                                 <text
                                                     x={x + width / 2}
@@ -230,7 +232,7 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                                                     fontSize={11}
                                                     textAnchor="middle"
                                                 >
-                                                    {`${value} (${payload.pct}%)`}
+                                                    {`${value} (${item?.pct || 0}%)`}
                                                 </text>
                                             )
                                         }}
@@ -263,7 +265,8 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                                 <Bar dataKey="rank3" name="#3 Choice" stackId="a" fill="#f97316" radius={[0, 4, 4, 0]}>
                                     <LabelList
                                         content={(props: any) => {
-                                            const { x, y, width, height, value, payload } = props
+                                            const { x, y, width, height, value, index } = props
+                                            const item = data.top3Choices[index]
                                             return (
                                                 <text
                                                     x={x + width + 5}
@@ -273,7 +276,7 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                                                     fontSize={11}
                                                     textAnchor="start"
                                                 >
-                                                    {`${value} (${payload.pct}%)`}
+                                                    {`${value} (${item?.pct || 0}%)`}
                                                 </text>
                                             )
                                         }}
