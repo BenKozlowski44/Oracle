@@ -206,7 +206,7 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
             </div>
 
             {/* CO-SM Row */}
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid gap-6">
                 <div className="col-span-full border-b pb-2 pt-6">
                     <h2 className="text-2xl font-bold tracking-tight">CO-SM Priorities</h2>
                 </div>
@@ -225,23 +225,6 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                                 <Bar dataKey="rank2" name="#2 Choice" stackId="a" fill="#eab308" />
                                 <Bar dataKey="rank3" name="#3 Choice" stackId="a" fill="#f97316" radius={[0, 4, 4, 0]}>
                                     <LabelList dataKey="total" position="right" fontSize={11} fill="#6b7280" />
-                                </Bar>
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </div>
-                </div>
-
-                <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
-                    <h3 className="font-semibold mb-4 text-center">Most Frequently Ranked in Top 15</h3>
-                    <div className="h-[300px]">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={data.topAllChoices} layout="vertical" margin={{ left: 80, right: 30, top: 0, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                                <XAxis type="number" allowDecimals={false} />
-                                <YAxis type="category" dataKey="name" width={140} tick={{ fontSize: 11 }} />
-                                <Tooltip cursor={{ fill: 'transparent' }} />
-                                <Bar dataKey="count" fill="#8b5cf6" radius={[0, 4, 4, 0]}>
-                                    <LabelList dataKey="count" position="right" fontSize={11} fill="#6b7280" />
                                 </Bar>
                             </BarChart>
                         </ResponsiveContainer>
