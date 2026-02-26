@@ -25,7 +25,10 @@ export function MissingInputsReport() {
     const alerts = getAllPersonnelAlerts(officers)
 
     // Get unique officers who have at least one alert
-    const missingDataOfficerIds = Array.from(new Set(alerts.map(a => a.id.split("_")[0])))
+    // Officer IDs may contain underscores, so we carefully remove the "_screened" suffix
+    const missingDataOfficerIds = Array.from(new Set(alerts.map(a => {
+        return a.id.endsWith("_screened") ? a.id.replace("_screened", "") : a.id;
+    })))
 
     // Map IDs to full officer objects and filter by search
     const filteredOfficers = missingDataOfficerIds
