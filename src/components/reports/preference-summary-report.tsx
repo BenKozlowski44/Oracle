@@ -58,19 +58,20 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
             if (firstPlat) platformCounts[firstPlat] = (platformCounts[firstPlat] || 0) + 1
         })
 
+        const totalStandardWithPriority = locPriority + platPriority + doesntMatter
         const priorityData = [
-            { name: "Location", value: locPriority, color: "#3b82f6" },
-            { name: "Platform", value: platPriority, color: "#ef4444" },
-            { name: "Doesn't Matter", value: doesntMatter, color: "#6b7280" }
+            { name: "Location", value: locPriority, color: "#3b82f6", pct: totalStandardWithPriority ? Math.round((locPriority / totalStandardWithPriority) * 100) : 0 },
+            { name: "Platform", value: platPriority, color: "#ef4444", pct: totalStandardWithPriority ? Math.round((platPriority / totalStandardWithPriority) * 100) : 0 },
+            { name: "Doesn't Matter", value: doesntMatter, color: "#6b7280", pct: totalStandardWithPriority ? Math.round((doesntMatter / totalStandardWithPriority) * 100) : 0 }
         ].filter(d => d.value > 0)
 
         const topLocations = Object.entries(locationCounts)
-            .map(([name, count]) => ({ name, count }))
+            .map(([name, count]) => ({ name, count, pct: Math.round((count / standardOfficers.length) * 100) }))
             .sort((a, b) => b.count - a.count)
             .slice(0, 10)
 
         const topPlatforms = Object.entries(platformCounts)
-            .map(([name, count]) => ({ name, count }))
+            .map(([name, count]) => ({ name, count, pct: Math.round((count / standardOfficers.length) * 100) }))
             .sort((a, b) => b.count - a.count)
             .slice(0, 10)
 
@@ -114,7 +115,7 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
         })
 
         const top3Choices = Object.entries(top3ChoiceCounts)
-            .map(([name, counts]) => ({ name, ...counts }))
+            .map(([name, counts]) => ({ name, ...counts, pct: Math.round((counts.total / cosmOfficers.length) * 100) }))
             .sort((a, b) => b.total - a.total)
             .slice(0, 10)
 
@@ -162,7 +163,7 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                                     outerRadius={80}
                                     paddingAngle={5}
                                     dataKey="value"
-                                    label={({ value }) => value}
+                                    label={({ value, payload }) => `${value} (${payload.pct}%)`}
                                 >
                                     {data.priorityData.map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={entry.color} />
@@ -185,7 +186,23 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                                 <YAxis type="category" dataKey="name" width={100} tick={{ fontSize: 12 }} />
                                 <Tooltip />
                                 <Bar dataKey="count" fill="#3b82f6" radius={[0, 4, 4, 0]}>
-                                    <LabelList dataKey="count" position="right" fontSize={11} fill="#6b7280" />
+                                    <LabelList
+                                        content={(props: any) => {
+                                            const { x, y, width, height, value, payload } = props
+                                            return (
+                                                <text
+                                                    x={x + width + 5}
+                                                    y={y + height / 2}
+                                                    dy={4}
+                                                    fill="#6b7280"
+                                                    fontSize={11}
+                                                    textAnchor="start"
+                                                >
+                                                    {`${value} (${payload.pct}%)`}
+                                                </text>
+                                            )
+                                        }}
+                                    />
                                 </Bar>
                             </BarChart>
                         </ResponsiveContainer>
@@ -202,7 +219,22 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                                 <YAxis allowDecimals={false} />
                                 <Tooltip />
                                 <Bar dataKey="count" fill="#ef4444" radius={[4, 4, 0, 0]} maxBarSize={60}>
-                                    <LabelList dataKey="count" position="top" fontSize={11} fill="#6b7280" />
+                                    <LabelList
+                                        content={(props: any) => {
+                                            const { x, y, width, value, payload } = props
+                                            return (
+                                                <text
+                                                    x={x + width / 2}
+                                                    y={y - 5}
+                                                    fill="#6b7280"
+                                                    fontSize={11}
+                                                    textAnchor="middle"
+                                                >
+                                                    {`${value} (${payload.pct}%)`}
+                                                </text>
+                                            )
+                                        }}
+                                    />
                                 </Bar>
                             </BarChart>
                         </ResponsiveContainer>
@@ -229,7 +261,23 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                                 <Bar dataKey="rank1" name="#1 Choice" stackId="a" fill="#22c55e" />
                                 <Bar dataKey="rank2" name="#2 Choice" stackId="a" fill="#eab308" />
                                 <Bar dataKey="rank3" name="#3 Choice" stackId="a" fill="#f97316" radius={[0, 4, 4, 0]}>
-                                    <LabelList dataKey="total" position="right" fontSize={11} fill="#6b7280" />
+                                    <LabelList
+                                        content={(props: any) => {
+                                            const { x, y, width, height, value, payload } = props
+                                            return (
+                                                <text
+                                                    x={x + width + 5}
+                                                    y={y + height / 2}
+                                                    dy={4}
+                                                    fill="#6b7280"
+                                                    fontSize={11}
+                                                    textAnchor="start"
+                                                >
+                                                    {`${value} (${payload.pct}%)`}
+                                                </text>
+                                            )
+                                        }}
+                                    />
                                 </Bar>
                             </BarChart>
                         </ResponsiveContainer>
