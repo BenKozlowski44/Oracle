@@ -142,6 +142,7 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                                     outerRadius={80}
                                     paddingAngle={5}
                                     dataKey="value"
+                                    label={({ value }) => value}
                                 >
                                     {data.priorityData.map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={entry.color} />
