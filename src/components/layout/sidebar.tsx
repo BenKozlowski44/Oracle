@@ -10,12 +10,13 @@ import {
     Users,
     Building2,
     ClipboardList,
+    Swords,
     BarChart3,
     Settings,
+    Milestone,
     GraduationCap,
     CalendarRange,
-    Archive,
-    FileWarning,
+    Archive
 } from "lucide-react"
 
 const navItems = [
@@ -58,11 +59,6 @@ const navItems = [
         title: "Reports",
         href: "/reports",
         icon: BarChart3,
-    },
-    {
-        title: "Missing Inputs",
-        href: "/reports/missing-inputs",
-        icon: FileWarning,
     },
 ]
 

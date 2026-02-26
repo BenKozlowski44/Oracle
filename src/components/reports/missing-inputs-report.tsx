@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input"
 import { Search } from "lucide-react"
 import { EditOfficerDialog } from "@/components/officers/edit-officer-dialog"
 
-export default function MissingInputsReport() {
+export function MissingInputsReport() {
     const [search, setSearch] = useState("")
     const [editingOfficer, setEditingOfficer] = useState<Officer | null>(null)
 

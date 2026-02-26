@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button"
 import { Printer } from "lucide-react"
 import { AlignmentMatrixReport } from "@/components/reports/alignment-matrix"
 import { CommandsReport } from "@/components/reports/commands-report"
+import { MissingInputsReport } from "@/components/reports/missing-inputs-report"
 
 export default function ReportsPage() {
     const [selectedReport, setSelectedReport] = useState("alignment")
@@ -31,7 +32,7 @@ export default function ReportsPage() {
                         Generate global reports across your slates and officers.
                     </p>
                 </div>
-                {selectedReport && slate && (
+                {selectedReport && (selectedReport === "missing" || slate) && (
                     <Button variant="outline" onClick={() => window.print()}>
                         <Printer className="mr-2 h-4 w-4" />
                         Print Report
@@ -49,6 +50,7 @@ export default function ReportsPage() {
                         <SelectContent>
                             <SelectItem value="alignment">Alignment Matrix</SelectItem>
                             <SelectItem value="commands">Commands on Slate</SelectItem>
+                            <SelectItem value="missing">Missing Inputs</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
@@ -85,6 +87,12 @@ export default function ReportsPage() {
             {selectedReport === "commands" && slate && (
                 <div className="animate-in fade-in duration-300">
                     <CommandsReport slateId={slate.id} />
+                </div>
+            )}
+
+            {selectedReport === "missing" && (
+                <div className="animate-in fade-in duration-300 pt-6">
+                    <MissingInputsReport />
                 </div>
             )}
         </div>
