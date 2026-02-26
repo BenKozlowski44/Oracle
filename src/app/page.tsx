@@ -82,8 +82,8 @@ export default async function DashboardPage() {
         <div className="space-y-4">
           <CommandInventoryCard oracleData={oracleData} />
           <BankOfficersCard officers={currentOfficers} />
-          <CosmBankOfficersCard officers={currentOfficers} />
           <FirefighterStatsCard officers={currentOfficers} />
+          <CosmBankOfficersCard officers={currentOfficers} />
         </div>
 
         {/* Right Column: Issues & Alerts */}
