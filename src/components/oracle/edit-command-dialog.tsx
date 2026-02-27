@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { addMonths, parse, isValid, format, parseISO } from "date-fns"
-import { calculateTargetBoard } from "@/lib/utils"
+import { calculateTargetBoard, predictNextVacancyDate } from "@/lib/utils"
 import { OracleCommand } from "@/lib/types"
 import { CommandTimeline } from "./command-timeline"
 import { Button } from "@/components/ui/button"
@@ -47,11 +47,11 @@ export function EditCommandDialog({
         }
     }, [command])
 
-    // Auto-compute Target Board whenever Inbound XO Report Date changes
+    // Auto-compute Target Board based on the furthest arriving officer
     useEffect(() => {
-        if (formData && formData.inboundXO?.reportDate) {
-            const newBoard = calculateTargetBoard(formData.inboundXO.reportDate);
-            if (newBoard !== formData.nextSlateParams.targetBoardDate) {
+        if (formData) {
+            const newBoard = predictNextVacancyDate(formData);
+            if (newBoard !== "TBD" && newBoard !== formData.nextSlateParams.targetBoardDate) {
                 setFormData(prev => {
                     if (!prev) return null;
                     return {
@@ -64,7 +64,12 @@ export function EditCommandDialog({
                 });
             }
         }
-    }, [formData?.inboundXO?.reportDate]);
+    }, [
+        formData?.slatedXO?.reportDate,
+        formData?.inboundXO?.reportDate,
+        formData?.currentXO?.prd,
+        formData?.currentCO?.prd
+    ]);
 
     if (!formData) return null
 

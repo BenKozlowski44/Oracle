@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { format, parseISO, isValid, parse } from "date-fns"
+import { format, parseISO, isValid, parse, addMonths } from "date-fns"
+import { type OracleCommand } from "./types"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -58,4 +59,41 @@ export function calculateTargetBoard(dateStr?: string): string {
 
   const yearStr = year.toString().padStart(2, '0');
   return `${yearStr}-${quarter}`;
+}
+
+export function predictNextVacancyDate(command: OracleCommand): string {
+  const parseAnyDate = (dateStr?: string): Date | null => {
+    if (!dateStr || dateStr === "Unknown" || dateStr === "TBD" || dateStr === "N/A") return null;
+    let d = parseISO(dateStr);
+    if (isValid(d)) return d;
+    if (dateStr.length === 5) {
+      d = parse(dateStr, 'MMMyy', new Date());
+      if (isValid(d)) return d;
+    }
+    return null;
+  }
+
+  let baseDate: Date | null = null;
+  let isFromReportDate = false;
+
+  if (command.slatedXO?.reportDate && command.slatedXO.reportDate !== "N/A" && command.slatedXO.reportDate !== "TBD") {
+    baseDate = parseAnyDate(command.slatedXO.reportDate);
+    isFromReportDate = true;
+  } else if (command.inboundXO?.reportDate && command.inboundXO.reportDate !== "N/A" && command.inboundXO.reportDate !== "TBD") {
+    baseDate = parseAnyDate(command.inboundXO.reportDate);
+    isFromReportDate = true;
+  } else if (command.currentXO?.prd && command.currentXO.prd !== "N/A" && command.currentXO.prd !== "Unknown") {
+    baseDate = parseAnyDate(command.currentXO.prd);
+    isFromReportDate = false;
+  } else if (command.currentCO?.prd && command.currentCO.prd !== "N/A" && command.currentCO.prd !== "Unknown") {
+    baseDate = parseAnyDate(command.currentCO.prd);
+    isFromReportDate = false;
+  }
+
+  if (!baseDate) return "TBD";
+
+  const vacancyDate = isFromReportDate ? addMonths(baseDate, 18) : baseDate;
+  const vacancyDateStr = format(vacancyDate, "yyyy-MM-dd");
+
+  return calculateTargetBoard(vacancyDateStr);
 }

@@ -1,6 +1,6 @@
 import ExcelJS from 'exceljs';
 import type { OracleCommand, Officer } from './types';
-import { calculateTargetBoard } from './utils';
+import { calculateTargetBoard, predictNextVacancyDate } from './utils';
 
 // Helper: Generate ID from name
 function generateId(name: string): string {
@@ -128,6 +128,8 @@ export async function parseOracleExcel(fileData: ArrayBuffer): Promise<OracleCom
                             },
                             slatedXO: { name: "N/A", reportDate: "", timelineData: { i: "", k: "", m: "", q: "" } }
                         };
+
+                        cmd.nextSlateParams.targetBoardDate = predictNextVacancyDate(cmd);
                         commands.push(cmd);
                     }
                 }
@@ -189,8 +191,6 @@ export async function parseOracleExcel(fileData: ArrayBuffer): Promise<OracleCom
                     const slateRow = jsonData[i + 4] || [];
                     const slateReq = slateRow[1] ? String(slateRow[1]) : "XO";
 
-                    const targetBoard = calculateTargetBoard(inboundReport);
-
                     // Standardize Location
                     let location = sheetName;
                     if (location.includes("Norfolk")) location = "Norfolk, VA";
@@ -211,10 +211,11 @@ export async function parseOracleExcel(fileData: ArrayBuffer): Promise<OracleCom
                         currentCO: { name: coName, prd: coPrd },
                         currentXO: { name: xoName, prd: xoPrd },
                         inboundXO: inboundName ? { name: inboundName, reportDate: inboundReport } : undefined,
-                        nextSlateParams: { targetBoardDate: targetBoard, requirement: slateReq as "XO" | "CO" },
+                        nextSlateParams: { targetBoardDate: "TBD", requirement: slateReq as "XO" | "CO" },
                         timeline: {}
                     };
 
+                    command.nextSlateParams.targetBoardDate = predictNextVacancyDate(command);
                     commands.push(command);
                     i += 4; // Skip the block
                 }
