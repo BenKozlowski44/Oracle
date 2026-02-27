@@ -341,7 +341,8 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
             ...cmd,
             currentXO: newXO,
             inboundXO: undefined,
-            prospectiveCO: newProspectiveCO
+            prospectiveCO: newProspectiveCO,
+            fleetUpProgress: { isic: false, tycom: false, pco: false, orders: false, coc: false }
         };
 
         await persistUpdate(updatedCommand, officers, "XO Fleet Up / P-CO Stashed");
