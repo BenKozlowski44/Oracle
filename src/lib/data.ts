@@ -45,7 +45,8 @@ export const slates: Slate[] = [
                 "role": "XO",
                 "incumbent": "HODGEMAN JESSICA LYN",
                 "incumbentPrd": "2027-02-01",
-                "status": "Draft"
+                "status": "Filled",
+                "filledBy": "jonesantoniot_15"
             },
             {
                 "id": "req-cmd_3-xo",
@@ -7077,6 +7078,42 @@ export const officers: Officer[] = [
         "preferencePriority": null,
         "listShift": "CO-SM",
         "tentativeSlate": "26-2"
+    },
+    {
+        "id": "pcc-1772152854204",
+        "name": "Johnson, Lauren",
+        "rank": "CDR",
+        "designator": "1110",
+        "currentCommand": "PCC (Post-Command)",
+        "prd": "N/A",
+        "preferences": [],
+        "status": "PCC",
+        "notes": "CMD Tour: USS STOCKDALE",
+        "yearGroup": 0
+    },
+    {
+        "id": "pcc-1772155557695",
+        "name": "Wang, Nellie (CHS single crew CO)(COC NOV24)",
+        "rank": "CDR",
+        "designator": "1110",
+        "currentCommand": "PCC (Post-Command)",
+        "prd": "N/A",
+        "preferences": [],
+        "status": "PCC",
+        "notes": "CMD Tour: USS CHARLESTON",
+        "yearGroup": 0
+    },
+    {
+        "id": "pcc-1772155655815",
+        "name": "Robertson, Jeremy",
+        "rank": "CDR",
+        "designator": "1110",
+        "currentCommand": "PCC (Post-Command)",
+        "prd": "N/A",
+        "preferences": [],
+        "status": "PCC",
+        "notes": "CMD Tour: USS CARNEY",
+        "yearGroup": 0
     }
 ]
 
@@ -7089,17 +7126,7 @@ export const oracleData: OracleCommand[] = [
         "uic": "20156",
         "location": "Manama, BH",
         "currentCO": {
-            "name": "Wang, Nellie (CHS single crew CO)(COC NOV24)",
-            "prd": "2022-12-01",
-            "timelineData": {
-                "i": "2022-11-01",
-                "k": "2023-01-01",
-                "m": "2023-02-23",
-                "q": "2024-11-24"
-            }
-        },
-        "currentXO": {
-            "name": "Gray, Meghan (XO/CO) (CHS single crew XO/CO)",
+            "name": "GRAY MEGHAN",
             "prd": "2024-05-22",
             "timelineData": {
                 "i": "2024-04-22",
@@ -7108,9 +7135,9 @@ export const oracleData: OracleCommand[] = [
                 "q": "2026-05-26"
             }
         },
-        "inboundXO": {
-            "name": "Hooge, Daniel (XO/CO) (CHS single crew PXO)(SEP24)",
-            "reportDate": "2026-02-24",
+        "currentXO": {
+            "name": "HOOGE DANIEL",
+            "prd": "TBD",
             "timelineData": {
                 "i": "2026-02-24",
                 "k": "2026-04-24",
@@ -7138,6 +7165,10 @@ export const oracleData: OracleCommand[] = [
                 "m": "2028-08-27",
                 "q": "2030-02-27"
             }
+        },
+        "prospectiveCO": {
+            "name": "VACANT",
+            "prd": "TBD"
         }
     },
     {
@@ -7360,7 +7391,7 @@ export const oracleData: OracleCommand[] = [
                 "i": "2023-01-01",
                 "k": "2024-09-01",
                 "m": "2024-11-01",
-                "q": "JUL26"
+                "q": "JUN26"
             }
         },
         "currentXO": {
@@ -7369,7 +7400,7 @@ export const oracleData: OracleCommand[] = [
             "timelineData": {
                 "i": "2024-09-01",
                 "k": "MAY26",
-                "m": "JUL26",
+                "m": "JUN26",
                 "q": "JAN29"
             }
         },
@@ -7819,16 +7850,6 @@ export const oracleData: OracleCommand[] = [
         "uic": "21923",
         "location": "Mayport, FL",
         "currentCO": {
-            "name": "Robertson, Jeremy",
-            "prd": "Unknown",
-            "timelineData": {
-                "i": null,
-                "k": null,
-                "m": "2023-02-23",
-                "q": "2024-09-24"
-            }
-        },
-        "currentXO": {
             "name": "LIND MYRON E",
             "prd": "2024-06-23",
             "timelineData": {
@@ -7838,9 +7859,9 @@ export const oracleData: OracleCommand[] = [
                 "q": "2026-05-23"
             }
         },
-        "inboundXO": {
+        "currentXO": {
             "name": "MAKARENKO MEAGAN B",
-            "reportDate": "2024-08-24",
+            "prd": "TBD",
             "timelineData": {
                 "i": "2024-08-24",
                 "k": "2026-04-24",
@@ -7868,6 +7889,10 @@ export const oracleData: OracleCommand[] = [
                 "m": "2029-05-01",
                 "q": "2030-11-01"
             }
+        },
+        "prospectiveCO": {
+            "name": "VACANT",
+            "prd": "TBD"
         }
     },
     {
@@ -8343,8 +8368,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "inboundXO": {
-            "name": "MURRAY WILLIAM K",
-            "reportDate": "2026-09-23",
+            "name": "",
+            "reportDate": "",
             "timelineData": {
                 "i": "2026-09-23",
                 "k": "2028-03-23",
@@ -8353,7 +8378,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "26-2",
+            "targetBoardDate": "26-3",
             "requirement": "XO"
         },
         "timeline": {
@@ -8742,8 +8767,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "inboundXO": {
-            "name": "Bell, Timothy",
-            "reportDate": "2024-09-24",
+            "name": "SULLIVAN NAOMI C",
+            "reportDate": "JAN26",
             "timelineData": {
                 "i": "2024-09-24",
                 "k": "2026-03-24",
@@ -8752,7 +8777,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "26-1",
+            "targetBoardDate": "25-4",
             "requirement": "XO"
         },
         "timeline": {
@@ -10454,7 +10479,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "26-4",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -11461,16 +11486,6 @@ export const oracleData: OracleCommand[] = [
         "uic": "23163",
         "location": "San Diego, CA",
         "currentCO": {
-            "name": "Johnson, Lauren",
-            "prd": "2023-05-01",
-            "timelineData": {
-                "i": "2021-11-01",
-                "k": "2023-06-01",
-                "m": "2023-08-01",
-                "q": "2025-02-01"
-            }
-        },
-        "currentXO": {
             "name": "BECKELHYMER JACOB TITUS",
             "prd": "2024-11-01",
             "timelineData": {
@@ -11480,9 +11495,9 @@ export const oracleData: OracleCommand[] = [
                 "q": "2026-07-01"
             }
         },
-        "inboundXO": {
+        "currentXO": {
             "name": "MOORE CARISSA DANIELLE",
-            "reportDate": "2024-12-24",
+            "prd": "TBD",
             "timelineData": {
                 "i": "2024-12-24",
                 "k": "2026-05-24",
@@ -11490,8 +11505,12 @@ export const oracleData: OracleCommand[] = [
                 "q": "2028-01-24"
             }
         },
+        "inboundXO": {
+            "name": "SCHAEFER VICTOR CHARLES",
+            "reportDate": "MAY26"
+        },
         "nextSlateParams": {
-            "targetBoardDate": "28-1 (Settle, Darren)",
+            "targetBoardDate": "26-1",
             "requirement": "XO"
         },
         "timeline": {
@@ -11510,6 +11529,10 @@ export const oracleData: OracleCommand[] = [
                 "m": "FEB28",
                 "q": "AUG29"
             }
+        },
+        "prospectiveCO": {
+            "name": "VACANT",
+            "prd": "TBD"
         }
     },
     {

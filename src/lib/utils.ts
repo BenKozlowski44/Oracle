@@ -41,16 +41,18 @@ export function calculateTargetBoard(dateStr?: string): string {
   let year = date.getFullYear() % 100;
 
   let quarter = 0;
-  if (month >= 3 && month <= 5) {
+  if (month >= 3 && month <= 5) { // MAR-MAY
     quarter = 1;
-  } else if (month >= 6 && month <= 8) {
+  } else if (month >= 6 && month <= 8) { // JUN-AUG
     quarter = 2;
-  } else if (month >= 9 && month <= 11) {
+  } else if (month >= 9 && month <= 11) { // SEP-NOV
     quarter = 3;
-  } else if (month === 12 || month === 1 || month === 2) {
+  } else if (month === 12 || month === 1 || month === 2) { // DEC-FEB
     quarter = 4;
+    // If the report date is Jan or Feb, it technically belongs to the *previous* year's slate cycle
+    // e.g. Feb 2026 report belongs to the 25-4 slate. Dec 2025 belongs to the 25-4 slate.
     if (month === 1 || month === 2) {
-      year = year - 1; // Maps to previous year's slate
+      year = year - 1;
     }
   }
 
