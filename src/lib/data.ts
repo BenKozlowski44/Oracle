@@ -7170,7 +7170,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "TBD",
+            "targetBoardDate": "29-4",
             "requirement": "XO"
         },
         "timeline": {
@@ -7325,7 +7325,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "25-4",
+            "targetBoardDate": "30-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -7450,11 +7450,11 @@ export const oracleData: OracleCommand[] = [
         },
         "platform": "DDG",
         "fleetUpProgress": {
-            "isic": false,
-            "tycom": false,
-            "pco": false,
-            "orders": false,
-            "coc": false
+            "isic": true,
+            "tycom": true,
+            "pco": true,
+            "orders": true,
+            "coc": true
         },
         "slatedXO": {
             "name": "26-3",
@@ -7894,7 +7894,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "TBD",
+            "targetBoardDate": "29-1",
             "requirement": "XO"
         },
         "timeline": {
@@ -8006,7 +8006,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "TBD",
+            "targetBoardDate": "29-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -8406,7 +8406,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "26-2",
+            "targetBoardDate": "29-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -8620,7 +8620,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "26-3",
+            "targetBoardDate": "29-4",
             "requirement": "XO"
         },
         "timeline": {
