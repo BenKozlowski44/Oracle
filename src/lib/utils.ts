@@ -76,18 +76,26 @@ export function predictNextVacancyDate(command: OracleCommand): string {
   let baseDate: Date | null = null;
   let isFromReportDate = false;
 
-  if (command.slatedXO?.reportDate && command.slatedXO.reportDate !== "N/A" && command.slatedXO.reportDate !== "TBD") {
-    baseDate = parseAnyDate(command.slatedXO.reportDate);
-    isFromReportDate = true;
-  } else if (command.inboundXO?.reportDate && command.inboundXO.reportDate !== "N/A" && command.inboundXO.reportDate !== "TBD") {
-    baseDate = parseAnyDate(command.inboundXO.reportDate);
-    isFromReportDate = true;
-  } else if (command.currentXO?.prd && command.currentXO.prd !== "N/A" && command.currentXO.prd !== "Unknown") {
-    baseDate = parseAnyDate(command.currentXO.prd);
-    isFromReportDate = false;
-  } else if (command.currentCO?.prd && command.currentCO.prd !== "N/A" && command.currentCO.prd !== "Unknown") {
-    baseDate = parseAnyDate(command.currentCO.prd);
-    isFromReportDate = false;
+  const hasInboundXO = command.inboundXO?.reportDate && command.inboundXO.reportDate !== "N/A" && command.inboundXO.reportDate !== "TBD" && command.inboundXO?.name;
+
+  if (!hasInboundXO) {
+    // Immediate Hole Scenario: No Inbound XO exists. Ignore Slated XOs and use the Current XO to fill the gap now.
+    if (command.currentXO?.prd && command.currentXO.prd !== "N/A" && command.currentXO.prd !== "Unknown") {
+      baseDate = parseAnyDate(command.currentXO.prd);
+      isFromReportDate = false;
+    } else if (command.currentCO?.prd && command.currentCO.prd !== "N/A" && command.currentCO.prd !== "Unknown") {
+      baseDate = parseAnyDate(command.currentCO.prd);
+      isFromReportDate = false;
+    }
+  } else {
+    // Slot is filled safely. Look forward up the pipeline.
+    if (command.slatedXO?.reportDate && command.slatedXO.reportDate !== "N/A" && command.slatedXO.reportDate !== "TBD") {
+      baseDate = parseAnyDate(command.slatedXO.reportDate);
+      isFromReportDate = true;
+    } else {
+      baseDate = parseAnyDate(command.inboundXO!.reportDate);
+      isFromReportDate = true;
+    }
   }
 
   if (!baseDate) return "TBD";
