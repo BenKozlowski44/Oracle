@@ -79,9 +79,6 @@ export function predictNextVacancyDate(command: OracleCommand): string {
   if (command.slatedXO?.reportDate && command.slatedXO.reportDate !== "N/A" && command.slatedXO.reportDate !== "TBD") {
     baseDate = parseAnyDate(command.slatedXO.reportDate);
     isFromReportDate = true;
-  } else if (command.inboundXO?.reportDate && command.inboundXO.reportDate !== "N/A" && command.inboundXO.reportDate !== "TBD") {
-    baseDate = parseAnyDate(command.inboundXO.reportDate);
-    isFromReportDate = true;
   } else if (command.currentXO?.prd && command.currentXO.prd !== "N/A" && command.currentXO.prd !== "Unknown") {
     baseDate = parseAnyDate(command.currentXO.prd);
     isFromReportDate = false;
