@@ -7114,6 +7114,30 @@ export const officers: Officer[] = [
         "status": "PCC",
         "notes": "CMD Tour: USS CARNEY",
         "yearGroup": 0
+    },
+    {
+        "id": "pcc-1772158452646",
+        "name": "Neff, Justin (CO) (COC NOV 24)",
+        "rank": "CDR",
+        "designator": "1110",
+        "currentCommand": "PCC (Post-Command)",
+        "prd": "N/A",
+        "preferences": [],
+        "status": "PCC",
+        "notes": "CMD Tour: USS MINNEAPOLIS SAINT PAUL",
+        "yearGroup": 0
+    },
+    {
+        "id": "pcc-1772158609754",
+        "name": "Kemmitz, Bryan (XO-A)",
+        "rank": "CDR",
+        "designator": "1110",
+        "currentCommand": "PCC (Post-Command)",
+        "prd": "N/A",
+        "preferences": [],
+        "status": "PCC",
+        "notes": "CMD Tour: USS MINNEAPOLIS SAINT PAUL",
+        "yearGroup": 0
     }
 ]
 
@@ -8340,6 +8364,10 @@ export const oracleData: OracleCommand[] = [
             "pco": true,
             "orders": false,
             "coc": false
+        },
+        "inboundXO": {
+            "name": "CROCKETT MATRAKO FASHAUN",
+            "reportDate": "JUN26"
         }
     },
     {
@@ -8519,34 +8547,16 @@ export const oracleData: OracleCommand[] = [
         "uic": "20159",
         "location": "Mayport, FL",
         "currentCO": {
-            "name": "Neff, Justin (CO) (COC NOV 24)",
-            "prd": "Unknown",
-            "timelineData": {
-                "i": null,
-                "k": null,
-                "m": "2023-04-23",
-                "q": "2024-11-23"
-            }
+            "name": "VACANT",
+            "prd": "TBD"
         },
         "currentXO": {
-            "name": "Kemmitz, Bryan (XO-A)",
-            "prd": "2023-09-01",
-            "timelineData": {
-                "i": "2022-04-01",
-                "k": "2023-10-01",
-                "m": "2023-12-01",
-                "q": "2025-06-01"
-            }
+            "name": "BOND ARTHUR J",
+            "prd": "TBD"
         },
         "inboundXO": {
-            "name": "FRESSE STEVEN",
-            "reportDate": "2023-04-23",
-            "timelineData": {
-                "i": "2023-04-23",
-                "k": "2024-10-23",
-                "m": "2024-11-23",
-                "q": "2026-04-23"
-            }
+            "name": "ELLIS FRANK LANE",
+            "reportDate": "APR26"
         },
         "nextSlateParams": {
             "targetBoardDate": "29-1",
@@ -8568,6 +8578,10 @@ export const oracleData: OracleCommand[] = [
                 "m": "2029-06-26",
                 "q": "2030-12-26"
             }
+        },
+        "prospectiveCO": {
+            "name": "FRESSE STEVEN",
+            "prd": "TBD"
         }
     },
     {
