@@ -7279,23 +7279,23 @@ export const oracleData: OracleCommand[] = [
             "prd": "2025-06-24",
             "timelineData": {
                 "i": "2025-05-24",
-                "k": "2025-07-24",
-                "m": "2025-05-25",
-                "q": "2026-12-26"
+                "k": "NOV26",
+                "m": "JAN27",
+                "q": "JUL28"
             }
         },
         "inboundXO": {
             "name": "",
-            "reportDate": "",
+            "reportDate": "NOV26",
             "timelineData": {
-                "i": "2027-02-25",
-                "k": "2027-04-25",
-                "m": "2027-05-25",
-                "q": "2028-11-25"
+                "i": "NOV26",
+                "k": "MAY28",
+                "m": "JUL28",
+                "q": "JAN30"
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-2",
+            "targetBoardDate": "23-4",
             "requirement": "XO"
         },
         "timeline": {
@@ -7307,12 +7307,12 @@ export const oracleData: OracleCommand[] = [
         "platform": "LCS",
         "slatedXO": {
             "name": "Forecast",
-            "reportDate": "AUG28",
+            "reportDate": "MAY28",
             "timelineData": {
-                "i": "AUG28",
-                "k": "FEB30",
-                "m": "APR30",
-                "q": "OCT31"
+                "i": "MAY28",
+                "k": "NOV29",
+                "m": "JAN30",
+                "q": "JUL31"
             }
         }
     },

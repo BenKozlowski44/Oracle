@@ -76,28 +76,46 @@ export function predictNextVacancyDate(command: OracleCommand): string {
   let baseDate: Date | null = null;
   let isFromReportDate = false;
 
-  // 1. Look for the furthest forecast: Slated XO Report Date
-  if (command.slatedXO?.reportDate) {
-    baseDate = parseAnyDate(command.slatedXO.reportDate);
-    if (baseDate) isFromReportDate = true;
-  }
+  // Helper to determine if a slot is truly empty/TBD
+  const isFilled = (dateStr?: string) => {
+    if (!dateStr || dateStr === "Unknown" || dateStr === "TBD" || dateStr === "N/A" || dateStr === "VACANT") return false;
+    return true;
+  };
 
-  // 2. Fallback to Inbound XO Report Date
-  if (!baseDate && command.inboundXO?.reportDate) {
-    baseDate = parseAnyDate(command.inboundXO.reportDate);
-    if (baseDate) isFromReportDate = true;
-  }
+  const hasInboundXO = isFilled(command.inboundXO?.reportDate) && command.inboundXO?.name && command.inboundXO?.name !== "VACANT";
 
-  // 3. Fallback to Current XO PRD
-  if (!baseDate && command.currentXO?.prd) {
-    baseDate = parseAnyDate(command.currentXO.prd);
-    if (baseDate) isFromReportDate = false;
-  }
+  if (!hasInboundXO) {
+    // IMMEDIATE HOLE: The Inbound XO seat is empty. We need to fill it based on when the Current XO leaves.
+    if (isFilled(command.currentXO?.prd)) {
+      baseDate = parseAnyDate(command.currentXO!.prd);
+      if (baseDate) isFromReportDate = false;
+    }
 
-  // 4. Final Fallback to Current CO PRD
-  if (!baseDate && command.currentCO?.prd) {
-    baseDate = parseAnyDate(command.currentCO.prd);
-    if (baseDate) isFromReportDate = false;
+    // Fallback: If Current XO PRD is missing/TBD, we check the CO to see when *they* leave (since XO fleets up)
+    if (!baseDate && isFilled(command.currentCO?.prd)) {
+      baseDate = parseAnyDate(command.currentCO!.prd);
+      if (baseDate) isFromReportDate = false;
+    }
+
+    // Safety Fallback: If Current XO/CO are BOTH TBD, we cautiously look forward to the Slated forecast so the math doesn't crash
+    if (!baseDate && isFilled(command.slatedXO?.reportDate)) {
+      baseDate = parseAnyDate(command.slatedXO!.reportDate);
+      if (baseDate) isFromReportDate = true;
+    }
+
+  } else {
+    // SAFE PIPELINE: Inbound XO is filled. The *next* hole is the Slated XO.
+    // We calculate the Slated XO board primarily off the Inbound XO's arrival date.
+    if (isFilled(command.inboundXO?.reportDate)) {
+      baseDate = parseAnyDate(command.inboundXO!.reportDate);
+      if (baseDate) isFromReportDate = true;
+    }
+
+    // Fallback: If Inbound XO has a name but an invalid date, check if there is a Slated forecast
+    if (!baseDate && isFilled(command.slatedXO?.reportDate)) {
+      baseDate = parseAnyDate(command.slatedXO!.reportDate);
+      if (baseDate) isFromReportDate = true;
+    }
   }
 
   if (!baseDate) return "TBD";
