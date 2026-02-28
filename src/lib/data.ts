@@ -7234,7 +7234,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-2",
+            "targetBoardDate": "TBD",
             "requirement": "XO"
         },
         "timeline": {
@@ -7261,11 +7261,11 @@ export const oracleData: OracleCommand[] = [
     },
     {
         "id": "cmd_2",
-        "name": "USS TULSA  BLUE (CREW 215)",
-        "uic": "41061",
+        "name": "USS TULSA",
+        "uic": "20097",
         "location": "Manama, BH",
         "currentCO": {
-            "name": "Greenlees, Drew",
+            "name": "MOYER KYLE ANTHONY",
             "prd": "2022-08-22",
             "timelineData": {
                 "i": "2022-07-22",
@@ -7275,7 +7275,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "currentXO": {
-            "name": "Moyer, Kyle (XO/CO)",
+            "name": "BENKO RYAN EMERY",
             "prd": "2025-06-24",
             "timelineData": {
                 "i": "2025-05-24",
@@ -7285,8 +7285,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "inboundXO": {
-            "name": "Zarow, Zachary (24-3)",
-            "reportDate": "2027-02-25",
+            "name": "",
+            "reportDate": "",
             "timelineData": {
                 "i": "2027-02-25",
                 "k": "2027-04-25",
@@ -7313,53 +7313,6 @@ export const oracleData: OracleCommand[] = [
                 "k": "FEB30",
                 "m": "APR30",
                 "q": "OCT31"
-            }
-        }
-    },
-    {
-        "id": "cmd_3",
-        "name": "USS TULSA  GOLD (CREW 217)",
-        "platform": "LCS",
-        "location": "San Diego, CA",
-        "uic": "23114",
-        "currentCO": {
-            "name": "Wanier, Blake (XO/CO)",
-            "prd": "2025-09-23",
-            "timelineData": {
-                "i": "2025-08-23",
-                "k": "2025-10-23",
-                "m": "2025-11-23",
-                "q": "2027-06-23"
-            }
-        },
-        "currentXO": {
-            "name": "Bradford, Jordan (24-2)",
-            "prd": "2027-02-25",
-            "timelineData": {
-                "i": "2027-01-25",
-                "k": "2027-03-25",
-                "m": "2027-04-25",
-                "q": "2028-10-25"
-            }
-        },
-        "nextSlateParams": {
-            "targetBoardDate": "25-2",
-            "requirement": "XO"
-        },
-        "timeline": {
-            "xoReport": "2025-08-25",
-            "xoTurnover": "2027-02-25",
-            "coc": "2027-03-01",
-            "coTurnover": "2028-09-01"
-        },
-        "slatedXO": {
-            "name": "Forecast",
-            "reportDate": "",
-            "timelineData": {
-                "i": "",
-                "k": "",
-                "m": "",
-                "q": ""
             }
         }
     },
@@ -7426,37 +7379,37 @@ export const oracleData: OracleCommand[] = [
         "uic": "20267",
         "location": "Manama, BH",
         "currentCO": {
-            "name": "Guernsey, Justin (CO) (OIC)",
+            "name": "GUERNSEY JUSTIN",
             "prd": "Unknown",
             "timelineData": {
                 "i": null,
                 "k": null,
                 "m": null,
-                "q": "2026-06-26"
+                "q": "AUG26"
             }
         },
         "currentXO": {
-            "name": "Munji, Audrey (24-2)",
+            "name": "MUNJI AUDREY",
             "prd": "2026-04-24",
             "timelineData": {
-                "i": "2026-03-24",
-                "k": "2026-05-24",
-                "m": "2026-06-24",
-                "q": "2027-12-24"
+                "i": "OCT24",
+                "k": "JUL26",
+                "m": "AUG26",
+                "q": "MAR28"
             }
         },
         "inboundXO": {
-            "name": "Crockett, Vatrako (25-3)",
-            "reportDate": "2027-12-26",
+            "name": "CROCKETT VANTRAKO DASHAUN",
+            "reportDate": "JUL26",
             "timelineData": {
-                "i": "2027-12-26",
-                "k": "2028-02-26",
+                "i": "JUL26",
+                "k": "JAN28",
                 "m": "2028-03-26",
                 "q": "2029-09-26"
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-4",
+            "targetBoardDate": "27-4",
             "requirement": "XO"
         },
         "timeline": {
@@ -7467,13 +7420,13 @@ export const oracleData: OracleCommand[] = [
         },
         "platform": "LCS",
         "slatedXO": {
-            "name": "27-1",
-            "reportDate": "2029-01-26",
+            "name": "",
+            "reportDate": "JAN28",
             "timelineData": {
-                "i": "2029-01-26",
-                "k": "2029-03-26",
-                "m": "2029-04-26",
-                "q": "2030-10-26"
+                "i": "JAN28",
+                "k": "JUL29",
+                "m": "SEP29",
+                "q": "MAR31"
             }
         }
     },
@@ -7968,7 +7921,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-3",
+            "targetBoardDate": "TBD",
             "requirement": "XO"
         },
         "timeline": {
@@ -8080,7 +8033,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-4",
+            "targetBoardDate": "TBD",
             "requirement": "XO"
         },
         "timeline": {
@@ -8312,7 +8265,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "23-3",
+            "targetBoardDate": "TBD",
             "requirement": "XO"
         },
         "timeline": {
@@ -8480,7 +8433,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-4",
+            "targetBoardDate": "24-4",
             "requirement": "XO"
         },
         "timeline": {
@@ -8694,7 +8647,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-2",
+            "targetBoardDate": "25-1",
             "requirement": "XO"
         },
         "timeline": {
@@ -12131,7 +12084,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-3",
+            "targetBoardDate": "",
             "requirement": "XO"
         },
         "timeline": {
@@ -12292,7 +12245,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-2",
+            "targetBoardDate": "TBD",
             "requirement": "NO RELIEF"
         },
         "timeline": {
@@ -12365,7 +12318,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "22-4",
+            "targetBoardDate": "TBD",
             "requirement": "XO"
         },
         "timeline": {
@@ -12580,63 +12533,6 @@ export const oracleData: OracleCommand[] = [
                 "k": "2027-05-14",
                 "m": "2027-06-14",
                 "q": "2028-10-14"
-            }
-        },
-        "nextSlateParams": {
-            "targetBoardDate": "28-2",
-            "requirement": "XO"
-        },
-        "timeline": {
-            "xoReport": "2024-01-01",
-            "xoTurnover": "2025-06-01",
-            "coc": "2025-07-01",
-            "coTurnover": "2026-12-01"
-        },
-        "platform": "LCS",
-        "slatedXO": {
-            "name": "Forecast",
-            "reportDate": "AUG28",
-            "timelineData": {
-                "i": "AUG28",
-                "k": "FEB30",
-                "m": "APR30",
-                "q": "OCT31"
-            }
-        }
-    },
-    {
-        "id": "cmd_107",
-        "name": "USS TULSA  GOLD (CREW 214)",
-        "uic": "41060",
-        "location": "San Diego, CA",
-        "currentCO": {
-            "name": "Bassett, Emily",
-            "prd": "2025-12-21",
-            "timelineData": {
-                "i": "2025-11-21",
-                "k": "2025-12-21",
-                "m": "2026-01-21",
-                "q": "2027-06-21"
-            }
-        },
-        "currentXO": {
-            "name": "Braeckel, Kurt",
-            "prd": "2027-09-22",
-            "timelineData": {
-                "i": "2027-08-22",
-                "k": "2027-10-22",
-                "m": "2027-11-22",
-                "q": "2029-04-22"
-            }
-        },
-        "inboundXO": {
-            "name": "Kloppel, Jed",
-            "reportDate": "2027-02-23",
-            "timelineData": {
-                "i": "2027-02-23",
-                "k": "2027-05-23",
-                "m": "2027-06-23",
-                "q": "2028-10-23"
             }
         },
         "nextSlateParams": {
@@ -13039,7 +12935,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "23-1",
+            "targetBoardDate": "TBD",
             "requirement": "XO"
         },
         "timeline": {
