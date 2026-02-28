@@ -7178,6 +7178,18 @@ export const officers: Officer[] = [
         "status": "PCC",
         "notes": "CMD Tour: USS JACKSON",
         "yearGroup": 0
+    },
+    {
+        "id": "pcc-1772242876391",
+        "name": "EDISON RUSH",
+        "rank": "CDR",
+        "designator": "1110",
+        "currentCommand": "PCC (Post-Command)",
+        "prd": "N/A",
+        "preferences": [],
+        "status": "PCC",
+        "notes": "CMD Tour: USS MONTGOMERY",
+        "yearGroup": 0
     }
 ]
 
@@ -11811,6 +11823,10 @@ export const oracleData: OracleCommand[] = [
                 "m": "",
                 "q": ""
             }
+        },
+        "inboundXO": {
+            "name": "NO FILL - DECOM",
+            "reportDate": ""
         }
     },
     {
@@ -11989,53 +12005,6 @@ export const oracleData: OracleCommand[] = [
         }
     },
     {
-        "id": "cmd_91",
-        "name": "USS WICHITA  BLUE (CREW 101) - 40511 Training Ship",
-        "uic": "N/A",
-        "location": "San Diego, CA",
-        "currentCO": {
-            "name": "Austin, Spencer",
-            "prd": "2016-11-01",
-            "timelineData": {
-                "i": "2016-10-01",
-                "k": "2016-12-01",
-                "m": "2017-01-01",
-                "q": "2018-07-01"
-            }
-        },
-        "currentXO": {
-            "name": "PCC",
-            "prd": "1900-01-31",
-            "timelineData": {
-                "i": null,
-                "k": "1900-03-31",
-                "m": "2018-07-01",
-                "q": "2019-12-01"
-            }
-        },
-        "nextSlateParams": {
-            "targetBoardDate": "98-2",
-            "requirement": "XO"
-        },
-        "timeline": {
-            "xoReport": "2024-01-01",
-            "xoTurnover": "2025-06-01",
-            "coc": "2025-07-01",
-            "coTurnover": "2026-12-01"
-        },
-        "platform": "LCS",
-        "slatedXO": {
-            "name": "Forecast",
-            "reportDate": "",
-            "timelineData": {
-                "i": "",
-                "k": "",
-                "m": "",
-                "q": ""
-            }
-        }
-    },
-    {
         "id": "cmd_92",
         "name": "USS JACKSON",
         "uic": "20135",
@@ -12106,41 +12075,41 @@ export const oracleData: OracleCommand[] = [
     },
     {
         "id": "cmd_93",
-        "name": "USS MONTGOMERY  (CREW 212)",
+        "name": "USS MONTGOMERY",
         "uic": "41057",
         "location": "San Diego, CA",
         "currentCO": {
-            "name": "Edison, Rush (CO-SEQ) (COC DEC 2024)",
+            "name": "REPPERT CATHERINE",
             "prd": "Unknown",
             "timelineData": {
                 "i": null,
                 "k": null,
-                "m": null,
-                "q": "2024-10-24"
+                "m": "JUN25",
+                "q": "JUN27"
             }
         },
         "currentXO": {
-            "name": "Reppert, Catherine",
-            "prd": "Unknown",
+            "name": "HAUGAN NATHAN DANIEL",
+            "prd": "TBD",
             "timelineData": {
-                "i": null,
-                "k": null,
-                "m": null,
-                "q": "2026-11-26"
+                "i": "NOV25",
+                "k": "APR27",
+                "m": "JUN27",
+                "q": "DEC28"
             }
         },
         "inboundXO": {
-            "name": "HAUGAN NATHAN DANIEL (XO/CO)",
-            "reportDate": "2027-04-22",
+            "name": "",
+            "reportDate": "",
             "timelineData": {
-                "i": "2027-04-22",
-                "k": "2027-05-22",
-                "m": "2027-06-22",
-                "q": "2028-12-22"
+                "i": "APR27",
+                "k": "OCT28",
+                "m": "DEC28",
+                "q": "JUN30"
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-3",
+            "targetBoardDate": "TBD",
             "requirement": "XO"
         },
         "timeline": {
@@ -12151,13 +12120,13 @@ export const oracleData: OracleCommand[] = [
         },
         "platform": "LCS",
         "slatedXO": {
-            "name": "26-2",
-            "reportDate": "2028-10-01",
+            "name": "Forecast",
+            "reportDate": "OCT28",
             "timelineData": {
-                "i": "2028-10-01",
-                "k": "2028-12-01",
-                "m": "2029-01-01",
-                "q": "2030-07-01"
+                "i": "OCT28",
+                "k": "APR30",
+                "m": "JUN30",
+                "q": "DEC31"
             }
         }
     },
@@ -12332,7 +12301,11 @@ export const oracleData: OracleCommand[] = [
             "orders": false,
             "coc": false
         },
-        "notes": "DECOM 2606"
+        "notes": "DECOM 2606",
+        "inboundXO": {
+            "name": "NO FILL - DECOM",
+            "reportDate": ""
+        }
     },
     {
         "id": "cmd_100",
@@ -12435,120 +12408,6 @@ export const oracleData: OracleCommand[] = [
                 "k": "",
                 "m": "",
                 "q": ""
-            }
-        }
-    },
-    {
-        "id": "cmd_102",
-        "name": "USS MONTGOMERY  BLUE (CREW 208)",
-        "uic": "42688",
-        "location": "San Diego, CA",
-        "currentCO": {
-            "name": "Liebold, Wayne",
-            "prd": "2026-10-07",
-            "timelineData": {
-                "i": "2026-09-07",
-                "k": "2026-12-07",
-                "m": "2027-01-07",
-                "q": "2028-06-07"
-            }
-        },
-        "currentXO": {
-            "name": "Rosso, Ed",
-            "prd": "2027-03-08",
-            "timelineData": {
-                "i": "2027-02-08",
-                "k": "2027-05-08",
-                "m": "2027-06-08",
-                "q": "2028-11-08"
-            }
-        },
-        "inboundXO": {
-            "name": "Duff, Austin",
-            "reportDate": "2027-02-09",
-            "timelineData": {
-                "i": "2027-02-09",
-                "k": "2027-05-09",
-                "m": "2027-06-09",
-                "q": "2028-11-09"
-            }
-        },
-        "nextSlateParams": {
-            "targetBoardDate": "28-2",
-            "requirement": "XO"
-        },
-        "timeline": {
-            "xoReport": "2024-01-01",
-            "xoTurnover": "2025-06-01",
-            "coc": "2025-07-01",
-            "coTurnover": "2026-12-01"
-        },
-        "platform": "LCS",
-        "slatedXO": {
-            "name": "Forecast",
-            "reportDate": "AUG28",
-            "timelineData": {
-                "i": "AUG28",
-                "k": "FEB30",
-                "m": "APR30",
-                "q": "OCT31"
-            }
-        }
-    },
-    {
-        "id": "cmd_103",
-        "name": "USS MONTGOMERY  GOLD (CREW 209)",
-        "uic": "42689",
-        "location": "San Diego, CA",
-        "currentCO": {
-            "name": "Stefanik, Mark",
-            "prd": "2025-11-16",
-            "timelineData": {
-                "i": "2025-10-16",
-                "k": "2025-11-16",
-                "m": "2025-12-16",
-                "q": "2026-02-16"
-            }
-        },
-        "currentXO": {
-            "name": "Landry, Ken",
-            "prd": "2026-07-17",
-            "timelineData": {
-                "i": "2026-06-17",
-                "k": "2026-09-17",
-                "m": "2026-10-17",
-                "q": "2028-03-17"
-            }
-        },
-        "inboundXO": {
-            "name": "Richter, Matt",
-            "reportDate": "2027-01-18",
-            "timelineData": {
-                "i": "2027-01-18",
-                "k": "2027-03-18",
-                "m": "2027-04-18",
-                "q": "2028-08-18"
-            }
-        },
-        "nextSlateParams": {
-            "targetBoardDate": "28-2",
-            "requirement": "XO"
-        },
-        "timeline": {
-            "xoReport": "2024-01-01",
-            "xoTurnover": "2025-06-01",
-            "coc": "2025-07-01",
-            "coTurnover": "2026-12-01"
-        },
-        "platform": "LCS",
-        "slatedXO": {
-            "name": "Forecast",
-            "reportDate": "JUL28",
-            "timelineData": {
-                "i": "JUL28",
-                "k": "JAN30",
-                "m": "MAR30",
-                "q": "SEP31"
             }
         }
     },
@@ -12834,41 +12693,6 @@ export const oracleData: OracleCommand[] = [
                 "k": "2028-10-25",
                 "m": "2028-11-25",
                 "q": "2030-06-25"
-            }
-        }
-    },
-    {
-        "id": "cmd_109",
-        "name": "USS CINCINNATI  GOLD (CREW 219)",
-        "uic": "61223",
-        "location": "San Diego, CA",
-        "currentCO": {
-            "name": "VACANT",
-            "prd": "1900-01-31"
-        },
-        "currentXO": {
-            "name": "VACANT",
-            "prd": "1900-01-31"
-        },
-        "nextSlateParams": {
-            "targetBoardDate": "98-2",
-            "requirement": "XO"
-        },
-        "timeline": {
-            "xoReport": "2024-01-01",
-            "xoTurnover": "2025-06-01",
-            "coc": "2025-07-01",
-            "coTurnover": "2026-12-01"
-        },
-        "platform": "LCS",
-        "slatedXO": {
-            "name": "Forecast",
-            "reportDate": "",
-            "timelineData": {
-                "i": "",
-                "k": "",
-                "m": "",
-                "q": ""
             }
         }
     },
@@ -13334,7 +13158,7 @@ export const oracleData: OracleCommand[] = [
                 "i": "2024-12-25",
                 "k": "2025-11-25",
                 "m": "2025-12-25",
-                "q": "2027-06-25"
+                "q": "jun27"
             }
         },
         "currentXO": {
@@ -13348,7 +13172,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "26-1",
+            "targetBoardDate": "28-3",
             "requirement": "XO"
         },
         "timeline": {
@@ -13360,12 +13184,22 @@ export const oracleData: OracleCommand[] = [
         "platform": "LSD",
         "slatedXO": {
             "name": "Forecast",
-            "reportDate": "",
+            "reportDate": "OCT28",
             "timelineData": {
-                "i": "",
-                "k": "",
-                "m": "",
-                "q": ""
+                "i": "OCT28",
+                "k": "APR30",
+                "m": "JUN30",
+                "q": "DEC31"
+            }
+        },
+        "inboundXO": {
+            "name": "26-3",
+            "reportDate": "APR27",
+            "timelineData": {
+                "i": "APR27",
+                "k": "OCT28",
+                "m": "DEC28",
+                "q": "JUN30"
             }
         }
     },
