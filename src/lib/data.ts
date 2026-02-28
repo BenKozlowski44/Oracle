@@ -210,6 +210,23 @@ export const metrics: Metrics = {
 }
 
 export const officers: Officer[] = [
+{
+    "id": "tornambegregory_1772205982821",
+    "name": "TORNAMBE GREGORY",
+    "rank": "CDR",
+    "designator": "1110",
+    "currentCommand": "",
+    "prd": "",
+    "preferences": [],
+    "status": "Available",
+    "yearGroup": 20090,
+    "assignedSlate": "4AGAZ",
+    "csr": "4AGAZ",
+    "listShift": "Firefighters",
+    "preferredLocations": [],
+    "preferredPlatforms": []
+},
+
     {
         "id": "cabeclintonr_1771800239015",
         "name": "CABE CLINTON R",
@@ -7450,11 +7467,11 @@ export const oracleData: OracleCommand[] = [
         },
         "platform": "DDG",
         "fleetUpProgress": {
-            "isic": true,
-            "tycom": true,
+            "isic": false,
+            "tycom": false,
             "pco": true,
-            "orders": true,
-            "coc": true
+            "orders": false,
+            "coc": false
         },
         "slatedXO": {
             "name": "26-3",
@@ -9616,17 +9633,17 @@ export const oracleData: OracleCommand[] = [
         "uic": "23165",
         "location": "Norfolk, VA",
         "currentCO": {
-            "name": "KOFFI JAMESROBERT CABRAL",
+            "name": "AUCLAIR TAYLOR RANDALL",
             "prd": "2024-10-01",
             "timelineData": {
                 "i": "2023-11-01",
                 "k": "2024-11-01",
-                "m": "2024-12-01",
-                "q": "2026-05-01"
+                "m": "FEB26",
+                "q": "FEB28"
             }
         },
         "currentXO": {
-            "name": "TORNAMBE GREGORY",
+            "name": "SHOWANES JAMES BERNARD",
             "prd": "2026-02-25",
             "timelineData": {
                 "i": "2025-01-25",
@@ -9636,17 +9653,17 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "inboundXO": {
-            "name": "SHOWANES JAMES BERNARD",
-            "reportDate": "2024-12-24",
+            "name": "MEREDITH IAN CHRISTOPHER",
+            "reportDate": "MAR26",
             "timelineData": {
-                "i": "2024-12-24",
-                "k": "2026-04-24",
-                "m": "2026-05-24",
-                "q": "2028-05-24"
+                "i": "MAR26",
+                "k": "DEC27",
+                "m": "FEB28",
+                "q": "AUG29"
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-4",
+            "targetBoardDate": "29-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -9658,14 +9675,16 @@ export const oracleData: OracleCommand[] = [
         "platform": "DDG",
         "slatedXO": {
             "name": "Forecast",
-            "reportDate": "JUN26",
+            "reportDate": "DEC27",
             "timelineData": {
-                "i": "JUN26",
-                "k": "DEC27",
-                "m": "FEB28",
-                "q": "AUG29"
+                "i": "DEC27",
+                "k": "JUN29",
+                "m": "AUG29",
+                "q": "FEB31"
             }
-        }
+        },
+        "tourLength": 24,
+        "notes": "Pilot Program Ship with GRAVLEY"
     },
     {
         "id": "cmd_50",
