@@ -303,19 +303,29 @@ export async function deleteCommandFromExcel(command: import('./types').OracleCo
         if (command.tags?.includes("CO-SM")) {
             const worksheet = workbook.worksheets.find(w => w.name === "CO-SM");
             if (worksheet) {
-                // Must loop backwards when splicing to avoid index shifting issues during loop
-                for (let rowNumber = worksheet.rowCount; rowNumber >= 1; rowNumber--) {
-                    if (commandDeleted) break;
-                    const row = worksheet.getRow(rowNumber);
+                let startRow = -1;
+                worksheet.eachRow((row, rowNumber) => {
+                    if (startRow !== -1) return;
                     const cellA = String(row.getCell(1).value || "");
-
-                    // Look for the "NAME - UIC - " pattern
                     if (cellA.includes(" - ") && cellA.startsWith(command.name)) {
-                        commandDeleted = true;
-                        // Splice 2 rows for CO-SM: the command row and the incumbent incumbent row
-                        worksheet.spliceRows(rowNumber, 2);
-                        console.log(`[Excel-Writer] Deleted CO-SM Command ${command.name} at row ${rowNumber}.`);
+                        startRow = rowNumber;
                     }
+                });
+
+                if (startRow !== -1) {
+                    let nextCommandRow = worksheet.rowCount + 1;
+                    // Scan forward to find the next command 
+                    for (let r = startRow + 1; r <= worksheet.rowCount; r++) {
+                        const cellA = String(worksheet.getRow(r).getCell(1).value || "");
+                        if (cellA.includes(" - ")) {
+                            nextCommandRow = r;
+                            break; // Found the next command block
+                        }
+                    }
+                    const numRowsToDelete = nextCommandRow - startRow;
+                    worksheet.spliceRows(startRow, numRowsToDelete);
+                    commandDeleted = true;
+                    console.log(`[Excel-Writer] Deleted CO-SM Command ${command.name} (Rows ${startRow} to ${nextCommandRow - 1}).`);
                 }
             }
         } else {
@@ -324,9 +334,9 @@ export async function deleteCommandFromExcel(command: import('./types').OracleCo
             for (const worksheet of workbook.worksheets) {
                 if (commandDeleted || worksheet.name === "Summary" || worksheet.name.includes("Sheet") || worksheet.name === "CO-SM") continue;
 
-                for (let rowNumber = worksheet.rowCount; rowNumber >= 1; rowNumber--) {
-                    if (commandDeleted) break;
-                    const row = worksheet.getRow(rowNumber);
+                let startRow = -1;
+                worksheet.eachRow((row, rowNumber) => {
+                    if (startRow !== -1) return;
                     const colA = String(row.getCell(1).value || "").toUpperCase();
                     const colB = String(row.getCell(2).value || "").toUpperCase();
                     const targetName = command.name.toUpperCase();
@@ -335,11 +345,34 @@ export async function deleteCommandFromExcel(command: import('./types').OracleCo
                         colA.includes(targetName) || colB.includes(targetName) ||
                         (command.uic !== "N/A" && (colA.includes(command.uic) || colB.includes(command.uic)))
                     ) {
-                        // Splice 5 rows for standard: Title, CO, XO, Inndbound, Slate
-                        commandDeleted = true;
-                        worksheet.spliceRows(rowNumber, 5);
-                        console.log(`[Excel-Writer] Deleted Standard Command ${command.name} in worksheet ${worksheet.name} starting at row ${rowNumber}.`);
+                        startRow = rowNumber;
                     }
+                });
+
+                if (startRow !== -1) {
+                    let nextCommandRow = worksheet.rowCount + 1;
+                    const knownSubLabels = ["CO", "XO", "INBOUND XO", "TARGET BOARD", "SLATE", "INCUMBENT", "REQUIREMENT", "PLANNED SLATE", "PRIMARY", "SECONDARY"];
+
+                    // Scan forward to find the next command footprint
+                    for (let r = startRow + 1; r <= worksheet.rowCount; r++) {
+                        const colA = String(worksheet.getRow(r).getCell(1).value || "").toUpperCase().trim();
+                        const colB = String(worksheet.getRow(r).getCell(2).value || "").toUpperCase().trim();
+
+                        // We assume a row is the start of a new command block if it has text in Col A/B 
+                        // that is NOT a sub-row label. 
+                        const isNewLabelA = colA && !knownSubLabels.includes(colA);
+                        const isNewLabelB = !colA && colB && !knownSubLabels.includes(colB);
+
+                        if (isNewLabelA || isNewLabelB) {
+                            nextCommandRow = r;
+                            break;
+                        }
+                    }
+
+                    const numRowsToDelete = nextCommandRow - startRow;
+                    worksheet.spliceRows(startRow, numRowsToDelete);
+                    commandDeleted = true;
+                    console.log(`[Excel-Writer] Deleted Standard Command ${command.name} in worksheet ${worksheet.name} (Rows ${startRow} to ${nextCommandRow - 1}).`);
                 }
             }
         }
