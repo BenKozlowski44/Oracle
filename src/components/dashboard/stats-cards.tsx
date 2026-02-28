@@ -3,6 +3,15 @@
 import { Officer, Billet, OracleCommand, Metrics } from "@/lib/types"
 import { getAllAlerts, getAllPersonnelAlerts } from "@/lib/alerts"
 
+export const isFirefighter = (o: Officer) => {
+    if (o.status === "Slated" || o.listShift === "Slated" || o.status === "Declined" || o.status === "No Opportunity") return false;
+    if (o.listShift === "CO-SM" || o.screened?.includes("CO-SM")) return false;
+    const slate = o.assignedSlate?.toLowerCase() || ""
+    return o.status === "Ready FF" ||
+        slate.includes("3rd look") ||
+        slate.includes("no command")
+}
+
 export function CommandInventoryCard({ oracleData }: { oracleData: OracleCommand[] }) {
     return (
         <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
@@ -32,7 +41,8 @@ export function BankOfficersCard({ officers }: { officers: Officer[] }) {
         o.status !== "Declined" &&
         o.status !== "No Opportunity" &&
         o.listShift !== "CO-SM" &&
-        !o.screened?.includes("CO-SM")
+        !o.screened?.includes("CO-SM") &&
+        !isFirefighter(o)
     )
     const totalCount = validOfficers.length
 
@@ -171,15 +181,6 @@ export function ResolvedIssuesCard({ metrics }: { metrics: Metrics }) {
 }
 
 export function FirefighterStatsCard({ officers }: { officers: Officer[] }) {
-    const isFirefighter = (o: Officer) => {
-        if (o.status === "Slated" || o.listShift === "Slated" || o.status === "Declined" || o.status === "No Opportunity") return false;
-        if (o.listShift === "CO-SM" || o.screened?.includes("CO-SM")) return false;
-        const slate = o.assignedSlate?.toLowerCase() || ""
-        return o.status === "Ready FF" ||
-            slate.includes("3rd look") ||
-            slate.includes("no command")
-    }
-
     const firefighters = officers.filter(isFirefighter)
     const totalCount = firefighters.length
 
