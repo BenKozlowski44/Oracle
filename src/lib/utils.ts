@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { format, parseISO, isValid, parse, addMonths } from "date-fns"
+import { format, parseISO, isValid, parse, subMonths } from "date-fns"
 import { type OracleCommand } from "./types"
 
 export function cn(...inputs: ClassValue[]) {
@@ -100,8 +100,8 @@ export function predictNextVacancyDate(command: OracleCommand): string {
 
   if (!baseDate) return "TBD";
 
-  const vacancyDate = isFromReportDate ? addMonths(baseDate, 18) : baseDate;
-  const vacancyDateStr = format(vacancyDate, "yyyy-MM-dd");
+  const boardDate = isFromReportDate ? baseDate : subMonths(baseDate, 18);
+  const boardDateStr = format(boardDate, "yyyy-MM-dd");
 
-  return calculateTargetBoard(vacancyDateStr);
+  return calculateTargetBoard(boardDateStr);
 }
