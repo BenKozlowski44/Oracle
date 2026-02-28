@@ -467,6 +467,8 @@ export function EditCommandDialog({
                                     id="targetBoard"
                                     value={formData.nextSlateParams.targetBoardDate}
                                     onChange={(e) => handleNextSlateChange("targetBoardDate", e.target.value)}
+                                    readOnly
+                                    className="bg-muted text-muted-foreground font-medium cursor-not-allowed"
                                 />
                             </div>
                         </div>
