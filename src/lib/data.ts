@@ -7225,7 +7225,7 @@ export const oracleData: OracleCommand[] = [
         },
         "currentXO": {
             "name": "HOOGE DANIEL",
-            "prd": "TBD",
+            "prd": "",
             "timelineData": {
                 "i": "2026-02-24",
                 "k": "2026-04-24",
@@ -7234,7 +7234,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "TBD",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -7255,8 +7255,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "prospectiveCO": {
-            "name": "VACANT",
-            "prd": "TBD"
+            "name": "",
+            "prd": ""
         }
     },
     {
@@ -7295,7 +7295,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "23-4",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -7342,7 +7342,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-3",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -7380,7 +7380,7 @@ export const oracleData: OracleCommand[] = [
         "location": "Manama, BH",
         "currentCO": {
             "name": "GUERNSEY JUSTIN",
-            "prd": "Unknown",
+            "prd": "",
             "timelineData": {
                 "i": null,
                 "k": null,
@@ -7409,7 +7409,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-4",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -7466,7 +7466,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-3",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -7530,7 +7530,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-1",
+            "targetBoardDate": "26-3",
             "requirement": "XO"
         },
         "timeline": {
@@ -7587,7 +7587,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-1",
+            "targetBoardDate": "26-3",
             "requirement": "XO"
         },
         "timeline": {
@@ -7634,7 +7634,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-2",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -7695,7 +7695,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-3",
+            "targetBoardDate": "27-1",
             "requirement": "XO"
         },
         "timeline": {
@@ -7756,7 +7756,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-3",
+            "targetBoardDate": "27-1",
             "requirement": "XO"
         },
         "timeline": {
@@ -7874,7 +7874,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-2",
+            "targetBoardDate": "26-4",
             "requirement": "XO"
         },
         "timeline": {
@@ -7912,7 +7912,7 @@ export const oracleData: OracleCommand[] = [
         },
         "currentXO": {
             "name": "MAKARENKO MEAGAN B",
-            "prd": "TBD",
+            "prd": "",
             "timelineData": {
                 "i": "2024-08-24",
                 "k": "2026-04-24",
@@ -7921,7 +7921,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "TBD",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -7942,8 +7942,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "prospectiveCO": {
-            "name": "VACANT",
-            "prd": "TBD"
+            "name": "",
+            "prd": ""
         }
     },
     {
@@ -7972,7 +7972,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-3",
+            "targetBoardDate": "27-1",
             "requirement": "XO"
         },
         "timeline": {
@@ -8004,7 +8004,7 @@ export const oracleData: OracleCommand[] = [
         "location": "Mayport, FL",
         "currentCO": {
             "name": "HANLEY SEAN W",
-            "prd": "Unknown",
+            "prd": "",
             "timelineData": {
                 "i": "APR24",
                 "k": "MAY25",
@@ -8014,7 +8014,7 @@ export const oracleData: OracleCommand[] = [
         },
         "currentXO": {
             "name": "CORDREY ANDREW DUNCAN",
-            "prd": "TBD",
+            "prd": "",
             "timelineData": {
                 "i": "2025-02-25",
                 "k": "2026-09-25",
@@ -8033,7 +8033,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "TBD",
+            "targetBoardDate": "27-4",
             "requirement": "XO"
         },
         "timeline": {
@@ -8054,8 +8054,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "prospectiveCO": {
-            "name": "VACANT",
-            "prd": "TBD"
+            "name": "",
+            "prd": ""
         }
     },
     {
@@ -8094,7 +8094,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-3",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -8151,7 +8151,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-2",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -8208,7 +8208,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-4",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -8246,7 +8246,7 @@ export const oracleData: OracleCommand[] = [
         },
         "currentXO": {
             "name": "CRABB JUSTIN GLENN",
-            "prd": "TBD",
+            "prd": "",
             "timelineData": {
                 "i": "APR25",
                 "m": "OCT26",
@@ -8265,7 +8265,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "TBD",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -8286,8 +8286,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "prospectiveCO": {
-            "name": "VACANT",
-            "prd": "TBD"
+            "name": "",
+            "prd": ""
         }
     },
     {
@@ -8297,7 +8297,7 @@ export const oracleData: OracleCommand[] = [
         "location": "Mayport, FL",
         "currentCO": {
             "name": "Walter, Kevin",
-            "prd": "Unknown",
+            "prd": "",
             "timelineData": {
                 "i": null,
                 "k": null,
@@ -8307,7 +8307,7 @@ export const oracleData: OracleCommand[] = [
         },
         "currentXO": {
             "name": "XO Afloat",
-            "prd": "Unknown"
+            "prd": ""
         },
         "nextSlateParams": {
             "targetBoardDate": "TBD",
@@ -8352,7 +8352,7 @@ export const oracleData: OracleCommand[] = [
         },
         "currentXO": {
             "name": "DUNN RICHARD THOMAS",
-            "prd": "TBD",
+            "prd": "",
             "timelineData": {
                 "i": "2025-03-25",
                 "k": "2026-08-25",
@@ -8361,7 +8361,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-3",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -8382,8 +8382,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "prospectiveCO": {
-            "name": "VACANT",
-            "prd": "TBD"
+            "name": "",
+            "prd": ""
         },
         "fleetUpProgress": {
             "isic": false,
@@ -8433,7 +8433,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "24-4",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -8490,7 +8490,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-4",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -8547,7 +8547,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-4",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -8574,19 +8574,19 @@ export const oracleData: OracleCommand[] = [
         "uic": "20159",
         "location": "Mayport, FL",
         "currentCO": {
-            "name": "VACANT",
-            "prd": "TBD"
+            "name": "",
+            "prd": ""
         },
         "currentXO": {
             "name": "BOND ARTHUR J",
-            "prd": "TBD"
+            "prd": ""
         },
         "inboundXO": {
             "name": "ELLIS FRANK LANE",
             "reportDate": "APR26"
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-3",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -8608,7 +8608,7 @@ export const oracleData: OracleCommand[] = [
         },
         "prospectiveCO": {
             "name": "FRESSE STEVEN",
-            "prd": "TBD"
+            "prd": ""
         }
     },
     {
@@ -8647,7 +8647,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "25-1",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -8704,7 +8704,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-2",
+            "targetBoardDate": "26-3",
             "requirement": "XO"
         },
         "timeline": {
@@ -8761,7 +8761,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-2",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -8818,7 +8818,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-2",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -8876,7 +8876,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-1",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -8932,7 +8932,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-1",
+            "targetBoardDate": "26-3",
             "requirement": "XO"
         },
         "timeline": {
@@ -8989,7 +8989,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-4",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -9046,7 +9046,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-4",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -9103,7 +9103,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-1",
+            "targetBoardDate": "26-3",
             "requirement": "XO"
         },
         "timeline": {
@@ -9160,7 +9160,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-3",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -9217,7 +9217,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-1",
+            "targetBoardDate": "26-3",
             "requirement": "XO"
         },
         "timeline": {
@@ -9274,7 +9274,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-1",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -9331,7 +9331,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-3",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -9388,7 +9388,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-3",
+            "targetBoardDate": "27-1",
             "requirement": "XO"
         },
         "timeline": {
@@ -9445,7 +9445,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-2",
+            "targetBoardDate": "26-4",
             "requirement": "XO"
         },
         "timeline": {
@@ -9502,7 +9502,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-3",
+            "targetBoardDate": "27-1",
             "requirement": "XO"
         },
         "timeline": {
@@ -9559,7 +9559,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-2",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -9616,7 +9616,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-4",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -9673,7 +9673,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-4",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -9760,7 +9760,7 @@ export const oracleData: OracleCommand[] = [
         "location": "Norfolk, VA",
         "currentCO": {
             "name": "CANTU BENJAMIN R",
-            "prd": "Unknown",
+            "prd": "",
             "timelineData": {
                 "i": null,
                 "k": null,
@@ -9789,7 +9789,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "25-4",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -9817,7 +9817,7 @@ export const oracleData: OracleCommand[] = [
         "location": "Norfolk, VA",
         "currentCO": {
             "name": "DRYDEN MATTHEW ERNEST",
-            "prd": "Unknown",
+            "prd": "",
             "timelineData": {
                 "i": null,
                 "k": null,
@@ -9846,7 +9846,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-2",
+            "targetBoardDate": "26-4",
             "requirement": "XO"
         },
         "timeline": {
@@ -9874,7 +9874,7 @@ export const oracleData: OracleCommand[] = [
         "location": "Norfolk, VA",
         "currentCO": {
             "name": "PETERSEN CHRISTOPHER A",
-            "prd": "Unknown",
+            "prd": "",
             "timelineData": {
                 "i": null,
                 "k": null,
@@ -9903,7 +9903,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-2",
+            "targetBoardDate": "26-4",
             "requirement": "XO"
         },
         "timeline": {
@@ -9931,7 +9931,7 @@ export const oracleData: OracleCommand[] = [
         "location": "Norfolk, VA",
         "currentCO": {
             "name": "BROZNAK VALERIE KAYFRANCES",
-            "prd": "Unknown",
+            "prd": "",
             "timelineData": {
                 "i": null,
                 "k": null,
@@ -9960,7 +9960,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-2",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -10017,7 +10017,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-2",
+            "targetBoardDate": "26-4",
             "requirement": "XO"
         },
         "timeline": {
@@ -10074,7 +10074,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-2",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -10131,7 +10131,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-1",
+            "targetBoardDate": "26-3",
             "requirement": "XO"
         },
         "timeline": {
@@ -10169,7 +10169,7 @@ export const oracleData: OracleCommand[] = [
         },
         "currentXO": {
             "name": "CREWS ARLENE VALENZUELA",
-            "prd": "TBD",
+            "prd": "",
             "timelineData": {
                 "i": "2024-11-24",
                 "k": "2026-03-24",
@@ -10188,7 +10188,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-3",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -10209,8 +10209,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "prospectiveCO": {
-            "name": "VACANT",
-            "prd": "TBD"
+            "name": "",
+            "prd": ""
         }
     },
     {
@@ -10230,7 +10230,7 @@ export const oracleData: OracleCommand[] = [
         },
         "currentXO": {
             "name": "FELTON MATTHEW RAY",
-            "prd": "TBD",
+            "prd": "",
             "timelineData": {
                 "i": "2024-12-24",
                 "k": "2026-06-24",
@@ -10249,7 +10249,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-3",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -10270,8 +10270,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "prospectiveCO": {
-            "name": "VACANT",
-            "prd": "TBD"
+            "name": "",
+            "prd": ""
         }
     },
     {
@@ -10300,7 +10300,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "25-3",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -10347,7 +10347,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-2",
+            "targetBoardDate": "26-4",
             "requirement": "XO"
         },
         "timeline": {
@@ -10414,7 +10414,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-3",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -10461,7 +10461,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "24-2",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -10522,7 +10522,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-4",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -10567,7 +10567,7 @@ export const oracleData: OracleCommand[] = [
         },
         "currentXO": {
             "name": "DAPRATO RICHARD J",
-            "prd": "TBD",
+            "prd": "",
             "timelineData": {
                 "i": "sEP24",
                 "k": "MAR26",
@@ -10576,7 +10576,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-3",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -10597,8 +10597,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "prospectiveCO": {
-            "name": "VACANT",
-            "prd": "TBD"
+            "name": "",
+            "prd": ""
         },
         "inboundXO": {
             "name": "HAMMERER ROSS FITZGEREL",
@@ -10628,7 +10628,7 @@ export const oracleData: OracleCommand[] = [
         },
         "currentXO": {
             "name": "LAVOPA ANTHONY R",
-            "prd": "TBD",
+            "prd": "",
             "timelineData": {
                 "i": "2025-06-25",
                 "k": "2026-12-25",
@@ -10637,7 +10637,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-1",
+            "targetBoardDate": "26-3",
             "requirement": "XO"
         },
         "timeline": {
@@ -10658,8 +10658,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "prospectiveCO": {
-            "name": "VACANT",
-            "prd": "TBD"
+            "name": "",
+            "prd": ""
         },
         "inboundXO": {
             "name": "MCCADDEN DANIEL J",
@@ -10675,11 +10675,11 @@ export const oracleData: OracleCommand[] = [
     {
         "id": "cmd_67",
         "name": "USS PAUL IGNATIUS",
-        "uic": "N/A",
+        "uic": "",
         "location": "Rota, SP",
         "currentCO": {
             "name": "BURKE WILLIAM HENRY",
-            "prd": "TBD",
+            "prd": "",
             "timelineData": {
                 "i": "JUN24",
                 "m": "DEC25",
@@ -10689,7 +10689,7 @@ export const oracleData: OracleCommand[] = [
         },
         "currentXO": {
             "name": "SISLER RYAN J",
-            "prd": "TBD",
+            "prd": "",
             "timelineData": {
                 "i": "AUG25",
                 "m": "JUN27",
@@ -10720,7 +10720,7 @@ export const oracleData: OracleCommand[] = [
         },
         "prospectiveCO": {
             "name": "BURKE WILLIAM HENRY",
-            "prd": "TBD"
+            "prd": ""
         }
     },
     {
@@ -10759,7 +10759,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-4",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -10816,7 +10816,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-4",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -10873,7 +10873,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-2",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -10930,7 +10930,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-3",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -10988,7 +10988,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "26-3",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -11044,7 +11044,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "26-1",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -11082,7 +11082,7 @@ export const oracleData: OracleCommand[] = [
         },
         "currentXO": {
             "name": "WALKER MICHAEL A JR",
-            "prd": "TBD",
+            "prd": "",
             "timelineData": {
                 "i": "2024-12-24",
                 "k": "2026-01-24",
@@ -11101,7 +11101,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-2",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -11122,8 +11122,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "prospectiveCO": {
-            "name": "VACANT",
-            "prd": "TBD"
+            "name": "",
+            "prd": ""
         }
     },
     {
@@ -11162,7 +11162,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-1",
+            "targetBoardDate": "26-3",
             "requirement": "XO"
         },
         "timeline": {
@@ -11213,7 +11213,7 @@ export const oracleData: OracleCommand[] = [
             "reportDate": "MAY27"
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-3",
+            "targetBoardDate": "27-1",
             "requirement": "XO"
         },
         "timeline": {
@@ -11224,8 +11224,8 @@ export const oracleData: OracleCommand[] = [
         },
         "platform": "DDG",
         "prospectiveCO": {
-            "name": "VACANT",
-            "prd": "TBD"
+            "name": "",
+            "prd": ""
         },
         "slatedXO": {
             "name": "Forecast",
@@ -11275,7 +11275,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "26-3",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -11321,7 +11321,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-3",
+            "targetBoardDate": "27-1",
             "requirement": "XO"
         },
         "timeline": {
@@ -11378,7 +11378,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-2",
+            "targetBoardDate": "26-4",
             "requirement": "XO"
         },
         "timeline": {
@@ -11445,7 +11445,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-2",
+            "targetBoardDate": "26-4",
             "requirement": "XO"
         },
         "timeline": {
@@ -11502,7 +11502,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-1",
+            "targetBoardDate": "26-3",
             "requirement": "XO"
         },
         "timeline": {
@@ -11540,7 +11540,7 @@ export const oracleData: OracleCommand[] = [
         },
         "currentXO": {
             "name": "MOORE CARISSA DANIELLE",
-            "prd": "TBD",
+            "prd": "",
             "timelineData": {
                 "i": "2024-12-24",
                 "k": "2026-05-24",
@@ -11574,8 +11574,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "prospectiveCO": {
-            "name": "VACANT",
-            "prd": "TBD"
+            "name": "",
+            "prd": ""
         }
     },
     {
@@ -11595,7 +11595,7 @@ export const oracleData: OracleCommand[] = [
         },
         "currentXO": {
             "name": "YORK JEFFREY EDWARD",
-            "prd": "TBD",
+            "prd": "",
             "timelineData": {
                 "i": "2025-07-25",
                 "k": "2027-01-25",
@@ -11614,7 +11614,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-2",
+            "targetBoardDate": "26-4",
             "requirement": "XO"
         },
         "timeline": {
@@ -11635,8 +11635,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "prospectiveCO": {
-            "name": "VACANT",
-            "prd": "TBD"
+            "name": "",
+            "prd": ""
         }
     },
     {
@@ -11675,7 +11675,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "26-1",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -11733,7 +11733,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "26-4",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -11760,7 +11760,7 @@ export const oracleData: OracleCommand[] = [
         "location": "San Diego, CA",
         "currentCO": {
             "name": "PEARLSWIG BENJAMIN C",
-            "prd": "Unknown",
+            "prd": "",
             "timelineData": {
                 "i": null,
                 "k": null,
@@ -11779,7 +11779,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "25-2",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -11840,7 +11840,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "26-1",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -11868,7 +11868,7 @@ export const oracleData: OracleCommand[] = [
         "location": "San Diego, CA",
         "currentCO": {
             "name": "MCQUIDDY FRANK KIRBY",
-            "prd": "Unknown",
+            "prd": "",
             "timelineData": {
                 "i": null,
                 "k": null,
@@ -11878,7 +11878,7 @@ export const oracleData: OracleCommand[] = [
         },
         "currentXO": {
             "name": "RICHARDS SCOTT KENNETH JR",
-            "prd": "TBD",
+            "prd": "",
             "timelineData": {
                 "i": "2025-01-25",
                 "k": "2026-01-25",
@@ -11897,7 +11897,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-2",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -11918,8 +11918,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "prospectiveCO": {
-            "name": "VACANT",
-            "prd": "TBD"
+            "name": "",
+            "prd": ""
         }
     },
     {
@@ -11958,7 +11958,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-1",
+            "targetBoardDate": "26-3",
             "requirement": "XO"
         },
         "timeline": {
@@ -11986,7 +11986,7 @@ export const oracleData: OracleCommand[] = [
         "location": "San Diego, CA",
         "currentCO": {
             "name": "VANWAGONER JOHN NICHOLAS",
-            "prd": "Unknown",
+            "prd": "",
             "timelineData": {
                 "i": null,
                 "k": null,
@@ -11996,7 +11996,7 @@ export const oracleData: OracleCommand[] = [
         },
         "currentXO": {
             "name": "BRINKMAN PATRICK",
-            "prd": "TBD",
+            "prd": "",
             "timelineData": {
                 "i": "SEP25",
                 "k": "JUN26",
@@ -12015,7 +12015,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-3",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -12036,8 +12036,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "prospectiveCO": {
-            "name": "VACANT",
-            "prd": "TBD"
+            "name": "",
+            "prd": ""
         },
         "fleetUpProgress": {
             "isic": false,
@@ -12055,7 +12055,7 @@ export const oracleData: OracleCommand[] = [
         "location": "San Diego, CA",
         "currentCO": {
             "name": "REPPERT CATHERINE",
-            "prd": "Unknown",
+            "prd": "",
             "timelineData": {
                 "i": null,
                 "k": null,
@@ -12065,7 +12065,7 @@ export const oracleData: OracleCommand[] = [
         },
         "currentXO": {
             "name": "HAUGAN NATHAN DANIEL",
-            "prd": "TBD",
+            "prd": "",
             "timelineData": {
                 "i": "NOV25",
                 "k": "APR27",
@@ -12084,7 +12084,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "",
+            "targetBoardDate": "28-3",
             "requirement": "XO"
         },
         "timeline": {
@@ -12141,7 +12141,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "20-4",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -12169,7 +12169,7 @@ export const oracleData: OracleCommand[] = [
         "location": "San Diego, CA",
         "currentCO": {
             "name": "Mann, Ludwig (CO-A)",
-            "prd": "Unknown",
+            "prd": "",
             "timelineData": {
                 "i": null,
                 "k": null,
@@ -12179,7 +12179,7 @@ export const oracleData: OracleCommand[] = [
         },
         "currentXO": {
             "name": "Reppert, Catherine (CO-A) - SHIFT TO ANOTHER PLATFORM",
-            "prd": "Unknown",
+            "prd": "",
             "timelineData": {
                 "i": null,
                 "k": null,
@@ -12189,7 +12189,7 @@ export const oracleData: OracleCommand[] = [
         },
         "inboundXO": {
             "name": "Hoffman, Thomas (CO-A)",
-            "reportDate": "Unknown",
+            "reportDate": "",
             "timelineData": {
                 "i": null,
                 "k": null,
@@ -12226,7 +12226,7 @@ export const oracleData: OracleCommand[] = [
         "location": "San Diego, CA",
         "currentCO": {
             "name": "CANBY DANA",
-            "prd": "Unknown",
+            "prd": "",
             "timelineData": {
                 "i": null,
                 "k": null,
@@ -12236,7 +12236,7 @@ export const oracleData: OracleCommand[] = [
         },
         "currentXO": {
             "name": "LEWIS JAMES (XO-A) ",
-            "prd": "TBD",
+            "prd": "",
             "timelineData": {
                 "i": "2027-01-22",
                 "k": "2027-02-22",
@@ -12245,7 +12245,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "TBD",
+            "targetBoardDate": "28-2",
             "requirement": "NO RELIEF"
         },
         "timeline": {
@@ -12266,8 +12266,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "prospectiveCO": {
-            "name": "VACANT",
-            "prd": "TBD"
+            "name": "",
+            "prd": ""
         },
         "fleetUpProgress": {
             "isic": false,
@@ -12285,7 +12285,7 @@ export const oracleData: OracleCommand[] = [
     {
         "id": "cmd_100",
         "name": "USS GIFFORDS  - 20139 SEATTLE, WA",
-        "uic": "N/A",
+        "uic": "",
         "location": "San Diego, CA",
         "currentCO": {
             "name": "Herndl, Phil (retirement 2406)",
@@ -12309,7 +12309,7 @@ export const oracleData: OracleCommand[] = [
         },
         "inboundXO": {
             "name": "Fullerton, Kyle (Direct Input)",
-            "reportDate": "Unknown",
+            "reportDate": "",
             "timelineData": {
                 "i": null,
                 "k": null,
@@ -12318,7 +12318,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "TBD",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -12365,7 +12365,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "25-3",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -12422,7 +12422,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-2",
+            "targetBoardDate": "26-4",
             "requirement": "XO"
         },
         "timeline": {
@@ -12446,7 +12446,7 @@ export const oracleData: OracleCommand[] = [
     {
         "id": "cmd_105",
         "name": "USS JACKSON  (CREW 212) - 41057 Training Ship",
-        "uic": "N/A",
+        "uic": "",
         "location": "San Diego, CA",
         "currentCO": {
             "name": "Keller, Pat",
@@ -12479,7 +12479,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "29-1",
+            "targetBoardDate": "26-4",
             "requirement": "XO"
         },
         "timeline": {
@@ -12536,7 +12536,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-2",
+            "targetBoardDate": "26-4",
             "requirement": "XO"
         },
         "timeline": {
@@ -12593,7 +12593,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-2",
+            "targetBoardDate": "27-1",
             "requirement": "XO"
         },
         "timeline": {
@@ -12621,7 +12621,7 @@ export const oracleData: OracleCommand[] = [
         "location": "San Diego, CA",
         "currentCO": {
             "name": "Moore, Colleen (CO)",
-            "prd": "Unknown",
+            "prd": "",
             "timelineData": {
                 "i": null,
                 "k": null,
@@ -12631,7 +12631,7 @@ export const oracleData: OracleCommand[] = [
         },
         "currentXO": {
             "name": "Burke, Robert",
-            "prd": "Unknown",
+            "prd": "",
             "timelineData": {
                 "i": null,
                 "k": null,
@@ -12641,7 +12641,7 @@ export const oracleData: OracleCommand[] = [
         },
         "inboundXO": {
             "name": "Knuth, Matt",
-            "reportDate": "Unknown",
+            "reportDate": "",
             "timelineData": {
                 "i": null,
                 "k": null,
@@ -12707,7 +12707,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-3",
+            "targetBoardDate": "27-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -12745,7 +12745,7 @@ export const oracleData: OracleCommand[] = [
         },
         "currentXO": {
             "name": "MCLAUGHLIN JAMES",
-            "prd": "Unknown",
+            "prd": "",
             "timelineData": {
                 "i": null,
                 "k": null,
@@ -12764,7 +12764,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-3",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -12792,7 +12792,7 @@ export const oracleData: OracleCommand[] = [
         "location": "San Diego, CA",
         "currentCO": {
             "name": "HOFFMAN, THOMAS (CO) PENDING 24-2 (2410)",
-            "prd": "Unknown",
+            "prd": "",
             "timelineData": {
                 "i": null,
                 "k": null,
@@ -12821,7 +12821,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-1",
+            "targetBoardDate": "26-3",
             "requirement": "XO"
         },
         "timeline": {
@@ -12849,7 +12849,7 @@ export const oracleData: OracleCommand[] = [
         "location": "San Diego, CA",
         "currentCO": {
             "name": "Ochs, Adam (CO-A) (COC AUG 25) (Relieved)",
-            "prd": "Unknown",
+            "prd": "",
             "timelineData": {
                 "i": null,
                 "k": null,
@@ -12878,7 +12878,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-1",
+            "targetBoardDate": "26-3",
             "requirement": "XO"
         },
         "timeline": {
@@ -12906,7 +12906,7 @@ export const oracleData: OracleCommand[] = [
         "location": "San Diego, CA",
         "currentCO": {
             "name": "Gonzalez, Steve CO-A (COC 01NOV24)",
-            "prd": "Unknown",
+            "prd": "",
             "timelineData": {
                 "i": null,
                 "k": null,
@@ -12926,7 +12926,7 @@ export const oracleData: OracleCommand[] = [
         },
         "inboundXO": {
             "name": "Lewis, Linzy (COC NOV 24)",
-            "reportDate": "Unknown",
+            "reportDate": "",
             "timelineData": {
                 "i": null,
                 "k": null,
@@ -12935,7 +12935,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "TBD",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -12963,7 +12963,7 @@ export const oracleData: OracleCommand[] = [
         "location": "San Diego, CA",
         "currentCO": {
             "name": "Trager, Joseph (CO-A)(24-3)",
-            "prd": "Unknown",
+            "prd": "",
             "timelineData": {
                 "i": null,
                 "k": null,
@@ -12972,8 +12972,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "currentXO": {
-            "name": "VACANT",
-            "prd": "TBD"
+            "name": "",
+            "prd": ""
         },
         "inboundXO": {
             "name": "Smith Zachary (25-3)(2603)",
@@ -12986,7 +12986,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "29-1",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -13024,7 +13024,7 @@ export const oracleData: OracleCommand[] = [
         },
         "currentXO": {
             "name": "PARK AARON ALAN",
-            "prd": "TBD",
+            "prd": "",
             "timelineData": {
                 "i": "2026-11-25",
                 "k": "NOV26",
@@ -13043,7 +13043,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-1",
+            "targetBoardDate": "26-3",
             "requirement": "XO"
         },
         "timeline": {
@@ -13064,8 +13064,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "prospectiveCO": {
-            "name": "VACANT",
-            "prd": "TBD"
+            "name": "",
+            "prd": ""
         },
         "fleetUpProgress": {
             "isic": false,
@@ -13101,7 +13101,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-3",
+            "targetBoardDate": "27-1",
             "requirement": "XO"
         },
         "timeline": {
@@ -13168,7 +13168,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-3",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -13225,7 +13225,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "29-1",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -13282,7 +13282,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-2",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -13339,7 +13339,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-3",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -13367,7 +13367,7 @@ export const oracleData: OracleCommand[] = [
         "location": "Yokosuka, JP",
         "currentCO": {
             "name": "HAYES CHRISTOPHER R",
-            "prd": "Unknown",
+            "prd": "",
             "timelineData": {
                 "i": null,
                 "k": null,
@@ -13386,7 +13386,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-2",
+            "targetBoardDate": "26-4",
             "requirement": "XO"
         },
         "timeline": {
@@ -13447,7 +13447,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-1",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -13504,7 +13504,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-4",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -13561,7 +13561,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-2",
+            "targetBoardDate": "26-4",
             "requirement": "XO"
         },
         "timeline": {
@@ -13608,7 +13608,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "28-3",
+            "targetBoardDate": "27-1",
             "requirement": "XO"
         },
         "timeline": {
@@ -13669,7 +13669,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-4",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -13697,7 +13697,7 @@ export const oracleData: OracleCommand[] = [
         "location": "Yokosuka, JP",
         "currentCO": {
             "name": "Taylor, Earvin (COC 09DEC24)",
-            "prd": "Unknown",
+            "prd": "",
             "timelineData": {
                 "i": null,
                 "k": null,
@@ -13726,7 +13726,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "26-1",
+            "targetBoardDate": "26-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -13767,8 +13767,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "currentXO": {
-            "name": "N/A",
-            "prd": "N/A",
+            "name": "",
+            "prd": "",
             "timelineData": {
                 "i": "",
                 "k": "",
@@ -13777,7 +13777,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "inboundXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -13787,7 +13787,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "22-4",
+            "targetBoardDate": "26-2",
             "requirement": "CO"
         },
         "timeline": {
@@ -13797,7 +13797,7 @@ export const oracleData: OracleCommand[] = [
             "coTurnover": "2024-07-21"
         },
         "slatedXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -13827,8 +13827,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "currentXO": {
-            "name": "N/A",
-            "prd": "N/A",
+            "name": "",
+            "prd": "",
             "timelineData": {
                 "i": "",
                 "k": "",
@@ -13837,7 +13837,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "inboundXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -13847,7 +13847,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "25-2",
+            "targetBoardDate": "26-2",
             "requirement": "CO"
         },
         "timeline": {
@@ -13857,7 +13857,7 @@ export const oracleData: OracleCommand[] = [
             "coTurnover": "2026-12-21"
         },
         "slatedXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -13887,8 +13887,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "currentXO": {
-            "name": "N/A",
-            "prd": "N/A",
+            "name": "",
+            "prd": "",
             "timelineData": {
                 "i": "",
                 "k": "",
@@ -13897,7 +13897,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "inboundXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -13907,7 +13907,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "24-4",
+            "targetBoardDate": "26-2",
             "requirement": "CO"
         },
         "timeline": {
@@ -13917,7 +13917,7 @@ export const oracleData: OracleCommand[] = [
             "coTurnover": "2026-07-21"
         },
         "slatedXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -13947,8 +13947,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "currentXO": {
-            "name": "N/A",
-            "prd": "N/A",
+            "name": "",
+            "prd": "",
             "timelineData": {
                 "i": "",
                 "k": "",
@@ -13957,7 +13957,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "inboundXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -13967,7 +13967,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "21-2",
+            "targetBoardDate": "26-2",
             "requirement": "CO"
         },
         "timeline": {
@@ -13977,7 +13977,7 @@ export const oracleData: OracleCommand[] = [
             "coTurnover": "2023-01-31"
         },
         "slatedXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14007,8 +14007,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "currentXO": {
-            "name": "N/A",
-            "prd": "N/A",
+            "name": "",
+            "prd": "",
             "timelineData": {
                 "i": "",
                 "k": "",
@@ -14017,7 +14017,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "inboundXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14027,7 +14027,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "22-2",
+            "targetBoardDate": "26-2",
             "requirement": "CO"
         },
         "timeline": {
@@ -14037,7 +14037,7 @@ export const oracleData: OracleCommand[] = [
             "coTurnover": "2023-12-22"
         },
         "slatedXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14067,8 +14067,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "currentXO": {
-            "name": "N/A",
-            "prd": "N/A",
+            "name": "",
+            "prd": "",
             "timelineData": {
                 "i": "",
                 "k": "",
@@ -14077,7 +14077,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "inboundXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14087,7 +14087,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "20-4",
+            "targetBoardDate": "26-2",
             "requirement": "CO"
         },
         "timeline": {
@@ -14097,7 +14097,7 @@ export const oracleData: OracleCommand[] = [
             "coTurnover": "2022-06-30"
         },
         "slatedXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14127,8 +14127,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "currentXO": {
-            "name": "N/A",
-            "prd": "N/A",
+            "name": "",
+            "prd": "",
             "timelineData": {
                 "i": "",
                 "k": "",
@@ -14137,7 +14137,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "inboundXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14147,7 +14147,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "25-2",
+            "targetBoardDate": "26-2",
             "requirement": "CO"
         },
         "timeline": {
@@ -14157,7 +14157,7 @@ export const oracleData: OracleCommand[] = [
             "coTurnover": "2027-02-23"
         },
         "slatedXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14187,8 +14187,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "currentXO": {
-            "name": "N/A",
-            "prd": "N/A",
+            "name": "",
+            "prd": "",
             "timelineData": {
                 "i": "",
                 "k": "",
@@ -14197,7 +14197,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "inboundXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14207,7 +14207,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "25-1",
+            "targetBoardDate": "26-2",
             "requirement": "CO"
         },
         "timeline": {
@@ -14217,7 +14217,7 @@ export const oracleData: OracleCommand[] = [
             "coTurnover": "2026-09-22"
         },
         "slatedXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14247,8 +14247,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "currentXO": {
-            "name": "N/A",
-            "prd": "N/A",
+            "name": "",
+            "prd": "",
             "timelineData": {
                 "i": "",
                 "k": "",
@@ -14257,7 +14257,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "inboundXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14267,7 +14267,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "25-3",
+            "targetBoardDate": "26-2",
             "requirement": "CO"
         },
         "timeline": {
@@ -14277,7 +14277,7 @@ export const oracleData: OracleCommand[] = [
             "coTurnover": "2027-03-23"
         },
         "slatedXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14307,8 +14307,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "currentXO": {
-            "name": "N/A",
-            "prd": "N/A",
+            "name": "",
+            "prd": "",
             "timelineData": {
                 "i": "",
                 "k": "",
@@ -14317,7 +14317,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "inboundXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14327,7 +14327,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "01-2",
+            "targetBoardDate": "26-2",
             "requirement": "CO"
         },
         "timeline": {
@@ -14337,7 +14337,7 @@ export const oracleData: OracleCommand[] = [
             "coTurnover": "1903-01-31"
         },
         "slatedXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14367,8 +14367,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "currentXO": {
-            "name": "N/A",
-            "prd": "N/A",
+            "name": "",
+            "prd": "",
             "timelineData": {
                 "i": "",
                 "k": "",
@@ -14377,7 +14377,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "inboundXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14387,7 +14387,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "25-4",
+            "targetBoardDate": "26-2",
             "requirement": "CO"
         },
         "timeline": {
@@ -14397,7 +14397,7 @@ export const oracleData: OracleCommand[] = [
             "coTurnover": "2027-06-23"
         },
         "slatedXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14427,8 +14427,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "currentXO": {
-            "name": "N/A",
-            "prd": "N/A",
+            "name": "",
+            "prd": "",
             "timelineData": {
                 "i": "",
                 "k": "",
@@ -14437,7 +14437,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "inboundXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14447,7 +14447,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "23-1",
+            "targetBoardDate": "26-2",
             "requirement": "CO"
         },
         "timeline": {
@@ -14457,7 +14457,7 @@ export const oracleData: OracleCommand[] = [
             "coTurnover": "2024-11-23"
         },
         "slatedXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14487,8 +14487,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "currentXO": {
-            "name": "N/A",
-            "prd": "N/A",
+            "name": "",
+            "prd": "",
             "timelineData": {
                 "i": "",
                 "k": "",
@@ -14497,7 +14497,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "inboundXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14507,7 +14507,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "24-4",
+            "targetBoardDate": "26-2",
             "requirement": "CO"
         },
         "timeline": {
@@ -14517,7 +14517,7 @@ export const oracleData: OracleCommand[] = [
             "coTurnover": "2026-08-31"
         },
         "slatedXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14547,8 +14547,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "currentXO": {
-            "name": "N/A",
-            "prd": "N/A",
+            "name": "",
+            "prd": "",
             "timelineData": {
                 "i": "",
                 "k": "",
@@ -14557,7 +14557,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "inboundXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14567,7 +14567,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "25-2",
+            "targetBoardDate": "26-2",
             "requirement": "CO"
         },
         "timeline": {
@@ -14577,7 +14577,7 @@ export const oracleData: OracleCommand[] = [
             "coTurnover": "2027-01-23"
         },
         "slatedXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14607,8 +14607,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "currentXO": {
-            "name": "N/A",
-            "prd": "N/A",
+            "name": "",
+            "prd": "",
             "timelineData": {
                 "i": "",
                 "k": "",
@@ -14617,7 +14617,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "inboundXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14627,7 +14627,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "25-2",
+            "targetBoardDate": "26-2",
             "requirement": "CO"
         },
         "timeline": {
@@ -14637,7 +14637,7 @@ export const oracleData: OracleCommand[] = [
             "coTurnover": "2027-01-22"
         },
         "slatedXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14667,8 +14667,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "currentXO": {
-            "name": "N/A",
-            "prd": "N/A",
+            "name": "",
+            "prd": "",
             "timelineData": {
                 "i": "",
                 "k": "",
@@ -14677,7 +14677,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "inboundXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14687,7 +14687,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "25-4",
+            "targetBoardDate": "26-2",
             "requirement": "CO"
         },
         "timeline": {
@@ -14697,7 +14697,7 @@ export const oracleData: OracleCommand[] = [
             "coTurnover": "2027-06-23"
         },
         "slatedXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14727,8 +14727,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "currentXO": {
-            "name": "N/A",
-            "prd": "N/A",
+            "name": "",
+            "prd": "",
             "timelineData": {
                 "i": "",
                 "k": "",
@@ -14737,7 +14737,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "inboundXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14757,7 +14757,7 @@ export const oracleData: OracleCommand[] = [
             "coTurnover": "2028-03-23"
         },
         "slatedXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14787,8 +14787,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "currentXO": {
-            "name": "N/A",
-            "prd": "N/A",
+            "name": "",
+            "prd": "",
             "timelineData": {
                 "i": "",
                 "k": "",
@@ -14797,7 +14797,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "inboundXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14807,7 +14807,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "24-4",
+            "targetBoardDate": "26-2",
             "requirement": "CO"
         },
         "timeline": {
@@ -14817,7 +14817,7 @@ export const oracleData: OracleCommand[] = [
             "coTurnover": "2026-06-21"
         },
         "slatedXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14847,8 +14847,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "currentXO": {
-            "name": "N/A",
-            "prd": "N/A",
+            "name": "",
+            "prd": "",
             "timelineData": {
                 "i": "",
                 "k": "",
@@ -14857,7 +14857,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "inboundXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14877,7 +14877,7 @@ export const oracleData: OracleCommand[] = [
             "coTurnover": "2028-07-23"
         },
         "slatedXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14907,8 +14907,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "currentXO": {
-            "name": "N/A",
-            "prd": "N/A",
+            "name": "",
+            "prd": "",
             "timelineData": {
                 "i": "",
                 "k": "",
@@ -14917,7 +14917,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "inboundXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",
@@ -14927,7 +14927,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "25-3",
+            "targetBoardDate": "26-2",
             "requirement": "CO"
         },
         "timeline": {
@@ -14937,7 +14937,7 @@ export const oracleData: OracleCommand[] = [
             "coTurnover": "2027-04-21"
         },
         "slatedXO": {
-            "name": "N/A",
+            "name": "",
             "reportDate": "",
             "timelineData": {
                 "i": "",

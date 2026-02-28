@@ -3,6 +3,8 @@ import { twMerge } from "tailwind-merge"
 import { format, parseISO, isValid, parse, subMonths } from "date-fns"
 import { type OracleCommand } from "./types"
 
+export const CURRENT_ACTIVE_SLATE = "26-2";
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
@@ -58,7 +60,14 @@ export function calculateTargetBoard(dateStr?: string): string {
   }
 
   const yearStr = year.toString().padStart(2, '0');
-  return `${yearStr}-${quarter}`;
+  const calculatedSlate = `${yearStr}-${quarter}`;
+
+  // Clamp older target boards to the current active slate
+  if (calculatedSlate < CURRENT_ACTIVE_SLATE) {
+    return CURRENT_ACTIVE_SLATE;
+  }
+
+  return calculatedSlate;
 }
 
 export function predictNextVacancyDate(command: OracleCommand): string {
