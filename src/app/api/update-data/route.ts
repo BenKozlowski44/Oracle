@@ -8,9 +8,9 @@ import { Officer } from '@/lib/types';
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { oracleData, officers, slates, metrics, updatedCommand, mergeBank, mergeCosm } = body;
+        const { oracleData, officers, slates, metrics, updatedCommand, mergeBank, mergeCosm, deletedCommand } = body;
 
-        if (!oracleData && !officers && !slates && !metrics && !mergeBank && !mergeCosm) {
+        if (!oracleData && !officers && !slates && !metrics && !mergeBank && !mergeCosm && !deletedCommand) {
             return NextResponse.json({ error: 'No data provided' }, { status: 400 });
         }
 
@@ -103,6 +103,21 @@ export async function POST(request: Request) {
                     }
                 }).catch(err => {
                     console.error("Failed to sync Oracle command to Excel:", err);
+                });
+            });
+        }
+
+        // Trigger Excel Deletion for the deleted command (Fire and Forget)
+        if (deletedCommand) {
+            import('@/lib/excel-writer').then(({ deleteCommandFromExcel }) => {
+                deleteCommandFromExcel(deletedCommand).then(res => {
+                    if (!res.success) {
+                        console.warn(`[API] Oracle Excel deletion failed: ${res.message}`);
+                    } else {
+                        console.log(`[API] Successfully deleted ${deletedCommand.name} from oracle_data.xlsx`);
+                    }
+                }).catch(err => {
+                    console.error("Failed to delete Oracle command from Excel:", err);
                 });
             });
         }

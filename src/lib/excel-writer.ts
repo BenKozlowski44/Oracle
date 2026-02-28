@@ -292,3 +292,67 @@ export async function updateCommandInExcel(command: import('./types').OracleComm
     }
 }
 
+export async function deleteCommandFromExcel(command: import('./types').OracleCommand): Promise<{ success: boolean; message?: string }> {
+    try {
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.readFile(ORACLE_FILE_PATH);
+
+        let commandDeleted = false;
+
+        // 1. IS CO-SM?
+        if (command.tags?.includes("CO-SM")) {
+            const worksheet = workbook.worksheets.find(w => w.name === "CO-SM");
+            if (worksheet) {
+                // Must loop backwards when splicing to avoid index shifting issues during loop
+                for (let rowNumber = worksheet.rowCount; rowNumber >= 1; rowNumber--) {
+                    if (commandDeleted) break;
+                    const row = worksheet.getRow(rowNumber);
+                    const cellA = String(row.getCell(1).value || "");
+
+                    // Look for the "NAME - UIC - " pattern
+                    if (cellA.includes(" - ") && cellA.startsWith(command.name)) {
+                        commandDeleted = true;
+                        // Splice 2 rows for CO-SM: the command row and the incumbent incumbent row
+                        worksheet.spliceRows(rowNumber, 2);
+                        console.log(`[Excel-Writer] Deleted CO-SM Command ${command.name} at row ${rowNumber}.`);
+                    }
+                }
+            }
+        } else {
+            // 2. IS STANDARD
+            // Standard commands are searched across all non-summary sheets
+            for (const worksheet of workbook.worksheets) {
+                if (commandDeleted || worksheet.name === "Summary" || worksheet.name.includes("Sheet") || worksheet.name === "CO-SM") continue;
+
+                for (let rowNumber = worksheet.rowCount; rowNumber >= 1; rowNumber--) {
+                    if (commandDeleted) break;
+                    const row = worksheet.getRow(rowNumber);
+                    const colA = String(row.getCell(1).value || "").toUpperCase();
+                    const colB = String(row.getCell(2).value || "").toUpperCase();
+                    const targetName = command.name.toUpperCase();
+
+                    if (
+                        colA.includes(targetName) || colB.includes(targetName) ||
+                        (command.uic !== "N/A" && (colA.includes(command.uic) || colB.includes(command.uic)))
+                    ) {
+                        // Splice 5 rows for standard: Title, CO, XO, Inndbound, Slate
+                        commandDeleted = true;
+                        worksheet.spliceRows(rowNumber, 5);
+                        console.log(`[Excel-Writer] Deleted Standard Command ${command.name} in worksheet ${worksheet.name} starting at row ${rowNumber}.`);
+                    }
+                }
+            }
+        }
+
+        if (commandDeleted) {
+            await workbook.xlsx.writeFile(ORACLE_FILE_PATH);
+            return { success: true };
+        } else {
+            return { success: false, message: `Command '${command.name}' not found in Excel file to delete.` };
+        }
+    } catch (error: any) {
+        console.error("Error deleting command from Excel file:", error);
+        return { success: false, message: error.message };
+    }
+}
+

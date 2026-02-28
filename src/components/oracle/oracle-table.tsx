@@ -216,6 +216,7 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
     }
 
     const handleDeleteCommand = async (commandId: string) => {
+        const commandToDelete = data.find(c => c.id === commandId)
         const newData = data.filter(c => c.id !== commandId)
         setData(newData)
         setIsEditOpen(false)
@@ -224,10 +225,13 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
             const response = await fetch('/api/update-data', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ oracleData: newData }),
+                body: JSON.stringify({
+                    oracleData: newData,
+                    deletedCommand: commandToDelete
+                }),
             });
             if (!response.ok) throw new Error("Failed to save changes");
-            console.log("Command deleted");
+            console.log("Command deleted from DB and Excel");
         } catch (error) {
             console.error(error);
             alert("Failed to delete command");
