@@ -479,30 +479,39 @@ export function EditCommandDialog({
                         <Button
                             type="button"
                             variant="destructive"
-                            onClick={() => {
-                                if (confirm("Are you sure you want to delete this command? This cannot be undone.")) {
-                                    if (formData?.id) onDelete(formData.id)
-                                }
+                            onClick={(e) => {
+                                e.preventDefault();
+                                setTimeout(() => {
+                                    if (confirm("Are you sure you want to delete this command? This cannot be undone.")) {
+                                        if (formData?.id) onDelete(formData.id)
+                                    }
+                                }, 10);
                             }}
                         >
                             Delete UIC
                         </Button>
                         <div className="flex gap-2">
                             <div className="flex-1 flex justify-start gap-2">
-                                <Button type="button" variant="default" style={{ backgroundColor: '#2563eb', color: 'white' }} className="hover:bg-blue-700" onClick={() => {
-                                    const msg = formData?.prospectiveCO?.name
-                                        ? "Execute CO Turnover?\n- Current CO -> Bank (PCC)\n- P-CO -> Current CO"
-                                        : "Execute CO Turnover?\n- Current CO -> Bank (PCC)\n- Current XO -> CO (Direct Fleet Up)";
-                                    if (confirm(msg)) {
-                                        if (formData?.id) onCOTurnover(formData.id)
-                                    }
+                                <Button type="button" variant="default" style={{ backgroundColor: '#2563eb', color: 'white' }} className="hover:bg-blue-700" onClick={(e) => {
+                                    e.preventDefault();
+                                    setTimeout(() => {
+                                        const msg = formData?.prospectiveCO?.name
+                                            ? "Execute CO Turnover?\n- Current CO -> Bank (PCC)\n- P-CO -> Current CO"
+                                            : "Execute CO Turnover?\n- Current CO -> Bank (PCC)\n- Current XO -> CO (Direct Fleet Up)";
+                                        if (confirm(msg)) {
+                                            if (formData?.id) onCOTurnover(formData.id)
+                                        }
+                                    }, 10);
                                 }}>
                                     Relieve CO
                                 </Button>
-                                <Button type="button" variant="default" style={{ backgroundColor: '#16a34a', color: 'white' }} className="hover:bg-green-700" onClick={() => {
-                                    if (confirm("Execute XO Fleet Up?\n- Inbound XO -> Current XO\n- Inbound Slot -> Empty")) {
-                                        if (formData?.id) onXOFleetUp(formData.id)
-                                    }
+                                <Button type="button" variant="default" style={{ backgroundColor: '#16a34a', color: 'white' }} className="hover:bg-green-700" onClick={(e) => {
+                                    e.preventDefault();
+                                    setTimeout(() => {
+                                        if (confirm("Execute XO Fleet Up?\n- Inbound XO -> Current XO\n- Inbound Slot -> Empty")) {
+                                            if (formData?.id) onXOFleetUp(formData.id)
+                                        }
+                                    }, 10);
                                 }}>
                                     Fleet Up P-XO
                                 </Button>
