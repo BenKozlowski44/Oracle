@@ -13115,8 +13115,8 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "inboundXO": {
-            "name": "Park, Aaron (24-4)",
-            "reportDate": "2026-11-25",
+            "name": "PARK AARON ALAN",
+            "reportDate": "JAN26",
             "timelineData": {
                 "i": "2026-11-25",
                 "k": "2026-12-25",
