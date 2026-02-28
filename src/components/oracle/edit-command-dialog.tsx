@@ -38,6 +38,7 @@ export function EditCommandDialog({
     onDelete,
 }: EditCommandDialogProps) {
     const [formData, setFormData] = useState<OracleCommand | null>(null)
+    const [confirmAction, setConfirmAction] = useState<"delete" | "relieveCO" | "fleetUp" | null>(null)
 
     // ... (rest of component state/logic stays same until render)
 
@@ -476,51 +477,56 @@ export function EditCommandDialog({
 
 
                     <DialogFooter className="gap-2 sm:gap-0 sm:justify-between">
-                        <Button
-                            type="button"
-                            variant="destructive"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                setTimeout(() => {
-                                    if (confirm("Are you sure you want to delete this command? This cannot be undone.")) {
-                                        if (formData?.id) onDelete(formData.id)
-                                    }
-                                }, 10);
-                            }}
-                        >
-                            Delete UIC
-                        </Button>
-                        <div className="flex gap-2">
-                            <div className="flex-1 flex justify-start gap-2">
-                                <Button type="button" variant="default" style={{ backgroundColor: '#2563eb', color: 'white' }} className="hover:bg-blue-700" onClick={(e) => {
-                                    e.preventDefault();
-                                    setTimeout(() => {
-                                        const msg = formData?.prospectiveCO?.name
-                                            ? "Execute CO Turnover?\n- Current CO -> Bank (PCC)\n- P-CO -> Current CO"
-                                            : "Execute CO Turnover?\n- Current CO -> Bank (PCC)\n- Current XO -> CO (Direct Fleet Up)";
-                                        if (confirm(msg)) {
-                                            if (formData?.id) onCOTurnover(formData.id)
-                                        }
-                                    }, 10);
-                                }}>
-                                    Relieve CO
-                                </Button>
-                                <Button type="button" variant="default" style={{ backgroundColor: '#16a34a', color: 'white' }} className="hover:bg-green-700" onClick={(e) => {
-                                    e.preventDefault();
-                                    setTimeout(() => {
-                                        if (confirm("Execute XO Fleet Up?\n- Inbound XO -> Current XO\n- Inbound Slot -> Empty")) {
-                                            if (formData?.id) onXOFleetUp(formData.id)
-                                        }
-                                    }, 10);
-                                }}>
-                                    Fleet Up P-XO
-                                </Button>
+                        {confirmAction ? (
+                            <div className="flex-1 flex flex-col gap-2 items-center justify-center p-4 bg-muted/50 rounded-lg border">
+                                <p className="text-sm font-medium text-center">
+                                    {confirmAction === "delete" && "Are you sure you want to delete this command? This cannot be undone."}
+                                    {confirmAction === "relieveCO" && (
+                                        formData?.prospectiveCO?.name
+                                            ? "Execute CO Turnover? (Current CO -> Bank, P-CO -> Current CO)"
+                                            : "Execute CO Turnover? (Current CO -> Bank, Current XO -> CO)"
+                                    )}
+                                    {confirmAction === "fleetUp" && "Execute XO Fleet Up? (Inbound XO -> Current XO, Inbound Slot -> Empty)"}
+                                </p>
+                                <div className="flex gap-2 mt-2">
+                                    <Button type="button" variant="outline" onClick={() => setConfirmAction(null)}>
+                                        Cancel
+                                    </Button>
+                                    <Button type="button" variant="destructive" onClick={() => {
+                                        if (confirmAction === "delete" && formData?.id) onDelete(formData.id);
+                                        if (confirmAction === "relieveCO" && formData?.id) onCOTurnover(formData.id);
+                                        if (confirmAction === "fleetUp" && formData?.id) onXOFleetUp(formData.id);
+                                        setConfirmAction(null);
+                                    }}>
+                                        Yes, Confirm
+                                    </Button>
+                                </div>
                             </div>
-                            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                                Cancel
-                            </Button>
-                            <Button type="submit">Save Changes</Button>
-                        </div>
+                        ) : (
+                            <>
+                                <Button
+                                    type="button"
+                                    variant="destructive"
+                                    onClick={() => setConfirmAction("delete")}
+                                >
+                                    Delete UIC
+                                </Button>
+                                <div className="flex gap-2">
+                                    <div className="flex-1 flex justify-start gap-2">
+                                        <Button type="button" variant="default" style={{ backgroundColor: '#2563eb', color: 'white' }} className="hover:bg-blue-700" onClick={() => setConfirmAction("relieveCO")}>
+                                            Relieve CO
+                                        </Button>
+                                        <Button type="button" variant="default" style={{ backgroundColor: '#16a34a', color: 'white' }} className="hover:bg-green-700" onClick={() => setConfirmAction("fleetUp")}>
+                                            Fleet Up P-XO
+                                        </Button>
+                                    </div>
+                                    <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                                        Cancel
+                                    </Button>
+                                    <Button type="submit">Save Changes</Button>
+                                </div>
+                            </>
+                        )}
                     </DialogFooter>
                 </form>
             </DialogContent>

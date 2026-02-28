@@ -7190,6 +7190,18 @@ export const officers: Officer[] = [
         "status": "PCC",
         "notes": "CMD Tour: USS MONTGOMERY",
         "yearGroup": 0
+    },
+    {
+        "id": "pcc-1772246435949",
+        "name": "Mann, Ludwig (Lou) (CO)(COC TBD)",
+        "rank": "CDR",
+        "designator": "1110",
+        "currentCommand": "PCC (Post-Command)",
+        "prd": "N/A",
+        "preferences": [],
+        "status": "PCC",
+        "notes": "CMD Tour: USS KINGSVILLE",
+        "yearGroup": 0
     }
 ]
 
@@ -7357,7 +7369,7 @@ export const oracleData: OracleCommand[] = [
         "uic": "20141",
         "location": "Manama, BH",
         "currentCO": {
-            "name": "Doyle, Ryan (COC DEC 24 / EARLY JAN 2025)",
+            "name": "DOYLE RYAN TERRY",
             "prd": "2024-11-23",
             "timelineData": {
                 "i": "2024-10-23",
@@ -7367,17 +7379,17 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "currentXO": {
-            "name": "Nottberg, Adam (24-2)(D.I.T.) (2412)",
+            "name": "NOTTBERG ADAM N",
             "prd": "2026-02-24",
             "timelineData": {
                 "i": "2026-01-24",
-                "k": "2026-03-24",
-                "m": "2026-04-24",
+                "k": "APR26",
+                "m": "MAY26",
                 "q": "2027-11-24"
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "24-2",
+            "targetBoardDate": "27-3",
             "requirement": "XO"
         },
         "timeline": {
@@ -7388,13 +7400,23 @@ export const oracleData: OracleCommand[] = [
         },
         "platform": "LCS",
         "slatedXO": {
-            "name": "27-2",
-            "reportDate": "2029-01-26",
+            "name": "",
+            "reportDate": "OCT27",
             "timelineData": {
-                "i": "2029-01-26",
-                "k": "2029-03-26",
-                "m": "2029-04-26",
-                "q": "2030-11-26"
+                "i": "OCT27",
+                "k": "APR29",
+                "m": "JUN29",
+                "q": "DEC30"
+            }
+        },
+        "inboundXO": {
+            "name": "HARTMANN DAVID R",
+            "reportDate": "APR26",
+            "timelineData": {
+                "i": "APR26",
+                "k": "OCT27",
+                "m": "DEC27",
+                "q": "JUN29"
             }
         }
     },
@@ -13095,33 +13117,33 @@ export const oracleData: OracleCommand[] = [
         "uic": "20265",
         "location": "San Diego, CA",
         "currentCO": {
-            "name": "Mann, Ludwig (Lou) (CO)(COC TBD)",
-            "prd": "Unknown",
-            "timelineData": {
-                "i": null,
-                "k": null,
-                "m": "2023-11-23",
-                "q": "2025-04-01"
-            }
-        },
-        "currentXO": {
-            "name": "Kavanagh, John (XO/CO)",
+            "name": "KAVANAGH JOHN FEARON",
             "prd": "2025-04-23",
             "timelineData": {
                 "i": "2025-03-23",
                 "k": "2025-04-23",
                 "m": "2025-05-23",
-                "q": "2026-12-23"
+                "q": "JAN27"
+            }
+        },
+        "currentXO": {
+            "name": "PARK AARON ALAN",
+            "prd": "TBD",
+            "timelineData": {
+                "i": "2026-11-25",
+                "k": "NOV26",
+                "m": "2027-01-25",
+                "q": "2028-07-25"
             }
         },
         "inboundXO": {
-            "name": "PARK AARON ALAN",
-            "reportDate": "JAN26",
+            "name": "DRESSER THOMAS M",
+            "reportDate": "NOV26",
             "timelineData": {
-                "i": "2026-11-25",
-                "k": "2026-12-25",
-                "m": "2027-01-25",
-                "q": "2028-07-25"
+                "i": "NOV26",
+                "m": "JUL29",
+                "k": "MAY28",
+                "q": "JAN31"
             }
         },
         "nextSlateParams": {
@@ -13136,14 +13158,25 @@ export const oracleData: OracleCommand[] = [
         },
         "platform": "LCS",
         "slatedXO": {
-            "name": "26-1",
-            "reportDate": "2028-05-25",
+            "name": "Forecast",
+            "reportDate": "MAY28",
             "timelineData": {
-                "i": "2028-05-25",
-                "k": "2028-06-25",
-                "m": "2028-07-25",
-                "q": "2030-01-25"
+                "i": "MAY28",
+                "k": "NOV29",
+                "m": "JAN31",
+                "q": "JUL32"
             }
+        },
+        "prospectiveCO": {
+            "name": "VACANT",
+            "prd": "TBD"
+        },
+        "fleetUpProgress": {
+            "isic": false,
+            "tycom": false,
+            "pco": false,
+            "orders": false,
+            "coc": false
         }
     },
     {
