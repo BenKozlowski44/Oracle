@@ -7234,7 +7234,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "TBD",
+            "targetBoardDate": "28-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -7968,7 +7968,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "TBD",
+            "targetBoardDate": "27-3",
             "requirement": "XO"
         },
         "timeline": {
@@ -8080,7 +8080,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "TBD",
+            "targetBoardDate": "27-4",
             "requirement": "XO"
         },
         "timeline": {
@@ -8312,7 +8312,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "TBD",
+            "targetBoardDate": "23-3",
             "requirement": "XO"
         },
         "timeline": {
@@ -8480,7 +8480,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "24-4",
+            "targetBoardDate": "27-4",
             "requirement": "XO"
         },
         "timeline": {
@@ -8694,7 +8694,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "25-1",
+            "targetBoardDate": "28-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -12131,7 +12131,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "",
+            "targetBoardDate": "28-3",
             "requirement": "XO"
         },
         "timeline": {
@@ -12292,7 +12292,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "TBD",
+            "targetBoardDate": "28-2",
             "requirement": "NO RELIEF"
         },
         "timeline": {
@@ -12365,7 +12365,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "TBD",
+            "targetBoardDate": "22-4",
             "requirement": "XO"
         },
         "timeline": {
@@ -13039,7 +13039,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "TBD",
+            "targetBoardDate": "23-1",
             "requirement": "XO"
         },
         "timeline": {
