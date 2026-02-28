@@ -12109,7 +12109,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "TBD",
+            "targetBoardDate": "",
             "requirement": "XO"
         },
         "timeline": {
