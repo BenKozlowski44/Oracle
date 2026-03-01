@@ -1,8 +1,9 @@
+import { useState } from "react"
 import { Officer } from "@/lib/types"
 import { UserX, ArrowRight } from "lucide-react"
-import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { getAllPersonnelAlerts } from "@/lib/alerts"
+import { EditOfficerDialog } from "@/components/officers/edit-officer-dialog"
 
 interface PersonnelAlertsProps {
     officers: Officer[]
@@ -10,6 +11,16 @@ interface PersonnelAlertsProps {
 
 export function PersonnelAlerts({ officers }: PersonnelAlertsProps) {
     const allAlerts = getAllPersonnelAlerts(officers)
+    const [selectedOfficer, setSelectedOfficer] = useState<Officer | null>(null)
+    const [isDialogOpen, setIsDialogOpen] = useState(false)
+
+    const handleEditClick = (alertName: string) => {
+        const fullOfficer = officers.find(o => o.name === alertName)
+        if (fullOfficer) {
+            setSelectedOfficer(fullOfficer)
+            setIsDialogOpen(true)
+        }
+    }
 
     return (
         <div className="rounded-xl border bg-card text-card-foreground shadow h-full flex flex-col">
@@ -32,21 +43,36 @@ export function PersonnelAlerts({ officers }: PersonnelAlertsProps) {
                         {allAlerts.map((alert, i) => (
                             <div key={`${alert.id}-${i}`} className="flex items-center justify-between group">
                                 <div className="space-y-1">
-                                    <p className="text-sm font-medium leading-none group-hover:underline">
-                                        <Link href="/bank">{alert.name}</Link>
-                                    </p>
+                                    <button
+                                        className="text-sm font-medium leading-none group-hover:underline text-left"
+                                        onClick={() => handleEditClick(alert.name)}
+                                    >
+                                        {alert.name}
+                                    </button>
                                     <p className="text-xs text-muted-foreground">{alert.issue}</p>
                                 </div>
-                                <Button variant="ghost" size="sm" asChild className="h-8">
-                                    <Link href={`/bank?search=${alert.name}`}>
-                                        Fix <ArrowRight className="ml-2 h-4 w-4" />
-                                    </Link>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-8 group-hover:bg-muted"
+                                    onClick={() => handleEditClick(alert.name)}
+                                >
+                                    Fix <ArrowRight className="ml-2 h-4 w-4" />
                                 </Button>
                             </div>
                         ))}
                     </div>
                 )}
             </div>
+
+            <EditOfficerDialog
+                officer={selectedOfficer}
+                open={isDialogOpen}
+                onOpenChange={(open) => {
+                    setIsDialogOpen(open)
+                    if (!open) setSelectedOfficer(null)
+                }}
+            />
         </div>
     )
 }
