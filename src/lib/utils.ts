@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { format, parseISO, isValid, parse, subMonths } from "date-fns"
+import { format, parseISO, isValid, parse, subMonths, addMonths } from "date-fns"
 import { type OracleCommand } from "./types"
 
 export function getCurrentActiveSlate(today: Date = new Date()): string {
@@ -102,7 +102,6 @@ export function predictNextVacancyDate(command: OracleCommand): string {
   }
 
   let baseDate: Date | null = null;
-  let isFromReportDate = false;
 
   // Helper to determine if a slot is truly empty/TBD
   const isFilled = (dateStr?: string) => {
@@ -116,33 +115,32 @@ export function predictNextVacancyDate(command: OracleCommand): string {
     // IMMEDIATE HOLE: The Inbound XO seat is empty. We need to fill it based on when the Current XO leaves.
     if (isFilled(command.currentXO?.prd)) {
       baseDate = parseAnyDate(command.currentXO!.prd);
-      if (baseDate) isFromReportDate = false;
     }
 
     // Fallback: If Current XO PRD is missing/TBD, we check the CO to see when *they* leave (since XO fleets up)
     if (!baseDate && isFilled(command.currentCO?.prd)) {
       baseDate = parseAnyDate(command.currentCO!.prd);
-      if (baseDate) isFromReportDate = false;
     }
 
     // Safety Fallback: If Current XO/CO are BOTH TBD, we cautiously look forward to the Slated forecast so the math doesn't crash
     if (!baseDate && isFilled(command.slatedXO?.reportDate)) {
       baseDate = parseAnyDate(command.slatedXO!.reportDate);
-      if (baseDate) isFromReportDate = true;
     }
 
   } else {
     // SAFE PIPELINE: Inbound XO is filled. The *next* hole is the Slated XO.
-    // We calculate the Slated XO board primarily off the Inbound XO's arrival date.
-    if (isFilled(command.inboundXO?.reportDate)) {
-      baseDate = parseAnyDate(command.inboundXO!.reportDate);
-      if (baseDate) isFromReportDate = true;
+    // 1. If explicit forecast available:
+    if (isFilled(command.slatedXO?.reportDate)) {
+      baseDate = parseAnyDate(command.slatedXO!.reportDate);
     }
 
-    // Fallback: If Inbound XO has a name but an invalid date, check if there is a Slated forecast
-    if (!baseDate && isFilled(command.slatedXO?.reportDate)) {
-      baseDate = parseAnyDate(command.slatedXO!.reportDate);
-      if (baseDate) isFromReportDate = true;
+    // 2. Fallback: If no explicit Slated forecast, mathematically predict it as Inbound XO + 18mo
+    if (!baseDate && isFilled(command.inboundXO?.reportDate)) {
+      const inboundArrival = parseAnyDate(command.inboundXO!.reportDate);
+      if (inboundArrival) {
+        // The vacancy opens approximately 18 months after the Inbound XO arrives (CO fleet up cycle)
+        baseDate = addMonths(inboundArrival, 18);
+      }
     }
   }
 
