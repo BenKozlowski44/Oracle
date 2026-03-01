@@ -16,7 +16,8 @@ import {
     Milestone,
     GraduationCap,
     CalendarRange,
-    Archive
+    Archive,
+    Wrench
 } from "lucide-react"
 
 const navItems = [
@@ -59,6 +60,11 @@ const navItems = [
         title: "Reports",
         href: "/reports",
         icon: BarChart3,
+    },
+    {
+        title: "Tools",
+        href: "/tools",
+        icon: Wrench,
     },
 ]
 
