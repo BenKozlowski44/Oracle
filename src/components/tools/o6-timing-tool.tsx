@@ -34,12 +34,11 @@ export function O6TimingTool() {
         // O-6 Board -> JAN of the 5th year after promotion year
         // e.g., Promoted 2609 (2026). Board is JAN 2031 (26 + 5)
         const promoYear = promoDate.getFullYear()
-        const o6BoardStr = `${promoYear + 5}-01-01`
-        const o6Board = new Date(o6BoardStr)
+        // Use local Date constructor (year, monthIndex, day). Month is 0-indexed (0 = Jan)
+        const o6Board = new Date(promoYear + 5, 0, 1)
 
-        // MAJCOM -> NOV of the exact same year as the O-6 Board
-        const majcomStr = `${promoYear + 5}-11-01`
-        const majcom = new Date(majcomStr)
+        // MAJCOM -> NOV of the exact same year as the O-6 Board (10 = Nov)
+        const majcom = new Date(promoYear + 5, 10, 1)
 
         return {
             xoReport,
