@@ -3569,7 +3569,7 @@ export const officers: Officer[] = [
         "preferredLocations": [
             "EV",
             "SD",
-            "HI",
+            "PH",
             "MP",
             "NF"
         ],
@@ -4717,7 +4717,7 @@ export const officers: Officer[] = [
         "preferredLocations": [
             "YJ",
             "RS",
-            "MY",
+            "MP",
             "EV",
             "SD"
         ],
@@ -13477,7 +13477,7 @@ export const oracleData: OracleCommand[] = [
     },
     {
         "id": "cmd_127",
-        "name": "USS R JOHNSON",
+        "name": "USS RALPH JOHNSON",
         "uic": "50125",
         "location": "Yokosuka, JP",
         "currentCO": {
