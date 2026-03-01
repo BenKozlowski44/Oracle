@@ -754,9 +754,19 @@ export const officers: Officer[] = [
         "billet": "CDR ENG ASSESS",
         "csr": "6AGAZ",
         "assignedSlate": "FY26 2nd Look ",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "NF",
+            "MP",
+            "PH",
+            "RS",
+            "YJ"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LCS",
+            "LSD"
+        ],
+        "preferencePriority": "Homeport",
         "listShift": "Slated",
         "tentativeSlate": "USS BELOIT (LCS 29)"
     },
