@@ -92,9 +92,9 @@ export function O6TimingTool() {
                                 <TableHead>XO Pipeline</TableHead>
                                 <TableHead>XO Report</TableHead>
                                 <TableHead>CO Report</TableHead>
-                                <TableHead className={isBroken ? "text-destructive font-bold" : ""}>CO Complete</TableHead>
-                                <TableHead>O-6 Board</TableHead>
-                                <TableHead>MAJCOM</TableHead>
+                                <TableHead className={isBroken ? "text-destructive font-bold" : (timing && !isBroken ? "text-green-600 font-bold" : "")}>CO Complete</TableHead>
+                                <TableHead className={timing && !isBroken ? "text-green-600 font-bold" : ""}>O-6 Board</TableHead>
+                                <TableHead className={timing && !isBroken ? "text-green-600 font-bold" : ""}>MAJCOM</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -111,13 +111,13 @@ export function O6TimingTool() {
                                 <TableCell>
                                     {timing ? format(timing.coReport, "yyMM") : "---"}
                                 </TableCell>
-                                <TableCell className={isBroken ? "text-destructive font-bold" : ""}>
+                                <TableCell className={isBroken ? "text-destructive font-bold" : (timing && !isBroken ? "text-green-600 font-bold" : "")}>
                                     {timing ? format(timing.coComplete, "yyMM") : "---"}
                                 </TableCell>
-                                <TableCell>
+                                <TableCell className={timing && !isBroken ? "text-green-600 font-bold" : ""}>
                                     {timing ? format(timing.o6Board, "yyMM") : "---"}
                                 </TableCell>
-                                <TableCell>
+                                <TableCell className={timing && !isBroken ? "text-green-600 font-bold" : ""}>
                                     {timing ? format(timing.majcom, "yyMM") : "---"}
                                 </TableCell>
                             </TableRow>
