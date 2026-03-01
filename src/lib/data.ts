@@ -7262,6 +7262,18 @@ export const officers: Officer[] = [
         "status": "PCC",
         "notes": "CMD Tour: USS OAKLAND",
         "yearGroup": 0
+    },
+    {
+        "id": "pcc-1772376339723",
+        "name": "Taylor, Earvin (COC 09DEC24)",
+        "rank": "CDR",
+        "designator": "1110",
+        "currentCommand": "PCC (Post-Command)",
+        "prd": "N/A",
+        "preferences": [],
+        "status": "PCC",
+        "notes": "CMD Tour: USS JOHN FINN",
+        "yearGroup": 0
     }
 ]
 
@@ -8356,7 +8368,7 @@ export const oracleData: OracleCommand[] = [
         "uic": "21956",
         "location": "Mayport, FL",
         "currentCO": {
-            "name": "Walter, Kevin",
+            "name": "WALTER KEVIN W",
             "prd": "",
             "timelineData": {
                 "i": null,
@@ -13577,16 +13589,6 @@ export const oracleData: OracleCommand[] = [
         "uic": "20010",
         "location": "Yokosuka, JP",
         "currentCO": {
-            "name": "Taylor, Earvin (COC 09DEC24)",
-            "prd": "",
-            "timelineData": {
-                "i": null,
-                "k": null,
-                "m": null,
-                "q": "2024-12-24"
-            }
-        },
-        "currentXO": {
             "name": "ONEILL DANIEL J",
             "prd": "2024-09-01",
             "timelineData": {
@@ -13596,9 +13598,9 @@ export const oracleData: OracleCommand[] = [
                 "q": "2026-06-01"
             }
         },
-        "inboundXO": {
+        "currentXO": {
             "name": "JOHNSON DRAONNE D",
-            "reportDate": "2024-11-24",
+            "prd": "TBD",
             "timelineData": {
                 "i": "2024-11-24",
                 "k": "2026-04-24",
@@ -13606,8 +13608,18 @@ export const oracleData: OracleCommand[] = [
                 "q": "2027-12-24"
             }
         },
+        "inboundXO": {
+            "name": "YELVERTON HARRISON OSCAR I",
+            "reportDate": "APR26",
+            "timelineData": {
+                "i": "APR26",
+                "k": "OCT27",
+                "m": "DEC27",
+                "q": "JUN29"
+            }
+        },
         "nextSlateParams": {
-            "targetBoardDate": "26-2",
+            "targetBoardDate": "26-3",
             "requirement": "XO"
         },
         "timeline": {
@@ -13619,13 +13631,24 @@ export const oracleData: OracleCommand[] = [
         "platform": "DDG",
         "slatedXO": {
             "name": "Forecast",
-            "reportDate": "MAY26",
+            "reportDate": "OCT27",
             "timelineData": {
-                "i": "MAY26",
-                "k": "NOV27",
-                "m": "JAN28",
-                "q": "JUL29"
+                "i": "OCT27",
+                "k": "APR29",
+                "m": "JUN29",
+                "q": "DEC30"
             }
+        },
+        "prospectiveCO": {
+            "name": "VACANT",
+            "prd": "TBD"
+        },
+        "fleetUpProgress": {
+            "isic": false,
+            "tycom": false,
+            "pco": false,
+            "orders": false,
+            "coc": false
         }
     },
     {
