@@ -41,6 +41,7 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
 
         // Locations & Platforms
         const locationCounts: Record<string, number> = {}
+        const top3LocationCounts: Record<string, { total: number, rank1: number, rank2: number, rank3: number }> = {}
         const platformCounts: Record<string, number> = {}
 
         standardOfficers.forEach(o => {
@@ -51,8 +52,26 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                 else doesntMatter++
             }
 
-            const firstLoc = o.preferredLocations?.[0]?.trim()
-            if (firstLoc) locationCounts[firstLoc] = (locationCounts[firstLoc] || 0) + 1
+            const loc1 = o.preferredLocations?.[0]?.trim()
+            const loc2 = o.preferredLocations?.[1]?.trim()
+            const loc3 = o.preferredLocations?.[2]?.trim()
+
+            if (loc1) {
+                locationCounts[loc1] = (locationCounts[loc1] || 0) + 1
+                if (!top3LocationCounts[loc1]) top3LocationCounts[loc1] = { total: 0, rank1: 0, rank2: 0, rank3: 0 }
+                top3LocationCounts[loc1].rank1++
+                top3LocationCounts[loc1].total++
+            }
+            if (loc2) {
+                if (!top3LocationCounts[loc2]) top3LocationCounts[loc2] = { total: 0, rank1: 0, rank2: 0, rank3: 0 }
+                top3LocationCounts[loc2].rank2++
+                top3LocationCounts[loc2].total++
+            }
+            if (loc3) {
+                if (!top3LocationCounts[loc3]) top3LocationCounts[loc3] = { total: 0, rank1: 0, rank2: 0, rank3: 0 }
+                top3LocationCounts[loc3].rank3++
+                top3LocationCounts[loc3].total++
+            }
 
             const firstPlat = o.preferredPlatforms?.[0]?.trim()
             if (firstPlat) platformCounts[firstPlat] = (platformCounts[firstPlat] || 0) + 1
@@ -75,6 +94,12 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
         const topPlatforms = Object.entries(platformCounts)
             .map(([name, count]) => ({ name, count, pct: totalPlatformVotes ? Math.round((count / totalPlatformVotes) * 100) : 0 }))
             .sort((a, b) => b.count - a.count)
+            .slice(0, 10)
+
+        const votingLocationCount = standardOfficers.filter(o => o.preferredLocations && o.preferredLocations.length > 0).length
+        const top3Locations = Object.entries(top3LocationCounts)
+            .map(([name, counts]) => ({ name, ...counts, pct: votingLocationCount ? Math.round((counts.total / votingLocationCount) * 100) : 0 }))
+            .sort((a, b) => b.total - a.total)
             .slice(0, 10)
 
 
@@ -134,6 +159,7 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
             standardOfficersCount: standardOfficers.length,
             priorityData,
             topLocations,
+            top3Locations,
             topPlatforms,
             top3Choices,
             topAllChoices
@@ -150,7 +176,7 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
             </div>
 
             {/* Standard Bank Top Row */}
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
                 <div className="col-span-full border-b pb-2">
                     <h2 className="text-2xl font-bold tracking-tight">Standard Bank & Firefighters</h2>
                 </div>
@@ -181,7 +207,7 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                     </div>
                 </div>
 
-                <div className="rounded-xl border bg-card text-card-foreground shadow p-6 lg:col-span-2">
+                <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
                     <h3 className="font-semibold mb-4 text-center">Constituent's #1 Preferred Location</h3>
                     <div className="h-[250px]">
                         <ResponsiveContainer width="100%" height="100%">
@@ -215,7 +241,44 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                     </div>
                 </div>
 
-                <div className="rounded-xl border bg-card text-card-foreground shadow p-6 col-span-full">
+                <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
+                    <h3 className="font-semibold mb-4 text-center">Top 3 Preferred Locations</h3>
+                    <div className="h-[250px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={data.top3Locations} layout="vertical" margin={{ left: 50, right: 30, top: 0, bottom: 0 }}>
+                                <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                                <XAxis type="number" allowDecimals={false} />
+                                <YAxis type="category" dataKey="name" width={100} tick={{ fontSize: 11 }} />
+                                <Tooltip cursor={{ fill: 'transparent' }} />
+                                <Legend />
+                                <Bar dataKey="rank1" name="#1 Choice" stackId="a" fill="#22c55e" />
+                                <Bar dataKey="rank2" name="#2 Choice" stackId="a" fill="#eab308" />
+                                <Bar dataKey="rank3" name="#3 Choice" stackId="a" fill="#f97316" radius={[0, 4, 4, 0]}>
+                                    <LabelList
+                                        content={(props: any) => {
+                                            const { x, y, width, height, value, index } = props
+                                            const item = data.top3Locations[index]
+                                            return (
+                                                <text
+                                                    x={x + width + 5}
+                                                    y={y + height / 2}
+                                                    dy={4}
+                                                    fill="#6b7280"
+                                                    fontSize={11}
+                                                    textAnchor="start"
+                                                >
+                                                    {`${value} (${item?.pct || 0}%)`}
+                                                </text>
+                                            )
+                                        }}
+                                    />
+                                </Bar>
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+
+                <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
                     <h3 className="font-semibold mb-4 text-center">Constituent's #1 Preferred Platform</h3>
                     <div className="h-[250px]">
                         <ResponsiveContainer width="100%" height="100%">
