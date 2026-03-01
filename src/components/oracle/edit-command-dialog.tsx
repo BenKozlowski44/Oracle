@@ -242,7 +242,7 @@ export function EditCommandDialog({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto" aria-describedby={undefined}>
+            <DialogContent className="max-w-[95vw] lg:max-w-6xl max-h-[90vh] overflow-y-auto" aria-describedby={undefined}>
                 <DialogHeader>
                     <DialogTitle>Edit Command</DialogTitle>
                     <DialogDescription>
@@ -253,17 +253,19 @@ export function EditCommandDialog({
 
                     {/* Timeline Visualization */}
                     {formData && (
-                        <CommandTimeline
-                            command={formData}
-                            editable={true}
-                            onDateChange={handleTimelineChange}
-                        />
+                        <div className="w-full overflow-x-auto pb-2">
+                            <CommandTimeline
+                                command={formData}
+                                editable={true}
+                                onDateChange={handleTimelineChange}
+                            />
+                        </div>
                     )}
 
                     {/* Command Details */}
                     <div className="grid gap-4">
                         <h3 className="font-semibold leading-none tracking-tight">Command Details</h3>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             <div className="grid gap-2">
                                 <Label htmlFor="name">Command Name</Label>
                                 <Input
@@ -318,7 +320,7 @@ export function EditCommandDialog({
                                     placeholder="e.g. 18, 24"
                                 />
                             </div>
-                            <div className="grid gap-2 col-span-2">
+                            <div className="grid gap-2 col-span-full">
                                 <Label htmlFor="notes">Notes</Label>
                                 <textarea
                                     id="notes"
@@ -336,8 +338,8 @@ export function EditCommandDialog({
                     {/* Current CO */}
                     <div className="grid gap-4">
                         <h3 className="font-semibold leading-none tracking-tight">Current CO</h3>
-                        <div className="grid grid-cols-3 gap-4">
-                            <div className="grid gap-2 col-span-3">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="grid gap-2 col-span-full">
                                 <Label htmlFor="coName">Name</Label>
                                 <Input
                                     id="coName"
@@ -356,8 +358,8 @@ export function EditCommandDialog({
                             {/* Prospective CO (P-CO / Stashed XO) */}
                             <div className="grid gap-4">
                                 <h3 className="font-semibold leading-none tracking-tight">Prospective CO (P-CO)</h3>
-                                <div className="grid grid-cols-3 gap-4">
-                                    <div className="grid gap-2 col-span-3">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="grid gap-2 col-span-full">
                                         <Label htmlFor="pcoName">Name</Label>
                                         <Input
                                             id="pcoName"
@@ -377,8 +379,8 @@ export function EditCommandDialog({
                             {/* Current XO */}
                             <div className="grid gap-4">
                                 <h3 className="font-semibold leading-none tracking-tight">Current XO</h3>
-                                <div className="grid grid-cols-3 gap-4">
-                                    <div className="grid gap-2 col-span-3">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="grid gap-2 col-span-full">
                                         <Label htmlFor="xoName">Name</Label>
                                         <Input
                                             id="xoName"
@@ -394,8 +396,8 @@ export function EditCommandDialog({
                             {/* Inbound XO */}
                             <div className="grid gap-4">
                                 <h3 className="font-semibold leading-none tracking-tight">Inbound XO (P-XO)</h3>
-                                <div className="grid grid-cols-3 gap-4">
-                                    <div className="grid gap-2 col-span-2">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="grid gap-2 md:col-span-2 col-span-1">
                                         <Label htmlFor="inboundName">Name</Label>
                                         <Input
                                             id="inboundName"
@@ -420,8 +422,8 @@ export function EditCommandDialog({
                             {/* Slated XO */}
                             <div className="grid gap-4">
                                 <h3 className="font-semibold leading-none tracking-tight">Slated XO (Forecast)</h3>
-                                <div className="grid grid-cols-3 gap-4">
-                                    <div className="grid gap-2 col-span-2">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="grid gap-2 md:col-span-2 col-span-1">
                                         <Label htmlFor="slatedName">Name / Slate</Label>
                                         <Input
                                             id="slatedName"

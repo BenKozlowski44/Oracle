@@ -275,9 +275,19 @@ export const officers: Officer[] = [
         "billet": "STF REDI GEN",
         "csr": "6AGAZ",
         "assignedSlate": "3rd Look CO Afloat",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "NF",
+            "MP",
+            "RS",
+            "PH",
+            "SD"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LCS",
+            "LSD"
+        ],
+        "preferencePriority": "Homeport",
         "tentativeSlate": "USS TRUXTUN (DDG 103)",
         "listShift": "Slated"
     },
@@ -2106,7 +2116,7 @@ export const officers: Officer[] = [
         "yearGroup": 20120,
         "billet": "BUDGET/DEFENSE RESOURCE MGR/00001657",
         "csr": "6AGAZ",
-        "assignedSlate": "",
+        "assignedSlate": "FY26 1st Look",
         "preferredLocations": [],
         "preferredPlatforms": [],
         "preferencePriority": null,
