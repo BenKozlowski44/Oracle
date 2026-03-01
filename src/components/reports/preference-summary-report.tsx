@@ -216,7 +216,7 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                 </div>
 
                 <div className="rounded-xl border bg-card text-card-foreground shadow p-6 col-span-full">
-                    <h3 className="font-semibold mb-4 text-center">Top 10 #1 Platform Choices</h3>
+                    <h3 className="font-semibold mb-4 text-center">Constituent's #1 Preferred Platform</h3>
                     <div className="h-[250px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={data.topPlatforms}>
