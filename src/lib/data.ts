@@ -784,9 +784,19 @@ export const officers: Officer[] = [
         "billet": "OPS/EXEC ASSISTANT",
         "csr": "5AGAZ",
         "assignedSlate": "FY25 1st Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "NF",
+            "MP",
+            "EV",
+            "SD",
+            "PH"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LSD",
+            "LCS"
+        ],
+        "preferencePriority": "Homeport",
         "listShift": "Slated",
         "tentativeSlate": "USS PORTER (DDG 78)"
     },
@@ -803,9 +813,19 @@ export const officers: Officer[] = [
         "yearGroup": 20110,
         "csr": "6AGAZ",
         "assignedSlate": "FY26 2nd Look ",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "NF",
+            "MP",
+            "EV",
+            "SD",
+            "RS"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LCS",
+            "LSD"
+        ],
+        "preferencePriority": "Homeport",
         "listShift": "Slated",
         "tentativeSlate": "USS CHAFEE (DDG 90)"
     },
@@ -823,9 +843,19 @@ export const officers: Officer[] = [
         "billet": "CO AFLOAT LCDR",
         "csr": "5AGAZ",
         "assignedSlate": "FY25 1st Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "RS",
+            "YJ",
+            "SJ",
+            "EV",
+            "MP"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LCS",
+            "LSD"
+        ],
+        "preferencePriority": "Platform",
         "listShift": "Slated",
         "tentativeSlate": "USS KINGSVILLE (LCS 36)"
     },
@@ -843,9 +873,19 @@ export const officers: Officer[] = [
         "billet": "AIDE/N09A1 NAVAL AIDE TO VCNO",
         "csr": "6AGAZ",
         "assignedSlate": "FY26 2nd Look ",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "NF",
+            "SD",
+            "MP",
+            "RS",
+            "PH"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LSD",
+            "LCS"
+        ],
+        "preferencePriority": "Homeport",
         "listShift": "Slated",
         "tentativeSlate": "USS HARVEY C. BARNUM (DDG 124)"
     },
@@ -883,9 +923,19 @@ export const officers: Officer[] = [
         "billet": "INTRAGOVTINQ/ASST (SURF WF)",
         "csr": "5AGAZ",
         "assignedSlate": "FY25 1st Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "RS",
+            "YJ",
+            "NF",
+            "MP",
+            "SD"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LSD",
+            "LCS"
+        ],
+        "preferencePriority": "Platform",
         "listShift": "Slated",
         "tentativeSlate": "USS RALPH JOHNSON (DDG 114)"
     },
@@ -903,9 +953,19 @@ export const officers: Officer[] = [
         "billet": "OIC SHR ACT/SHP ENG NUCGEN",
         "csr": "5AGAZ",
         "assignedSlate": "FY25 2nd Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "NF",
+            "MP",
+            "EV",
+            "SD",
+            "RS"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LSD",
+            "LCS"
+        ],
+        "preferencePriority": "Homeport",
         "listShift": "Slated",
         "tentativeSlate": "USS CLEVELAND (LCS 31)"
     },
@@ -923,9 +983,19 @@ export const officers: Officer[] = [
         "billet": "STF PLN/ASST FOR STRAT ACTIONS GRP",
         "csr": "3AGAZ",
         "assignedSlate": "FY23 1st Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "EV",
+            "SD",
+            "PH",
+            "MP",
+            "RS"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            " LCS",
+            "LSD"
+        ],
+        "preferencePriority": "Platform",
         "listShift": "Slated",
         "tentativeSlate": "USS KIDD (DDG 100)"
     },
@@ -963,9 +1033,19 @@ export const officers: Officer[] = [
         "billet": "CDR ENG ASSESS",
         "csr": "5AGAZ",
         "assignedSlate": "FY25 2nd Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "NF",
+            "MP",
+            "RS",
+            "EV",
+            "SD"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LSD",
+            "LCS"
+        ],
+        "preferencePriority": "Platform",
         "listShift": "Slated",
         "tentativeSlate": "USS MAHAN (DDG 72)"
     },
@@ -983,9 +1063,19 @@ export const officers: Officer[] = [
         "billet": "STF PLN/DCIP/FLEET I&I TD/EKMS/N9IX3",
         "csr": "4AGAZ",
         "assignedSlate": "FY24 1st Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "EV",
+            "SD",
+            "MP",
+            "PH",
+            "NF"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LCS",
+            "LSD"
+        ],
+        "preferencePriority": "Platform",
         "listShift": "Slated",
         "tentativeSlate": "USS MOMSEN (DDG 92)"
     },
@@ -1003,9 +1093,19 @@ export const officers: Officer[] = [
         "billet": "STF TSC OFF",
         "csr": "5AGAZ",
         "assignedSlate": "FY25 1st Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "PH",
+            "MP",
+            "YJ",
+            "RS",
+            "SD"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LSD",
+            "LCS"
+        ],
+        "preferencePriority": "Platform",
         "listShift": "Slated",
         "tentativeSlate": "USS SULLIVANS (DDG 68)"
     },
@@ -1023,9 +1123,19 @@ export const officers: Officer[] = [
         "billet": "PERS DIST OFF/BR HD/SURF SHIP PLCMT",
         "csr": "5AGAZ",
         "assignedSlate": "FY25 1st Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "NF",
+            "SD",
+            "MP",
+            "RS",
+            "PH"
+        ],
+        "preferredPlatforms": [
+            "LSD",
+            "DDG",
+            "LCS"
+        ],
+        "preferencePriority": "Homeport",
         "listShift": "Slated",
         "tentativeSlate": "USS TORTUGA (LSD 46)"
     },
@@ -1043,9 +1153,19 @@ export const officers: Officer[] = [
         "billet": "XO SHR ACT",
         "csr": "4AGAZ",
         "assignedSlate": "FY24 2nd Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "PH",
+            "MP",
+            "SD",
+            "YJ",
+            "EV"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LCS",
+            "LSD"
+        ],
+        "preferencePriority": "Platform",
         "listShift": "Slated",
         "tentativeSlate": "USS MICHAEL MURPHY (DDG 112)"
     },
@@ -1063,9 +1183,19 @@ export const officers: Officer[] = [
         "billet": "XO SHR ACT",
         "csr": "4AGAZ",
         "assignedSlate": "FY24 2nd Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "SD",
+            "PH",
+            "RS",
+            "YJ",
+            "NF"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LSD",
+            "LCS"
+        ],
+        "preferencePriority": "Homeport",
         "listShift": "",
         "tentativeSlate": "26-2"
     },
@@ -1113,9 +1243,19 @@ export const officers: Officer[] = [
         "billet": "STUDENT",
         "csr": "5AGAZ",
         "assignedSlate": "FY25 1st Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "RS",
+            "PH",
+            "SD",
+            "YJ",
+            "NF"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LSD",
+            "LCS"
+        ],
+        "preferencePriority": "Platform",
         "listShift": "",
         "tentativeSlate": "26-2"
     },
@@ -1133,9 +1273,19 @@ export const officers: Officer[] = [
         "billet": "STF OPS&PLN/IAMD LEAD WTI",
         "csr": "5AGAZ",
         "assignedSlate": "FY25 1st Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "NF",
+            "MP",
+            "SD",
+            "PH",
+            "RS"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LSD",
+            "LCS"
+        ],
+        "preferencePriority": "Homeport",
         "listShift": "",
         "tentativeSlate": "26-2"
     },
@@ -1153,9 +1303,19 @@ export const officers: Officer[] = [
         "billet": "STF REDI TAC/N5 DEPUTY",
         "csr": "6AGAZ",
         "assignedSlate": "FY26 2nd Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "PH",
+            "SD",
+            "RS",
+            "YJ",
+            "MP"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LCS",
+            "LSD"
+        ],
+        "preferencePriority": "Platform",
         "listShift": "",
         "tentativeSlate": "26-2"
     },
@@ -1173,9 +1333,19 @@ export const officers: Officer[] = [
         "billet": "STUDENT",
         "csr": "6AGAZ",
         "assignedSlate": "FY26 2nd Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "MP",
+            "NF",
+            "SD",
+            "PH",
+            "RS"
+        ],
+        "preferredPlatforms": [
+            "LCS",
+            "DDG",
+            "LSD"
+        ],
+        "preferencePriority": "Homeport",
         "listShift": "",
         "tentativeSlate": "26-2"
     },
@@ -1193,9 +1363,19 @@ export const officers: Officer[] = [
         "billet": "XO SHR ACT",
         "csr": "2AGAZ",
         "assignedSlate": "FY22 1st Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "NF",
+            "SD",
+            "MP",
+            "PH",
+            "YJ"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LSD",
+            "LCS"
+        ],
+        "preferencePriority": "Platform",
         "listShift": "",
         "tentativeSlate": "26-2"
     },
@@ -1213,9 +1393,19 @@ export const officers: Officer[] = [
         "billet": "OPS AFLOAT GEN",
         "csr": "6AGAZ",
         "assignedSlate": "FY26 2nd Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "SD",
+            "PH",
+            "NF",
+            "MP",
+            "YJ"
+        ],
+        "preferredPlatforms": [
+            "LSD",
+            "DDG",
+            "LCS"
+        ],
+        "preferencePriority": "Homeport",
         "listShift": "",
         "tentativeSlate": "26-2"
     },
@@ -1233,9 +1423,19 @@ export const officers: Officer[] = [
         "billet": "STF OPS & PLN/N721 ANALYTICS",
         "csr": "6AGAZ",
         "assignedSlate": "FY26 2nd Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "NF",
+            "SD",
+            "MP",
+            "RS",
+            "PH"
+        ],
+        "preferredPlatforms": [
+            "LSD",
+            "LCS",
+            "DDG"
+        ],
+        "preferencePriority": "Platform",
         "listShift": "",
         "tentativeSlate": "26-2"
     },
@@ -1293,9 +1493,19 @@ export const officers: Officer[] = [
         "billet": "JOINT INFO SHARING O/T",
         "csr": "5AGAZ",
         "assignedSlate": "FY25 1st Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "NF",
+            "MP",
+            "PH",
+            "SD",
+            "RS"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LSD",
+            "LCS"
+        ],
+        "preferencePriority": "Homeport",
         "listShift": "",
         "tentativeSlate": "26-2"
     },
@@ -1353,9 +1563,19 @@ export const officers: Officer[] = [
         "billet": "JOINT COMMS STRAT",
         "csr": "5AGAZ",
         "assignedSlate": "FY25 2nd Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "NF",
+            "PH",
+            "SD",
+            "RS",
+            "YJ"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LSD",
+            "LCS"
+        ],
+        "preferencePriority": "Homeport",
         "listShift": "",
         "tentativeSlate": "26-2"
     },
@@ -1393,9 +1613,19 @@ export const officers: Officer[] = [
         "billet": "STF OPS & PLN",
         "csr": "5AGAZ",
         "assignedSlate": "FY25 1st Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "YJ",
+            "PH",
+            "RS",
+            "SD",
+            "MP"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LSD",
+            "LCS"
+        ],
+        "preferencePriority": "Homeport",
         "listShift": "",
         "tentativeSlate": "26-2"
     },
@@ -1473,9 +1703,19 @@ export const officers: Officer[] = [
         "billet": "OPERATIONS OFFICER/00011084/",
         "csr": "6AGAZ",
         "assignedSlate": "FY26 2nd Look ",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "PH",
+            "RS",
+            "NF",
+            "MP",
+            "SD"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LSD",
+            "LCS"
+        ],
+        "preferencePriority": "Homeport",
         "listShift": "",
         "tentativeSlate": "26-2"
     },
@@ -1513,9 +1753,19 @@ export const officers: Officer[] = [
         "billet": "INST TECH/INST A BDOC MARITIME",
         "csr": "6AGAZ",
         "assignedSlate": "FY26 1st Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "NF",
+            "SD",
+            "EV",
+            "PH",
+            "RS"
+        ],
+        "preferredPlatforms": [
+            "LSD",
+            "DDG",
+            "LCS"
+        ],
+        "preferencePriority": "Homeport",
         "listShift": "",
         "tentativeSlate": "26-2"
     },

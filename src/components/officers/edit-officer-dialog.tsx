@@ -152,6 +152,7 @@ export function EditOfficerDialog({ officer, open, onOpenChange }: EditOfficerDi
                                 id="assignedSlate"
                                 value={formData.assignedSlate || ""}
                                 onChange={(e) => handleChange("assignedSlate", e.target.value)}
+                                className={!formData.assignedSlate?.trim() ? "border-destructive focus-visible:ring-destructive" : ""}
                             />
                         </div>
                         <div className="space-y-2">
@@ -248,6 +249,7 @@ export function EditOfficerDialog({ officer, open, onOpenChange }: EditOfficerDi
                                                     handleChange("cosmPreferences", newPrefs);
                                                 }}
                                                 placeholder={`Preference ${i + 1}`}
+                                                className={!formData.cosmPreferences?.[i]?.trim() ? "border-destructive focus-visible:ring-destructive" : ""}
                                             />
                                         </div>
                                     ))}
@@ -261,7 +263,7 @@ export function EditOfficerDialog({ officer, open, onOpenChange }: EditOfficerDi
                                         value={formData.preferencePriority || ""}
                                         onValueChange={(v) => handleChange("preferencePriority", v === "null" ? null : v)}
                                     >
-                                        <SelectTrigger>
+                                        <SelectTrigger className={!formData.preferencePriority ? "border-destructive focus:ring-destructive" : ""}>
                                             <SelectValue placeholder="Select Priority" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -285,6 +287,7 @@ export function EditOfficerDialog({ officer, open, onOpenChange }: EditOfficerDi
                                                     newLocs[index] = e.target.value;
                                                     handleChange("preferredLocations", newLocs);
                                                 }}
+                                                className={!formData.preferredLocations?.[index]?.trim() ? "border-destructive focus-visible:ring-destructive" : ""}
                                             />
                                         ))}
                                     </div>
@@ -300,6 +303,7 @@ export function EditOfficerDialog({ officer, open, onOpenChange }: EditOfficerDi
                                                     newPlats[index] = e.target.value;
                                                     handleChange("preferredPlatforms", newPlats);
                                                 }}
+                                                className={!formData.preferredPlatforms?.[index]?.trim() ? "border-destructive focus-visible:ring-destructive" : ""}
                                             />
                                         ))}
                                     </div>
