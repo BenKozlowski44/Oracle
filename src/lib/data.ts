@@ -211,6 +211,22 @@ export const metrics: Metrics = {
 
 export const officers: Officer[] = [
     {
+        "id": "spotserjustinbrent_1772391561809",
+        "name": "SPOTSER JUSTIN BRENT",
+        "rank": "CDR",
+        "designator": "1110",
+        "currentCommand": "COMLCSRON ONE",
+        "prd": "2026-07-01",
+        "preferences": [],
+        "status": "Hold",
+        "yearGroup": 0,
+        "assignedSlate": "SWO 3rd Look COSM",
+        "csr": "4AGAO",
+        "listShift": "CO-SM",
+        "preferredLocations": [],
+        "preferredPlatforms": []
+    },
+    {
         "id": "tornambegregory_1772205982821",
         "name": "TORNAMBE GREGORY",
         "rank": "CDR",
@@ -251,7 +267,7 @@ export const officers: Officer[] = [
         "currentCommand": "MOC FLT FORCES",
         "prd": "2024-11-01",
         "preferences": [],
-        "status": "Hold",
+        "status": "Retire",
         "notes": "Has medical condition that precludes him from Command right now.",
         "yearGroup": 20070,
         "billet": "STFOPSCMDCENWO/BWC/MOC BWC",
@@ -8862,6 +8878,13 @@ export const oracleData: OracleCommand[] = [
                 "m": "2029-03-25",
                 "q": "2030-09-25"
             }
+        },
+        "fleetUpProgress": {
+            "isic": false,
+            "tycom": false,
+            "pco": true,
+            "orders": true,
+            "coc": true
         }
     },
     {
