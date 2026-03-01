@@ -3,7 +3,25 @@ import { twMerge } from "tailwind-merge"
 import { format, parseISO, isValid, parse, subMonths } from "date-fns"
 import { type OracleCommand } from "./types"
 
-export const CURRENT_ACTIVE_SLATE = "26-2";
+export function getCurrentActiveSlate(today: Date = new Date()): string {
+  const month = today.getMonth() + 1; // 1-12
+  let year = today.getFullYear() % 100;
+
+  let quarter = 0;
+  if (month >= 1 && month <= 3) { // Jan-Mar
+    quarter = 2;
+  } else if (month >= 4 && month <= 6) { // Apr-Jun
+    quarter = 3;
+  } else if (month >= 7 && month <= 9) { // Jul-Sep
+    quarter = 4;
+  } else if (month >= 10 && month <= 12) { // Oct-Dec
+    quarter = 1;
+    year = year + 1; // e.g. Oct-Dec 2026 works on 27-1
+  }
+
+  const yearStr = year.toString().padStart(2, '0');
+  return `${yearStr}-${quarter}`;
+}
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -41,7 +59,7 @@ export function calculateTargetBoard(dateStr?: string): string {
   if (!date) return "TBD";
 
   const month = date.getMonth() + 1; // 1-12
-  let year = date.getFullYear() % 100;
+  let year = (date.getFullYear() % 100) - 1; // Target Slate is always exactly 1 calendar loop before the fill vacancy
 
   let quarter = 0;
   if (month >= 3 && month <= 5) { // MAR-MAY
@@ -61,10 +79,11 @@ export function calculateTargetBoard(dateStr?: string): string {
 
   const yearStr = year.toString().padStart(2, '0');
   const calculatedSlate = `${yearStr}-${quarter}`;
+  const activeSlate = getCurrentActiveSlate();
 
-  // Clamp older target boards to the current active slate
-  if (calculatedSlate < CURRENT_ACTIVE_SLATE) {
-    return CURRENT_ACTIVE_SLATE;
+  // Clamp older target boards to the dynamically determined active slate
+  if (calculatedSlate < activeSlate) {
+    return activeSlate;
   }
 
   return calculatedSlate;
@@ -129,8 +148,9 @@ export function predictNextVacancyDate(command: OracleCommand): string {
 
   if (!baseDate) return "TBD";
 
-  const boardDate = isFromReportDate ? baseDate : subMonths(baseDate, 18);
-  const boardDateStr = format(boardDate, "yyyy-MM-dd");
+  // The baseDate is the exact vacancy/fill date (either PRD or ReportDate).
+  // We pass it directly into the math engine, which correctly maps FillDate -> TargetSlate intrinsically.
+  const boardDateStr = format(baseDate, "yyyy-MM-dd");
 
   return calculateTargetBoard(boardDateStr);
 }
