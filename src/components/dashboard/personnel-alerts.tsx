@@ -1,3 +1,5 @@
+"use client"
+
 import { useState } from "react"
 import { Officer } from "@/lib/types"
 import { UserX, ArrowRight } from "lucide-react"
