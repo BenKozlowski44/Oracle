@@ -182,7 +182,7 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                 </div>
 
                 <div className="rounded-xl border bg-card text-card-foreground shadow p-6 lg:col-span-2">
-                    <h3 className="font-semibold mb-4 text-center">Top 10 #1 Location Choices</h3>
+                    <h3 className="font-semibold mb-4 text-center">Constituent's #1 Preferred Location</h3>
                     <div className="h-[250px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={data.topLocations} layout="vertical" margin={{ left: 50, right: 30, top: 0, bottom: 0 }}>
