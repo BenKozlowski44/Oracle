@@ -1453,9 +1453,19 @@ export const officers: Officer[] = [
         "billet": "PERS DIST GEN",
         "csr": "6AGAZ",
         "assignedSlate": "FY26 2nd Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "NF",
+            "SD",
+            "PH",
+            "RS",
+            "YJ"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LSD",
+            "LCS"
+        ],
+        "preferencePriority": "Platform",
         "listShift": "",
         "tentativeSlate": "26-2"
     },
@@ -1473,9 +1483,19 @@ export const officers: Officer[] = [
         "billet": "DEFENSE ACQ PROG ANALYST/03018217",
         "csr": "5AGAZ",
         "assignedSlate": "FY25 1st Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "PH",
+            "SD",
+            "NF",
+            "MP",
+            "YJ"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LCS",
+            "LSD"
+        ],
+        "preferencePriority": "Platform",
         "listShift": "",
         "tentativeSlate": "26-2"
     },
@@ -1523,9 +1543,19 @@ export const officers: Officer[] = [
         "billet": "INST TECH/INST A MARINER SKILLS",
         "csr": "5AGAZ",
         "assignedSlate": "FY25 1st Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "NF",
+            "SD",
+            "RS",
+            "MP",
+            "PH"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LSD",
+            "LCS"
+        ],
+        "preferencePriority": "Homeport",
         "listShift": "",
         "tentativeSlate": "26-2"
     },
@@ -1543,9 +1573,19 @@ export const officers: Officer[] = [
         "billet": "STF REDI GEN/LCS TRNG & REDI",
         "csr": "6AGAZ",
         "assignedSlate": "FY26 2nd Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "SD",
+            "NF",
+            "MP",
+            "PH",
+            "YJ"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LCS",
+            "LSD"
+        ],
+        "preferencePriority": "Homeport",
         "listShift": "",
         "tentativeSlate": "26-2"
     },
@@ -1593,9 +1633,19 @@ export const officers: Officer[] = [
         "billet": "OPERATIONS STAFF/STF OPS&PLN00074018",
         "csr": "4AGAZ",
         "assignedSlate": "FY24 1st Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "NF",
+            "PH",
+            "SD",
+            "RS",
+            "MP"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LCS",
+            "LSD"
+        ],
+        "preferencePriority": "Platform",
         "listShift": "",
         "tentativeSlate": "26-2"
     },
@@ -1663,9 +1713,19 @@ export const officers: Officer[] = [
         "billet": "CAPABILITIES BH CHF/WPN MTL GEN/0000966",
         "csr": "5AGAZ",
         "assignedSlate": "FY25 1st Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "PH",
+            "SD",
+            "YJ",
+            "NF",
+            "RS"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LCS",
+            "LSD"
+        ],
+        "preferencePriority": "Platform",
         "listShift": "",
         "tentativeSlate": "26-2"
     },
@@ -5810,7 +5870,7 @@ export const officers: Officer[] = [
     },
     {
         "id": "pcc-1771877067961",
-        "name": "Ringo, Brett",
+        "name": "RINGO BRETT M",
         "rank": "CDR",
         "designator": "1110",
         "currentCommand": "PCC (Post-Command)",
@@ -7407,7 +7467,7 @@ export const officers: Officer[] = [
     },
     {
         "id": "pcc-1772155655815",
-        "name": "Robertson, Jeremy",
+        "name": "ROBERTSON JEREMY DANIEL",
         "rank": "CDR",
         "designator": "1110",
         "currentCommand": "PCC (Post-Command)",
@@ -7503,7 +7563,7 @@ export const officers: Officer[] = [
     },
     {
         "id": "pcc-1772331455396",
-        "name": "Toohig, Rob (XO/CO) (GOLD CO)",
+        "name": "TOOHIG ROBERT JAMES JR",
         "rank": "CDR",
         "designator": "1110",
         "currentCommand": "PCC (Post-Command)",
@@ -7527,7 +7587,7 @@ export const officers: Officer[] = [
     },
     {
         "id": "pcc-1772332257744",
-        "name": "Shaw, Matt (XO/CO) / Gardner, Dave (hold)",
+        "name": "SHAW MATTHEW STEPHEN",
         "rank": "CDR",
         "designator": "1110",
         "currentCommand": "PCC (Post-Command)",
