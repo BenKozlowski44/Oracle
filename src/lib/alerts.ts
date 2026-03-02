@@ -69,6 +69,11 @@ export interface PersonnelAlert {
 }
 
 export function getPersonnelAlerts(officer: Officer): PersonnelAlert[] {
+    // Rule 0: Completely ignore Post-Command Commanders (PCC)
+    if (officer.status === "PCC" || officer.listShift === "PCC") {
+        return [];
+    }
+
     const alerts: PersonnelAlert[] = []
 
     // Rule 1: Missing Preference Inputs
