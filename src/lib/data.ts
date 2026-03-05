@@ -69,7 +69,8 @@ export const slates: Slate[] = [
                 "role": "XO",
                 "incumbent": "PETERS SAVANNAH JUNE",
                 "incumbentPrd": "2027-07-01",
-                "status": "Draft"
+                "status": "Filled",
+                "filledBy": "vansicekara_12"
             },
             {
                 "id": "req-cmd_56-xo",
@@ -78,7 +79,8 @@ export const slates: Slate[] = [
                 "role": "XO",
                 "incumbent": "KIRBY MATTHEW DAVID",
                 "incumbentPrd": "2027-07-01",
-                "status": "Draft"
+                "status": "Filled",
+                "filledBy": "brinsonsamuelfelton_21"
             },
             {
                 "id": "req-cmd_23-xo-1772671797558",
@@ -87,7 +89,8 @@ export const slates: Slate[] = [
                 "role": "XO",
                 "incumbent": "BURNS JOHN A",
                 "incumbentPrd": "2026-08-25",
-                "status": "Draft"
+                "status": "Filled",
+                "filledBy": "dennellytimothyr_18"
             },
             {
                 "id": "req-cmd_27-xo-1772671839198",
@@ -106,7 +109,8 @@ export const slates: Slate[] = [
                 "role": "XO",
                 "incumbent": "HARRIS ROBERT NELSON III",
                 "incumbentPrd": "2027-04-05",
-                "status": "Draft"
+                "status": "Filled",
+                "filledBy": "tanalegajohnfrancis_21"
             },
             {
                 "id": "req-cmd_67-xo-1772671927548",
@@ -115,7 +119,8 @@ export const slates: Slate[] = [
                 "role": "XO",
                 "incumbent": "SISLER RYAN J",
                 "incumbentPrd": "",
-                "status": "Draft"
+                "status": "Filled",
+                "filledBy": "stensonfosterparris_21"
             },
             {
                 "id": "req-cmd_88-xo-1772671937382",
@@ -160,7 +165,8 @@ export const slates: Slate[] = [
                 "role": "XO",
                 "incumbent": "GOSTEL CHRISTOPHER RANSOMA",
                 "incumbentPrd": "2026-01-24",
-                "status": "Draft"
+                "status": "Filled",
+                "filledBy": "gubanchamiltonr_17"
             },
             {
                 "id": "req-cmd_2-xo-1772672042961",

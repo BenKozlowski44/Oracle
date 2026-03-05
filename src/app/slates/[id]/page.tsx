@@ -22,7 +22,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { formatToMMMyy } from "@/lib/utils"
+import { formatToMMMyy, cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { SlateRequirement, Officer, SlateCandidateProfile } from "@/lib/types"
 import { CandidateInputForm } from "@/components/slating/candidate-input-form"
@@ -121,11 +121,12 @@ export default function SlateDetailPage({ params }: SlateDetailPageProps) {
         setIsAssignDialogOpen(true);
     }
 
-    const handleAssignCandidate = async (officerId: string) => {
+    const handleAssignCandidate = async (officerId: string | null) => {
         if (!selectedReqId) return;
 
         const updatedReqs = requirements.map(req => {
             if (req.id === selectedReqId) {
+                if (!officerId) return { ...req, status: "Draft" as const, filledBy: undefined };
                 return { ...req, status: "Filled" as const, filledBy: officerId };
             }
             return req;
@@ -553,14 +554,23 @@ export default function SlateDetailPage({ params }: SlateDetailPageProps) {
                                     {slateCandidates.map(c => {
                                         const profile = candidateProfiles.find(p => p.officerId === c.id);
                                         const hasProfile = !!profile;
+
+                                        // Check if candidate is assigned to any requirement in this slate
+                                        const assignedReq = requirements.find(r => r.filledBy === c.id);
+                                        const isAssigned = !!assignedReq;
+
                                         return (
-                                            <div key={c.id} className="flex items-center justify-between p-2 border rounded-md bg-muted/40 group">
+                                            <div key={c.id} className={cn("flex items-center justify-between p-2 border rounded-md group transition-all", isAssigned ? "bg-muted/10 opacity-60" : "bg-muted/40")}>
                                                 <div>
                                                     <div className="font-medium text-sm flex items-center gap-2">
                                                         {c.name}
                                                         {hasProfile && <Badge variant="secondary" className="text-[10px] h-5 px-1 bg-green-100 text-green-800 hover:bg-green-100">Profile</Badge>}
+                                                        {isAssigned && <Badge variant="default" className="text-[10px] h-5 px-1">Slated</Badge>}
                                                     </div>
-                                                    <div className="text-xs text-muted-foreground">{c.rank} • {c.designator}</div>
+                                                    <div className="text-xs text-muted-foreground">
+                                                        {c.rank} • {c.designator}
+                                                        {isAssigned && assignedReq && <span className="ml-1 text-primary/80">• Assigned: {assignedReq.commandName}</span>}
+                                                    </div>
                                                 </div>
                                                 <div className="flex gap-1">
                                                     <Button
@@ -629,21 +639,36 @@ export default function SlateDetailPage({ params }: SlateDetailPageProps) {
 
                                 if (!isCosmCommand) {
                                     // For Standard Commands, EXCLUDE CO-SM screened officers
-                                    assignableCandidates = slateCandidates.filter(c => !c.screened?.includes("CO-SM"));
+                                    assignableCandidates = assignableCandidates.filter(c => !c.screened?.includes("CO-SM"));
                                 }
                             }
 
-                            if (assignableCandidates.length === 0) {
+                            // EXCLUDE candidates already assigned to another command
+                            assignableCandidates = assignableCandidates.filter(c => {
+                                const assignedReq = requirements.find(r => r.filledBy === c.id);
+                                return !assignedReq || assignedReq.id === selectedReqId;
+                            });
+
+                            if (assignableCandidates.length === 0 && targetReq?.status !== "Filled") {
                                 return (
                                     <div className="text-center text-muted-foreground">
                                         No eligible candidates in pool.
-                                        {slateCandidates.length > 0 && <div className="text-xs mt-1">(CO-SM officers are restricted from Standard Commands)</div>}
+                                        {slateCandidates.length > 0 && <div className="text-xs mt-1">(CO-SM or Already Assigned restrictions apply)</div>}
                                     </div>
                                 )
                             }
 
                             return (
                                 <div className="grid gap-2 max-h-[300px] overflow-y-auto pr-2">
+                                    {targetReq?.status === "Filled" && (
+                                        <Button
+                                            variant="destructive"
+                                            className="justify-start h-auto py-3"
+                                            onClick={() => handleAssignCandidate(null)}
+                                        >
+                                            <div className="text-left font-medium">Unassign Current Officer</div>
+                                        </Button>
+                                    )}
                                     {assignableCandidates.map(c => (
                                         <Button
                                             key={c.id}
