@@ -31,14 +31,23 @@ export function O6TimingTool() {
         // CO Report -> CO Complete (18 months)
         const coComplete = addMonths(coReport, 18)
 
-        // O-6 Board -> JAN of the 5th year after promotion year
-        // e.g., Promoted 2609 (2026). Board is JAN 2031 (26 + 5)
-        const promoYear = promoDate.getFullYear()
+        // O-6 Board -> JAN of the 5th year after promotion FY
+        // e.g., Promoted 2509 (FY25). Board is JAN 2030 (25 + 5)
+        // e.g., Promoted 2510 (FY26). Board is JAN 2031 (26 + 5)
+
+        let promoFy = promoDate.getFullYear();
+        const promoMonth = promoDate.getMonth(); // 0-indexed (0 = Jan, 9 = Oct)
+
+        // Navy FY starts in October
+        if (promoMonth >= 9) {
+            promoFy += 1;
+        }
+
         // Use local Date constructor (year, monthIndex, day). Month is 0-indexed (0 = Jan)
-        const o6Board = new Date(promoYear + 5, 0, 1)
+        const o6Board = new Date(promoFy + 5, 0, 1)
 
         // MAJCOM -> NOV of the exact same year as the O-6 Board (10 = Nov)
-        const majcom = new Date(promoYear + 5, 10, 1)
+        const majcom = new Date(promoFy + 5, 10, 1)
 
         return {
             xoReport,

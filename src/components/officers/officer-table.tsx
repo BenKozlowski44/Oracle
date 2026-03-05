@@ -127,6 +127,7 @@ export function OfficerTable({ data, variant = "default" }: OfficerTableProps) {
                 "War College": 6,
                 "Joint Lock": 7,
                 "Hold": 8,
+                "De-screened": 97,
                 "Retire": 99,
                 "Policy": 98,
                 "List Shift": 9
@@ -168,6 +169,8 @@ export function OfficerTable({ data, variant = "default" }: OfficerTableProps) {
             case "Retire":
                 return "bg-red-500 hover:bg-red-600"
             case "Policy":
+                return "bg-red-500 hover:bg-red-600"
+            case "De-screened":
                 return "bg-red-500 hover:bg-red-600"
             case "Declined":
                 return "bg-red-500 hover:bg-red-600"

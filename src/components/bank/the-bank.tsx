@@ -22,7 +22,7 @@ export function TheBank({ data }: BankProps) {
             slate.includes("no command")
     }
 
-    const isDeclined = (o: Officer) => o.status === "Declined" || o.status === "No Opportunity"
+    const isDeclined = (o: Officer) => o.status === "Declined" || o.status === "No Opportunity" || o.status === "De-screened" || o.listShift === "Declined/Descreened"
 
     const bankOfficers = data.filter(o => {
         if (isDeclined(o)) return false;

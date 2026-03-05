@@ -1,43 +1,13 @@
 import type { Officer, Billet, OracleCommand, Slate, Metrics } from "./types"
-import { cosmCommandData } from "./cosm-data"
+
 
 export const slates: Slate[] = [
     {
-        "id": "slate-1771335821958",
-        "name": "FY26-3",
+        "id": "slate-1772671162167",
+        "name": "FY26-2",
         "windowStart": "2026-07-01",
-        "windowEnd": "2027-07-23",
+        "windowEnd": "2027-08-31",
         "requirements": [
-            {
-                "id": "req-cmd_50-xo",
-                "commandName": "USS GRAVELY",
-                "commandId": "cmd_50",
-                "role": "XO",
-                "incumbent": "TORNAMBE GREGORY",
-                "incumbentPrd": "2026-07-01",
-                "status": "Filled",
-                "filledBy": "harringtonbrianmichael_24"
-            },
-            {
-                "id": "req-cmd_77-xo",
-                "commandName": "USS PINCKNEY",
-                "commandId": "cmd_77",
-                "role": "XO",
-                "incumbent": "RAGSDALE CHRISTOPHER THOMA",
-                "incumbentPrd": "2026-09-01",
-                "status": "Filled",
-                "filledBy": "auclairtaylorr_16"
-            },
-            {
-                "id": "req-cmd_72-xo",
-                "commandName": "USS PAUL HAMILTON",
-                "commandId": "cmd_72",
-                "role": "XO",
-                "incumbent": "INTOCCIA MATTHEW JAMES",
-                "incumbentPrd": "2026-10-01",
-                "status": "Filled",
-                "filledBy": "hurleyseanpatrick_19"
-            },
             {
                 "id": "req-cmd_86-xo",
                 "commandName": "USS COMSTOCK",
@@ -45,34 +15,15 @@ export const slates: Slate[] = [
                 "role": "XO",
                 "incumbent": "HODGEMAN JESSICA LYN",
                 "incumbentPrd": "2027-02-01",
-                "status": "Filled",
-                "filledBy": "jonesantoniot_15"
-            },
-            {
-                "id": "req-cmd_3-xo",
-                "commandName": "USS TULSA  GOLD (CREW 217)",
-                "commandId": "cmd_3",
-                "role": "XO",
-                "incumbent": "Bradford, Jordan (24-2)",
-                "incumbentPrd": "2027-02-25",
                 "status": "Draft"
             },
             {
-                "id": "req-cmd_31-xo",
-                "commandName": "USS CLEVELAND",
-                "commandId": "cmd_31",
+                "id": "req-cmd_100-xo",
+                "commandName": "USS GABRIELLE GIFFORDS",
+                "commandId": "cmd_100",
                 "role": "XO",
-                "incumbent": "Eickelmann, Angela (TEMP XO)",
-                "incumbentPrd": "2027-03-27",
-                "status": "Draft"
-            },
-            {
-                "id": "req-cmd_42-xo",
-                "commandName": "USS MAHAN",
-                "commandId": "cmd_42",
-                "role": "XO",
-                "incumbent": "BABCOCK DONALD S",
-                "incumbentPrd": "2027-05-01",
+                "incumbent": "LILEKS WAYNE D",
+                "incumbentPrd": "2027-02-01",
                 "status": "Draft"
             },
             {
@@ -85,20 +36,20 @@ export const slates: Slate[] = [
                 "status": "Draft"
             },
             {
-                "id": "req-cmd_18-xo",
-                "commandName": "USS JASON DUNHAM",
-                "commandId": "cmd_18",
-                "role": "XO",
-                "incumbent": "BLANCO ANDREW ANTONIO",
-                "incumbentPrd": "2027-06-01",
-                "status": "Draft"
-            },
-            {
                 "id": "req-cmd_89-xo",
                 "commandName": "USS HARPER'S FERRY",
                 "commandId": "cmd_89",
                 "role": "XO",
                 "incumbent": "CHALLBURG MARIBEL",
+                "incumbentPrd": "2027-06-01",
+                "status": "Draft"
+            },
+            {
+                "id": "req-cmd_108-xo",
+                "commandName": "USS MANCHESTER",
+                "commandId": "cmd_108",
+                "role": "XO",
+                "incumbent": "THURMAN JEREMY S",
                 "incumbentPrd": "2027-06-01",
                 "status": "Draft"
             },
@@ -112,38 +63,11 @@ export const slates: Slate[] = [
                 "status": "Draft"
             },
             {
-                "id": "req-cmd_9-xo",
-                "commandName": "USS BENFOLD",
-                "commandId": "cmd_9",
-                "role": "XO",
-                "incumbent": "SHRADER JARED ALLEN",
-                "incumbentPrd": "2027-07-01",
-                "status": "Draft"
-            },
-            {
-                "id": "req-cmd_30-xo",
-                "commandName": "USS BELOIT",
-                "commandId": "cmd_30",
-                "role": "XO",
-                "incumbent": "Bell, Timothy",
-                "incumbentPrd": "2027-07-01",
-                "status": "Draft"
-            },
-            {
                 "id": "req-cmd_47-xo",
                 "commandName": "USS BAINBRIDGE",
                 "commandId": "cmd_47",
                 "role": "XO",
                 "incumbent": "PETERS SAVANNAH JUNE",
-                "incumbentPrd": "2027-07-01",
-                "status": "Draft"
-            },
-            {
-                "id": "req-cmd_54-xo",
-                "commandName": "USS TORTUGA",
-                "commandId": "cmd_54",
-                "role": "XO",
-                "incumbent": "HEBENSTREIT KRISTA RAE",
                 "incumbentPrd": "2027-07-01",
                 "status": "Draft"
             },
@@ -157,43 +81,117 @@ export const slates: Slate[] = [
                 "status": "Draft"
             },
             {
-                "id": "req-aamdsromania_13-xo-1771777850292",
-                "commandName": "AAMDS ROMANIA",
-                "commandId": "aamdsromania_13",
+                "id": "req-cmd_23-xo-1772671797558",
+                "commandName": "USS BILLINGS",
+                "commandId": "cmd_23",
                 "role": "XO",
-                "incumbent": "N/A",
-                "incumbentPrd": "N/A",
+                "incumbent": "BURNS JOHN A",
+                "incumbentPrd": "2026-08-25",
+                "status": "Draft"
+            },
+            {
+                "id": "req-cmd_27-xo-1772671839198",
+                "commandName": "USS COOPERSTOWN",
+                "commandId": "cmd_27",
+                "role": "XO",
+                "incumbent": "HEILIGER NICHOLAS SEAN",
+                "incumbentPrd": "2026-11-25",
+                "status": "Filled",
+                "filledBy": "tyeandrewj_12"
+            },
+            {
+                "id": "req-cmd_60-xo-1772671919157",
+                "commandName": "USS WILLIAM P LAWRENCE",
+                "commandId": "cmd_60",
+                "role": "XO",
+                "incumbent": "HARRIS ROBERT NELSON III",
+                "incumbentPrd": "2027-04-05",
+                "status": "Draft"
+            },
+            {
+                "id": "req-cmd_67-xo-1772671927548",
+                "commandName": "USS PAUL IGNATIUS",
+                "commandId": "cmd_67",
+                "role": "XO",
+                "incumbent": "SISLER RYAN J",
+                "incumbentPrd": "",
+                "status": "Draft"
+            },
+            {
+                "id": "req-cmd_88-xo-1772671937382",
+                "commandName": "USS ASHLAND",
+                "commandId": "cmd_88",
+                "role": "XO",
+                "incumbent": "Cranford, Marcus (XO-A)",
+                "incumbentPrd": "2025-07-24",
+                "status": "Draft"
+            },
+            {
+                "id": "req-cmd_93-xo-1772671948550",
+                "commandName": "USS MONTGOMERY",
+                "commandId": "cmd_93",
+                "role": "XO",
+                "incumbent": "HAUGAN NATHAN DANIEL",
+                "incumbentPrd": "",
+                "status": "Draft"
+            },
+            {
+                "id": "req-cmd_113-xo-1772671964175",
+                "commandName": "USS CANBERRA  GOLD (CREW 228)",
+                "commandId": "cmd_113",
+                "role": "XO",
+                "incumbent": "Towles, Courtney (XO/CO)",
+                "incumbentPrd": "2025-05-23",
+                "status": "Draft"
+            },
+            {
+                "id": "req-cmd_114-xo-1772671982803",
+                "commandName": "USS SANTA BARBARA  BLUE (CREW 229)",
+                "commandId": "cmd_114",
+                "role": "XO",
+                "incumbent": "Buss, Johnathan (XO/CO)",
+                "incumbentPrd": "2025-08-23",
+                "status": "Draft"
+            },
+            {
+                "id": "req-cmd_40-xo-1772672011635",
+                "commandName": "USS COLE",
+                "commandId": "cmd_40",
+                "role": "XO",
+                "incumbent": "GOSTEL CHRISTOPHER RANSOMA",
+                "incumbentPrd": "2026-01-24",
+                "status": "Draft"
+            },
+            {
+                "id": "req-cmd_2-xo-1772672042961",
+                "commandName": "USS TULSA",
+                "commandId": "cmd_2",
+                "role": "XO",
+                "incumbent": "BENKO RYAN EMERY",
+                "incumbentPrd": "2025-06-24",
                 "status": "Draft"
             }
         ],
         "candidates": [
-            "auclairtaylorr_16",
-            "jonesantoniot_15",
-            "hurleyseanpatrick_19"
-        ],
-        "candidateProfiles": [
-            {
-                "id": "prof-1",
-                "slateId": "slate-1771335821958",
-                "officerId": "harringtonbrianmichael_24",
-                "preferences": [
-                    {
-                        "key": "LCS - San Diego, CA",
-                        "rank": 1
-                    },
-                    {
-                        "key": "DDG - Norfolk, VA",
-                        "rank": 2
-                    },
-                    {
-                        "key": "DDG - San Diego, CA",
-                        "rank": 3
-                    }
-                ],
-                "experienceSummary": "Extensive ASW experience. Served as OPS on DDG 51.",
-                "availabilityDate": "2026-06-01",
-                "notes": "Strong candidate for early fill."
-            }
+            "dennellytimothyr_18",
+            "tyeandrewj_12",
+            "gubanchamiltonr_17",
+            "vansicekara_12",
+            "brinsonsamuelfelton_21",
+            "tanalegajohnfrancis_21",
+            "stensonfosterparris_21",
+            "kowatchjustinedward_21",
+            "vandecastlethomasedward_25",
+            "piresmichaeljoseph_20",
+            "whitmerandrewrobert_21",
+            "smithcodyt_12",
+            "barnerseanj_1772671666454",
+            "geerrichardgreyson_20",
+            "carballocarlosalberto_23",
+            "withrowgraigallen_19",
+            "strifflerbriangarret_22",
+            "englishjayc_13",
+            "collinstravisanthony_22"
         ],
         "status": "Active",
         "approvals": {
@@ -201,7 +199,8 @@ export const slates: Slate[] = [
             "pers41": false,
             "swcc": false,
             "swoboss": false
-        }
+        },
+        "candidateProfiles": []
     }
 ]
 
@@ -210,6 +209,24 @@ export const metrics: Metrics = {
 }
 
 export const officers: Officer[] = [
+{
+    "id": "barnerseanj_1772671666454",
+    "name": "BARNER SEAN J",
+    "rank": "CDR",
+    "designator": "1110",
+    "currentCommand": "AFLTRAGRUMP PH",
+    "prd": "2028-10-01",
+    "preferences": [],
+    "status": "Available",
+    "yearGroup": 20110,
+    "billet": "XO SHR ACT",
+    "assignedSlate": "FY27 2nd Look",
+    "csr": "7AGAZ",
+    "tentativeSlate": "26-2",
+    "preferredLocations": [],
+    "preferredPlatforms": []
+},
+
     {
         "id": "spotserjustinbrent_1772391561809",
         "name": "SPOTSER JUSTIN BRENT",
@@ -239,8 +256,19 @@ export const officers: Officer[] = [
         "assignedSlate": "4AGAZ",
         "csr": "4AGAZ",
         "listShift": "Firefighters",
-        "preferredLocations": [],
-        "preferredPlatforms": []
+        "preferredLocations": [
+            "NF",
+            "MP",
+            "RS",
+            "SD",
+            "EV"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LCS",
+            "LSD"
+        ],
+        "preferencePriority": "Homeport"
     },
     {
         "id": "cabeclintonr_1771800239015",
@@ -321,9 +349,19 @@ export const officers: Officer[] = [
         "billet": "PERS DIST OFFICER",
         "csr": "6AGAZ",
         "assignedSlate": "3rd Look CO Afloat",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null
+        "preferredLocations": [
+            "RS",
+            "YJ",
+            "PH",
+            "MP",
+            "SD"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LCS",
+            "LSD"
+        ],
+        "preferencePriority": "Platform"
     },
     {
         "id": "hurleyseanpatrick_19",
@@ -441,9 +479,19 @@ export const officers: Officer[] = [
         "billet": "STF REDI GEN/DIR",
         "csr": "4AGAZ",
         "assignedSlate": "No Command Opprotunity",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null
+        "preferredLocations": [
+            "NF",
+            "MP",
+            "SD",
+            "EV",
+            "RS"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LSD",
+            "LCS"
+        ],
+        "preferencePriority": "Platform"
     },
     {
         "id": "kleinematthewr_16",
@@ -708,9 +756,19 @@ export const officers: Officer[] = [
         "billet": "STF REDI GEN",
         "csr": "7AGAZ",
         "assignedSlate": "3rd Look CO Afloat",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null
+        "preferredLocations": [
+            "SD",
+            "PH",
+            "EV",
+            "NF",
+            "MP"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LSD",
+            "LCS"
+        ],
+        "preferencePriority": "Homeport"
     },
     {
         "id": "andrewsryannicholas_21",
@@ -1737,7 +1795,7 @@ export const officers: Officer[] = [
         "currentCommand": "TRANSCOM HD",
         "prd": "2026-11-01",
         "preferences": [],
-        "status": "Hold",
+        "status": "Declined",
         "notes": "Turning down Command",
         "yearGroup": 20110,
         "billet": "NCAGS SCT/JT TRANS PLANS OFF/00005863",
@@ -1793,9 +1851,19 @@ export const officers: Officer[] = [
         "billet": "INST TECH/INST C SOSMRC DIR",
         "csr": "5AGAZ",
         "assignedSlate": "",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "NF",
+            "MP",
+            "SD",
+            "PH",
+            "RS"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LSD",
+            "LCS"
+        ],
+        "preferencePriority": "Homeport",
         "listShift": "",
         "tentativeSlate": "26-2"
     },
@@ -1973,9 +2041,19 @@ export const officers: Officer[] = [
         "billet": "PERS DIST OFF/SURF CDR/LCDR DIST",
         "csr": "6AGAZ",
         "assignedSlate": "FY26 1st Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "RS",
+            "YJ",
+            "PH",
+            "MP",
+            "SD"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LSD",
+            "LCS"
+        ],
+        "preferencePriority": "Platform",
         "listShift": "",
         "tentativeSlate": "26-3"
     },
@@ -2373,9 +2451,19 @@ export const officers: Officer[] = [
         "billet": "PERS DIST OFF/ASST SURF CAPT DIST",
         "csr": "7AGAZ",
         "assignedSlate": "FY27 1st Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "MP",
+            "NF",
+            "SD",
+            "EV",
+            "PH"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LCS",
+            "LSD"
+        ],
+        "preferencePriority": "Platform",
         "listShift": "",
         "tentativeSlate": "26-4"
     },
@@ -2897,7 +2985,7 @@ export const officers: Officer[] = [
         "currentCommand": "OPNAV",
         "prd": "2026-12-01",
         "preferences": [],
-        "status": "Available",
+        "status": "Verify PD2",
         "notes": "",
         "yearGroup": 20130,
         "billet": "INTRAGOVT INQ/N96 CONG LIAISON",
@@ -2917,8 +3005,8 @@ export const officers: Officer[] = [
         "currentCommand": "MSTCLANT NORF VA",
         "prd": "2028-03-01",
         "preferences": [],
-        "status": "Available",
-        "notes": "",
+        "status": "Hold",
+        "notes": "Wife is on sea duty until MAY28 and potential medical issues",
         "yearGroup": 20110,
         "billet": "INST TECH/INST A MARINER",
         "csr": "5AGAZ",
@@ -3167,17 +3255,17 @@ export const officers: Officer[] = [
         "currentCommand": "TRANS JPSE",
         "prd": "2028-04-01",
         "preferences": [],
-        "status": "Retire",
+        "status": "De-screened",
         "notes": "",
         "yearGroup": 20100,
         "billet": "MGT INFO CEN/MARITIME PLANS CHF/0004730",
-        "csr": "5AGAZ",
+        "csr": "7XGAZ",
         "assignedSlate": "Retiring",
         "preferredLocations": [],
         "preferredPlatforms": [],
         "preferencePriority": null,
         "listShift": "",
-        "tentativeSlate": "26-3"
+        "tentativeSlate": ""
     },
     {
         "id": "pacestevenharrison_20",
@@ -3960,9 +4048,19 @@ export const officers: Officer[] = [
         "billet": "PERS DIST OFF/BR HD/SURF SHIP PLCMT",
         "csr": "7AGAZ",
         "assignedSlate": "FY27 1st Look",
-        "preferredLocations": [],
-        "preferredPlatforms": [],
-        "preferencePriority": null,
+        "preferredLocations": [
+            "NF",
+            "RS",
+            "YJ",
+            "PH",
+            "EV"
+        ],
+        "preferredPlatforms": [
+            "DDG",
+            "LCS",
+            "LSD"
+        ],
+        "preferencePriority": "Platform",
         "listShift": ""
     },
     {
@@ -7443,7 +7541,7 @@ export const officers: Officer[] = [
     },
     {
         "id": "pcc-1772152854204",
-        "name": "Johnson, Lauren",
+        "name": "JOHNSON LAUREN MICHELLE",
         "rank": "CDR",
         "designator": "1110",
         "currentCommand": "PCC (Post-Command)",
@@ -7455,7 +7553,7 @@ export const officers: Officer[] = [
     },
     {
         "id": "pcc-1772155557695",
-        "name": "Wang, Nellie (CHS single crew CO)(COC NOV24)",
+        "name": "WANG NELLIE",
         "rank": "CDR",
         "designator": "1110",
         "currentCommand": "PCC (Post-Command)",
@@ -7479,7 +7577,7 @@ export const officers: Officer[] = [
     },
     {
         "id": "pcc-1772158452646",
-        "name": "Neff, Justin (CO) (COC NOV 24)",
+        "name": "NEFF JUSTIN MICHAEL",
         "rank": "CDR",
         "designator": "1110",
         "currentCommand": "PCC (Post-Command)",
@@ -7491,7 +7589,7 @@ export const officers: Officer[] = [
     },
     {
         "id": "pcc-1772158609754",
-        "name": "Kemmitz, Bryan (XO-A)",
+        "name": "KEMMITZ BRIAN",
         "rank": "CDR",
         "designator": "1110",
         "currentCommand": "PCC (Post-Command)",
@@ -7503,7 +7601,7 @@ export const officers: Officer[] = [
     },
     {
         "id": "pcc-1772239905020",
-        "name": "White, Alfonza",
+        "name": "WHITE ALFONZA OCTTAVAIS",
         "rank": "CDR",
         "designator": "1110",
         "currentCommand": "PCC (Post-Command)",
@@ -7515,7 +7613,7 @@ export const officers: Officer[] = [
     },
     {
         "id": "pcc-1772240063472",
-        "name": "Winslow, Michael",
+        "name": "WINSLOW MICHAEL ALLAN",
         "rank": "CDR",
         "designator": "1110",
         "currentCommand": "PCC (Post-Command)",
@@ -7539,7 +7637,7 @@ export const officers: Officer[] = [
     },
     {
         "id": "pcc-1772246435949",
-        "name": "Mann, Ludwig (Lou) (CO)(COC TBD)",
+        "name": "MANN LUDWIG III",
         "rank": "CDR",
         "designator": "1110",
         "currentCommand": "PCC (Post-Command)",
@@ -7551,7 +7649,7 @@ export const officers: Officer[] = [
     },
     {
         "id": "pcc-1772331378277",
-        "name": "Herndl, Phil (retirement 2406)",
+        "name": "HERDL PHILLIP",
         "rank": "CDR",
         "designator": "1110",
         "currentCommand": "PCC (Post-Command)",
@@ -7575,7 +7673,7 @@ export const officers: Officer[] = [
     },
     {
         "id": "pcc-1772331902375",
-        "name": "Callihan, Shawn (COC 2410 --> 2602)",
+        "name": "CALLIHAN SHAWN RICHARD",
         "rank": "CDR",
         "designator": "1110",
         "currentCommand": "PCC (Post-Command)",
@@ -7599,7 +7697,7 @@ export const officers: Officer[] = [
     },
     {
         "id": "pcc-1772332526179",
-        "name": "Laidler, Andrew (SINGLE CREW) (CO JUL24)",
+        "name": "LAIDLER ANDREW L",
         "rank": "CDR",
         "designator": "1110",
         "currentCommand": "PCC (Post-Command)",
@@ -8706,7 +8804,8 @@ export const oracleData: OracleCommand[] = [
         "prospectiveCO": {
             "name": "",
             "prd": ""
-        }
+        },
+        "notes": "26-4 VANWINTER ROBERT"
     },
     {
         "id": "cmd_21",
@@ -10003,7 +10102,8 @@ export const oracleData: OracleCommand[] = [
                 "m": "MAR29",
                 "q": "SEP30"
             }
-        }
+        },
+        "notes": "FONTANA VINCE"
     },
     {
         "id": "cmd_48",
@@ -10230,8 +10330,8 @@ export const oracleData: OracleCommand[] = [
             "timelineData": {
                 "i": "JUL27",
                 "k": "JAN29",
-                "m": "APR29",
-                "q": "OCT30"
+                "m": "MAR29",
+                "q": "SEP30"
             }
         }
     },
@@ -11062,7 +11162,7 @@ export const oracleData: OracleCommand[] = [
             }
         },
         "nextSlateParams": {
-            "targetBoardDate": "27-1",
+            "targetBoardDate": "27-2",
             "requirement": "XO"
         },
         "timeline": {
@@ -11074,12 +11174,12 @@ export const oracleData: OracleCommand[] = [
         "platform": "DDG",
         "slatedXO": {
             "name": "Forecast",
-            "reportDate": "MAY28",
+            "reportDate": "Jun28",
             "timelineData": {
-                "i": "MAY28",
-                "k": "NOV29",
-                "m": "JAN30",
-                "q": "JUL31"
+                "i": "Jun28",
+                "k": "DEC29",
+                "m": "feb30",
+                "q": "AUG31"
             }
         },
         "prospectiveCO": {
@@ -11095,7 +11195,8 @@ export const oracleData: OracleCommand[] = [
                 "q": "FEB30",
                 "k": "JUN28"
             }
-        }
+        },
+        "notes": "BONSALL NICK"
     },
     {
         "id": "cmd_67",
@@ -11635,7 +11736,13 @@ export const oracleData: OracleCommand[] = [
         },
         "inboundXO": {
             "name": "BOILY JUSTIN ALLEN",
-            "reportDate": "MAY27"
+            "reportDate": "MAY27",
+            "timelineData": {
+                "i": "MAY27",
+                "k": "NOV28",
+                "m": "JAN29",
+                "q": "JUL30"
+            }
         },
         "nextSlateParams": {
             "targetBoardDate": "27-3",
@@ -12884,17 +12991,17 @@ export const oracleData: OracleCommand[] = [
         "uic": "20172",
         "location": "San Diego, CA",
         "currentCO": {
-            "name": "Schmidt, Robert (XO/CO) (COC 2501)",
+            "name": "SCHMIDT ROBERT S",
             "prd": "2024-06-24",
             "timelineData": {
                 "i": "2024-03-01",
                 "k": "2024-07-24",
                 "m": "2025-02-24",
-                "q": "2026-08-24"
+                "q": "OCT26"
             }
         },
         "currentXO": {
-            "name": "Rivers, William (XO/CO)",
+            "name": "RIVERS WILLIAM MASON JR",
             "prd": "2025-12-24",
             "timelineData": {
                 "i": "2025-10-24",
@@ -12933,6 +13040,10 @@ export const oracleData: OracleCommand[] = [
                 "m": "2029-02-01",
                 "q": "2030-08-01"
             }
+        },
+        "prospectiveCO": {
+            "name": "BRADFORD JORDAN PAUL",
+            "prd": ""
         }
     },
     {
@@ -14014,7 +14125,7 @@ export const oracleData: OracleCommand[] = [
         ],
         "platform": "CO-SM",
         "currentCO": {
-            "name": "Farrell, BJ",
+            "name": "SCHAEFER CRYSTAL L",
             "prd": "2024-07-21",
             "timelineData": {
                 "i": "2021-12-16",
@@ -14062,7 +14173,8 @@ export const oracleData: OracleCommand[] = [
                 "m": "",
                 "q": ""
             }
-        }
+        },
+        "rotationStyle": "DirectCO"
     },
     {
         "id": "aamdsromania_13",

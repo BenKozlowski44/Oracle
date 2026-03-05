@@ -381,20 +381,30 @@ export default function SlateDetailPage({ params }: SlateDetailPageProps) {
                                                         <TableRow key={req.id}>
                                                             <TableCell className="font-medium">
                                                                 <div>{req.commandName}</div>
-                                                                <div className="text-xs text-muted-foreground">
-                                                                    {(() => {
-                                                                        if (title === "CO-SM") {
-                                                                            const cmd = oracleData.find(c => c.id === req.commandId);
-                                                                            if (cmd) {
-                                                                                const style = cmd.rotationStyle === "DirectCO" ? "Direct Input CO" : "Fleet Up CO";
-                                                                                const length = cmd.tourLength ? `${cmd.tourLength} mos` : "";
-                                                                                const notes = cmd.notes ? `• ${cmd.notes}` : "";
-                                                                                return `${style} ${length} ${notes}`;
-                                                                            }
-                                                                        }
-                                                                        return req.role;
-                                                                    })()}
-                                                                </div>
+                                                                {(() => {
+                                                                    const cmd = oracleData.find(c => c.id === req.commandId);
+                                                                    if (!cmd) return <div className="text-xs text-muted-foreground font-normal">{req.role}</div>;
+
+                                                                    const tags = cmd.tags ? cmd.tags.filter(t => t !== "CO-SM" && t !== "CDR CMD").join(", ") : "";
+                                                                    const locationInfo = [cmd.uic, cmd.location, tags].filter(Boolean).join(" • ");
+
+                                                                    let roleDetails = `Role: ${req.role}`;
+                                                                    if (cmd.tags?.includes("CO-SM") || title === "CO-SM") {
+                                                                        const style = cmd.rotationStyle === "DirectCO" ? "Direct Input CO" : "Fleet Up CO";
+                                                                        const length = cmd.tourLength ? `${cmd.tourLength} mos` : "";
+                                                                        roleDetails += ` (${style} ${length}`.trim() + `)`;
+                                                                    }
+                                                                    if (cmd.notes) {
+                                                                        roleDetails += ` • ${cmd.notes}`;
+                                                                    }
+
+                                                                    return (
+                                                                        <div className="mt-1 space-y-0.5">
+                                                                            {locationInfo && <div className="text-[11px] text-muted-foreground font-normal leading-tight">{locationInfo}</div>}
+                                                                            <div className="text-xs text-muted-foreground font-normal leading-tight">{roleDetails}</div>
+                                                                        </div>
+                                                                    );
+                                                                })()}
                                                             </TableCell>
                                                             <TableCell>{req.incumbent}</TableCell>
                                                             <TableCell>{formatToMMMyy(req.incumbentPrd)}</TableCell>
@@ -633,7 +643,7 @@ export default function SlateDetailPage({ params }: SlateDetailPageProps) {
                             }
 
                             return (
-                                <div className="grid gap-2">
+                                <div className="grid gap-2 max-h-[300px] overflow-y-auto pr-2">
                                     {assignableCandidates.map(c => (
                                         <Button
                                             key={c.id}

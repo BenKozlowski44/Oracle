@@ -350,30 +350,32 @@ export function EditCommandDialog({
                         </div>
                     </div>
 
+                    <Separator />
+
+                    {/* Prospective CO (P-CO / Stashed XO) */}
+                    <div className="grid gap-4">
+                        <h3 className="font-semibold leading-none tracking-tight">
+                            {formData.rotationStyle === "DirectCO" ? "Prospective CO (Inbound Relief)" : "Prospective CO (P-CO)"}
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="grid gap-2 col-span-full">
+                                <Label htmlFor="pcoName">Name</Label>
+                                <Input
+                                    id="pcoName"
+                                    placeholder={formData.rotationStyle === "DirectCO" ? "Leave empty if none" : "Waiting for CO Turnover..."}
+                                    value={formData.prospectiveCO?.name || ""}
+                                    onChange={(e) => setFormData(prev => prev ? ({
+                                        ...prev,
+                                        prospectiveCO: { ...prev.prospectiveCO, name: e.target.value, prd: prev.prospectiveCO?.prd || "" }
+                                    }) : null)}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
                     {/* XO Sections - Only Show if FleetUp */}
                     {(formData.rotationStyle !== "DirectCO") && (
                         <>
-                            <Separator />
-
-                            {/* Prospective CO (P-CO / Stashed XO) */}
-                            <div className="grid gap-4">
-                                <h3 className="font-semibold leading-none tracking-tight">Prospective CO (P-CO)</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <div className="grid gap-2 col-span-full">
-                                        <Label htmlFor="pcoName">Name</Label>
-                                        <Input
-                                            id="pcoName"
-                                            placeholder="Waiting for CO Turnover..."
-                                            value={formData.prospectiveCO?.name || ""}
-                                            onChange={(e) => setFormData(prev => prev ? ({
-                                                ...prev,
-                                                prospectiveCO: { ...prev.prospectiveCO, name: e.target.value, prd: prev.prospectiveCO?.prd || "" }
-                                            }) : null)}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
                             <Separator />
 
                             {/* Current XO */}

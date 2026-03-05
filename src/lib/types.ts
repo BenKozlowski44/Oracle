@@ -2,7 +2,7 @@ export type Rank = "ENS" | "LTJG" | "LT" | "LCDR" | "CDR" | "CAPT" | "ADM"
 
 export type Designator = "1110" | "1310" | "1320" | "1120" | "3100" | "1830" | "1117"
 
-export type BilletRole = "CO" | "XO" | "CO-SM"
+export type BilletRole = "CO" | "XO" | "CO-SM" | "NO RELIEF"
 
 export type OfficerStatus =
     | "Available"
@@ -20,6 +20,7 @@ export type OfficerStatus =
     | "Policy"
     | "Declined"
     | "No Opportunity"
+    | "De-screened"
     | "FF (EAST COAST)"
     | "FF (SDGO/Pearl/YOKO/ROTA)"
     | "FF (YOKO)"

@@ -196,6 +196,7 @@ export function EditOfficerDialog({ officer, open, onOpenChange }: EditOfficerDi
                                     <SelectItem value="Policy">Policy</SelectItem>
                                     <SelectItem value="Declined">Declined</SelectItem>
                                     <SelectItem value="No Opportunity">No Opportunity</SelectItem>
+                                    <SelectItem value="De-screened">De-screened</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -224,6 +225,7 @@ export function EditOfficerDialog({ officer, open, onOpenChange }: EditOfficerDi
                                 <SelectItem value="Firefighters">Firefighters</SelectItem>
                                 <SelectItem value="Slated">Slated</SelectItem>
                                 <SelectItem value="CO-SM">CO-SM</SelectItem>
+                                <SelectItem value="Declined/Descreened">Declined/Descreened</SelectItem>
                             </SelectContent>
                         </Select>
                         <p className="text-xs text-muted-foreground">Moving an officer via this dropdown updates their Tab assignment directly, saving to the List Shift column in Excel without altering their official Status.</p>

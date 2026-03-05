@@ -109,37 +109,49 @@ export function predictNextVacancyDate(command: OracleCommand): string {
     return true;
   };
 
-  const hasInboundXO = isFilled(command.inboundXO?.reportDate) && command.inboundXO?.name && command.inboundXO?.name !== "VACANT";
-
-  if (!hasInboundXO) {
-    // IMMEDIATE HOLE: The Inbound XO seat is empty. We need to fill it based on when the Current XO leaves.
-    if (isFilled(command.currentXO?.prd)) {
-      baseDate = parseAnyDate(command.currentXO!.prd);
+  if (command.rotationStyle === "DirectCO") {
+    // DIRECT CO PIPELINE: No XO fleet up. Vacancy is driven by CO departing.
+    if (isFilled(command.prospectiveCO?.prd)) {
+      baseDate = parseAnyDate(command.prospectiveCO!.prd);
     }
 
-    // Fallback: If Current XO PRD is missing/TBD, we check the CO to see when *they* leave (since XO fleets up)
     if (!baseDate && isFilled(command.currentCO?.prd)) {
       baseDate = parseAnyDate(command.currentCO!.prd);
     }
-
-    // Safety Fallback: If Current XO/CO are BOTH TBD, we cautiously look forward to the Slated forecast so the math doesn't crash
-    if (!baseDate && isFilled(command.slatedXO?.reportDate)) {
-      baseDate = parseAnyDate(command.slatedXO!.reportDate);
-    }
-
   } else {
-    // SAFE PIPELINE: Inbound XO is filled. The *next* hole is the Slated XO.
-    // 1. If explicit forecast available:
-    if (isFilled(command.slatedXO?.reportDate)) {
-      baseDate = parseAnyDate(command.slatedXO!.reportDate);
-    }
+    // FLEET UP PIPELINE (Standard)
+    const hasInboundXO = isFilled(command.inboundXO?.reportDate) && command.inboundXO?.name && command.inboundXO?.name !== "VACANT";
 
-    // 2. Fallback: If no explicit Slated forecast, mathematically predict it as Inbound XO + 18mo
-    if (!baseDate && isFilled(command.inboundXO?.reportDate)) {
-      const inboundArrival = parseAnyDate(command.inboundXO!.reportDate);
-      if (inboundArrival) {
-        // The vacancy opens approximately 18 months after the Inbound XO arrives (CO fleet up cycle)
-        baseDate = addMonths(inboundArrival, 18);
+    if (!hasInboundXO) {
+      // IMMEDIATE HOLE: The Inbound XO seat is empty. We need to fill it based on when the Current XO leaves.
+      if (isFilled(command.currentXO?.prd)) {
+        baseDate = parseAnyDate(command.currentXO!.prd);
+      }
+
+      // Fallback: If Current XO PRD is missing/TBD, we check the CO to see when *they* leave (since XO fleets up)
+      if (!baseDate && isFilled(command.currentCO?.prd)) {
+        baseDate = parseAnyDate(command.currentCO!.prd);
+      }
+
+      // Safety Fallback: If Current XO/CO are BOTH TBD, we cautiously look forward to the Slated forecast so the math doesn't crash
+      if (!baseDate && isFilled(command.slatedXO?.reportDate)) {
+        baseDate = parseAnyDate(command.slatedXO!.reportDate);
+      }
+
+    } else {
+      // SAFE PIPELINE: Inbound XO is filled. The *next* hole is the Slated XO.
+      // 1. If explicit forecast available:
+      if (isFilled(command.slatedXO?.reportDate)) {
+        baseDate = parseAnyDate(command.slatedXO!.reportDate);
+      }
+
+      // 2. Fallback: If no explicit Slated forecast, mathematically predict it as Inbound XO + 18mo
+      if (!baseDate && isFilled(command.inboundXO?.reportDate)) {
+        const inboundArrival = parseAnyDate(command.inboundXO!.reportDate);
+        if (inboundArrival) {
+          // The vacancy opens approximately 18 months after the Inbound XO arrives (CO fleet up cycle)
+          baseDate = addMonths(inboundArrival, 18);
+        }
       }
     }
   }

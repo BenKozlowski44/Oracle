@@ -4,7 +4,7 @@ import { Officer, Billet, OracleCommand, Metrics } from "@/lib/types"
 import { getAllAlerts, getAllPersonnelAlerts } from "@/lib/alerts"
 
 export const isFirefighter = (o: Officer) => {
-    if (o.status === "Slated" || o.listShift === "Slated" || o.status === "Declined" || o.status === "No Opportunity") return false;
+    if (o.status === "Slated" || o.listShift === "Slated" || o.status === "Declined" || o.status === "No Opportunity" || o.status === "De-screened" || o.listShift === "Declined/Descreened") return false;
     if (o.listShift === "CO-SM" || o.screened?.includes("CO-SM")) return false;
     const slate = o.assignedSlate?.toLowerCase() || ""
     const shift = o.listShift || ""
@@ -41,6 +41,8 @@ export function BankOfficersCard({ officers }: { officers: Officer[] }) {
         o.listShift !== "Slated" &&
         o.status !== "Declined" &&
         o.status !== "No Opportunity" &&
+        o.status !== "De-screened" &&
+        o.listShift !== "Declined/Descreened" &&
         o.listShift !== "CO-SM" &&
         !o.screened?.includes("CO-SM") &&
         !isFirefighter(o)
@@ -62,6 +64,7 @@ export function BankOfficersCard({ officers }: { officers: Officer[] }) {
             case "List Shift": return "bg-red-500"
             case "Retire": return "bg-red-500"
             case "Policy": return "bg-red-500"
+            case "De-screened": return "bg-red-500"
             case "Slated": return "bg-blue-500"
             case "Defer": return "bg-yellow-500"
             case "Hold": return "bg-red-500"
@@ -78,6 +81,7 @@ export function BankOfficersCard({ officers }: { officers: Officer[] }) {
         "War College": 5,
         "Joint Lock": 6,
         "Hold": 7,
+        "De-screened": 97,
         "Policy": 98,
         "Retire": 99,
         "List Shift": 8
@@ -119,7 +123,9 @@ export function CosmBankOfficersCard({ officers }: { officers: Officer[] }) {
         o.status !== "Slated" &&
         o.listShift !== "Slated" &&
         o.status !== "Declined" &&
-        o.status !== "No Opportunity"
+        o.status !== "No Opportunity" &&
+        o.status !== "De-screened" &&
+        o.listShift !== "Declined/Descreened"
     )
     const totalCount = validOfficers.length
 
@@ -198,6 +204,7 @@ export function FirefighterStatsCard({ officers }: { officers: Officer[] }) {
             case "War College": return "bg-orange-500"
             case "Family Planning": return "bg-yellow-500"
             case "List Shift": return "bg-red-500"
+            case "De-screened": return "bg-red-500"
             case "Slated": return "bg-blue-500"
             case "Defer": return "bg-yellow-500"
             case "Hold": return "bg-red-500"
@@ -214,6 +221,7 @@ export function FirefighterStatsCard({ officers }: { officers: Officer[] }) {
         "War College": 5,
         "Joint Lock": 6,
         "Hold": 7,
+        "De-screened": 97,
         "List Shift": 8
     }
 
