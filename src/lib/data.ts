@@ -14006,7 +14006,13 @@ export const oracleData: OracleCommand[] = [
         "platform": "DDG",
         "inboundXO": {
             "name": "HORNE JOHN HARRISON",
-            "reportDate": "APR27"
+            "reportDate": "APR27",
+            "timelineData": {
+                "i": "APR27",
+                "m": "DEC28",
+                "k": "OCT28",
+                "q": "JUN30"
+            }
         },
         "slatedXO": {
             "name": "Forecast",
@@ -15346,3 +15352,12 @@ export const oracleData: OracleCommand[] = [
         }
     }
 ]
+export const boards: import("./types").CdrCmdBoard[] = [
+    {
+        id: "fy26_test",
+        fy: "FY26",
+        boardDate: "Dec 3-5",
+        candidates: [],
+        status: "Open"
+    }
+];
