@@ -54,100 +54,99 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
         const workbook = new ExcelJS.Workbook()
         await workbook.xlsx.load(arrayBuffer)
 
-        const worksheet = workbook.worksheets[0]
-        if (!worksheet) return;
-
         const newCandidates: BoardCandidate[] = []
 
-        // Map headers
-        const headers: Record<string, number> = {};
-        const headerRow = worksheet.getRow(1);
-        headerRow.eachCell((cell, colNumber) => {
-            const value = cell.value?.toString().trim().toLowerCase();
-            if (value) headers[value] = colNumber;
-        });
+        workbook.eachSheet((worksheet, sheetId) => {
+            // Determine Look Tracker from sheet name
+            let sheetLookTracker: "1st Look" | "2nd Look" | "3rd Look" = "1st Look";
+            const sheetNameLower = worksheet.name.toLowerCase();
+            if (sheetNameLower.includes("1st")) sheetLookTracker = "1st Look";
+            else if (sheetNameLower.includes("2nd")) sheetLookTracker = "2nd Look";
+            else if (sheetNameLower.includes("3rd")) sheetLookTracker = "3rd Look";
 
-        // Helper to get value
-        const getVal = (row: ExcelJS.Row, ...possibleHeaders: string[]) => {
-            for (const h of possibleHeaders) {
-                const col = headers[h.toLowerCase()];
-                if (col) {
-                    const cell = row.getCell(col);
-                    // Handle rich text
-                    if (cell.type === ExcelJS.ValueType.RichText && cell.value && typeof cell.value === 'object' && 'richText' in cell.value) {
-                        return cell.value.richText.map(rt => rt.text).join('').trim();
+            // Map headers
+            const headers: Record<string, number> = {};
+            const headerRow = worksheet.getRow(1);
+            if (!headerRow) return;
+
+            headerRow.eachCell((cell, colNumber) => {
+                const value = cell.value?.toString().trim().toLowerCase();
+                if (value) headers[value] = colNumber;
+            });
+
+            // Helper to get value
+            const getVal = (row: ExcelJS.Row, ...possibleHeaders: string[]) => {
+                for (const h of possibleHeaders) {
+                    const col = headers[h.toLowerCase()];
+                    if (col) {
+                        const cell = row.getCell(col);
+                        // Handle rich text
+                        if (cell.type === ExcelJS.ValueType.RichText && cell.value && typeof cell.value === 'object' && 'richText' in cell.value) {
+                            return cell.value.richText.map(rt => rt.text).join('').trim();
+                        }
+                        // Handle formulas
+                        if (cell.type === ExcelJS.ValueType.Formula && cell.result !== undefined) {
+                            return cell.result?.toString().trim();
+                        }
+                        // Handle dates directly
+                        if (cell.value instanceof Date) {
+                            const year = cell.value.getFullYear();
+                            const month = String(cell.value.getMonth() + 1).padStart(2, '0');
+                            const day = String(cell.value.getDate()).padStart(2, '0');
+                            return `${year}-${month}-${day}`;
+                        }
+                        return cell.value?.toString().trim();
                     }
-                    // Handle formulas
-                    if (cell.type === ExcelJS.ValueType.Formula && cell.result !== undefined) {
-                        return cell.result?.toString().trim();
+                }
+                return null;
+            };
+
+            worksheet.eachRow((row, rowNumber) => {
+                if (rowNumber === 1) return; // skip header
+
+                const rawName = getVal(row, 'name');
+                const name = String(rawName || "Unknown");
+                if (!rawName || name.trim() === '') return;
+
+                const rank = String(getVal(row, 'rank') || "LCDR");
+                const designator = String(getVal(row, 'desig', 'designator') || "1110");
+                const commDate = String(getVal(row, 'commission', 'date', 'comm date', 'commissioning date') || "");
+
+                let calculatedYcs = 0;
+                if (commDate && board.boardDate) {
+                    // Approximate Year extracting
+                    let commYearText = commDate;
+                    // If it's a serial date string, or YYYY-MM-DD
+                    if (commDate.match(/^\d{4}/)) {
+                        commYearText = commDate.substring(0, 4);
+                    } else if (commDate.includes('/')) {
+                        const parts = commDate.split('/');
+                        if (parts.length === 3) commYearText = parts[2].length === 2 ? `20${parts[2]}` : parts[2];
                     }
-                    // Handle dates directly
-                    if (cell.value instanceof Date) {
-                        const year = cell.value.getFullYear();
-                        const month = String(cell.value.getMonth() + 1).padStart(2, '0');
-                        const day = String(cell.value.getDate()).padStart(2, '0');
-                        return `${year}-${month}-${day}`;
+
+                    const commYear = parseInt(commYearText, 10);
+                    const boardYear = new Date(board.boardDate).getFullYear();
+                    if (!isNaN(commYear) && !isNaN(boardYear)) {
+                        calculatedYcs = boardYear - commYear;
                     }
-                    return cell.value?.toString().trim();
-                }
-            }
-            return null;
-        };
-
-        worksheet.eachRow((row, rowNumber) => {
-            if (rowNumber === 1) return; // skip header
-
-            const rawName = getVal(row, 'name');
-            const name = String(rawName || "Unknown");
-            if (!rawName || name.trim() === '') return;
-
-            const rank = String(getVal(row, 'rank') || "LCDR");
-            const designator = String(getVal(row, 'desig', 'designator') || "1110");
-            const commDate = String(getVal(row, 'commission', 'date', 'comm date', 'commissioning date') || "");
-
-            let lookTrackerRaw = getVal(row, 'look', 'tracker', 'look tracker');
-            let lookTracker: "1st Look" | "2nd Look" | "Other" = "1st Look";
-            if (lookTrackerRaw) {
-                const l = lookTrackerRaw.toLowerCase();
-                if (l.includes("1st")) lookTracker = "1st Look";
-                else if (l.includes("2nd")) lookTracker = "2nd Look";
-                else lookTracker = "Other";
-            }
-
-            let calculatedYcs = 0;
-            if (commDate && board.boardDate) {
-                // Approximate Year extracting
-                let commYearText = commDate;
-                // If it's a serial date string, or YYYY-MM-DD
-                if (commDate.match(/^\d{4}/)) {
-                    commYearText = commDate.substring(0, 4);
-                } else if (commDate.includes('/')) {
-                    const parts = commDate.split('/');
-                    if (parts.length === 3) commYearText = parts[2].length === 2 ? `20${parts[2]}` : parts[2];
                 }
 
-                const commYear = parseInt(commYearText, 10);
-                const boardYear = new Date(board.boardDate).getFullYear();
-                if (!isNaN(commYear) && !isNaN(boardYear)) {
-                    calculatedYcs = boardYear - commYear;
-                }
-            }
-
-            newCandidates.push({
-                id: `cand_${Math.random().toString(36).substring(2, 9)}`,
-                name,
-                rank,
-                designator,
-                commissioningDate: commDate,
-                ycs: calculatedYcs,
-                lookTracker,
-                missingRecords: false,
-                missingRecordsNotes: "",
-                deferralRequested: false,
-                deferralApproved: false,
-                specialRequests: "",
-                boardNotes: "",
-                result: "Pending"
+                newCandidates.push({
+                    id: `cand_${Math.random().toString(36).substring(2, 9)}`,
+                    name,
+                    rank,
+                    designator,
+                    commissioningDate: commDate,
+                    ycs: calculatedYcs,
+                    lookTracker: sheetLookTracker,
+                    missingRecords: false,
+                    missingRecordsNotes: "",
+                    deferralRequested: false,
+                    deferralApproved: false,
+                    specialRequests: "",
+                    boardNotes: "",
+                    result: "Pending"
+                });
             });
         });
 
@@ -167,7 +166,6 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
     const updateCandidate = (candId: string, updates: Partial<BoardCandidate>) => {
         setCandidates(prev => prev.map(c => c.id === candId ? { ...c, ...updates } : c))
     }
-
     return (
         <div className="flex-1 space-y-4 p-8 pt-6">
             <div className="flex items-center space-x-4 mb-4">
@@ -225,13 +223,13 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                                     2nd Look
                                     <Badge variant="secondary" className="ml-2 h-5 bg-muted-foreground/20">{candidates.filter(c => c.lookTracker === "2nd Look").length}</Badge>
                                 </TabsTrigger>
-                                <TabsTrigger value="Other">
-                                    Other
-                                    <Badge variant="secondary" className="ml-2 h-5 bg-muted-foreground/20">{candidates.filter(c => c.lookTracker === "Other").length}</Badge>
+                                <TabsTrigger value="3rd Look">
+                                    3rd Look
+                                    <Badge variant="secondary" className="ml-2 h-5 bg-muted-foreground/20">{candidates.filter(c => c.lookTracker === "3rd Look").length}</Badge>
                                 </TabsTrigger>
                             </TabsList>
 
-                            {(["1st Look", "2nd Look", "Other"] as const).map(look => {
+                            {(["1st Look", "2nd Look", "3rd Look"] as const).map(look => {
                                 const lookCandidates = candidates.filter(c => c.lookTracker === look);
 
                                 return (
