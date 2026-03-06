@@ -340,7 +340,6 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                                                     <TableRow>
                                                         <TableHead className="w-[200px] sticky left-0 bg-background z-10">Officer</TableHead>
                                                         <TableHead className="min-w-[120px]">Eligibility</TableHead>
-                                                        <TableHead className="min-w-[120px] text-center">Missing Records</TableHead>
                                                         <TableHead className="min-w-[200px] text-center">Deferral</TableHead>
                                                         <TableHead className="min-w-[250px]">Special Requests/Notes</TableHead>
                                                         {allRawHeaders.map(header => (
@@ -367,22 +366,6 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                                                                 <TableCell>
                                                                     <div className="text-xs text-muted-foreground">Comm: {c.commissioningDate || "N/A"}</div>
                                                                     <div className="text-[10px] text-muted-foreground">{c.ycs > 0 ? `${c.ycs} YCS` : ""}</div>
-                                                                </TableCell>
-                                                                <TableCell className="text-center">
-                                                                    <div className="flex flex-col items-center gap-2">
-                                                                        <Checkbox
-                                                                            checked={c.missingRecords}
-                                                                            onCheckedChange={(val) => updateCandidate(c.id, { missingRecords: !!val })}
-                                                                        />
-                                                                        {c.missingRecords && (
-                                                                            <Input
-                                                                                placeholder="Details..."
-                                                                                className="h-7 text-xs"
-                                                                                value={c.missingRecordsNotes || ""}
-                                                                                onChange={(e) => updateCandidate(c.id, { missingRecordsNotes: e.target.value })}
-                                                                            />
-                                                                        )}
-                                                                    </div>
                                                                 </TableCell>
                                                                 <TableCell>
                                                                     <div className="space-y-2 text-sm pt-1 pb-1">
