@@ -1,5 +1,6 @@
-import type { Officer, Billet, OracleCommand, Slate, Metrics } from "./types"
+import type { Officer, Billet, OracleCommand, Slate, Metrics, CdrCmdBoard } from "./types"
 
+export let boards: CdrCmdBoard[] = []
 
 export const slates: Slate[] = [
     {
@@ -215,24 +216,39 @@ export const metrics: Metrics = {
 }
 
 export const officers: Officer[] = [
-{
-    "id": "barnerseanj_1772671666454",
-    "name": "BARNER SEAN J",
-    "rank": "CDR",
-    "designator": "1110",
-    "currentCommand": "AFLTRAGRUMP PH",
-    "prd": "2028-10-01",
-    "preferences": [],
-    "status": "Available",
-    "yearGroup": 20110,
-    "billet": "XO SHR ACT",
-    "assignedSlate": "FY27 2nd Look",
-    "csr": "7AGAZ",
-    "tentativeSlate": "26-2",
-    "preferredLocations": [],
-    "preferredPlatforms": []
-},
-
+    {
+        "id": "josephanthonymarcello_1772724366007",
+        "name": "JOSEPH ANTHONY MARCELLO",
+        "rank": "LCDR",
+        "designator": "1117",
+        "currentCommand": "CNRF DET MILL",
+        "prd": "202707",
+        "preferences": [],
+        "status": "Available",
+        "yearGroup": 20130,
+        "billet": "PERS DIST OFF/FTS/ADDU TO 46048/62980",
+        "assignedSlate": "FY27 2nd Look",
+        "csr": "7AGAZ",
+        "preferredLocations": [],
+        "preferredPlatforms": []
+    },
+    {
+        "id": "barnerseanj_1772671666454",
+        "name": "BARNER SEAN J",
+        "rank": "CDR",
+        "designator": "1110",
+        "currentCommand": "AFLTRAGRUMP PH",
+        "prd": "2028-10-01",
+        "preferences": [],
+        "status": "Available",
+        "yearGroup": 20110,
+        "billet": "XO SHR ACT",
+        "assignedSlate": "FY27 2nd Look",
+        "csr": "7AGAZ",
+        "tentativeSlate": "26-2",
+        "preferredLocations": [],
+        "preferredPlatforms": []
+    },
     {
         "id": "spotserjustinbrent_1772391561809",
         "name": "SPOTSER JUSTIN BRENT",
@@ -7999,7 +8015,7 @@ export const oracleData: OracleCommand[] = [
         },
         "platform": "DDG",
         "fleetUpProgress": {
-            "isic": false,
+            "isic": true,
             "tycom": false,
             "pco": true,
             "orders": false,
@@ -8128,6 +8144,13 @@ export const oracleData: OracleCommand[] = [
                 "m": "2030-01-01",
                 "q": "2031-07-01"
             }
+        },
+        "fleetUpProgress": {
+            "isic": true,
+            "tycom": false,
+            "pco": true,
+            "orders": false,
+            "coc": false
         }
     },
     {

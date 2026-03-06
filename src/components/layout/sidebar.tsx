@@ -37,6 +37,11 @@ const navItems = [
         icon: Users,
     },
     {
+        title: "CDR CMD Board",
+        href: "/boards",
+        icon: Milestone,
+    },
+    {
         title: "PCC",
         href: "/pcc",
         icon: GraduationCap,

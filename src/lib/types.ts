@@ -171,3 +171,34 @@ export interface Slate {
         swoboss: boolean
     }
 }
+
+export type BoardResult = "Pending" | "Selected CO" | "Selected XO" | "Selected XO-SM" | "FOS" | "Deferred" | "Pulled"
+
+export interface BoardCandidate {
+    id: string // Unique ID for this board instance
+    name: string
+    rank: Rank | string
+    designator: Designator | string
+    commissioningDate?: string // Required to calculate YCS
+    ycs: number // Calculated Years Commissioned Service at board time
+    lookTracker: "1st Look" | "2nd Look" | "Other"
+
+    // Board Prep Fields
+    missingRecords: boolean
+    missingRecordsNotes?: string
+    deferralRequested: boolean
+    deferralApproved: boolean
+    specialRequests?: string
+    boardNotes?: string
+
+    // Final Result
+    result: BoardResult
+}
+
+export interface CdrCmdBoard {
+    id: string
+    fy: string // e.g. "FY28"
+    boardDate: string // e.g. "2025-12-01"
+    status: "Open" | "Closed"
+    candidates: BoardCandidate[]
+}
