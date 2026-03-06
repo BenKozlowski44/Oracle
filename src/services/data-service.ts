@@ -26,6 +26,7 @@ export function replaceExport(content: string, varName: string, data: any): stri
     if (varName === 'oracleData') typeAnnotation = 'OracleCommand[]';
     if (varName === 'officers') typeAnnotation = 'Officer[]';
     if (varName === 'slates') typeAnnotation = 'Slate[]';
+    if (varName === 'boards') typeAnnotation = 'CdrCmdBoard[]';
 
     const dataString = JSON.stringify(data, null, 4);
     const newBlock = `export const ${varName}: ${typeAnnotation} = ${dataString}${endIndex === content.length ? '' : '\n\n'}`;
@@ -36,7 +37,7 @@ export function replaceExport(content: string, varName: string, data: any): stri
 /**
  * High-level orchestration function to safely update data.ts
  */
-export async function updateDataFile(updates: { oracleData?: any, officers?: any, slates?: any }) {
+export async function updateDataFile(updates: { oracleData?: any, officers?: any, slates?: any, boards?: any }) {
     let fileContent = await readDataFile();
     let updated = false;
 
@@ -52,6 +53,11 @@ export async function updateDataFile(updates: { oracleData?: any, officers?: any
 
     if (updates.slates && Array.isArray(updates.slates)) {
         fileContent = replaceExport(fileContent, 'slates', updates.slates);
+        updated = true;
+    }
+
+    if (updates.boards && Array.isArray(updates.boards)) {
+        fileContent = replaceExport(fileContent, 'boards', updates.boards);
         updated = true;
     }
 

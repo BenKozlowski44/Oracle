@@ -8,9 +8,9 @@ import { Officer } from '@/lib/types';
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { oracleData, officers, slates, metrics, updatedCommand, mergeBank, mergeCosm, deletedCommand } = body;
+        const { oracleData, officers, slates, metrics, boards, updatedCommand, mergeBank, mergeCosm, deletedCommand } = body;
 
-        if (!oracleData && !officers && !slates && !metrics && !mergeBank && !mergeCosm && !deletedCommand) {
+        if (!oracleData && !officers && !slates && !metrics && !boards && !mergeBank && !mergeCosm && !deletedCommand) {
             return NextResponse.json({ error: 'No data provided' }, { status: 400 });
         }
 
@@ -88,8 +88,8 @@ export async function POST(request: Request) {
         }
 
         // Handle Data.ts updates via Service
-        if (oracleData || finalOfficers || slates) {
-            await updateDataFile({ oracleData, officers: finalOfficers, slates });
+        if (oracleData || finalOfficers || slates || boards) {
+            await updateDataFile({ oracleData, officers: finalOfficers, slates, boards });
         }
 
         // Trigger Excel Write-Back for the specific updated command (Fire and Forget)

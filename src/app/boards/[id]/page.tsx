@@ -154,12 +154,30 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
         if (fileInputRef.current) fileInputRef.current.value = ""
     }
 
-    const saveChanges = () => {
+    const saveChanges = async () => {
         const boardIndex = boards.findIndex(b => b.id === board.id)
         if (boardIndex >= 0) {
-            boards[boardIndex].candidates = [...candidates]
-            setBoard({ ...boards[boardIndex] })
-            // Normally trigger toast or notification here
+            const updatedBoards = [...boards];
+            updatedBoards[boardIndex].candidates = [...candidates];
+
+            setBoard({ ...updatedBoards[boardIndex] });
+
+            try {
+                const res = await fetch('/api/update-data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ boards: updatedBoards })
+                });
+
+                if (res.ok) {
+                    alert("Board saved successfully!");
+                } else {
+                    alert("Failed to save board");
+                }
+            } catch (e) {
+                console.error("Save error", e);
+                alert("Failed to save board");
+            }
         }
     }
 
