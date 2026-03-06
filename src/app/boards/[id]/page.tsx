@@ -58,11 +58,12 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
 
         workbook.eachSheet((worksheet, sheetId) => {
             // Determine Look Tracker from sheet name
-            let sheetLookTracker: "1st Look" | "2nd Look" | "3rd Look" = "1st Look";
+            let sheetLookTracker: "1st Look" | "2nd Look" | "3rd Look";
             const sheetNameLower = worksheet.name.toLowerCase();
             if (sheetNameLower.includes("1st")) sheetLookTracker = "1st Look";
             else if (sheetNameLower.includes("2nd")) sheetLookTracker = "2nd Look";
             else if (sheetNameLower.includes("3rd")) sheetLookTracker = "3rd Look";
+            else return; // Skip sheets that are not look tabs (e.g., Bank, CO-SM)
 
             // Map headers
             const headers: Record<string, number> = {};
