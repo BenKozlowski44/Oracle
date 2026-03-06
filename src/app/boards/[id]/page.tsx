@@ -22,7 +22,11 @@ import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-
+import {
+    HoverCard,
+    HoverCardContent,
+    HoverCardTrigger,
+} from "@/components/ui/hover-card"
 interface BoardPageProps {
     params: Promise<{ id: string }>
 }
@@ -132,6 +136,28 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                     }
                 }
 
+                // Capture all raw data
+                const rawData: Record<string, string> = {};
+                Object.entries(headers).forEach(([headerName, colNumber]) => {
+                    const cell = row.getCell(colNumber);
+                    let val = "";
+                    if (cell.type === ExcelJS.ValueType.RichText && cell.value && typeof cell.value === 'object' && 'richText' in cell.value) {
+                        val = cell.value.richText.map(rt => rt.text).join('').trim();
+                    } else if (cell.type === ExcelJS.ValueType.Formula && cell.result !== undefined) {
+                        val = cell.result?.toString().trim() || "";
+                    } else if (cell.value instanceof Date) {
+                        const year = cell.value.getFullYear();
+                        const month = String(cell.value.getMonth() + 1).padStart(2, '0');
+                        const day = String(cell.value.getDate()).padStart(2, '0');
+                        val = `${year}-${month}-${day}`;
+                    } else {
+                        val = cell.value?.toString().trim() || "";
+                    }
+                    if (val) {
+                        rawData[headerName] = val;
+                    }
+                });
+
                 newCandidates.push({
                     id: `cand_${Math.random().toString(36).substring(2, 9)}`,
                     name,
@@ -140,6 +166,7 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                     commissioningDate: commDate,
                     ycs: calculatedYcs,
                     lookTracker: sheetLookTracker,
+                    rawData,
                     missingRecords: false,
                     missingRecordsNotes: "",
                     deferralRequested: false,
@@ -307,7 +334,31 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                                                         lookCandidates.map(c => (
                                                             <TableRow key={c.id}>
                                                                 <TableCell>
-                                                                    <div className="font-medium">{c.name}</div>
+                                                                    <div className="flex items-center gap-2">
+                                                                        <div className="font-medium">{c.name}</div>
+                                                                        {c.rawData && Object.keys(c.rawData).length > 0 && (
+                                                                            <HoverCard>
+                                                                                <HoverCardTrigger asChild>
+                                                                                    <Button variant="ghost" size="icon" className="h-4 w-4 rounded-full text-muted-foreground hover:text-primary">
+                                                                                        <Info className="h-3 w-3" />
+                                                                                    </Button>
+                                                                                </HoverCardTrigger>
+                                                                                <HoverCardContent className="w-80 p-4">
+                                                                                    <div className="space-y-2">
+                                                                                        <h4 className="text-sm font-semibold">{c.name} - Raw Data</h4>
+                                                                                        <div className="grid grid-cols-2 gap-2 text-xs">
+                                                                                            {Object.entries(c.rawData).map(([key, value]) => (
+                                                                                                <div key={key} className="flex flex-col">
+                                                                                                    <span className="font-medium text-muted-foreground uppercase">{key}</span>
+                                                                                                    <span className="truncate" title={value}>{value || "-"}</span>
+                                                                                                </div>
+                                                                                            ))}
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </HoverCardContent>
+                                                                            </HoverCard>
+                                                                        )}
+                                                                    </div>
                                                                     <div className="text-xs text-muted-foreground">{c.rank} • {c.designator}</div>
                                                                 </TableCell>
                                                                 <TableCell>

@@ -181,7 +181,8 @@ export interface BoardCandidate {
     designator: Designator | string
     commissioningDate?: string // Required to calculate YCS
     ycs: number // Calculated Years Commissioned Service at board time
-    lookTracker: "1st Look" | "2nd Look" | "Other"
+    lookTracker: "1st Look" | "2nd Look" | "3rd Look"
+    rawData?: Record<string, string> // To store all generic Excel columns
 
     // Board Prep Fields
     missingRecords: boolean
