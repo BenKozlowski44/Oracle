@@ -64,9 +64,9 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
             // Determine Look Tracker from sheet name
             let sheetLookTracker: "1st Look" | "2nd Look" | "3rd Look";
             const sheetNameLower = worksheet.name.toLowerCase();
-            if (sheetNameLower.includes("1st")) sheetLookTracker = "1st Look";
-            else if (sheetNameLower.includes("2nd")) sheetLookTracker = "2nd Look";
-            else if (sheetNameLower.includes("3rd")) sheetLookTracker = "3rd Look";
+            if (sheetNameLower.includes("1st") || sheetNameLower.includes("first") || sheetNameLower === "1") sheetLookTracker = "1st Look";
+            else if (sheetNameLower.includes("2nd") || sheetNameLower.includes("second") || sheetNameLower === "2") sheetLookTracker = "2nd Look";
+            else if (sheetNameLower.includes("3rd") || sheetNameLower.includes("third") || sheetNameLower === "3") sheetLookTracker = "3rd Look";
             else return; // Skip sheets that are not look tabs (e.g., Bank, CO-SM)
 
             // Map headers
@@ -213,6 +213,28 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
         setCandidates(prev => prev.map(c => c.id === candId ? { ...c, ...updates } : c))
     }
 
+    const updateCandidateRawData = (candId: string, key: string, value: string) => {
+        setCandidates(prev => prev.map(c => {
+            if (c.id === candId) {
+                return {
+                    ...c,
+                    rawData: {
+                        ...(c.rawData || {}),
+                        [key]: value
+                    }
+                }
+            }
+            return c;
+        }))
+    }
+
+    // Extract all unique raw data headers across all uploaded candidates
+    const allRawHeaders = Array.from(
+        new Set(
+            candidates.flatMap(c => Object.keys(c.rawData || {}))
+        )
+    ).sort();
+
     const clearCandidates = async () => {
         if (!confirm("Are you sure you want to clear all candidates from this board? This cannot be undone if saved.")) return;
         setCandidates([]);
@@ -316,11 +338,16 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                                             <Table>
                                                 <TableHeader>
                                                     <TableRow>
-                                                        <TableHead className="w-[200px]">Officer</TableHead>
-                                                        <TableHead>Eligibility</TableHead>
-                                                        <TableHead className="w-[120px] text-center">Missing Records</TableHead>
-                                                        <TableHead className="w-[200px] text-center">Deferral</TableHead>
-                                                        <TableHead className="w-[250px]">Special Requests/Notes</TableHead>
+                                                        <TableHead className="w-[200px] sticky left-0 bg-background z-10">Officer</TableHead>
+                                                        <TableHead className="min-w-[120px]">Eligibility</TableHead>
+                                                        <TableHead className="min-w-[120px] text-center">Missing Records</TableHead>
+                                                        <TableHead className="min-w-[200px] text-center">Deferral</TableHead>
+                                                        <TableHead className="min-w-[250px]">Special Requests/Notes</TableHead>
+                                                        {allRawHeaders.map(header => (
+                                                            <TableHead key={header} className="min-w-[150px] uppercase text-xs break-words">
+                                                                {header}
+                                                            </TableHead>
+                                                        ))}
                                                     </TableRow>
                                                 </TableHeader>
                                                 <TableBody>
@@ -333,32 +360,8 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                                                     ) : (
                                                         lookCandidates.map(c => (
                                                             <TableRow key={c.id}>
-                                                                <TableCell>
-                                                                    <div className="flex items-center gap-2">
-                                                                        <div className="font-medium">{c.name}</div>
-                                                                        {c.rawData && Object.keys(c.rawData).length > 0 && (
-                                                                            <HoverCard>
-                                                                                <HoverCardTrigger asChild>
-                                                                                    <Button variant="ghost" size="icon" className="h-4 w-4 rounded-full text-muted-foreground hover:text-primary">
-                                                                                        <Info className="h-3 w-3" />
-                                                                                    </Button>
-                                                                                </HoverCardTrigger>
-                                                                                <HoverCardContent className="w-80 p-4">
-                                                                                    <div className="space-y-2">
-                                                                                        <h4 className="text-sm font-semibold">{c.name} - Raw Data</h4>
-                                                                                        <div className="grid grid-cols-2 gap-2 text-xs">
-                                                                                            {Object.entries(c.rawData).map(([key, value]) => (
-                                                                                                <div key={key} className="flex flex-col">
-                                                                                                    <span className="font-medium text-muted-foreground uppercase">{key}</span>
-                                                                                                    <span className="truncate" title={value}>{value || "-"}</span>
-                                                                                                </div>
-                                                                                            ))}
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </HoverCardContent>
-                                                                            </HoverCard>
-                                                                        )}
-                                                                    </div>
+                                                                <TableCell className="sticky left-0 bg-background z-10 border-r">
+                                                                    <div className="font-medium">{c.name}</div>
                                                                     <div className="text-xs text-muted-foreground">{c.rank} • {c.designator}</div>
                                                                 </TableCell>
                                                                 <TableCell>
@@ -416,6 +419,15 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                                                                         />
                                                                     </div>
                                                                 </TableCell>
+                                                                {allRawHeaders.map(header => (
+                                                                    <TableCell key={header}>
+                                                                        <Input
+                                                                            className="h-7 text-xs"
+                                                                            value={c.rawData?.[header] || ""}
+                                                                            onChange={(e) => updateCandidateRawData(c.id, header, e.target.value)}
+                                                                        />
+                                                                    </TableCell>
+                                                                ))}
                                                             </TableRow>
                                                         ))
                                                     )}
