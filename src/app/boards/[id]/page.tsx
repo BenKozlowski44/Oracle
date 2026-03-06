@@ -8,7 +8,7 @@ import ExcelJS from "exceljs"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ArrowLeft, Upload, Save, UserPlus, Info } from "lucide-react"
+import { ArrowLeft, Upload, Save, UserPlus, Info, Trash2 } from "lucide-react"
 import Link from "next/link"
 import {
     Table,
@@ -184,6 +184,35 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
     const updateCandidate = (candId: string, updates: Partial<BoardCandidate>) => {
         setCandidates(prev => prev.map(c => c.id === candId ? { ...c, ...updates } : c))
     }
+
+    const clearCandidates = async () => {
+        if (!confirm("Are you sure you want to clear all candidates from this board? This cannot be undone if saved.")) return;
+        setCandidates([]);
+
+        const boardIndex = boards.findIndex(b => b.id === board.id)
+        if (boardIndex >= 0) {
+            const updatedBoards = [...boards];
+            updatedBoards[boardIndex].candidates = [];
+            setBoard({ ...updatedBoards[boardIndex] });
+
+            try {
+                const res = await fetch('/api/update-data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ boards: updatedBoards })
+                });
+
+                if (res.ok) {
+                    alert("Board cleared successfully!");
+                } else {
+                    alert("Failed to clear board data");
+                }
+            } catch (e) {
+                console.error("Save error", e);
+                alert("Failed to clear board data");
+            }
+        }
+    }
     return (
         <div className="flex-1 space-y-4 p-8 pt-6">
             <div className="flex items-center space-x-4 mb-4">
@@ -206,6 +235,9 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                     />
                     <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
                         <Upload className="mr-2 h-4 w-4" /> Import Eligibles Excel
+                    </Button>
+                    <Button variant="destructive" onClick={clearCandidates} disabled={candidates.length === 0}>
+                        <Trash2 className="mr-2 h-4 w-4" /> Clear Board
                     </Button>
                     <Button onClick={saveChanges}>
                         <Save className="mr-2 h-4 w-4" /> Save Board State
