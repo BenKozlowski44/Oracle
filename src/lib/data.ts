@@ -1,6 +1,13 @@
 import type { Officer, Billet, OracleCommand, Slate, Metrics, CdrCmdBoard } from "./types"
-
-export let boards: CdrCmdBoard[] = []
+export const boards: CdrCmdBoard[] = [
+    {
+        id: "fy26_test",
+        fy: "FY26",
+        boardDate: "Dec 3-5",
+        candidates: [],
+        status: "Open"
+    }
+]
 
 export const slates: Slate[] = [
     {
@@ -15352,12 +15359,3 @@ export const oracleData: OracleCommand[] = [
         }
     }
 ]
-export const boards: import("./types").CdrCmdBoard[] = [
-    {
-        id: "fy26_test",
-        fy: "FY26",
-        boardDate: "Dec 3-5",
-        candidates: [],
-        status: "Open"
-    }
-];
