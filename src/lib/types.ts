@@ -172,7 +172,7 @@ export interface Slate {
     }
 }
 
-export type BoardResult = "Pending" | "Selected CO" | "Selected XO" | "Selected XO-SM" | "FOS" | "Deferred" | "Pulled"
+export type BoardResult = "Pending" | "Selected CO" | "Selected XO" | "Selected XO-SM" | "Selected CO-SM" | "FOS" | "Deferred" | "Pulled"
 
 export interface BoardCandidate {
     id: string // Unique ID for this board instance

@@ -2,17 +2,18 @@
 
 import { useState, use, useRef, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { boards } from "@/lib/data"
+import { boards, officers } from "@/lib/data"
 import { CdrCmdBoard, BoardCandidate, BoardResult } from "@/lib/types"
 import ExcelJS from "exceljs"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ArrowLeft, Upload, Info, Trash2, ChevronDown, ChevronUp, CheckCircle2, Loader2, AlertCircle } from "lucide-react"
+import { ArrowLeft, Upload, Info, Trash2, ChevronDown, ChevronUp, CheckCircle2, Loader2, AlertCircle, Lock } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { boardCandidateToOfficer, getMigrationConfig } from "@/lib/board-migration"
 interface BoardPageProps {
     params: Promise<{ id: string }>
 }
@@ -297,6 +298,69 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
         return { yg, ycs };
     };
 
+    // Result label config for display
+    const RESULT_OPTIONS: BoardResult[] = [
+        'Pending', 'Selected CO', 'Selected XO', 'Selected XO-SM', 'Selected CO-SM', 'FOS', 'Deferred', 'Pulled'
+    ];
+
+    const resultColor = (result: BoardResult) => {
+        switch (result) {
+            case 'Selected CO': return 'bg-green-100 text-green-800 border-green-300';
+            case 'Selected XO': return 'bg-blue-100 text-blue-800 border-blue-300';
+            case 'Selected XO-SM': return 'bg-purple-100 text-purple-800 border-purple-300';
+            case 'Selected CO-SM': return 'bg-indigo-100 text-indigo-800 border-indigo-300';
+            case 'FOS': return 'bg-orange-100 text-orange-800 border-orange-300';
+            case 'Deferred': return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+            case 'Pulled': return 'bg-red-100 text-red-800 border-red-300';
+            default: return 'bg-muted text-muted-foreground';
+        }
+    };
+
+    const closeOutBoard = async () => {
+        const pendingCount = candidates.filter(c => c.result === 'Pending').length;
+        if (pendingCount > 0) {
+            alert(`Cannot close out board: ${pendingCount} candidate(s) are still marked Pending. Please assign a result to every candidate first.`);
+            return;
+        }
+        if (!confirm(`This will close out the ${board?.fy} board and migrate all selected officers to the officer database. This action cannot be undone. Proceed?`)) return;
+
+        // Build new officers from candidates with migration-eligible results
+        const newOfficers = candidates
+            .filter(c => getMigrationConfig(c.result) !== null)
+            .map(c => boardCandidateToOfficer(c));
+
+        const boardIndex = boards.findIndex(b => b.id === board!.id);
+        const updatedBoards = [...boards];
+        if (boardIndex >= 0) {
+            updatedBoards[boardIndex] = {
+                ...updatedBoards[boardIndex],
+                candidates: [...candidates],
+                status: 'Closed'
+            };
+        }
+
+        const updatedOfficers = [...officers, ...newOfficers];
+        // Also update in-memory array so navigation works immediately
+        newOfficers.forEach(o => officers.push(o));
+
+        try {
+            const res = await fetch('/api/update-data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ boards: updatedBoards, officers: updatedOfficers })
+            });
+            if (res.ok) {
+                setBoard(prev => prev ? { ...prev, status: 'Closed' } : prev);
+                setSaveStatus('saved');
+                alert(`Board closed out! ${newOfficers.length} officer(s) migrated to the database.`);
+            } else {
+                alert('Failed to close out board. Please try again.');
+            }
+        } catch {
+            alert('Network error during close-out.');
+        }
+    };
+
     return (
         <div className="flex-1 space-y-4 p-8 pt-6">
             <div className="flex items-center space-x-4 mb-4">
@@ -331,12 +395,25 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                         ref={fileInputRef}
                         onChange={handleFileUpload}
                     />
-                    <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
+                    <Button variant="outline" onClick={() => fileInputRef.current?.click()} disabled={board?.status === 'Closed'}>
                         <Upload className="mr-2 h-4 w-4" /> Import Eligibles Excel
                     </Button>
-                    <Button variant="destructive" onClick={clearCandidates} disabled={candidates.length === 0}>
+                    <Button variant="destructive" onClick={clearCandidates} disabled={candidates.length === 0 || board?.status === 'Closed'}>
                         <Trash2 className="mr-2 h-4 w-4" /> Clear Board
                     </Button>
+                    {board?.status === 'Open' && (
+                        <Button
+                            variant="outline"
+                            className="border-red-300 text-red-700 hover:bg-red-50"
+                            onClick={closeOutBoard}
+                            disabled={candidates.length === 0}
+                        >
+                            <Lock className="mr-2 h-4 w-4" /> Close Out Board
+                        </Button>
+                    )}
+                    {board?.status === 'Closed' && (
+                        <Badge variant="secondary" className="px-3 py-1 text-sm">Board Closed</Badge>
+                    )}
                 </div>
             </div>
 
@@ -428,6 +505,21 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                                                                             </Badge>
                                                                         );
                                                                     })}
+                                                                </div>
+                                                                {/* Result selector */}
+                                                                <div className="flex items-center gap-2 shrink-0" onClick={e => e.stopPropagation()}>
+                                                                    <span className={`text-xs font-semibold px-2 py-0.5 rounded border ${resultColor(c.result)}`}>{c.result}</span>
+                                                                    {board?.status === 'Open' && (
+                                                                        <select
+                                                                            className="text-xs border rounded px-1.5 py-1 bg-background cursor-pointer"
+                                                                            value={c.result}
+                                                                            onChange={e => updateCandidate(c.id, { result: e.target.value as BoardResult })}
+                                                                        >
+                                                                            {RESULT_OPTIONS.map(r => (
+                                                                                <option key={r} value={r}>{r}</option>
+                                                                            ))}
+                                                                        </select>
+                                                                    )}
                                                                 </div>
                                                                 {isExpanded ? <ChevronUp className="h-4 w-4 text-muted-foreground shrink-0" /> : <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />}
                                                             </button>

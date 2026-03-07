@@ -27,10 +27,11 @@ export function TheBank({ data }: BankProps) {
     const bankOfficers = data.filter(o => {
         if (isDeclined(o)) return false;
         const shift = o.listShift || ""
-        return shift !== "CO-SM" && shift !== "Slated" && o.status !== "PCC" && !isFirefighter(o)
+        return shift !== "CO-SM" && shift !== "Slated" && shift !== "XO Screened" && o.status !== "PCC" && !isFirefighter(o)
     })
     const slatedOfficers = data.filter(o => o.listShift === "Slated" && !isDeclined(o))
-    const cosmOfficers = data.filter(o => (o.listShift === "CO-SM" || o.screened?.includes("CO-SM")) && !isDeclined(o))
+    const xoScreenedOfficers = data.filter(o => o.listShift === "XO Screened" && !isDeclined(o))
+    const cosmOfficers = data.filter(o => (o.listShift === "CO-SM") && !isDeclined(o))
     const firefighters = data.filter(o => isFirefighter(o) && !isDeclined(o))
     const declinedOfficers = data.filter(o => isDeclined(o))
 
@@ -44,6 +45,9 @@ export function TheBank({ data }: BankProps) {
 
             const inSlated = slatedOfficers.some(o => o.name.toLowerCase().includes(query))
             if (inSlated) return "slated"
+
+            const inXoScreened = xoScreenedOfficers.some(o => o.name.toLowerCase().includes(query))
+            if (inXoScreened) return "xo-screened"
 
             const inCosm = cosmOfficers.some(o => o.name.toLowerCase().includes(query))
             if (inCosm) return "cosm"
@@ -69,11 +73,12 @@ export function TheBank({ data }: BankProps) {
         if (query) {
             if (firefighters.some(o => o.name.toLowerCase().includes(query))) setActiveTab("firefighters")
             else if (slatedOfficers.some(o => o.name.toLowerCase().includes(query))) setActiveTab("slated")
+            else if (xoScreenedOfficers.some(o => o.name.toLowerCase().includes(query))) setActiveTab("xo-screened")
             else if (cosmOfficers.some(o => o.name.toLowerCase().includes(query))) setActiveTab("cosm")
             else if (declinedOfficers.some(o => o.name.toLowerCase().includes(query))) setActiveTab("declined")
             else setActiveTab("bank")
         }
-    }, [searchParams, firefighters, slatedOfficers, cosmOfficers, declinedOfficers])
+    }, [searchParams, firefighters, slatedOfficers, xoScreenedOfficers, cosmOfficers, declinedOfficers])
 
     return (
         <div className="space-y-4">
@@ -83,6 +88,7 @@ export function TheBank({ data }: BankProps) {
                         <TabsTrigger value="bank">Officer Bank ({bankOfficers.length})</TabsTrigger>
                         <TabsTrigger value="firefighters">Firefighters ({firefighters.length})</TabsTrigger>
                         <TabsTrigger value="slated">Slated ({slatedOfficers.length})</TabsTrigger>
+                        <TabsTrigger value="xo-screened">XO Screened ({xoScreenedOfficers.length})</TabsTrigger>
                         <TabsTrigger value="cosm">CO-SM ({cosmOfficers.length})</TabsTrigger>
                         <TabsTrigger value="declined">Declined/Descreened ({declinedOfficers.length})</TabsTrigger>
                     </TabsList>
@@ -118,6 +124,17 @@ export function TheBank({ data }: BankProps) {
                             </p>
                         </div>
                         <OfficerTable data={slatedOfficers} />
+                    </div>
+                </TabsContent>
+
+                <TabsContent value="xo-screened" className="mt-4">
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                            <p className="text-sm text-muted-foreground">
+                                Officers who screened an XO milestone (XO or XO-SM selects from the annual board).
+                            </p>
+                        </div>
+                        <OfficerTable data={xoScreenedOfficers} />
                     </div>
                 </TabsContent>
 
