@@ -8,7 +8,7 @@ import ExcelJS from "exceljs"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ArrowLeft, Upload, Save, UserPlus, Info, Trash2 } from "lucide-react"
+import { ArrowLeft, Upload, Save, Info, Trash2, ChevronDown, ChevronUp } from "lucide-react"
 import Link from "next/link"
 import {
     Table,
@@ -36,6 +36,7 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
     const router = useRouter()
     const [board, setBoard] = useState<CdrCmdBoard | null>(null)
     const [candidates, setCandidates] = useState<BoardCandidate[]>([])
+    const [expandedCandidates, setExpandedCandidates] = useState<Set<string>>(new Set())
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
@@ -299,7 +300,7 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                 <CardHeader>
                     <CardTitle>Record Review & Candidate Prep</CardTitle>
                     <CardDescription>
-                        Manage missing items, deferral requests, and special requests for the {candidates.length} eligible candidates.
+                        Manage deferral requests, special requests, and candidate data for the {candidates.length} eligible candidates.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -334,89 +335,115 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
 
                                 return (
                                     <TabsContent key={look} value={look}>
-                                        <div className="border rounded-md overflow-x-auto">
-                                            <Table>
-                                                <TableHeader>
-                                                    <TableRow>
-                                                        <TableHead className="w-[200px] sticky left-0 bg-background z-10">Officer</TableHead>
-                                                        <TableHead className="min-w-[120px]">Eligibility</TableHead>
-                                                        <TableHead className="min-w-[200px] text-center">Deferral</TableHead>
-                                                        <TableHead className="min-w-[250px]">Special Requests/Notes</TableHead>
-                                                        {allRawHeaders.map(header => (
-                                                            <TableHead key={header} className="min-w-[150px] uppercase text-xs break-words">
-                                                                {header}
-                                                            </TableHead>
-                                                        ))}
-                                                    </TableRow>
-                                                </TableHeader>
-                                                <TableBody>
-                                                    {lookCandidates.length === 0 ? (
-                                                        <TableRow>
-                                                            <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
-                                                                No candidates in this category.
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    ) : (
-                                                        lookCandidates.map(c => (
-                                                            <TableRow key={c.id}>
-                                                                <TableCell className="sticky left-0 bg-background z-10 border-r">
-                                                                    <div className="font-medium">{c.name}</div>
-                                                                    <div className="text-xs text-muted-foreground">{c.rank} • {c.designator}</div>
-                                                                </TableCell>
-                                                                <TableCell>
-                                                                    <div className="text-xs text-muted-foreground">Comm: {c.commissioningDate || "N/A"}</div>
-                                                                    <div className="text-[10px] text-muted-foreground">{c.ycs > 0 ? `${c.ycs} YCS` : ""}</div>
-                                                                </TableCell>
-                                                                <TableCell>
-                                                                    <div className="space-y-2 text-sm pt-1 pb-1">
-                                                                        <div className="flex items-center justify-between">
-                                                                            <span className="text-muted-foreground">Requested:</span>
-                                                                            <Checkbox
-                                                                                checked={c.deferralRequested}
-                                                                                onCheckedChange={(val) => updateCandidate(c.id, { deferralRequested: !!val })}
-                                                                            />
-                                                                        </div>
-                                                                        <div className="flex items-center justify-between">
-                                                                            <span className="text-muted-foreground">Approved:</span>
-                                                                            <Checkbox
-                                                                                checked={c.deferralApproved}
-                                                                                onCheckedChange={(val) => updateCandidate(c.id, { deferralApproved: !!val })}
-                                                                                disabled={!c.deferralRequested}
-                                                                            />
+                                        {lookCandidates.length === 0 ? (
+                                            <div className="text-center py-10 border border-dashed rounded-md text-muted-foreground">
+                                                No candidates in this category.
+                                            </div>
+                                        ) : (
+                                            <div className="space-y-2">
+                                                {lookCandidates.map(c => {
+                                                    const isExpanded = expandedCandidates.has(c.id);
+                                                    const toggle = () => setExpandedCandidates(prev => {
+                                                        const next = new Set(prev);
+                                                        if (next.has(c.id)) next.delete(c.id);
+                                                        else next.add(c.id);
+                                                        return next;
+                                                    });
+                                                    return (
+                                                        <div key={c.id} className="border rounded-md overflow-hidden">
+                                                            {/* Collapsed Header Row */}
+                                                            <button
+                                                                onClick={toggle}
+                                                                className="w-full flex items-center justify-between px-4 py-3 hover:bg-muted/50 transition-colors text-left"
+                                                            >
+                                                                <div className="flex items-center gap-6">
+                                                                    <div>
+                                                                        <div className="font-semibold text-sm">{c.name}</div>
+                                                                        <div className="text-xs text-muted-foreground">{c.rank} &bull; {c.designator}</div>
+                                                                    </div>
+                                                                    <div className="text-xs text-muted-foreground hidden sm:block">
+                                                                        <span className="font-medium">Comm:</span> {c.commissioningDate || "N/A"}
+                                                                        {c.ycs > 0 && <span className="ml-2">({c.ycs} YCS)</span>}
+                                                                    </div>
+                                                                    {c.deferralRequested && (
+                                                                        <Badge variant="outline" className="text-xs border-yellow-500 text-yellow-600">Deferral Requested</Badge>
+                                                                    )}
+                                                                    {c.deferralApproved && (
+                                                                        <Badge variant="outline" className="text-xs border-green-500 text-green-600">Deferral Approved</Badge>
+                                                                    )}
+                                                                </div>
+                                                                {isExpanded ? <ChevronUp className="h-4 w-4 text-muted-foreground shrink-0" /> : <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />}
+                                                            </button>
+
+                                                            {/* Expanded Detail Panel */}
+                                                            {isExpanded && (
+                                                                <div className="border-t bg-muted/20 px-4 py-4 space-y-6">
+
+                                                                    {/* Board Prep Fields */}
+                                                                    <div className="space-y-3">
+                                                                        <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Board Prep</h4>
+                                                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                                            <div className="space-y-2">
+                                                                                <div className="flex items-center gap-3">
+                                                                                    <Checkbox
+                                                                                        id={`defer-req-${c.id}`}
+                                                                                        checked={c.deferralRequested}
+                                                                                        onCheckedChange={(val) => updateCandidate(c.id, { deferralRequested: !!val })}
+                                                                                    />
+                                                                                    <label htmlFor={`defer-req-${c.id}`} className="text-sm">Deferral Requested</label>
+                                                                                </div>
+                                                                                <div className="flex items-center gap-3">
+                                                                                    <Checkbox
+                                                                                        id={`defer-appr-${c.id}`}
+                                                                                        checked={c.deferralApproved}
+                                                                                        onCheckedChange={(val) => updateCandidate(c.id, { deferralApproved: !!val })}
+                                                                                        disabled={!c.deferralRequested}
+                                                                                    />
+                                                                                    <label htmlFor={`defer-appr-${c.id}`} className={`text-sm ${!c.deferralRequested ? "text-muted-foreground" : ""}`}>Deferral Approved</label>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div className="flex flex-col gap-2">
+                                                                                <Input
+                                                                                    placeholder="Special requests..."
+                                                                                    className="h-8 text-sm"
+                                                                                    value={c.specialRequests || ""}
+                                                                                    onChange={(e) => updateCandidate(c.id, { specialRequests: e.target.value })}
+                                                                                />
+                                                                                <Textarea
+                                                                                    placeholder="Board prep notes..."
+                                                                                    className="min-h-[60px] text-sm py-1"
+                                                                                    value={c.boardNotes || ""}
+                                                                                    onChange={(e) => updateCandidate(c.id, { boardNotes: e.target.value })}
+                                                                                />
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                </TableCell>
-                                                                <TableCell>
-                                                                    <div className="space-y-2">
-                                                                        <Input
-                                                                            placeholder="Special requests..."
-                                                                            className="h-7 text-xs"
-                                                                            value={c.specialRequests || ""}
-                                                                            onChange={(e) => updateCandidate(c.id, { specialRequests: e.target.value })}
-                                                                        />
-                                                                        <Textarea
-                                                                            placeholder="Board prep notes..."
-                                                                            className="min-h-[40px] text-xs py-1"
-                                                                            value={c.boardNotes || ""}
-                                                                            onChange={(e) => updateCandidate(c.id, { boardNotes: e.target.value })}
-                                                                        />
-                                                                    </div>
-                                                                </TableCell>
-                                                                {allRawHeaders.map(header => (
-                                                                    <TableCell key={header}>
-                                                                        <Input
-                                                                            className="h-7 text-xs"
-                                                                            value={c.rawData?.[header] || ""}
-                                                                            onChange={(e) => updateCandidateRawData(c.id, header, e.target.value)}
-                                                                        />
-                                                                    </TableCell>
-                                                                ))}
-                                                            </TableRow>
-                                                        ))
-                                                    )}
-                                                </TableBody>
-                                            </Table>
-                                        </div>
+
+                                                                    {/* Raw Data Fields */}
+                                                                    {allRawHeaders.length > 0 && (
+                                                                        <div className="space-y-3">
+                                                                            <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Imported Data</h4>
+                                                                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                                                                                {allRawHeaders.map(header => (
+                                                                                    <div key={header} className="flex flex-col gap-1">
+                                                                                        <label className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{header}</label>
+                                                                                        <Input
+                                                                                            className="h-8 text-sm"
+                                                                                            value={c.rawData?.[header] || ""}
+                                                                                            onChange={(e) => updateCandidateRawData(c.id, header, e.target.value)}
+                                                                                        />
+                                                                                    </div>
+                                                                                ))}
+                                                                            </div>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
                                     </TabsContent>
                                 );
                             })}
