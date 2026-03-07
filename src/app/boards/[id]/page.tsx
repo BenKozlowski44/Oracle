@@ -192,7 +192,8 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                     }
                 }
 
-                // Capture all raw data
+                // Capture all raw data, stripping any parenthetical suffixes
+                const stripParens = (str: string) => str.replace(/\s*\(.*?\)/g, '').trim();
                 const rawData: Record<string, string> = {};
                 Object.entries(headers).forEach(([headerName, colNumber]) => {
                     const cell = row.getCell(colNumber);
@@ -209,6 +210,8 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                     } else {
                         val = cell.value?.toString().trim() || "";
                     }
+                    // Strip any parenthetical content (e.g. "PERS-8 (Detail Officer)" -> "PERS-8")
+                    val = stripParens(val);
                     if (val) {
                         rawData[headerName] = val;
                     }
@@ -464,16 +467,30 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                                                                         <div className="space-y-3">
                                                                             <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Imported Data</h4>
                                                                             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                                                                                {allRawHeaders.map(header => (
-                                                                                    <div key={header} className="flex flex-col gap-1">
-                                                                                        <label className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{header}</label>
-                                                                                        <Input
-                                                                                            className="h-8 text-sm"
-                                                                                            value={c.rawData?.[header] || ""}
-                                                                                            onChange={(e) => updateCandidateRawData(c.id, header, e.target.value)}
-                                                                                        />
-                                                                                    </div>
-                                                                                ))}
+                                                                                {allRawHeaders.map(header => {
+                                                                                    const val = c.rawData?.[header] || "";
+                                                                                    const isYN = val.toUpperCase() === 'Y' || val.toUpperCase() === 'N';
+                                                                                    const isYes = val.toUpperCase() === 'Y';
+                                                                                    return (
+                                                                                        <div key={header} className="flex flex-col gap-1">
+                                                                                            <label className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{header}</label>
+                                                                                            {isYN ? (
+                                                                                                <button
+                                                                                                    onClick={() => updateCandidateRawData(c.id, header, isYes ? 'N' : 'Y')}
+                                                                                                    className={`inline-flex items-center justify-center h-8 rounded-md text-sm font-semibold px-3 border transition-colors ${isYes ? 'bg-green-100 text-green-700 border-green-300 hover:bg-green-200' : 'bg-red-100 text-red-700 border-red-300 hover:bg-red-200'}`}
+                                                                                                >
+                                                                                                    {isYes ? '✓ Yes' : '✗ No'}
+                                                                                                </button>
+                                                                                            ) : (
+                                                                                                <Input
+                                                                                                    className="h-8 text-sm"
+                                                                                                    value={val}
+                                                                                                    onChange={(e) => updateCandidateRawData(c.id, header, e.target.value)}
+                                                                                                />
+                                                                                            )}
+                                                                                        </div>
+                                                                                    );
+                                                                                })}
                                                                             </div>
                                                                         </div>
                                                                     )}
