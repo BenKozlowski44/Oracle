@@ -416,6 +416,21 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                                                                     {c.deferralApproved && (
                                                                         <Badge variant="outline" className="text-xs border-green-500 text-green-600">Deferral Approved</Badge>
                                                                     )}
+                                                                    {/* Key flags visible at a glance */}
+                                                                    {(['pers-8', '2d1', 'ln7'] as const).map(flagKey => {
+                                                                        const val = Object.entries(c.rawData || {}).find(([k]) => k.toLowerCase() === flagKey)?.[1]?.toUpperCase();
+                                                                        if (!val) return null;
+                                                                        const isYes = val === 'Y';
+                                                                        return (
+                                                                            <Badge
+                                                                                key={flagKey}
+                                                                                variant="outline"
+                                                                                className={`text-xs uppercase ${isYes ? 'border-blue-500 text-blue-600 bg-blue-50' : 'border-muted text-muted-foreground'}`}
+                                                                            >
+                                                                                {flagKey.toUpperCase()}: {isYes ? 'Y' : 'N'}
+                                                                            </Badge>
+                                                                        );
+                                                                    })}
                                                                 </div>
                                                                 {isExpanded ? <ChevronUp className="h-4 w-4 text-muted-foreground shrink-0" /> : <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />}
                                                             </button>
