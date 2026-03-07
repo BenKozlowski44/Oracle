@@ -406,10 +406,7 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                                                                         <div className="text-xs text-muted-foreground">{c.rank} &bull; {c.designator}</div>
                                                                     </div>
                                                                     <div className="text-xs text-muted-foreground hidden sm:block">
-                                                                        {(() => {
-                                                                            const { yg, ycs } = getYGDisplay(c);
-                                                                            return (<><span className="font-medium">YG:</span> {yg}{ycs > 0 && <span className="ml-2">({ycs} YCS)</span>}</>);
-                                                                        })()}
+                                                                        <span className="font-medium">YG:</span> {getYGDisplay(c).yg}
                                                                     </div>
                                                                     {c.deferralRequested && (
                                                                         <Badge variant="outline" className="text-xs border-yellow-500 text-yellow-600">Deferral Requested</Badge>
@@ -417,22 +414,17 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                                                                     {c.deferralApproved && (
                                                                         <Badge variant="outline" className="text-xs border-green-500 text-green-600">Deferral Approved</Badge>
                                                                     )}
-                                                                    {/* Key flags visible at a glance: match actual rawData key names */}
+                                                                    {/* Key flags: only show when Y */}
                                                                     {([
                                                                         { label: 'PERS-8', search: '8 flag' },
                                                                         { label: '2D1', search: '2d1' },
                                                                         { label: 'LN7', search: 'ln7' },
                                                                     ] as const).map(({ label, search }) => {
                                                                         const val = Object.entries(c.rawData || {}).find(([k]) => k.toLowerCase().includes(search))?.[1]?.toUpperCase();
-                                                                        if (!val) return null;
-                                                                        const isYes = val === 'Y';
+                                                                        if (val !== 'Y') return null;
                                                                         return (
-                                                                            <Badge
-                                                                                key={label}
-                                                                                variant="outline"
-                                                                                className={`text-xs uppercase ${isYes ? 'border-blue-500 text-blue-600 bg-blue-50' : 'border-muted text-muted-foreground'}`}
-                                                                            >
-                                                                                {label}: {isYes ? 'Y' : 'N'}
+                                                                            <Badge key={label} variant="outline" className="text-xs uppercase border-blue-500 text-blue-600 bg-blue-50">
+                                                                                {label}
                                                                             </Badge>
                                                                         );
                                                                     })}
