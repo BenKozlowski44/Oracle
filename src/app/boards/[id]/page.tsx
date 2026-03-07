@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, use, useRef, useEffect } from "react"
+import { useState, use, useRef, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { boards } from "@/lib/data"
 import { CdrCmdBoard, BoardCandidate, BoardResult } from "@/lib/types"
@@ -8,7 +8,7 @@ import ExcelJS from "exceljs"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ArrowLeft, Upload, Save, Info, Trash2, ChevronDown, ChevronUp } from "lucide-react"
+import { ArrowLeft, Upload, Info, Trash2, ChevronDown, ChevronUp, CheckCircle2, Loader2, AlertCircle } from "lucide-react"
 import Link from "next/link"
 import {
     Table,
@@ -37,8 +37,10 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
     const [board, setBoard] = useState<CdrCmdBoard | null>(null)
     const [candidates, setCandidates] = useState<BoardCandidate[]>([])
     const [expandedCandidates, setExpandedCandidates] = useState<Set<string>>(new Set())
-    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
+    const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
     const fileInputRef = useRef<HTMLInputElement>(null)
+    const autoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+    const isFirstRender = useRef(true)
 
     useEffect(() => {
         const found = boards.find(b => b.id === id)
@@ -48,17 +50,57 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
         }
     }, [id])
 
-    // Warn on browser tab close / refresh when there are unsaved changes
+    // Warn on browser tab close / refresh when actively saving or unsaved
     useEffect(() => {
         const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-            if (hasUnsavedChanges) {
+            if (saveStatus === 'saving' || saveStatus === 'idle') {
                 e.preventDefault();
                 e.returnValue = '';
             }
         };
         window.addEventListener('beforeunload', handleBeforeUnload);
         return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-    }, [hasUnsavedChanges])
+    }, [saveStatus])
+
+    // Core save function
+    const performSave = useCallback(async (candidatesToSave: BoardCandidate[], currentBoard: CdrCmdBoard) => {
+        const boardIndex = boards.findIndex(b => b.id === currentBoard.id);
+        if (boardIndex < 0) return;
+        const updatedBoards = [...boards];
+        updatedBoards[boardIndex].candidates = [...candidatesToSave];
+        setSaveStatus('saving');
+        try {
+            const res = await fetch('/api/update-data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ boards: updatedBoards })
+            });
+            if (res.ok) {
+                setSaveStatus('saved');
+            } else {
+                setSaveStatus('error');
+            }
+        } catch {
+            setSaveStatus('error');
+        }
+    }, [])
+
+    // Debounced auto-save: fires 2s after candidates last changed
+    useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
+        if (!board) return;
+        setSaveStatus('idle');
+        if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
+        autoSaveTimer.current = setTimeout(() => {
+            performSave(candidates, board);
+        }, 2000);
+        return () => {
+            if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
+        };
+    }, [candidates])
 
     if (!board) {
         return <div className="p-8">Loading board data...</div>
@@ -196,41 +238,12 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
         if (fileInputRef.current) fileInputRef.current.value = ""
     }
 
-    const saveChanges = async () => {
-        const boardIndex = boards.findIndex(b => b.id === board.id)
-        if (boardIndex >= 0) {
-            const updatedBoards = [...boards];
-            updatedBoards[boardIndex].candidates = [...candidates];
-
-            setBoard({ ...updatedBoards[boardIndex] });
-
-            try {
-                const res = await fetch('/api/update-data', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ boards: updatedBoards })
-                });
-
-                if (res.ok) {
-                    setHasUnsavedChanges(false);
-                    alert("Board saved successfully!");
-                } else {
-                    alert("Failed to save board");
-                }
-            } catch (e) {
-                console.error("Save error", e);
-                alert("Failed to save board");
-            }
-        }
-    }
 
     const updateCandidate = (candId: string, updates: Partial<BoardCandidate>) => {
-        setHasUnsavedChanges(true);
         setCandidates(prev => prev.map(c => c.id === candId ? { ...c, ...updates } : c))
     }
 
     const updateCandidateRawData = (candId: string, key: string, value: string) => {
-        setHasUnsavedChanges(true);
         setCandidates(prev => prev.map(c => {
             if (c.id === candId) {
                 return {
@@ -287,8 +300,8 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                     variant="ghost"
                     size="icon"
                     onClick={() => {
-                        if (hasUnsavedChanges) {
-                            const confirmed = confirm("You have unsaved changes. Are you sure you want to leave? Your changes will be lost.");
+                        if (saveStatus === 'idle' || saveStatus === 'saving') {
+                            const confirmed = confirm("Changes are still being saved. Are you sure you want to leave?");
                             if (!confirmed) return;
                         }
                         router.push("/boards");
@@ -298,9 +311,12 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                 </Button>
                 <div>
                     <h2 className="text-3xl font-bold tracking-tight">{board.fy} CDR CMD Board</h2>
-                    <p className="text-muted-foreground">
+                    <p className="text-muted-foreground flex items-center gap-2">
                         Board Date: {board.boardDate}
-                        {hasUnsavedChanges && <span className="ml-3 text-amber-500 font-medium text-xs">● Unsaved Changes</span>}
+                        {saveStatus === 'idle' && <span className="ml-2 text-amber-500 text-xs font-medium flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full bg-amber-400"></span>Unsaved</span>}
+                        {saveStatus === 'saving' && <span className="ml-2 text-muted-foreground text-xs flex items-center gap-1"><Loader2 className="h-3 w-3 animate-spin" />Saving...</span>}
+                        {saveStatus === 'saved' && <span className="ml-2 text-green-600 text-xs flex items-center gap-1"><CheckCircle2 className="h-3 w-3" />Saved</span>}
+                        {saveStatus === 'error' && <span className="ml-2 text-red-500 text-xs flex items-center gap-1"><AlertCircle className="h-3 w-3" />Save failed</span>}
                     </p>
                 </div>
                 <div className="ml-auto flex gap-2">
@@ -316,9 +332,6 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                     </Button>
                     <Button variant="destructive" onClick={clearCandidates} disabled={candidates.length === 0}>
                         <Trash2 className="mr-2 h-4 w-4" /> Clear Board
-                    </Button>
-                    <Button onClick={saveChanges}>
-                        <Save className="mr-2 h-4 w-4" /> Save Board State
                     </Button>
                 </div>
             </div>
