@@ -407,8 +407,14 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                                                                         <div className="text-xs text-muted-foreground">{c.rank} &bull; {c.designator}</div>
                                                                     </div>
                                                                     <div className="text-xs text-muted-foreground hidden sm:block">
-                                                                        <span className="font-medium">YG:</span> {c.commissioningDate || "N/A"}
-                                                                        {c.ycs > 0 && <span className="ml-2">({c.ycs} YCS)</span>}
+                                                                        {(() => {
+                                                                            const yg = c.commissioningDate ||
+                                                                                Object.entries(c.rawData || {}).find(([k]) => k.toLowerCase().startsWith('yg'))?.[1] || "N/A";
+                                                                            const ycs = c.ycs > 0 ? c.ycs : (yg !== "N/A" && board?.boardDate
+                                                                                ? new Date(board.boardDate).getFullYear() - parseInt(yg, 10)
+                                                                                : 0);
+                                                                            return (<><span className="font-medium">YG:</span> {yg}{ycs > 0 && <span className="ml-2">({ycs} YCS)</span>}</>);
+                                                                        })()}
                                                                     </div>
                                                                     {c.deferralRequested && (
                                                                         <Badge variant="outline" className="text-xs border-yellow-500 text-yellow-600">Deferral Requested</Badge>
