@@ -263,12 +263,12 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
         }))
     }
 
-    // Extract all unique raw data headers across all uploaded candidates
+    // Preserve original Excel column order (left to right = highest priority first)
     const allRawHeaders = Array.from(
         new Set(
             candidates.flatMap(c => Object.keys(c.rawData || {}))
         )
-    ).sort();
+    );
 
     const clearCandidates = async () => {
         if (!confirm("Are you sure you want to clear all candidates from this board? This cannot be undone if saved.")) return;
