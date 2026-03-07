@@ -131,7 +131,9 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
             if (!headerRow) return;
 
             headerRow.eachCell((cell, colNumber) => {
-                const value = cell.value?.toString().trim().toLowerCase();
+                const raw = cell.value?.toString().trim() ?? '';
+                // Strip parenthetical suffix from header labels (e.g. "PERS-8 (Detail Officer)" -> "pers-8")
+                const value = raw.replace(/\s*\(.*?\)/g, '').trim().toLowerCase();
                 if (value) headers[value] = colNumber;
             });
 
