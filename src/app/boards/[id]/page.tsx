@@ -285,7 +285,11 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
     // Helper: resolve YG and YCS from stored fields or rawData fallback
     const getYGDisplay = (c: BoardCandidate) => {
         const yg = c.commissioningDate ||
-            Object.entries(c.rawData || {}).find(([k]) => k.toLowerCase().startsWith('yg'))?.[1] ||
+            Object.entries(c.rawData || {}).find(([k]) =>
+                k.toLowerCase() === 'yg' ||
+                k.toLowerCase().startsWith('year group') ||
+                k.toLowerCase().startsWith('year')
+            )?.[1] ||
             "N/A";
         const ycs = c.ycs > 0 ? c.ycs : (yg !== "N/A" && board?.boardDate
             ? new Date(board.boardDate).getFullYear() - parseInt(yg, 10)
@@ -413,18 +417,22 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                                                                     {c.deferralApproved && (
                                                                         <Badge variant="outline" className="text-xs border-green-500 text-green-600">Deferral Approved</Badge>
                                                                     )}
-                                                                    {/* Key flags visible at a glance */}
-                                                                    {(['pers-8', '2d1', 'ln7'] as const).map(flagKey => {
-                                                                        const val = Object.entries(c.rawData || {}).find(([k]) => k.toLowerCase().startsWith(flagKey))?.[1]?.toUpperCase();
+                                                                    {/* Key flags visible at a glance: match actual rawData key names */}
+                                                                    {([
+                                                                        { label: 'PERS-8', search: '8 flag' },
+                                                                        { label: '2D1', search: '2d1' },
+                                                                        { label: 'LN7', search: 'ln7' },
+                                                                    ] as const).map(({ label, search }) => {
+                                                                        const val = Object.entries(c.rawData || {}).find(([k]) => k.toLowerCase().includes(search))?.[1]?.toUpperCase();
                                                                         if (!val) return null;
                                                                         const isYes = val === 'Y';
                                                                         return (
                                                                             <Badge
-                                                                                key={flagKey}
+                                                                                key={label}
                                                                                 variant="outline"
                                                                                 className={`text-xs uppercase ${isYes ? 'border-blue-500 text-blue-600 bg-blue-50' : 'border-muted text-muted-foreground'}`}
                                                                             >
-                                                                                {flagKey.toUpperCase()}: {isYes ? 'Y' : 'N'}
+                                                                                {label}: {isYes ? 'Y' : 'N'}
                                                                             </Badge>
                                                                         );
                                                                     })}
