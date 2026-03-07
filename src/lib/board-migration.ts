@@ -15,7 +15,7 @@ export function getMigrationConfig(result: BoardCandidate['result']): {
         case 'Selected XO':
             return { status: 'Available', listShift: 'XO Screened' };
         case 'Selected XO-SM':
-            return { status: 'Available', listShift: 'XO Screened', screened: ['CO-SM'] };
+            return { status: 'Available', listShift: 'XO Screened' };
         case 'Selected CO-SM':
             return { status: 'Available', listShift: 'CO-SM', screened: ['CO-SM'] };
         default:
