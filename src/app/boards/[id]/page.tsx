@@ -173,7 +173,7 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
 
                 const rank = String(getVal(row, 'rank') || "LCDR");
                 const designator = String(getVal(row, 'desig', 'designator') || "1110");
-                const commDate = String(getVal(row, 'commission', 'date', 'comm date', 'commissioning date') || "");
+                const commDate = String(getVal(row, 'yg', 'year group', 'commission', 'date', 'comm date', 'commissioning date') || "");
 
                 let calculatedYcs = 0;
                 if (commDate && board.boardDate) {
@@ -407,7 +407,7 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                                                                         <div className="text-xs text-muted-foreground">{c.rank} &bull; {c.designator}</div>
                                                                     </div>
                                                                     <div className="text-xs text-muted-foreground hidden sm:block">
-                                                                        <span className="font-medium">Comm:</span> {c.commissioningDate || "N/A"}
+                                                                        <span className="font-medium">YG:</span> {c.commissioningDate || "N/A"}
                                                                         {c.ycs > 0 && <span className="ml-2">({c.ycs} YCS)</span>}
                                                                     </div>
                                                                     {c.deferralRequested && (
