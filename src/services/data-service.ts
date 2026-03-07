@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import type { OracleCommand, Officer, Slate, CdrCmdBoard } from '../lib/types';
 
 const DATA_FILE_PATH = path.join(process.cwd(), 'src', 'lib', 'data.ts');
 
@@ -37,7 +38,12 @@ export function replaceExport(content: string, varName: string, data: any): stri
 /**
  * High-level orchestration function to safely update data.ts
  */
-export async function updateDataFile(updates: { oracleData?: any, officers?: any, slates?: any, boards?: any }) {
+export async function updateDataFile(updates: {
+    oracleData?: OracleCommand[],
+    officers?: Officer[],
+    slates?: Slate[],
+    boards?: CdrCmdBoard[]
+}) {
     let fileContent = await readDataFile();
     let updated = false;
 

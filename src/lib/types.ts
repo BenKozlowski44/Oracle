@@ -185,8 +185,6 @@ export interface BoardCandidate {
     rawData?: Record<string, string> // To store all generic Excel columns
 
     // Board Prep Fields
-    missingRecords: boolean
-    missingRecordsNotes?: string
     deferralRequested: boolean
     deferralApproved: boolean
     specialRequests?: string

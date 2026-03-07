@@ -9,24 +9,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ArrowLeft, Upload, Info, Trash2, ChevronDown, ChevronUp, CheckCircle2, Loader2, AlertCircle } from "lucide-react"
-import Link from "next/link"
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import {
-    HoverCard,
-    HoverCardContent,
-    HoverCardTrigger,
-} from "@/components/ui/hover-card"
 interface BoardPageProps {
     params: Promise<{ id: string }>
 }
@@ -228,8 +214,6 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                     ycs: calculatedYcs,
                     lookTracker: sheetLookTracker,
                     rawData,
-                    missingRecords: false,
-                    missingRecordsNotes: "",
                     deferralRequested: false,
                     deferralApproved: false,
                     specialRequests: "",
@@ -298,6 +282,17 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
             }
         }
     }
+    // Helper: resolve YG and YCS from stored fields or rawData fallback
+    const getYGDisplay = (c: BoardCandidate) => {
+        const yg = c.commissioningDate ||
+            Object.entries(c.rawData || {}).find(([k]) => k.toLowerCase().startsWith('yg'))?.[1] ||
+            "N/A";
+        const ycs = c.ycs > 0 ? c.ycs : (yg !== "N/A" && board?.boardDate
+            ? new Date(board.boardDate).getFullYear() - parseInt(yg, 10)
+            : 0);
+        return { yg, ycs };
+    };
+
     return (
         <div className="flex-1 space-y-4 p-8 pt-6">
             <div className="flex items-center space-x-4 mb-4">
@@ -408,11 +403,7 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                                                                     </div>
                                                                     <div className="text-xs text-muted-foreground hidden sm:block">
                                                                         {(() => {
-                                                                            const yg = c.commissioningDate ||
-                                                                                Object.entries(c.rawData || {}).find(([k]) => k.toLowerCase().startsWith('yg'))?.[1] || "N/A";
-                                                                            const ycs = c.ycs > 0 ? c.ycs : (yg !== "N/A" && board?.boardDate
-                                                                                ? new Date(board.boardDate).getFullYear() - parseInt(yg, 10)
-                                                                                : 0);
+                                                                            const { yg, ycs } = getYGDisplay(c);
                                                                             return (<><span className="font-medium">YG:</span> {yg}{ycs > 0 && <span className="ml-2">({ycs} YCS)</span>}</>);
                                                                         })()}
                                                                     </div>
