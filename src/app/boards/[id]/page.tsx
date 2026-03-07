@@ -418,7 +418,7 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                                                                     )}
                                                                     {/* Key flags visible at a glance */}
                                                                     {(['pers-8', '2d1', 'ln7'] as const).map(flagKey => {
-                                                                        const val = Object.entries(c.rawData || {}).find(([k]) => k.toLowerCase() === flagKey)?.[1]?.toUpperCase();
+                                                                        const val = Object.entries(c.rawData || {}).find(([k]) => k.toLowerCase().startsWith(flagKey))?.[1]?.toUpperCase();
                                                                         if (!val) return null;
                                                                         const isYes = val === 'Y';
                                                                         return (
