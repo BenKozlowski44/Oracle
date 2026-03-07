@@ -37,6 +37,7 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
     const [board, setBoard] = useState<CdrCmdBoard | null>(null)
     const [candidates, setCandidates] = useState<BoardCandidate[]>([])
     const [expandedCandidates, setExpandedCandidates] = useState<Set<string>>(new Set())
+    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
@@ -46,6 +47,18 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
             setCandidates([...found.candidates])
         }
     }, [id])
+
+    // Warn on browser tab close / refresh when there are unsaved changes
+    useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            if (hasUnsavedChanges) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        };
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, [hasUnsavedChanges])
 
     if (!board) {
         return <div className="p-8">Loading board data...</div>
@@ -199,6 +212,7 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                 });
 
                 if (res.ok) {
+                    setHasUnsavedChanges(false);
                     alert("Board saved successfully!");
                 } else {
                     alert("Failed to save board");
@@ -211,10 +225,12 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
     }
 
     const updateCandidate = (candId: string, updates: Partial<BoardCandidate>) => {
+        setHasUnsavedChanges(true);
         setCandidates(prev => prev.map(c => c.id === candId ? { ...c, ...updates } : c))
     }
 
     const updateCandidateRawData = (candId: string, key: string, value: string) => {
+        setHasUnsavedChanges(true);
         setCandidates(prev => prev.map(c => {
             if (c.id === candId) {
                 return {
@@ -267,14 +283,25 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
     return (
         <div className="flex-1 space-y-4 p-8 pt-6">
             <div className="flex items-center space-x-4 mb-4">
-                <Link href="/boards">
-                    <Button variant="ghost" size="icon">
-                        <ArrowLeft className="h-5 w-5" />
-                    </Button>
-                </Link>
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                        if (hasUnsavedChanges) {
+                            const confirmed = confirm("You have unsaved changes. Are you sure you want to leave? Your changes will be lost.");
+                            if (!confirmed) return;
+                        }
+                        router.push("/boards");
+                    }}
+                >
+                    <ArrowLeft className="h-5 w-5" />
+                </Button>
                 <div>
                     <h2 className="text-3xl font-bold tracking-tight">{board.fy} CDR CMD Board</h2>
-                    <p className="text-muted-foreground">Board Date: {board.boardDate}</p>
+                    <p className="text-muted-foreground">
+                        Board Date: {board.boardDate}
+                        {hasUnsavedChanges && <span className="ml-3 text-amber-500 font-medium text-xs">● Unsaved Changes</span>}
+                    </p>
                 </div>
                 <div className="ml-auto flex gap-2">
                     <input
