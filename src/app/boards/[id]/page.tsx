@@ -392,7 +392,7 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                 <div>
                     <h2 className="text-3xl font-bold tracking-tight">{board.fy} CDR CMD Board</h2>
                     <p className="text-muted-foreground flex items-center gap-2">
-                        Board Date: {board.boardDate}
+                        Board Date: {board.boardDate ? new Date(board.boardDate + 'T12:00:00').toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A'}
                         {saveStatus === 'idle' && <span className="ml-2 text-amber-500 text-xs font-medium flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full bg-amber-400"></span>Unsaved</span>}
                         {saveStatus === 'saving' && <span className="ml-2 text-muted-foreground text-xs flex items-center gap-1"><Loader2 className="h-3 w-3 animate-spin" />Saving...</span>}
                         {saveStatus === 'saved' && <span className="ml-2 text-green-600 text-xs flex items-center gap-1"><CheckCircle2 className="h-3 w-3" />Saved</span>}
