@@ -136,6 +136,24 @@ export async function generateCandidateTemplate(slate: Slate): Promise<Buffer> {
         // spacer
         r++;
 
+        // ─── CONTACT INFORMATION ──────────────────────────────────────
+        makeSectionHeader(r++, 'CONTACT INFORMATION');
+        makeSubHeader(r++, ['Work Email', 'Home / Personal Email', 'Work Phone', 'Personal Cell', '']);
+        makeInputCell(`A${r}`);
+        makeInputCell(`B${r}`);
+        makeInputCell(`C${r}`);
+        makeInputCell(`D${r}`);
+        r++;
+
+        makeSubHeader(r++, ['Mailing Address (Street, City, State ZIP)', '', '', '', '']);
+        wsInput.mergeCells(r - 1, 1, r - 1, 5);
+        wsInput.mergeCells(r, 1, r, 5);
+        makeInputCell(`A${r}`);
+        r++;
+
+        // spacer
+        r++;
+
         // ─── FLAG CONTACT ─────────────────────────────────────────────
         makeSectionHeader(r++, 'FLAG CONTACT');
         makeSubHeader(r++, ['Flag Officer Name', 'Relationship / Context', '', '', '']);

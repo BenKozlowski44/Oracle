@@ -70,6 +70,16 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: `Officer '${rawName}' not found in system.` }, { status: 404 });
         }
 
+        // ── CONTACT INFORMATION ───────────────────────────────────────
+        // Section layout: header → column headers → emails+phones row → address sub-header → address row
+        const contactSection = findRow('CONTACT INFORMATION');
+        const workEmail = contactSection > 0 ? cellVal(contactSection + 2, 1) : '';
+        const homeEmail = contactSection > 0 ? cellVal(contactSection + 2, 2) : '';
+        const workPhone = contactSection > 0 ? cellVal(contactSection + 2, 3) : '';
+        const personalPhone = contactSection > 0 ? cellVal(contactSection + 2, 4) : '';
+        // Address row is merged into col A, 2 rows after the address sub-header (which is +3)
+        const mailingAddress = contactSection > 0 ? cellVal(contactSection + 4, 1) : '';
+
         // ── FLAG CONTACT ──────────────────────────────────────────────
         const flagRow = findRow('FLAG CONTACT');
         const flagName = flagRow > 0 ? cellVal(flagRow + 2, 1) : '';
@@ -167,6 +177,13 @@ export async function POST(request: Request) {
             tourHistory: tourHistory.length > 0 ? tourHistory : undefined,
             jpme: jpme || undefined,
             wti: wti || undefined,
+            contactInfo: (workEmail || homeEmail || workPhone || personalPhone || mailingAddress)
+                ? {
+                    workEmail: workEmail || undefined, homeEmail: homeEmail || undefined,
+                    workPhone: workPhone || undefined, personalPhone: personalPhone || undefined,
+                    mailingAddress: mailingAddress || undefined
+                }
+                : undefined,
         };
 
         // ── Persist to slates.json ────────────────────────────────────

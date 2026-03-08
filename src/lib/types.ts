@@ -175,6 +175,13 @@ export interface SlateCandidateProfile {
     tourHistory?: TourEntry[]
     jpme?: string
     wti?: string
+    contactInfo?: {
+        workEmail?: string
+        homeEmail?: string
+        workPhone?: string
+        personalPhone?: string
+        mailingAddress?: string // Street, City, State ZIP
+    }
 }
 
 
