@@ -298,10 +298,22 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
         return { yg, ycs };
     };
 
-    // Result label config for display
-    const RESULT_OPTIONS: BoardResult[] = [
-        'Pending', 'Selected CO Afloat', 'Selected XO Afloat', 'Selected XO Afloat*', 'Selected XO-SM', 'Selected CO-SM', 'FOS', 'Deferred', 'Pulled'
-    ];
+    // Non-selection outcomes always available regardless of look
+    const BASE_OPTIONS: BoardResult[] = ['Pending', 'FOS', 'Deferred', 'Pulled'];
+
+    // Returns eligible selection results for a given look, plus always-available base options
+    const getResultOptions = (look: string): BoardResult[] => {
+        switch (look) {
+            case '1st Look':
+                return ['Selected CO Afloat', ...BASE_OPTIONS];
+            case '2nd Look':
+                return ['Selected CO Afloat', 'Selected XO Afloat', 'Selected XO Afloat*', 'Selected XO-SM', ...BASE_OPTIONS];
+            case '3rd Look':
+                return ['Selected CO Afloat', 'Selected CO-SM', ...BASE_OPTIONS];
+            default:
+                return ['Selected CO Afloat', 'Selected XO Afloat', 'Selected XO Afloat*', 'Selected XO-SM', 'Selected CO-SM', ...BASE_OPTIONS];
+        }
+    };
 
     const resultColor = (result: BoardResult) => {
         switch (result) {
@@ -515,7 +527,7 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                                                                             value={c.result}
                                                                             onChange={e => updateCandidate(c.id, { result: e.target.value as BoardResult })}
                                                                         >
-                                                                            {RESULT_OPTIONS.map(r => (
+                                                                            {getResultOptions(c.lookTracker).map(r => (
                                                                                 <option key={r} value={r}>{r}</option>
                                                                             ))}
                                                                         </select>
