@@ -494,9 +494,9 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                                                                         <div className="font-semibold text-sm">{c.name}</div>
                                                                         <div className="text-xs text-muted-foreground">{c.rank} &bull; {c.designator}</div>
                                                                     </div>
-                                                                    <div className="text-xs text-muted-foreground hidden sm:block">
-                                                                        <span className="font-medium">YG:</span> {getYGDisplay(c).yg}
-                                                                    </div>
+                                                                    <Badge variant="outline" className="text-xs text-muted-foreground border-muted-foreground/30 hidden sm:flex">
+                                                                        YG {getYGDisplay(c).yg}
+                                                                    </Badge>
                                                                     {c.deferralRequested && (
                                                                         <Badge variant="outline" className="text-xs border-yellow-500 text-yellow-600">Deferral Requested</Badge>
                                                                     )}
