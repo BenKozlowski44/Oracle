@@ -297,6 +297,9 @@ export default function SlateDetailPage({ params }: SlateDetailPageProps) {
                     <Link href={`/slates/${id}/alignment`}>
                         <Button variant="outline">Alignment Matrix</Button>
                     </Link>
+                    <Link href={`/slates/${id}/brief`}>
+                        <Button variant="outline">Print Brief</Button>
+                    </Link>
                     <Badge variant="outline" className="text-sm px-3 py-1">
                         {filledCount} / {totalCount} Requirements Filled
                     </Badge>
