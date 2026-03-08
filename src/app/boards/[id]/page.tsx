@@ -396,7 +396,7 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                         {saveStatus === 'idle' && <span className="ml-2 text-amber-500 text-xs font-medium flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full bg-amber-400"></span>Unsaved</span>}
                         {saveStatus === 'saving' && <span className="ml-2 text-muted-foreground text-xs flex items-center gap-1"><Loader2 className="h-3 w-3 animate-spin" />Saving...</span>}
                         {saveStatus === 'saved' && <span className="ml-2 text-green-600 text-xs flex items-center gap-1"><CheckCircle2 className="h-3 w-3" />Saved</span>}
-                        {saveStatus === 'error' && <span className="ml-2 text-red-500 text-xs flex items-center gap-1"><AlertCircle className="h-3 w-3" />Save failed</span>}
+                        {saveStatus === 'error' && <span className="ml-2 text-red-500 text-xs flex items-center gap-2"><AlertCircle className="h-3 w-3" />Save failed<button onClick={() => board && performSave(candidates, board)} className="underline hover:text-red-700 font-medium">Retry</button></span>}
                     </p>
                 </div>
                 <div className="ml-auto flex gap-2">
