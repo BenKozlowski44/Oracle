@@ -62,23 +62,49 @@ export function AlignmentMatrixReport({ slateId }: { slateId: string }) {
 
     const groupedPrefs = Array.from(uniquePrefsMap.values());
 
+    // Build a map of prefFormat → earliest fill date (incumbentPrd) across requirements
+    const prefFillDates = new Map<string, Date>();
+    requirements.forEach(r => {
+        const cmd = oracleData.find(c => c.id === r.commandId);
+        const pf = `${cmd?.platform || 'Unknown'} - ${cmd?.location || 'Unknown'}`;
+        if (r.incumbentPrd) {
+            const d = new Date(r.incumbentPrd);
+            const existing = prefFillDates.get(pf);
+            if (!existing || d < existing) prefFillDates.set(pf, d);
+        }
+    });
+
+    const MIN_PIPELINE_MONTHS = 6; // Minimum XO pipeline duration
+
     const getPreferenceRank = (candidateId: string, prefFormat: string) => {
         const profile = slate.candidateProfiles?.find(p => p.officerId === candidateId);
         if (!profile) return null;
 
         const pref = profile.preferences.find(p => p.key === prefFormat);
-        return pref ? { rank: pref.rank } : null;
+        if (!pref) return null;
+
+        // Pipeline timing check: avail date + min pipeline must reach the fill date
+        let pipelineWarning = false;
+        let pipelineDetail = '';
+        if (profile.availabilityDate) {
+            const fillDate = prefFillDates.get(prefFormat);
+            if (fillDate) {
+                const availDate = new Date(profile.availabilityDate);
+                const pipelineEnd = new Date(availDate);
+                pipelineEnd.setMonth(pipelineEnd.getMonth() + MIN_PIPELINE_MONTHS);
+                if (pipelineEnd > fillDate) {
+                    pipelineWarning = true;
+                    pipelineDetail = `Avail ${formatToMMMyy(profile.availabilityDate)} + ${MIN_PIPELINE_MONTHS}mo pipeline ends ${formatToMMMyy(pipelineEnd.toISOString())} — fill date is ${formatToMMMyy(fillDate.toISOString())}`;
+                }
+            }
+        }
+
+        return { rank: pref.rank, pipelineWarning, pipelineDetail };
     }
 
-    const checkAvailability = (candidateId: string) => {
+    const getAvailDate = (candidateId: string) => {
         const profile = slate.candidateProfiles?.find(p => p.officerId === candidateId);
-        if (!profile?.availabilityDate) return null;
-
-        const availDate = new Date(profile.availabilityDate);
-        const slateStart = new Date(slate.windowStart);
-        const isLate = availDate > new Date(slateStart.getTime() + 90 * 24 * 60 * 60 * 1000);
-
-        return { date: profile.availabilityDate, isLate };
+        return profile?.availabilityDate || null;
     }
 
     return (
@@ -125,7 +151,6 @@ export function AlignmentMatrixReport({ slateId }: { slateId: string }) {
                             </TableRow>
                         ) : (
                             candidates.map(candidate => {
-                                const avail = checkAvailability(candidate.id);
                                 return (
                                     <TableRow key={candidate.id} className="print:break-inside-avoid">
                                         <TableCell className="font-medium sticky left-0 bg-background z-10 border-r print:static print:p-1 print:align-top">
@@ -135,14 +160,14 @@ export function AlignmentMatrixReport({ slateId }: { slateId: string }) {
                                             </div>
                                         </TableCell>
                                         <TableCell className="border-r text-xs print:text-[8px] print:p-1 print:align-top">
-                                            {avail ? (
-                                                <div className={`flex flex-col xl:flex-row items-center gap-1 ${avail.isLate ? "text-amber-600" : "text-muted-foreground"}`}>
-                                                    {avail.isLate && <AlertTriangle className="h-3 w-3 print:hidden" />}
-                                                    <span className="print:break-all">{formatToMMMyy(avail.date)}</span>
-                                                </div>
-                                            ) : (
-                                                <span className="text-muted-foreground italic">-</span>
-                                            )}
+                                            {(() => {
+                                                const availDate = getAvailDate(candidate.id);
+                                                return availDate ? (
+                                                    <span className="text-muted-foreground">{formatToMMMyy(availDate)}</span>
+                                                ) : (
+                                                    <span className="text-muted-foreground italic">-</span>
+                                                );
+                                            })()}
                                         </TableCell>
                                         {groupedPrefs.map(group => {
                                             const cell = getPreferenceRank(candidate.id, group.prefFormat);
@@ -152,18 +177,29 @@ export function AlignmentMatrixReport({ slateId }: { slateId: string }) {
                                                         <TooltipProvider>
                                                             <Tooltip>
                                                                 <TooltipTrigger asChild>
-                                                                    <div className={`
-                                                                        inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold
-                                                                        print:w-4 print:h-4 print:text-[8px] mx-auto
-                                                                        ${cell.rank >= 1 && cell.rank <= 3 ? "bg-green-100 text-green-700 border border-green-200" :
-                                                                            cell.rank >= 4 && cell.rank <= 6 ? "bg-amber-100 text-amber-700 border border-amber-200" :
-                                                                                "bg-rose-100 text-rose-700 border border-rose-200"}
-                                                                    `}>
-                                                                        {cell.rank}
+                                                                    <div className="relative inline-flex items-center justify-center">
+                                                                        <div className={`
+                                                                            inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold
+                                                                            print:w-4 print:h-4 print:text-[8px] mx-auto
+                                                                            ${cell.rank >= 1 && cell.rank <= 3 ? "bg-green-100 text-green-700 border border-green-200" :
+                                                                                cell.rank >= 4 && cell.rank <= 6 ? "bg-amber-100 text-amber-700 border border-amber-200" :
+                                                                                    "bg-rose-100 text-rose-700 border border-rose-200"}
+                                                                        `}>
+                                                                            {cell.rank}
+                                                                        </div>
+                                                                        {cell.pipelineWarning && (
+                                                                            <AlertTriangle className="absolute -top-1.5 -right-1.5 h-3.5 w-3.5 text-amber-500 print:hidden" />
+                                                                        )}
                                                                     </div>
                                                                 </TooltipTrigger>
                                                                 <TooltipContent>
-                                                                    <p>Ranked #{cell.rank}</p>
+                                                                    {cell.pipelineWarning ? (
+                                                                        <p className="text-amber-600 text-xs max-w-[220px]">
+                                                                            ⚠️ Pipeline timing conflict — {cell.pipelineDetail}
+                                                                        </p>
+                                                                    ) : (
+                                                                        <p>Ranked #{cell.rank}</p>
+                                                                    )}
                                                                 </TooltipContent>
                                                             </Tooltip>
                                                         </TooltipProvider>
