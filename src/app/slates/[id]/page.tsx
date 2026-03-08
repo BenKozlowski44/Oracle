@@ -583,6 +583,41 @@ export default function SlateDetailPage({ params }: SlateDetailPageProps) {
                                         const profile = candidateProfiles.find(p => p.officerId === c.id);
                                         const hasProfile = !!profile;
 
+                                        // Profile completeness scoring (6 sections)
+                                        const completenessChecks = profile ? [
+                                            {
+                                                label: 'Contact Info',
+                                                done: !!(profile.contactInfo?.workEmail || profile.contactInfo?.personalPhone)
+                                            },
+                                            {
+                                                label: 'Flag Notifier',
+                                                done: !!profile.flagContact?.name
+                                            },
+                                            {
+                                                label: 'Command Preferences',
+                                                done: profile.preferences.length > 0
+                                            },
+                                            {
+                                                label: 'Tour History',
+                                                done: !!(profile.tourHistory?.some(t => t.ship))
+                                            },
+                                            {
+                                                label: 'JPME / WTI',
+                                                done: !!(profile.jpme || profile.wti)
+                                            },
+                                            {
+                                                label: 'Availability Date',
+                                                done: !!profile.availabilityDate
+                                            },
+                                        ] : [];
+                                        const completedCount = completenessChecks.filter(c => c.done).length;
+                                        const totalCount = completenessChecks.length;
+                                        const missingLabels = completenessChecks.filter(c => !c.done).map(c => c.label);
+                                        const completenessColor = totalCount === 0 ? '' :
+                                            completedCount === totalCount ? 'bg-green-100 text-green-800 border-green-200' :
+                                                completedCount >= 4 ? 'bg-amber-100 text-amber-800 border-amber-200' :
+                                                    'bg-rose-100 text-rose-800 border-rose-200';
+
                                         // Check if candidate is assigned to any requirement in this slate
                                         const assignedReq = requirements.find(r => r.filledBy === c.id);
                                         const isAssigned = !!assignedReq;
@@ -595,7 +630,15 @@ export default function SlateDetailPage({ params }: SlateDetailPageProps) {
                                                         onClick={() => setViewingOfficerId(c.id)}
                                                     >
                                                         {c.name}
-                                                        {hasProfile && <Badge variant="secondary" className="text-[10px] h-5 px-1 bg-green-100 text-green-800 hover:bg-green-100">Profile</Badge>}
+                                                        {hasProfile && (
+                                                            <Badge
+                                                                variant="outline"
+                                                                className={`text-[10px] h-5 px-1.5 border ${completenessColor}`}
+                                                                title={missingLabels.length > 0 ? `Missing: ${missingLabels.join(', ')}` : 'Profile complete'}
+                                                            >
+                                                                {completedCount}/{totalCount}
+                                                            </Badge>
+                                                        )}
                                                         {isAssigned && <Badge variant="default" className="text-[10px] h-5 px-1">Slated</Badge>}
                                                     </button>
                                                     <div className="text-xs text-muted-foreground">
