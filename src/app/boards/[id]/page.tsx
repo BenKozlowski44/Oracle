@@ -300,13 +300,13 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
 
     // Result label config for display
     const RESULT_OPTIONS: BoardResult[] = [
-        'Pending', 'Selected CO Afloat', 'Selected XO', 'Selected XO-SM', 'Selected CO-SM', 'FOS', 'Deferred', 'Pulled'
+        'Pending', 'Selected CO Afloat', 'Selected XO Afloat', 'Selected XO Afloat*', 'Selected XO-SM', 'Selected CO-SM', 'FOS', 'Deferred', 'Pulled'
     ];
 
     const resultColor = (result: BoardResult) => {
         switch (result) {
             case 'Selected CO Afloat': return 'bg-green-100 text-green-800 border-green-300';
-            case 'Selected XO': return 'bg-blue-100 text-blue-800 border-blue-300';
+            case 'Selected XO Afloat': return 'bg-blue-100 text-blue-800 border-blue-300';
             case 'Selected XO-SM': return 'bg-purple-100 text-purple-800 border-purple-300';
             case 'Selected CO-SM': return 'bg-indigo-100 text-indigo-800 border-indigo-300';
             case 'FOS': return 'bg-orange-100 text-orange-800 border-orange-300';
