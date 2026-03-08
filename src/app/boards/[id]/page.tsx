@@ -489,11 +489,13 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                                                                 onClick={toggle}
                                                                 className="w-full flex items-center justify-between px-4 py-3 hover:bg-muted/50 transition-colors text-left"
                                                             >
-                                                                <div className="flex items-center gap-6">
-                                                                    <div>
-                                                                        <div className="font-semibold text-sm">{c.name}</div>
-                                                                        <div className="text-xs text-muted-foreground">{c.rank} &bull; {c.designator}</div>
-                                                                    </div>
+                                                                {/* Name column — fixed width */}
+                                                                <div className="w-52 shrink-0">
+                                                                    <div className="font-semibold text-sm">{c.name}</div>
+                                                                    <div className="text-xs text-muted-foreground">{c.rank} &bull; {c.designator}</div>
+                                                                </div>
+                                                                {/* Badge strip — grows to fill, badges always start at the same x position */}
+                                                                <div className="flex items-center gap-2 flex-1 min-w-0">
                                                                     <Badge variant="outline" className="text-xs text-muted-foreground border-muted-foreground/30 hidden sm:flex">
                                                                         YG {getYGDisplay(c).yg}
                                                                     </Badge>
