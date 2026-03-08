@@ -1,10 +1,13 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
 import { Officer } from '@/lib/types';
+import { readJson } from '@/services/data-service';
 import { updateOfficerInExcel } from '@/lib/excel-writer';
 import { getPersonnelAlerts } from '@/lib/alerts';
 import { getMetrics, saveMetrics } from '@/lib/metrics-service';
+import fs from 'fs';
+import path from 'path';
+
+const DATA_DIR = path.join(process.cwd(), 'src', 'data');
 
 export async function POST(request: Request) {
     try {
@@ -14,109 +17,42 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Invalid officer data' }, { status: 400 });
         }
 
-        // 1. Update data.ts
-        const dataFilePath = path.join(process.cwd(), 'src', 'lib', 'data.ts');
-        const fileContent = fs.readFileSync(dataFilePath, 'utf8');
+        const officers = readJson<Officer[]>('officers.json');
 
-        // Extract JSON
-        const startMarker = 'export const officers: Officer[] =';
-        const searchStartIndex = fileContent.indexOf(startMarker);
-
-        if (searchStartIndex === -1) throw new Error("Could not find officers array");
-
-        const openBracketIndex = fileContent.indexOf('[', searchStartIndex + startMarker.length);
-        if (openBracketIndex === -1) throw new Error("Could not find opening bracket");
-
-        // 2. Find the matching closing bracket using a counter
-        let depth = 0;
-        let inString = false;
-        let quoteChar = '';
-        let closeBracketIndex = -1;
-
-        for (let i = openBracketIndex; i < fileContent.length; i++) {
-            const char = fileContent[i];
-
-            if (inString) {
-                if (char === quoteChar && fileContent[i - 1] !== '\\') {
-                    inString = false;
-                }
-            } else {
-                if (char === '"' || char === "'" || char === '`') {
-                    inString = true;
-                    quoteChar = char;
-                } else if (char === '[') {
-                    depth++;
-                } else if (char === ']') {
-                    depth--;
-                    if (depth === 0) {
-                        closeBracketIndex = i;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (closeBracketIndex === -1) throw new Error("Could not find matching closing bracket");
-
-        const jsonString = fileContent.substring(openBracketIndex, closeBracketIndex + 1);
-
-        // The content might not be valid JSON because keys might not be quoted if written loosely, 
-        // OR it might be perfectly valid JSON if we used JSON.stringify to write it previously.
-        // Our `update-data` uses JSON.stringify, so it SHOULD be valid JSON.
-        // HOWEVER: data.ts often has trailing commas if edited manually or by certain formatters.
-
-        let officers: Officer[];
-        try {
-            // Use Function constructor to parse valid JS object literal strings (supports trailing commas)
-            // This is safer for data.ts which is a TS file, not strict JSON.
-            const parseFn = new Function(`return ${jsonString}`);
-            officers = parseFn() as Officer[];
-        } catch (e) {
-            console.error("Failed to parse officers data", e);
-            return NextResponse.json({ error: 'Data file corrupted or invalid format' }, { status: 500 });
-        }
-
-        // Update in memory
         const index = officers.findIndex(o => o.id === updatedOfficer.id);
-        if (index !== -1) {
-            const originalOfficer = officers[index];
-            const newOfficerObj = { ...originalOfficer, ...updatedOfficer };
-
-            // Metrics Tracking: Check if we resolved any personnel issues
-            try {
-                const originalAlerts = getPersonnelAlerts(originalOfficer).length;
-                const newAlerts = getPersonnelAlerts(newOfficerObj).length;
-
-                if (originalAlerts > newAlerts) {
-                    const diff = originalAlerts - newAlerts;
-                    const metrics = getMetrics();
-                    metrics.resolvedConflicts += diff;
-                    saveMetrics(metrics);
-                    console.log(`[API] Resolved ${diff} personnel issues for ${newOfficerObj.name}`);
-                }
-            } catch (e) {
-                console.error("Failed to update metrics for officer", e);
-            }
-
-            officers[index] = newOfficerObj;
-        } else {
+        if (index === -1) {
             return NextResponse.json({ error: 'Officer not found' }, { status: 404 });
         }
 
-        // Write back to data.ts
-        const newSegment = JSON.stringify(officers, null, 4);
-        const newFileContent = fileContent.substring(0, openBracketIndex) +
-            newSegment +
-            fileContent.substring(closeBracketIndex + 1);
+        const originalOfficer = officers[index];
+        const newOfficerObj = { ...originalOfficer, ...updatedOfficer };
 
-        fs.writeFileSync(dataFilePath, newFileContent);
+        // Metrics Tracking: Check if we resolved any personnel issues
+        try {
+            const originalAlerts = getPersonnelAlerts(originalOfficer).length;
+            const newAlerts = getPersonnelAlerts(newOfficerObj).length;
 
-        // 2. Write-Back to Excel (Fire and Forget / Async)
+            if (originalAlerts > newAlerts) {
+                const diff = originalAlerts - newAlerts;
+                const metrics = getMetrics();
+                metrics.resolvedConflicts += diff;
+                saveMetrics(metrics);
+                console.log(`[API] Resolved ${diff} personnel issues for ${newOfficerObj.name}`);
+            }
+        } catch (e) {
+            console.error('Failed to update metrics for officer', e);
+        }
+
+        officers[index] = newOfficerObj;
+
+        // Persist to JSON
+        fs.writeFileSync(path.join(DATA_DIR, 'officers.json'), JSON.stringify(officers, null, 2), 'utf8');
+
+        // Write-Back to Excel (Fire and Forget)
         console.log(`[API] Updating Excel for ${officers[index].name}`);
         const excelResult = await updateOfficerInExcel(officers[index]);
         if (!excelResult.success) {
             console.warn(`[API] Excel update failed: ${excelResult.message}`);
-            // We do NOT fail the request, as the DB update succeeded. 
         }
 
         return NextResponse.json({ success: true });

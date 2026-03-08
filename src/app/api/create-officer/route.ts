@@ -1,8 +1,10 @@
-
 import { NextResponse } from 'next/server';
+import { Officer } from '@/lib/types';
+import { readJson } from '@/services/data-service';
 import fs from 'fs';
 import path from 'path';
-import { Officer } from '@/lib/types';
+
+const DATA_DIR = path.join(process.cwd(), 'src', 'data');
 
 export async function POST(request: Request) {
     try {
@@ -22,63 +24,22 @@ export async function POST(request: Request) {
         if (!newOfficer.preferredLocations) newOfficer.preferredLocations = [];
         if (!newOfficer.preferredPlatforms) newOfficer.preferredPlatforms = [];
 
-        const dataFilePath = path.join(process.cwd(), 'src', 'lib', 'data.ts');
-        const fileContent = fs.readFileSync(dataFilePath, 'utf8');
+        const officers = readJson<Officer[]>('officers.json');
+        officers.unshift(newOfficer); // Add to top of list
 
-        // Logic similar to update-officer, but we append to the array.
-        const startMarker = 'export const officers: Officer[] = [';
-        const startIndex = fileContent.indexOf(startMarker);
-
-        if (startIndex === -1) {
-            return NextResponse.json({ error: 'Could not find officers data' }, { status: 500 });
-        }
-
-        const blockStart = startIndex + startMarker.length;
-
-        // Find the end of the array by counting brackets is safest, or use the "export const billets" marker method as before?
-        // Let's use the same robust logic as update-officer or update-data if possible.
-        // Actually, update-officer implementation we saw earlier might have been incomplete in my view_file? 
-        // Let's re-read update-officer logic to reuse it or improve it.
-        // For simplicity and speed in a prototype:
-        // We can just find the LAST closing bracket of the officers array?
-
-        // Let's assume the file structure is somewhat static due to our generators.
-        // "export const officers: Officer[] = [...];"
-
-        // Matches the array content
-        // Regex to match "export const officers: Officer[] = <JSONArray>;" or similar
-        // But referencing manual file parsing is risky.
-
-        // Robust approach:
-        // 1. Read file.
-        // 2. Extract current officers block.
-        // 3. Parse it? (Dangerous with comments/imports)
-
-        // Safest for this environment:
-        // Read file, find "export const officers: Officer[] = [" 
-        // Insert the new officer object string right after that.
-
-        const newOfficerString = JSON.stringify(newOfficer, null, 4) + ',\n';
-
-        const newFileContent = fileContent.slice(0, blockStart) + '\n' + newOfficerString + fileContent.slice(blockStart);
-
-        fs.writeFileSync(dataFilePath, newFileContent);
+        fs.writeFileSync(path.join(DATA_DIR, 'officers.json'), JSON.stringify(officers, null, 2), 'utf8');
 
         // Fire and forget Excel write-back
         import('@/lib/excel-writer').then(({ appendOfficersToExcel }) => {
             appendOfficersToExcel([newOfficer]).then(res => {
-                if (!res.success) {
-                    console.warn(`[API] Excel append failed: ${res.message}`);
-                }
-            }).catch(err => {
-                console.error("Failed to append officer to Excel:", err);
-            });
+                if (!res.success) console.warn(`[API] Excel append failed: ${res.message}`);
+            }).catch(err => console.error('Failed to append officer to Excel:', err));
         });
 
         return NextResponse.json({ success: true, officer: newOfficer });
 
     } catch (error) {
-        console.error("Error creating officer:", error);
+        console.error('Error creating officer:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }
