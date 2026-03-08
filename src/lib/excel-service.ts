@@ -166,7 +166,7 @@ export async function generateCandidateTemplate(slate: Slate): Promise<Buffer> {
 
         // ─── COMMAND PREFERENCES ──────────────────────────────────────
         makeSectionHeader(r++, `COMMAND PREFERENCES (Ranked 1–${prefCount})`);
-        makeSubHeader(r++, ['Rank', 'Platform - Location', 'Narrative (why this preference?)', '', '']);
+        makeSubHeader(r++, ['Rank', 'Platform - Location', '', '', '']);
 
         const prefStartRow = r;
         for (let i = 0; i < prefCount; i++) {
@@ -177,11 +177,42 @@ export async function generateCandidateTemplate(slate: Slate): Promise<Buffer> {
                 allowBlank: true,
                 formulae: [`'Data'!$A$1:$A$${finalOptions.length}`]
             };
-            wsInput.mergeCells(r, 3, r, 5);
-            makeInputCell(`C${r}`);
             r++;
         }
         console.log(`[ExcelService] Built ${prefCount} preference rows (first at row ${prefStartRow}).`);
+
+        // spacer
+        r++;
+
+        // ─── CONSIDERATIONS & NOTES ───────────────────────────────────
+        makeSectionHeader(r++, 'CONSIDERATIONS & NOTES');
+        // Instruction label
+        wsInput.getRow(r).getCell(1).value =
+            'Provide any amplifying information for the Detailer — timing constraints, family considerations, career goals, etc.';
+        wsInput.getRow(r).getCell(1).font = { italic: true, size: 9, color: { argb: 'FF555555' } };
+        wsInput.mergeCells(r, 1, r, 5);
+        r++;
+        // Large free-text input area (5 rows, merged)
+        const notesStartRow = r;
+        for (let i = 0; i < 5; i++) {
+            for (let c = 1; c <= 5; c++) {
+                const cell = wsInput.getCell(r + i, c);
+                if (i === 0 && c === 1) {
+                    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE6F0FF' } };
+                    cell.protection = { locked: false };
+                }
+            }
+        }
+        wsInput.mergeCells(notesStartRow, 1, notesStartRow + 4, 5);
+        const notesCell = wsInput.getCell(notesStartRow, 1);
+        notesCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE6F0FF' } };
+        notesCell.border = {
+            top: { style: 'thin' }, left: { style: 'thin' },
+            bottom: { style: 'thin' }, right: { style: 'thin' }
+        };
+        notesCell.protection = { locked: false };
+        notesCell.alignment = { wrapText: true, vertical: 'top' };
+        r += 5;
 
         // spacer
         r++;

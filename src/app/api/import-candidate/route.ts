@@ -104,6 +104,11 @@ export async function POST(request: Request) {
             }
         }
 
+        // ── CONSIDERATIONS & NOTES (free-text box below preferences) ──
+        const candNotesSection = findRow('CONSIDERATIONS & NOTES');
+        // The free-text area is 2 rows after the section header (header +1 = instruction label, +2 = input)
+        const candidateNotes = candNotesSection > 0 ? cellVal(candNotesSection + 2, 1) : '';
+
         // ── TOUR HISTORY ──────────────────────────────────────────────
         // Each tour block:
         //  +0  tour name sub-header (colored, merged)
@@ -149,6 +154,7 @@ export async function POST(request: Request) {
         const education = consRow > 0 ? cellVal(consRow + 4, 2) : '';
 
         const notes = [
+            candidateNotes ? `Candidate Notes: ${candidateNotes}` : '',
             coLocation ? `Co-Location: ${coLocation}` : '',
             efm ? `EFM: ${efm}` : '',
             education ? `Education: ${education}` : '',
