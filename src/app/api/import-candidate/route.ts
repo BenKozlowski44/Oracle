@@ -83,6 +83,10 @@ export async function POST(request: Request) {
             }
         }
 
+        // Read availability date from column D of the Officer Info input row
+        const rawAvailDate = infoRow > 0 ? cellVal(infoRow + 2, 4) : '';
+        const availabilityDate = rawAvailDate || undefined;
+
         // ── CONTACT INFORMATION ───────────────────────────────────────
         // Section layout: header → column headers → emails+phones row → address sub-header → address row
         const contactSection = findRow('CONTACT INFORMATION');
@@ -190,7 +194,7 @@ export async function POST(request: Request) {
             officerId,
             preferences,
             experienceSummary,
-            availabilityDate: '',
+            availabilityDate,
             notes,
             flagContact: flagName ? { name: flagName, relationship: flagRelationship } : undefined,
             tourHistory: tourHistory.length > 0 ? tourHistory : undefined,

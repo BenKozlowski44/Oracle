@@ -124,10 +124,11 @@ export async function generateCandidateTemplate(slate: Slate): Promise<Buffer> {
 
         // ─── OFFICER INFORMATION ─────────────────────────────────────
         makeSectionHeader(r++, 'OFFICER INFORMATION');
-        makeSubHeader(r++, ['Full Name', 'Rank', 'Designator', '', '']);
+        makeSubHeader(r++, ['Full Name', 'Rank', 'Designator', 'Avail Date (XO Pipeline Start)', '']);
         makeInputCell(`A${r}`);
         makeInputCell(`B${r}`);
         makeInputCell(`C${r}`);
+        makeInputCell(`D${r}`);
         r++;
 
         // spacer
