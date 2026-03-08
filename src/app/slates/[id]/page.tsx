@@ -618,8 +618,8 @@ export default function SlateDetailPage({ params }: SlateDetailPageProps) {
                                                     </Button>
                                                     <Button
                                                         variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground"
-                                                        onClick={() => setEditingOfficerId(c.id)}
-                                                        title="Edit Slate Profile"
+                                                        onClick={() => setViewingOfficerId(c.id)}
+                                                        title="View Profile"
                                                     >
                                                         <Edit className="h-3 w-3" />
                                                     </Button>
