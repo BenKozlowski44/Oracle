@@ -493,14 +493,14 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                                                                     )}
                                                                     {/* Key flags: only show when Y */}
                                                                     {([
-                                                                        { label: 'PERS-8', search: '8 flag' },
-                                                                        { label: '2D1', search: '2d1' },
-                                                                        { label: 'LN7', search: 'ln7' },
-                                                                    ] as const).map(({ label, search }) => {
+                                                                        { label: 'PERS-8', search: '8 flag', className: 'border-red-400 text-red-700 bg-red-50' },
+                                                                        { label: '2D1', search: '2d1', className: 'border-blue-500 text-blue-700 bg-blue-50' },
+                                                                        { label: 'LN7', search: 'ln7', className: 'border-green-500 text-green-700 bg-green-50' },
+                                                                    ] as const).map(({ label, search, className }) => {
                                                                         const val = Object.entries(c.rawData || {}).find(([k]) => k.toLowerCase().includes(search))?.[1]?.toUpperCase();
                                                                         if (val !== 'Y') return null;
                                                                         return (
-                                                                            <Badge key={label} variant="outline" className="text-xs uppercase border-blue-500 text-blue-600 bg-blue-50">
+                                                                            <Badge key={label} variant="outline" className={`text-xs uppercase ${className}`}>
                                                                                 {label}
                                                                             </Badge>
                                                                         );
