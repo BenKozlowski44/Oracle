@@ -30,6 +30,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning
       >
         <TooltipProvider>
           <div className="flex h-screen overflow-hidden bg-background print:h-auto print:min-h-screen print:overflow-visible print:block">
