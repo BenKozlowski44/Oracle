@@ -5,8 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { Plus, Trash2, Archive } from "lucide-react"
 import Link from "next/link"
-import { slates } from "@/lib/data"
+import { slates, oracleData, officers } from "@/lib/data"
 import { formatToMMMyy } from "@/lib/utils"
+import { applySlateToOracle } from "@/lib/slate-migration"
 // import { useRouter } from "next/navigation" // Not strictly needed if we just update state
 
 export default function ActiveSlatesPage() {
@@ -67,33 +68,57 @@ export default function ActiveSlatesPage() {
         e.preventDefault();
         e.stopPropagation();
 
+        const slate = activeSlates.find(s => s.id === id);
+        if (!slate) return;
+
+        const currentValue = slate.approvals[entity];
+        const willBeTrue = !currentValue;
+
+        // SWOBOSS approval requires confirmation and triggers Oracle migration
+        if (entity === 'swoboss' && willBeTrue) {
+            const confirmed = confirm(
+                `SWOBOSS APPROVAL CONFIRMATION\n\nAre you sure SWOBOSS has approved slate "${slate.name}"?\n\nThis will:\n• Mark the slate as SWOBOSS Approved\n• Populate the Slated XO slot in the Oracle for all filled requirements\n\nThis action cannot be undone.`
+            );
+            if (!confirmed) return;
+        }
+
         // 1. Update Local State
-        const updatedSlates = activeSlates.map(slate => {
-            if (slate.id === id) {
+        const updatedSlates = activeSlates.map(s => {
+            if (s.id === id) {
                 return {
-                    ...slate,
+                    ...s,
                     approvals: {
-                        ...slate.approvals,
-                        [entity]: !slate.approvals[entity]
+                        ...s.approvals,
+                        [entity]: willBeTrue
                     }
                 }
             }
-            return slate;
+            return s;
         });
         setActiveSlates(updatedSlates);
 
-        // 2. Update In-Memory Data
+        // 2. Update In-Memory Slates
         const slateIndex = slates.findIndex(s => s.id === id);
         if (slateIndex !== -1 && slates[slateIndex].approvals) {
-            slates[slateIndex].approvals[entity] = !slates[slateIndex].approvals[entity];
+            slates[slateIndex].approvals[entity] = willBeTrue;
         }
 
-        // 3. Persist
+        // 3. If SWOBOSS just approved — run Oracle migration
+        let updatedOracleData = oracleData;
+        if (entity === 'swoboss' && willBeTrue) {
+            updatedOracleData = applySlateToOracle(slate, officers, oracleData);
+        }
+
+        // 4. Persist (slates always, oracleData only on SWOBOSS)
         try {
+            const payload: Record<string, unknown> = { slates };
+            if (entity === 'swoboss' && willBeTrue) {
+                payload.oracleData = updatedOracleData;
+            }
             await fetch('/api/update-data', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ slates: slates }),
+                body: JSON.stringify(payload),
             });
         } catch (error) {
             console.error("Failed to update approval:", error);

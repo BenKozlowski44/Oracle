@@ -322,6 +322,7 @@ export function OfficerTable({ data, variant = "default" }: OfficerTableProps) {
                             <SortableHead label="PRD" column="prd" />
                             {variant === "default" && <TableHead>Preferences</TableHead>}
                             {variant === "pcc" && <TableHead>Command</TableHead>}
+                            {variant === "pcc" && <TableHead>CoC Date</TableHead>}
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -440,6 +441,9 @@ export function OfficerTable({ data, variant = "default" }: OfficerTableProps) {
                                     )}
                                     {variant === "pcc" && (
                                         <TableCell>{officer.notes?.replace("CMD Tour: ", "") || "N/A"}</TableCell>
+                                    )}
+                                    {variant === "pcc" && (
+                                        <TableCell>{officer.cocDate ? formatPrd(officer.cocDate) : "—"}</TableCell>
                                     )}
                                 </TableRow>
                             ))

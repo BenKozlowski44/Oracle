@@ -111,6 +111,7 @@ export interface Officer {
     tentativeSlate?: string
     listShift?: string // Dedicated routing for the UI tabs
     cosmPreferences?: string[] // Up to 15 specific ranked preferences for CO-SM
+    cocDate?: string // ISO date — the actual Change of Command date (separate from when relieve action is done)
 }
 
 export interface Metrics {

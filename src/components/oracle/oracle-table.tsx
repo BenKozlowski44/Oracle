@@ -21,6 +21,14 @@ import { formatToMMMyy } from "@/lib/utils"
 import { format, parseISO, isValid } from "date-fns"
 import { getCommandAlerts } from "@/lib/alerts"
 import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+import {
     Select,
     SelectContent,
     SelectItem,
@@ -50,6 +58,11 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
     // Edit State
     const [editingCommand, setEditingCommand] = useState<OracleCommand | null>(null)
     const [isEditOpen, setIsEditOpen] = useState(false)
+
+    // CoC Date Dialog State
+    const [pendingTurnoverCommandId, setPendingTurnoverCommandId] = useState<string | null>(null)
+    const [cocDateInput, setCocDateInput] = useState(new Date().toISOString().split('T')[0])
+    const [isCocDialogOpen, setIsCocDialogOpen] = useState(false)
 
     // Hydrate metrics from API on mount
     useEffect(() => {
@@ -262,7 +275,7 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
         }
     }
 
-    const handleCOTurnover = async (commandId: string) => {
+    const handleCOTurnover = async (commandId: string, cocDate: string) => {
         const cmd = data.find(c => c.id === commandId);
         if (!cmd) return;
 
@@ -277,7 +290,8 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
             preferences: [],
             status: "PCC",
             notes: `CMD Tour: ${cmd.name}`,
-            yearGroup: 0
+            yearGroup: 0,
+            cocDate: cocDate || undefined
         };
 
         const newOfficers = [...(officers || []), newPCC];
@@ -495,12 +509,59 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                 open={isEditOpen}
                 onOpenChange={setIsEditOpen}
                 command={editingCommand}
-
                 onSave={handleSaveCommand}
-                onCOTurnover={handleCOTurnover}
+                onCOTurnover={(commandId) => {
+                    setPendingTurnoverCommandId(commandId)
+                    setCocDateInput(new Date().toISOString().split('T')[0])
+                    setIsCocDialogOpen(true)
+                }}
                 onXOFleetUp={handleXOFleetUp}
                 onDelete={handleDeleteCommand}
             />
+
+            {/* CoC Date Dialog */}
+            <Dialog open={isCocDialogOpen} onOpenChange={setIsCocDialogOpen}>
+                <DialogContent className="sm:max-w-[400px]" aria-describedby={undefined}>
+                    <DialogHeader>
+                        <DialogTitle>Execute CO Turnover</DialogTitle>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                        <div className="grid gap-2">
+                            <Label htmlFor="coc-date">Change of Command Date</Label>
+                            <p className="text-xs text-muted-foreground">
+                                Enter the actual date the CoC took place. This may differ from today if you are recording it after the fact.
+                            </p>
+                            <input
+                                id="coc-date"
+                                type="date"
+                                value={cocDateInput}
+                                onChange={(e) => setCocDateInput(e.target.value)}
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <button
+                            className="inline-flex items-center justify-center rounded-md text-sm font-medium border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+                            onClick={() => setIsCocDialogOpen(false)}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            className="inline-flex items-center justify-center rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                            onClick={() => {
+                                if (pendingTurnoverCommandId) {
+                                    handleCOTurnover(pendingTurnoverCommandId, cocDateInput)
+                                }
+                                setIsCocDialogOpen(false)
+                                setPendingTurnoverCommandId(null)
+                            }}
+                        >
+                            Execute Turnover
+                        </button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }
