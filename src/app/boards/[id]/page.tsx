@@ -494,18 +494,20 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                                                                     <div className="font-semibold text-sm">{c.name}</div>
                                                                     <div className="text-xs text-muted-foreground">{c.rank} &bull; {c.designator}</div>
                                                                 </div>
-                                                                {/* Badge strip — grows to fill, badges always start at the same x position */}
-                                                                <div className="flex items-center gap-2 flex-1 min-w-0">
-                                                                    <Badge variant="outline" className="text-xs text-muted-foreground border-muted-foreground/30 hidden sm:flex">
+                                                                {/* YG column — fixed width */}
+                                                                <div className="w-16 shrink-0 hidden sm:flex">
+                                                                    <Badge variant="outline" className="text-xs text-muted-foreground border-muted-foreground/30">
                                                                         YG {getYGDisplay(c).yg}
                                                                     </Badge>
+                                                                </div>
+                                                                {/* AQD & deferral flags column — fixed width, holds up to 3 badges */}
+                                                                <div className="w-36 shrink-0 flex items-center gap-1">
                                                                     {c.deferralRequested && (
-                                                                        <Badge variant="outline" className="text-xs border-yellow-500 text-yellow-600">Deferral Requested</Badge>
+                                                                        <Badge variant="outline" className="text-xs border-yellow-500 text-yellow-600">Def Req</Badge>
                                                                     )}
                                                                     {c.deferralApproved && (
-                                                                        <Badge variant="outline" className="text-xs border-green-500 text-green-600">Deferral Approved</Badge>
+                                                                        <Badge variant="outline" className="text-xs border-green-500 text-green-600">Def Apvd</Badge>
                                                                     )}
-                                                                    {/* Key flags: only show when Y */}
                                                                     {([
                                                                         { label: 'PERS-8', search: '8 flag', className: 'border-red-400 text-red-700 bg-red-50' },
                                                                         { label: '2D1', search: '2d1', className: 'border-blue-500 text-blue-700 bg-blue-50' },
@@ -519,13 +521,15 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                                                                             </Badge>
                                                                         );
                                                                     })}
-                                                                    {/* Result badge — same style as AQDs */}
+                                                                </div>
+                                                                {/* Result badge column — fixed width, always at same x */}
+                                                                <div className="w-44 shrink-0">
                                                                     <Badge variant="outline" className={`text-xs ${resultColor(c.result)}`}>
                                                                         {c.result}
                                                                     </Badge>
                                                                 </div>
-                                                                {/* Result dropdown — isolated right edge */}
-                                                                <div className="flex items-center gap-2 shrink-0" onClick={e => e.stopPropagation()}>
+                                                                {/* Dropdown + chevron — far right */}
+                                                                <div className="flex items-center gap-2 shrink-0 ml-auto" onClick={e => e.stopPropagation()}>
                                                                     {board?.status === 'Open' && (
                                                                         <select
                                                                             className="text-xs border rounded px-1.5 py-1 bg-background cursor-pointer"
