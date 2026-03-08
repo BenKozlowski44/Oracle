@@ -517,10 +517,13 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                                                                             </Badge>
                                                                         );
                                                                     })}
+                                                                    {/* Result badge — same style as AQDs */}
+                                                                    <Badge variant="outline" className={`text-xs ${resultColor(c.result)}`}>
+                                                                        {c.result}
+                                                                    </Badge>
                                                                 </div>
-                                                                {/* Result selector */}
+                                                                {/* Result dropdown — isolated right edge */}
                                                                 <div className="flex items-center gap-2 shrink-0" onClick={e => e.stopPropagation()}>
-                                                                    <span className={`text-xs font-semibold px-2 py-0.5 rounded border ${resultColor(c.result)}`}>{c.result}</span>
                                                                     {board?.status === 'Open' && (
                                                                         <select
                                                                             className="text-xs border rounded px-1.5 py-1 bg-background cursor-pointer"
@@ -532,8 +535,8 @@ export default function BoardDetailPage({ params }: BoardPageProps) {
                                                                             ))}
                                                                         </select>
                                                                     )}
+                                                                    {isExpanded ? <ChevronUp className="h-4 w-4 text-muted-foreground shrink-0" /> : <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />}
                                                                 </div>
-                                                                {isExpanded ? <ChevronUp className="h-4 w-4 text-muted-foreground shrink-0" /> : <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />}
                                                             </button>
 
                                                             {/* Expanded Detail Panel */}
