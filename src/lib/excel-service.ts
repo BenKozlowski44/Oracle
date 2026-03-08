@@ -5,166 +5,243 @@ const ExcelJS = require('exceljs');
 import { Slate, OracleCommand } from '@/lib/types';
 import { oracleData } from '@/lib/data';
 
+// OFRP Phase dropdown options
+const OFRP_PHASES = [
+    'Maintenance',
+    'Basic',
+    'Integrated',
+    'Sustainment',
+    'Deployment Prep',
+    'Deployed',
+    'Post-Deployment',
+    'N/A (Shore/Staff)',
+];
+
+// The 6 career tour periods, in order
+const TOUR_PERIODS = [
+    '1st Division Officer Tour',
+    '2nd Division Officer Tour',
+    'Post-Division Officer Tour',
+    '1st Department Head Tour',
+    '2nd Department Head Tour',
+    'Post-Department Head Tour',
+];
+
 export async function generateCandidateTemplate(slate: Slate): Promise<Buffer> {
-    console.log("[ExcelService] Starting generation...");
+    console.log('[ExcelService] Starting generation...');
     try {
-        // 1. Get scoped Platform-Location options from this slate's requirements
+        // --- Scoped preference options ---
         const relevantCommands = slate.requirements
             .map(req => oracleData.find(c => c.id === req.commandId))
             .filter((c): c is OracleCommand => !!c && !!c.platform && !!c.location);
-
-        console.log(`[ExcelService] Found ${relevantCommands.length} relevant commands.`);
 
         const options = Array.from(new Set(
             relevantCommands.map(cmd => `${cmd.platform} - ${cmd.location}`)
         )).sort();
 
-        const finalOptions = options.length > 0 ? options : ["No Commands Available"];
-
-        // Number of preference rows = number of unique platform-location options
-        // (they can't have more preferences than available options)
+        const finalOptions = options.length > 0 ? options : ['No Commands Available'];
         const prefCount = finalOptions.length;
 
-        // 2. Create Workbook
+        // --- Workbook ---
         const workbook = new ExcelJS.Workbook();
-        workbook.creator = 'Slate Manager';
+        workbook.creator = 'Oracle Slate Manager';
         workbook.created = new Date();
 
-        // --- Sheet 1: Instructions ---
+        // ── Sheet 1: Instructions ────────────────────────────────────
         const wsInstructions = workbook.addWorksheet('Instructions');
-        wsInstructions.getColumn(1).width = 80;
-        const instructions = [
+        wsInstructions.getColumn(1).width = 90;
+        const instructionLines = [
             `Candidate Slate Input — ${slate.name}`,
-            "",
-            "1. Fill out the 'Input' tab completely. All blue cells require your input.",
-            "2. Select your command preferences from the dropdown menus in ranked order (1 = top choice).",
-            "3. Add a brief narrative in Column C explaining why you prefer that platform/location.",
-            "4. Complete the Experience and Considerations sections honestly.",
-            "5. Save this file and return it to your Detailer for upload.",
-            "",
-            "Note: Do not modify locked cells or the structure of this file.",
+            '',
+            'INSTRUCTIONS',
+            '1. Fill in every blue cell in the "Input" tab. Locked cells cannot be edited.',
+            '2. For command preferences, select from the dropdown and explain your reasoning in the narrative column.',
+            '3. Complete ALL tour history sections honestly. Accuracy matters — this guides the Detailer.',
+            '4. For OFRP Phase, select the phase the ship was in for the MAJORITY of that tour.',
+            '5. Save and return this file to your Detailer.',
+            '',
             `Slate Window: ${slate.windowStart} — ${slate.windowEnd}`,
+            '',
+            'DO NOT alter the structure of this file or rename worksheets.',
         ];
-
-        instructions.forEach((line, i) => {
-            const row = wsInstructions.getRow(i + 1);
-            row.getCell(1).value = line;
-            if (i === 0) row.font = { bold: true, size: 14 };
+        instructionLines.forEach((line, i) => {
+            const cell = wsInstructions.getRow(i + 1).getCell(1);
+            cell.value = line;
+            if (i === 0) cell.font = { bold: true, size: 14 };
+            else if (i === 2) cell.font = { bold: true, size: 11 };
         });
-
         await wsInstructions.protect('password', { selectLockedCells: true, selectUnlockedCells: true });
 
-        // --- Sheet 2: Data (Hidden) — preference options for dropdown validation ---
+        // ── Sheet 2: Data (hidden) — dropdown sources ────────────────
         const wsData = workbook.addWorksheet('Data');
         wsData.state = 'hidden';
-        finalOptions.forEach((opt, i) => {
-            wsData.getRow(i + 1).getCell(1).value = opt;
-        });
+        // Column A: preference options
+        finalOptions.forEach((opt, i) => wsData.getRow(i + 1).getCell(1).value = opt);
+        // Column B: OFRP phases
+        OFRP_PHASES.forEach((phase, i) => wsData.getRow(i + 1).getCell(2).value = phase);
 
-        // --- Sheet 3: Input ---
+        // ── Sheet 3: Input ───────────────────────────────────────────
         const wsInput = workbook.addWorksheet('Input');
-        wsInput.getColumn('A').width = 32;
-        wsInput.getColumn('B').width = 50;
-        wsInput.getColumn('C').width = 40;
+        wsInput.getColumn('A').width = 34;
+        wsInput.getColumn('B').width = 22;
+        wsInput.getColumn('C').width = 22;
+        wsInput.getColumn('D').width = 22;
+        wsInput.getColumn('E').width = 40;
 
-        const inputStyle = {
-            fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE6F0FF' } },
-            border: {
+        // Style helpers
+        const makeInputCell = (cellRef: string) => {
+            const cell = wsInput.getCell(cellRef);
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE6F0FF' } };
+            cell.border = {
                 top: { style: 'thin' }, left: { style: 'thin' },
                 bottom: { style: 'thin' }, right: { style: 'thin' }
-            },
-            protection: { locked: false }
-        };
-
-        const sectionHeaderStyle = { bold: true, size: 11 };
-        const columnHeaderStyle = { bold: true, italic: true };
-
-        const applyInput = (cellRef: string) => {
-            const cell = wsInput.getCell(cellRef);
-            cell.fill = inputStyle.fill;
-            cell.border = inputStyle.border;
+            };
             cell.protection = { locked: false };
+            return cell;
         };
 
-        // ─── Section 1: Personal Info ────────────────────────────────
-        wsInput.getRow(1).values = ["OFFICER INFORMATION", "", ""];
-        wsInput.getRow(1).font = sectionHeaderStyle;
-        wsInput.getRow(2).values = ["Officer Name", "Rank", "Designator"];
-        wsInput.getRow(2).font = columnHeaderStyle;
-        // Row 3: input cells
-        ['A3', 'B3', 'C3'].forEach(applyInput);
+        const makeSectionHeader = (rowNum: number, title: string, argb = 'FF1F3864') => {
+            const row = wsInput.getRow(rowNum);
+            const cell = row.getCell(1);
+            cell.value = title;
+            cell.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 11 };
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb } };
+            // Merge across all 5 columns
+            wsInput.mergeCells(rowNum, 1, rowNum, 5);
+        };
 
-        // ─── Spacer ──────────────────────────────────────────────────
-        wsInput.getRow(4).values = [];
+        const makeSubHeader = (rowNum: number, labels: string[]) => {
+            const row = wsInput.getRow(rowNum);
+            labels.forEach((lbl, i) => {
+                const cell = row.getCell(i + 1);
+                cell.value = lbl;
+                cell.font = { bold: true, italic: true, size: 9 };
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD9E1F2' } };
+            });
+        };
 
-        // ─── Section 2: Preferences ──────────────────────────────────
-        wsInput.getRow(5).values = ["COMMAND PREFERENCES (Ranked)", "", ""];
-        wsInput.getRow(5).font = sectionHeaderStyle;
-        wsInput.getRow(6).values = ["Rank", "Platform - Location", "Narrative (why this preference?)"];
-        wsInput.getRow(6).font = columnHeaderStyle;
+        let r = 1;
 
-        const prefStartRow = 7;
+        // ─── OFFICER INFORMATION ─────────────────────────────────────
+        makeSectionHeader(r++, 'OFFICER INFORMATION');
+        makeSubHeader(r++, ['Full Name', 'Rank', 'Designator', 'Email', '']);
+        ['B', 'C', 'D', 'E'].forEach(col => makeInputCell(`A${r}`));
+        makeInputCell(`A${r}`);
+        makeInputCell(`B${r}`);
+        makeInputCell(`C${r}`);
+        makeInputCell(`D${r}`);
+        makeInputCell(`E${r}`);
+        r++;
+
+        // spacer
+        r++;
+
+        // ─── FLAG CONTACT ─────────────────────────────────────────────
+        makeSectionHeader(r++, 'FLAG CONTACT');
+        makeSubHeader(r++, ['Flag Officer Name', 'Relationship / Context', '', '', '']);
+        makeInputCell(`A${r}`);
+        makeInputCell(`B${r}`);
+        r++;
+
+        // spacer
+        r++;
+
+        // ─── COMMAND PREFERENCES ──────────────────────────────────────
+        makeSectionHeader(r++, `COMMAND PREFERENCES (Ranked 1–${prefCount})`);
+        makeSubHeader(r++, ['Rank', 'Platform - Location', 'Narrative (why this preference?)', '', '']);
+
+        const prefStartRow = r;
         for (let i = 0; i < prefCount; i++) {
-            const r = prefStartRow + i;
-            const row = wsInput.getRow(r);
-            row.getCell(1).value = `Preference ${i + 1}`;
-
-            // Dropdown for Platform-Location
-            const cellB = row.getCell(2);
-            cellB.fill = inputStyle.fill;
-            cellB.border = inputStyle.border;
-            cellB.protection = { locked: false };
+            wsInput.getRow(r).getCell(1).value = `Preference ${i + 1}`;
+            const cellB = makeInputCell(`B${r}`);
             cellB.dataValidation = {
                 type: 'list',
                 allowBlank: true,
                 formulae: [`'Data'!$A$1:$A$${finalOptions.length}`]
             };
+            wsInput.mergeCells(r, 3, r, 5);
+            makeInputCell(`C${r}`);
+            r++;
+        }
+        console.log(`[ExcelService] Built ${prefCount} preference rows (first at row ${prefStartRow}).`);
 
-            // Narrative
-            const cellC = row.getCell(3);
-            cellC.fill = inputStyle.fill;
-            cellC.border = inputStyle.border;
-            cellC.protection = { locked: false };
+        // spacer
+        r++;
+
+        // ─── TOUR HISTORY (6 tours) ───────────────────────────────────
+        makeSectionHeader(r++, 'TOUR HISTORY', 'FF1B5E20'); // dark green
+
+        for (const period of TOUR_PERIODS) {
+            // Tour sub-header
+            const subHeaderRow = r;
+            wsInput.getRow(r).getCell(1).value = period;
+            wsInput.getRow(r).getCell(1).font = { bold: true, size: 10 };
+            wsInput.getRow(r).getCell(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE8F5E9' } };
+            wsInput.mergeCells(r, 1, r, 5);
+            r++;
+
+            // Line 1: Ship | Platform | OFRP Phase
+            makeSubHeader(r, ['Ship / Command', 'Platform (DDG/CG/etc.)', 'OFRP Phase (majority)', '', '']);
+            r++;
+            makeInputCell(`A${r}`);
+            makeInputCell(`B${r}`);
+            const cellOFRP = makeInputCell(`C${r}`);
+            cellOFRP.dataValidation = {
+                type: 'list',
+                allowBlank: true,
+                formulae: [`'Data'!$B$1:$B$${OFRP_PHASES.length}`]
+            };
+            r++;
+
+            // Line 2: Months U/W | Months Deployed | Months as OOD
+            makeSubHeader(r, ['Months U/W', 'Months Deployed', 'Months stood as OOD', '', '']);
+            r++;
+            makeInputCell(`A${r}`);
+            makeInputCell(`B${r}`);
+            makeInputCell(`C${r}`);
+            r++;
+
+            // Line 3: OOD Evolutions | CONN Evolutions | JOOD Evolutions
+            makeSubHeader(r, ['# OOD Evolutions', '# CONN Evolutions', '# JOOD Evolutions', '', '']);
+            r++;
+            makeInputCell(`A${r}`);
+            makeInputCell(`B${r}`);
+            makeInputCell(`C${r}`);
+            r++;
+
+            // spacer between tours
+            r++;
         }
 
-        // ─── Spacer ──────────────────────────────────────────────────
-        let r = prefStartRow + prefCount + 1;
+        // ─── PROFESSIONAL QUALIFICATIONS ──────────────────────────────
+        makeSectionHeader(r++, 'PROFESSIONAL QUALIFICATIONS');
+        makeSubHeader(r++, ['Field', 'Value', '', '', '']);
 
-        // ─── Section 3: Experience ───────────────────────────────────
-        wsInput.getRow(r).values = ["Experience", "Value"];
-        wsInput.getRow(r).font = sectionHeaderStyle;
-        r++;
-
-        const expFields = [
-            "Total Months U/W",
-            "Total Months Deployed",
-            "Current Role",
-            "Past Roles (Key Tours)",
-            "JPME Completion / Plan",
-            "WTI Qualification (Type if applicable)",
+        const qualFields = [
+            'JPME Completion / Plan',
+            'WTI Qualification (Type if applicable)',
         ];
-        expFields.forEach(field => {
+        for (const field of qualFields) {
             wsInput.getRow(r).getCell(1).value = field;
-            applyInput(`B${r}`);
+            makeInputCell(`B${r}`);
             r++;
-        });
+        }
 
-        // ─── Spacer ──────────────────────────────────────────────────
+        // spacer
         r++;
 
-        // ─── Section 4: Considerations ───────────────────────────────
-        wsInput.getRow(r).values = ["Considerations", "Notes"];
-        wsInput.getRow(r).font = sectionHeaderStyle;
-        r++;
+        // ─── PERSONAL CONSIDERATIONS ──────────────────────────────────
+        makeSectionHeader(r++, 'PERSONAL CONSIDERATIONS');
+        makeSubHeader(r++, ['Consideration', 'Notes', '', '', '']);
 
-        const consFields = ["Co-Location Request", "EFM Considerations", "Education / Pipeline"];
-        consFields.forEach(field => {
+        const consFields = ['Co-Location Request', 'EFM Considerations', 'Education / Pipeline'];
+        for (const field of consFields) {
             wsInput.getRow(r).getCell(1).value = field;
-            applyInput(`B${r}`);
+            makeInputCell(`B${r}`);
             r++;
-        });
+        }
 
-        // Protect Input sheet (leaves unlocked cells editable)
+        // Protect the input sheet
         await wsInput.protect('password', {
             selectLockedCells: true,
             selectUnlockedCells: true
@@ -173,7 +250,7 @@ export async function generateCandidateTemplate(slate: Slate): Promise<Buffer> {
         const uint8Array = await workbook.xlsx.writeBuffer();
         return Buffer.from(uint8Array);
     } catch (e: any) {
-        console.error("[ExcelService] Generation failed:", e);
+        console.error('[ExcelService] Generation failed:', e);
         throw e;
     }
 }

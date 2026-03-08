@@ -142,6 +142,20 @@ export interface SlateRequirement {
 }
 
 
+
+export interface TourEntry {
+    period: string       // e.g. "First Division Officer Tour"
+    ship?: string        // Ship/Command name
+    platform?: string    // e.g. DDG, CG, LCS
+    ofrpPhase?: string   // Maintenance, Basic, Integrated, Sustainment, Deployed, etc.
+    monthsUW?: string
+    monthsDeployed?: string
+    monthsAsOOD?: string
+    oodEvolutions?: string   // # of times stood OOD watch
+    connEvolutions?: string  // # of times stood CONN watch
+    joodEvolutions?: string  // # of times stood JOOD watch
+}
+
 export interface SlateCandidateProfile {
     id: string
     slateId: string
@@ -154,7 +168,15 @@ export interface SlateCandidateProfile {
     experienceSummary: string
     availabilityDate: string // ISO Date
     notes: string
+    flagContact?: {
+        name: string
+        relationship: string // e.g. "ISIC", "CO during DH tour", "Board member"
+    }
+    tourHistory?: TourEntry[]
+    jpme?: string
+    wti?: string
 }
+
 
 export interface Slate {
     id: string

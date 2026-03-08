@@ -1,19 +1,27 @@
 import { NextResponse } from 'next/server';
 import ExcelJS from 'exceljs';
-import { SlateCandidateProfile, Slate, Officer } from '@/lib/types';
+import { SlateCandidateProfile, TourEntry, Slate, Officer } from '@/lib/types';
 import { readJson, writeJson } from '@/services/data-service';
 
 // Helper to find officer by name (exact then fuzzy)
 function findOfficerId(name: string, officers: Officer[]): string | undefined {
     const exact = officers.find(o => o.name.toLowerCase() === name.toLowerCase());
     if (exact) return exact.id;
-
     const fuzzy = officers.find(
         o => o.name.toLowerCase().includes(name.toLowerCase()) ||
             name.toLowerCase().includes(o.name.toLowerCase())
     );
     return fuzzy?.id;
 }
+
+const TOUR_PERIODS = [
+    '1st Division Officer Tour',
+    '2nd Division Officer Tour',
+    'Post-Division Officer Tour',
+    '1st Department Head Tour',
+    '2nd Department Head Tour',
+    'Post-Department Head Tour',
+];
 
 export async function POST(request: Request) {
     try {
@@ -25,18 +33,35 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Missing file or slateId' }, { status: 400 });
         }
 
-        // --- Parse Excel ---
-        const arrayBuffer = await file.arrayBuffer();
+        // ── Load workbook ────────────────────────────────────────────
         const workbook = new ExcelJS.Workbook();
-        await workbook.xlsx.load(arrayBuffer);
-
+        await workbook.xlsx.load(await file.arrayBuffer());
         const sheet = workbook.getWorksheet('Input') || workbook.worksheets[0];
         if (!sheet) return NextResponse.json({ error: 'File appears empty' }, { status: 400 });
 
-        // Row 3: Officer name (row 1 = section header, row 2 = column headers, row 3 = input)
-        const rawName = sheet.getRow(3).getCell(1).value?.toString().trim() || '';
+        // ── Build a row-index map for fast section scanning ───────────
+        // Map: rowNumber → first-cell text value
+        const rowLabels = new Map<number, string>();
+        sheet.eachRow((row, rowNumber) => {
+            const val = row.getCell(1).value?.toString().trim() || '';
+            rowLabels.set(rowNumber, val);
+        });
+
+        const findRow = (startsWith: string): number => {
+            for (const [rowNum, label] of rowLabels) {
+                if (label.includes(startsWith)) return rowNum;
+            }
+            return -1;
+        };
+
+        const cellVal = (r: number, c: number): string =>
+            sheet.getRow(r).getCell(c).value?.toString().trim() || '';
+
+        // ── OFFICER INFORMATION (row 3 is input, row 1 = header, row 2 = col headers) ──
+        const infoRow = findRow('OFFICER INFORMATION');
+        const rawName = infoRow > 0 ? cellVal(infoRow + 2, 1) : '';
         if (!rawName) {
-            return NextResponse.json({ error: 'Officer Name is required in cell A3' }, { status: 400 });
+            return NextResponse.json({ error: 'Officer Name is required (cell A in the name input row)' }, { status: 400 });
         }
 
         const officers = readJson<Officer[]>('officers.json');
@@ -45,58 +70,73 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: `Officer '${rawName}' not found in system.` }, { status: 404 });
         }
 
-        // --- Parse Preferences ---
-        // Template layout:
-        //   Row 1: "OFFICER INFORMATION" section header
-        //   Row 2: column headers
-        //   Row 3: officer input cells
-        //   Row 4: blank spacer
-        //   Row 5: "COMMAND PREFERENCES..." section header
-        //   Row 6: column headers (Rank | Platform - Location | Narrative)
-        //   Row 7+: "Preference 1", "Preference 2", ... (dynamic count)
-        //
-        // Scan from row 7, stop when the cell label no longer starts with "Preference"
+        // ── FLAG CONTACT ──────────────────────────────────────────────
+        const flagRow = findRow('FLAG CONTACT');
+        const flagName = flagRow > 0 ? cellVal(flagRow + 2, 1) : '';
+        const flagRelationship = flagRow > 0 ? cellVal(flagRow + 2, 2) : '';
+
+        // ── PREFERENCES ───────────────────────────────────────────────
+        // Section header contains "COMMAND PREFERENCES", input starts 2 rows later
+        const prefSection = findRow('COMMAND PREFERENCES');
         const preferences: { key: string; rank: number }[] = [];
-        let r = 7;
-        while (r < 200) {
-            const row = sheet.getRow(r);
-            const label = row.getCell(1).value?.toString() || '';
-            if (!label.startsWith('Preference')) break;
-            const val = row.getCell(2).value?.toString().trim();
-            if (val && val.includes(' - ')) {
-                preferences.push({ key: val, rank: r - 6 }); // row 7 = rank 1
+        if (prefSection > 0) {
+            let r = prefSection + 2; // skip section header + column header
+            let rank = 1;
+            while (r < prefSection + 100) {
+                const label = rowLabels.get(r) || '';
+                if (!label.startsWith('Preference')) break;
+                const val = cellVal(r, 2);
+                if (val && val.includes(' - ')) {
+                    preferences.push({ key: val, rank });
+                    rank++;
+                }
+                r++;
             }
-            r++;
         }
 
-        // --- Parse Experience section ---
-        // After preferences there's a blank spacer row, then "Experience" header
-        // Scan forward from r to find the Experience header
-        while (r < 100 && (sheet.getRow(r).getCell(1).value?.toString() || '') !== 'Experience') r++;
-        r++; // skip header row
+        // ── TOUR HISTORY ──────────────────────────────────────────────
+        // Each tour block:
+        //  +0  tour name sub-header (colored, merged)
+        //  +1  sub-header: Ship | Platform | OFRP Phase
+        //  +2  input row 1
+        //  +3  sub-header: Months U/W | Months Deployed | Months as OOD
+        //  +4  input row 2
+        //  +5  sub-header: # OOD | # CONN | # JOOD
+        //  +6  input row 3
+        //  +7  spacer
+        const tourHistory: TourEntry[] = [];
+        const tourSectionRow = findRow('TOUR HISTORY');
 
-        const monthsUW = sheet.getRow(r).getCell(2).value?.toString() || '0'; r++;
-        const monthsDep = sheet.getRow(r).getCell(2).value?.toString() || '0'; r++;
-        const currentRole = sheet.getRow(r).getCell(2).value?.toString() || ''; r++;
-        const pastRoles = sheet.getRow(r).getCell(2).value?.toString() || ''; r++;
-        const jpme = sheet.getRow(r).getCell(2).value?.toString() || ''; r++;
-        const wti = sheet.getRow(r).getCell(2).value?.toString() || ''; r++;
+        if (tourSectionRow > 0) {
+            for (const period of TOUR_PERIODS) {
+                const tourRow = findRow(period);
+                if (tourRow < 0) continue;
 
-        const experienceSummary = [
-            `U/W: ${monthsUW}mo, Deployed: ${monthsDep}mo`,
-            `Current: ${currentRole}`,
-            `Past: ${pastRoles}`,
-            jpme ? `JPME: ${jpme}` : '',
-            wti ? `WTI: ${wti}` : '',
-        ].filter(Boolean).join('\n');
+                tourHistory.push({
+                    period,
+                    ship: cellVal(tourRow + 2, 1),
+                    platform: cellVal(tourRow + 2, 2),
+                    ofrpPhase: cellVal(tourRow + 2, 3),
+                    monthsUW: cellVal(tourRow + 4, 1),
+                    monthsDeployed: cellVal(tourRow + 4, 2),
+                    monthsAsOOD: cellVal(tourRow + 4, 3),
+                    oodEvolutions: cellVal(tourRow + 6, 1),
+                    connEvolutions: cellVal(tourRow + 6, 2),
+                    joodEvolutions: cellVal(tourRow + 6, 3),
+                });
+            }
+        }
 
-        // --- Parse Considerations section ---
-        while (r < 100 && (sheet.getRow(r).getCell(1).value?.toString() || '') !== 'Considerations') r++;
-        r++; // skip header
+        // ── PROFESSIONAL QUALIFICATIONS ───────────────────────────────
+        const qualRow = findRow('PROFESSIONAL QUALIFICATIONS');
+        const jpme = qualRow > 0 ? cellVal(qualRow + 2, 2) : '';
+        const wti = qualRow > 0 ? cellVal(qualRow + 3, 2) : '';
 
-        const coLocation = sheet.getRow(r).getCell(2).value?.toString() || ''; r++;
-        const efm = sheet.getRow(r).getCell(2).value?.toString() || ''; r++;
-        const education = sheet.getRow(r).getCell(2).value?.toString() || '';
+        // ── PERSONAL CONSIDERATIONS ───────────────────────────────────
+        const consRow = findRow('PERSONAL CONSIDERATIONS');
+        const coLocation = consRow > 0 ? cellVal(consRow + 2, 2) : '';
+        const efm = consRow > 0 ? cellVal(consRow + 3, 2) : '';
+        const education = consRow > 0 ? cellVal(consRow + 4, 2) : '';
 
         const notes = [
             coLocation ? `Co-Location: ${coLocation}` : '',
@@ -104,29 +144,40 @@ export async function POST(request: Request) {
             education ? `Education: ${education}` : '',
         ].filter(Boolean).join(' | ');
 
-        // --- Build Profile ---
+        // ── Build summary string from tour history ────────────────────
+        const experienceSummary = tourHistory
+            .filter(t => t.ship || t.monthsUW)
+            .map(t =>
+                `[${t.period}] ${t.ship || 'N/A'} (${t.platform || '?'}) · OFRP: ${t.ofrpPhase || '?'} · ` +
+                `U/W: ${t.monthsUW || '0'}mo · Dep: ${t.monthsDeployed || '0'}mo · OOD: ${t.monthsAsOOD || '0'}mo · ` +
+                `Evo: OOD ${t.oodEvolutions || '0'}, CONN ${t.connEvolutions || '0'}, JOOD ${t.joodEvolutions || '0'}`
+            )
+            .join('\n');
+
+        // ── Build Profile ─────────────────────────────────────────────
         const newProfile: SlateCandidateProfile = {
             id: `prof-${Date.now()}`,
             slateId,
             officerId,
             preferences,
             experienceSummary,
-            availabilityDate: '', // Not synced to officer bank per design
+            availabilityDate: '',
             notes,
+            flagContact: flagName ? { name: flagName, relationship: flagRelationship } : undefined,
+            tourHistory: tourHistory.length > 0 ? tourHistory : undefined,
+            jpme: jpme || undefined,
+            wti: wti || undefined,
         };
 
-        // --- Persist to slates.json ---
+        // ── Persist to slates.json ────────────────────────────────────
         const slates = readJson<Slate[]>('slates.json');
         const slateIndex = slates.findIndex(s => s.id === slateId);
-
         if (slateIndex === -1) {
             return NextResponse.json({ error: 'Slate not found' }, { status: 404 });
         }
 
-        // Upsert: replace existing profile for this officer, or append
         const existing = slates[slateIndex].candidateProfiles || [];
         const profileIndex = existing.findIndex(p => p.officerId === officerId);
-
         if (profileIndex >= 0) {
             existing[profileIndex] = newProfile;
         } else {
