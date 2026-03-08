@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, use, useRef } from "react"
+import { toast } from "sonner"
 import { slates, officers, oracleData } from "@/lib/data"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -227,15 +228,15 @@ export default function SlateDetailPage({ params }: SlateDetailPageProps) {
                 const data = await res.json();
                 if (data.success && data.profile) {
                     handleSaveProfile(data.profile);
-                    alert(`Successfully imported profile for ${data.profile.officerId}`);
+                    toast.success(`Profile imported successfully`);
                 }
             } else {
                 const err = await res.json();
-                alert(`Import failed: ${err.error}`);
+                toast.error(`Import failed: ${err.error}`);
             }
         } catch (error) {
             console.error(error);
-            alert("Error uploading file.");
+            toast.error("Error uploading file — check console for details.");
         }
     }
 
@@ -255,14 +256,16 @@ export default function SlateDetailPage({ params }: SlateDetailPageProps) {
                 const data = await res.json();
                 if (data.success && data.profile) {
                     handleSaveProfile(data.profile);
+                    const officerName = officers.find(o => o.id === uploadTargetOfficerId)?.name ?? 'Officer';
+                    toast.success(`Profile imported for ${officerName}`);
                 }
             } else {
                 const err = await res.json();
-                alert(`Import failed: ${err.error}`);
+                toast.error(`Import failed: ${err.error}`);
             }
         } catch (err) {
             console.error(err);
-            alert('Error uploading file.');
+            toast.error('Error uploading file — check console for details.');
         } finally {
             setUploadingOfficerId(null);
             setUploadTargetOfficerId(null);
