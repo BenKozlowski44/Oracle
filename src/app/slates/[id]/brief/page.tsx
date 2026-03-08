@@ -68,7 +68,7 @@ export default function SlateBriefPage({ params }: BriefPageProps) {
                 {/* Header */}
                 <div className="flex items-start justify-between border-b-2 border-gray-900 pb-4">
                     <div>
-                        <p className="text-xs uppercase tracking-widest text-gray-500 font-semibold">PERS-41 // Slate Brief</p>
+                        <p className="text-xs uppercase tracking-widest text-gray-500 font-semibold">PERS-41 // Detailer Slate</p>
                         <h1 className="text-3xl font-bold tracking-tight mt-1">{slate.name}</h1>
                         <p className="text-sm text-gray-600 mt-1">
                             Fill Window: {formatToMMMyy(slate.windowStart)} – {formatToMMMyy(slate.windowEnd)}
@@ -273,7 +273,7 @@ export default function SlateBriefPage({ params }: BriefPageProps) {
 
                 {/* Footer */}
                 <div className="border-t border-gray-200 pt-3 text-xs text-gray-400 flex justify-between">
-                    <span>PERS-41 Command Detailer · Oracle</span>
+                    <span>PERS-41 Command Detailer · Oracle · Detailer Slate</span>
                     <span>{slate.name} · {generatedAt}</span>
                 </div>
             </div>
