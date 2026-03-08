@@ -760,6 +760,7 @@ export default function SlateDetailPage({ params }: SlateDetailPageProps) {
                         }}
                         open={!!viewingOfficerId}
                         onClose={() => setViewingOfficerId(null)}
+                        onSave={handleSaveProfile}
                     />
                 );
             })()}
