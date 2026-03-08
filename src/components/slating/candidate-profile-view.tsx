@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Officer, SlateCandidateProfile, TourEntry } from "@/lib/types"
+import { Officer, SlateCandidateProfile, TourEntry, ContactInfo, FlagContact } from "@/lib/types"
 import {
     Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from "@/components/ui/dialog"
@@ -150,8 +150,9 @@ export function CandidateProfileView({ officer, profile, open, onClose, onSave }
     )
 
     // Local editable state
-    const [contactInfo, setContactInfo] = useState(profile.contactInfo || {})
-    const [flagContact, setFlagContact] = useState(profile.flagContact || { name: '', relationship: '' })
+    const [contactInfo, setContactInfo] = useState<ContactInfo>(profile.contactInfo || {})
+    const [flagContact, setFlagContact] = useState<FlagContact>(profile.flagContact || { name: '', relationship: '' })
+    const [availabilityDate, setAvailabilityDate] = useState(profile.availabilityDate || '')
     const [preferences, setPreferences] = useState(profile.preferences || [])
     const [tours, setTours] = useState<TourEntry[]>(initialTours)
     const [jpme, setJpme] = useState(profile.jpme || '')
@@ -186,6 +187,7 @@ export function CandidateProfileView({ officer, profile, open, onClose, onSave }
             tourHistory: tours,
             jpme: jpme || undefined,
             wti: wti || undefined,
+            availabilityDate: availabilityDate || undefined,
             notes,
         })
         onClose()
@@ -231,6 +233,20 @@ export function CandidateProfileView({ officer, profile, open, onClose, onSave }
                         </FieldRow>
                         <FieldRow label={<><MapPin className="inline h-3 w-3 mr-1" />Mailing Address</>}>
                             <input className={fieldClass(contactInfo.mailingAddress, false)} value={contactInfo.mailingAddress || ''} onChange={e => updateContact('mailingAddress', e.target.value)} placeholder="Street, City, State ZIP..." />
+                        </FieldRow>
+                    </Section>
+
+                    <Separator />
+
+                    {/* ── AVAILABILITY DATE ── */}
+                    <Section icon={<Award className="h-4 w-4" />} title="Availability">
+                        <FieldRow label="Available From">
+                            <input
+                                type="date"
+                                className={fieldClass(availabilityDate, false)}
+                                value={availabilityDate}
+                                onChange={e => setAvailabilityDate(e.target.value)}
+                            />
                         </FieldRow>
                     </Section>
 

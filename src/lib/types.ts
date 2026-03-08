@@ -156,32 +156,36 @@ export interface TourEntry {
     joodEvolutions?: string  // # of times stood JOOD watch
 }
 
+export interface ContactInfo {
+    workEmail?: string
+    homeEmail?: string
+    workPhone?: string
+    personalPhone?: string
+    mailingAddress?: string
+}
+
+export interface FlagContact {
+    name: string
+    relationship?: string
+}
+
 export interface SlateCandidateProfile {
     id: string
     slateId: string
     officerId: string
-    // Preferences are now Platform + Location (e.g. "DDG-Norfolk")
+    /** Ranked Platform-Location preferences (e.g. { key: "DDG - Norfolk", rank: 1 }) */
     preferences: {
-        key: string // "DDG-Norfolk"
-        rank: number // 1 = Top Choice
+        key: string
+        rank: number
     }[]
-    experienceSummary: string
-    availabilityDate: string // ISO Date
-    notes: string
-    flagContact?: {
-        name: string
-        relationship: string // e.g. "ISIC", "CO during DH tour", "Board member"
-    }
+    experienceSummary?: string  // Free-text summary; optional (legacy field)
+    availabilityDate?: string   // ISO Date; optional — shown in Alignment Matrix
+    notes?: string              // Pipe-delimited: "Candidate Notes: … | Co-Location: …"
+    flagContact?: FlagContact
     tourHistory?: TourEntry[]
-    jpme?: string
-    wti?: string
-    contactInfo?: {
-        workEmail?: string
-        homeEmail?: string
-        workPhone?: string
-        personalPhone?: string
-        mailingAddress?: string // Street, City, State ZIP
-    }
+    jpme?: string               // JPME completion or planned phase
+    wti?: string                // WTI type or N/A
+    contactInfo?: ContactInfo
 }
 
 

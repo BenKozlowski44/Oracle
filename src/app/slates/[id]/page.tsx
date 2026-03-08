@@ -755,8 +755,10 @@ export default function SlateDetailPage({ params }: SlateDetailPageProps) {
                     <CandidateProfileView
                         officer={officer}
                         profile={profile ?? {
-                            id: '', slateId: slate.id, officerId: viewingOfficerId,
-                            preferences: [], experienceSummary: '', availabilityDate: '', notes: ''
+                            id: '',
+                            slateId: slate.id,
+                            officerId: viewingOfficerId,
+                            preferences: [],
                         }}
                         open={!!viewingOfficerId}
                         onClose={() => setViewingOfficerId(null)}
