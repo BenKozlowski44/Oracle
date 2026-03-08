@@ -26,6 +26,7 @@ import { formatToMMMyy, cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { SlateRequirement, Officer, SlateCandidateProfile } from "@/lib/types"
 import { CandidateInputForm } from "@/components/slating/candidate-input-form"
+import { CandidateProfileView } from "@/components/slating/candidate-profile-view"
 
 interface SlateDetailPageProps {
     params: Promise<{ id: string }>
@@ -47,6 +48,7 @@ export default function SlateDetailPage({ params }: SlateDetailPageProps) {
 
     // Profile Edit State
     const [editingOfficerId, setEditingOfficerId] = useState<string | null>(null);
+    const [viewingOfficerId, setViewingOfficerId] = useState<string | null>(null);
 
     // Per-candidate upload state
     const [uploadTargetOfficerId, setUploadTargetOfficerId] = useState<string | null>(null);
@@ -588,11 +590,14 @@ export default function SlateDetailPage({ params }: SlateDetailPageProps) {
                                         return (
                                             <div key={c.id} className={cn("flex items-center justify-between p-2 border rounded-md group transition-all", isAssigned ? "bg-muted/10 opacity-60" : "bg-muted/40")}>
                                                 <div>
-                                                    <div className="font-medium text-sm flex items-center gap-2">
+                                                    <button
+                                                        className="font-medium text-sm flex items-center gap-2 hover:underline cursor-pointer text-left"
+                                                        onClick={() => setViewingOfficerId(c.id)}
+                                                    >
                                                         {c.name}
                                                         {hasProfile && <Badge variant="secondary" className="text-[10px] h-5 px-1 bg-green-100 text-green-800 hover:bg-green-100">Profile</Badge>}
                                                         {isAssigned && <Badge variant="default" className="text-[10px] h-5 px-1">Slated</Badge>}
-                                                    </div>
+                                                    </button>
                                                     <div className="text-xs text-muted-foreground">
                                                         {c.rank} • {c.designator}
                                                         {isAssigned && assignedReq && <span className="ml-1 text-primary/80">• Assigned: {assignedReq.commandName}</span>}
@@ -740,6 +745,24 @@ export default function SlateDetailPage({ params }: SlateDetailPageProps) {
                 className="hidden"
                 onChange={handlePerCandidateUpload}
             />
+
+            {/* Candidate Profile Viewer */}
+            {viewingOfficerId && (() => {
+                const officer = officers.find(o => o.id === viewingOfficerId);
+                const profile = candidateProfiles.find(p => p.officerId === viewingOfficerId);
+                if (!officer) return null;
+                return (
+                    <CandidateProfileView
+                        officer={officer}
+                        profile={profile ?? {
+                            id: '', slateId: slate.id, officerId: viewingOfficerId,
+                            preferences: [], experienceSummary: '', availabilityDate: '', notes: ''
+                        }}
+                        open={!!viewingOfficerId}
+                        onClose={() => setViewingOfficerId(null)}
+                    />
+                );
+            })()}
         </div>
     )
 }
