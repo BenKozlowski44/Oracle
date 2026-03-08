@@ -10,7 +10,7 @@ export function getMigrationConfig(result: BoardCandidate['result']): {
     screened?: string[];
 } | null {
     switch (result) {
-        case 'Selected CO':
+        case 'Selected CO Afloat':
             return { status: 'Available', screened: ['CO'] };
         case 'Selected XO':
             return { status: 'Available', listShift: 'XO Screened' };
