@@ -8,7 +8,7 @@ import { oracleData } from '@/lib/data';
 export async function generateCandidateTemplate(slate: Slate): Promise<Buffer> {
     console.log("[ExcelService] Starting generation...");
     try {
-        // 1. Get Scoped Options
+        // 1. Get scoped Platform-Location options from this slate's requirements
         const relevantCommands = slate.requirements
             .map(req => oracleData.find(c => c.id === req.commandId))
             .filter((c): c is OracleCommand => !!c && !!c.platform && !!c.location);
@@ -21,6 +21,10 @@ export async function generateCandidateTemplate(slate: Slate): Promise<Buffer> {
 
         const finalOptions = options.length > 0 ? options : ["No Commands Available"];
 
+        // Number of preference rows = number of unique platform-location options
+        // (they can't have more preferences than available options)
+        const prefCount = finalOptions.length;
+
         // 2. Create Workbook
         const workbook = new ExcelJS.Workbook();
         workbook.creator = 'Slate Manager';
@@ -30,15 +34,16 @@ export async function generateCandidateTemplate(slate: Slate): Promise<Buffer> {
         const wsInstructions = workbook.addWorksheet('Instructions');
         wsInstructions.getColumn(1).width = 80;
         const instructions = [
-            "Candidate Slate Input - Instructions",
+            `Candidate Slate Input — ${slate.name}`,
             "",
-            "1. Please fill out the 'Input' tab completely.",
-            "2. Select your top 5 preferences from the dropdown menus.",
-            "3. Provide a narrative explanation for your preferences.",
-            "4. Enter your experience details and operational months.",
-            "5. Save this file and upload it back to the Slate Manager.",
+            "1. Fill out the 'Input' tab completely. All blue cells require your input.",
+            "2. Select your command preferences from the dropdown menus in ranked order (1 = top choice).",
+            "3. Add a brief narrative in Column C explaining why you prefer that platform/location.",
+            "4. Complete the Experience and Considerations sections honestly.",
+            "5. Save this file and return it to your Detailer for upload.",
             "",
-            "Note: This sheet is protected. You can only edit the blue input cells."
+            "Note: Do not modify locked cells or the structure of this file.",
+            `Slate Window: ${slate.windowStart} — ${slate.windowEnd}`,
         ];
 
         instructions.forEach((line, i) => {
@@ -49,75 +54,62 @@ export async function generateCandidateTemplate(slate: Slate): Promise<Buffer> {
 
         await wsInstructions.protect('password', { selectLockedCells: true, selectUnlockedCells: true });
 
-        // --- Sheet 2: Data (Hidden) ---
-        // Created BEFORE Input to ensure validation references are valid during Input creation.
+        // --- Sheet 2: Data (Hidden) — preference options for dropdown validation ---
         const wsData = workbook.addWorksheet('Data');
         wsData.state = 'hidden';
-
         finalOptions.forEach((opt, i) => {
             wsData.getRow(i + 1).getCell(1).value = opt;
         });
-        // Do NOT protect Data sheet to ensure it's readable by validation logic without issues.
 
         // --- Sheet 3: Input ---
         const wsInput = workbook.addWorksheet('Input');
+        wsInput.getColumn('A').width = 32;
+        wsInput.getColumn('B').width = 50;
+        wsInput.getColumn('C').width = 40;
 
-        // Define Columns
-        wsInput.getColumn('A').width = 30; // Labels
-        wsInput.getColumn('B').width = 50; // Input
-        wsInput.getColumn('C').width = 30; // Narrative / Extra
-
-        // Helper to style input cells
         const inputStyle = {
-            fill: {
-                type: 'pattern',
-                pattern: 'solid',
-                fgColor: { argb: 'FFE6F0FF' } // Light Blue
-            },
+            fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE6F0FF' } },
             border: {
-                top: { style: 'thin' },
-                left: { style: 'thin' },
-                bottom: { style: 'thin' },
-                right: { style: 'thin' }
+                top: { style: 'thin' }, left: { style: 'thin' },
+                bottom: { style: 'thin' }, right: { style: 'thin' }
             },
             protection: { locked: false }
         };
 
-        const headerStyle = {
-            bold: true
-        };
+        const sectionHeaderStyle = { bold: true, size: 11 };
+        const columnHeaderStyle = { bold: true, italic: true };
 
-        // Build Rows
-
-        // Row 1: Headers
-        wsInput.getRow(1).values = ["Officer Name", "Rank", "Designator", "Email"];
-        wsInput.getRow(1).font = headerStyle;
-
-        // Row 2: Inputs
-        const personalRow = wsInput.getRow(2);
-        // Explicitly set values to empty strings to ensure cells exist
-        personalRow.values = ["", "", "", ""];
-        ['A2', 'B2', 'C2', 'D2'].forEach(ref => {
-            const cell = wsInput.getCell(ref);
+        const applyInput = (cellRef: string) => {
+            const cell = wsInput.getCell(cellRef);
             cell.fill = inputStyle.fill;
             cell.border = inputStyle.border;
             cell.protection = { locked: false };
-        });
+        };
 
-        // Spacer
-        wsInput.getRow(3).values = [];
+        // ─── Section 1: Personal Info ────────────────────────────────
+        wsInput.getRow(1).values = ["OFFICER INFORMATION", "", ""];
+        wsInput.getRow(1).font = sectionHeaderStyle;
+        wsInput.getRow(2).values = ["Officer Name", "Rank", "Designator"];
+        wsInput.getRow(2).font = columnHeaderStyle;
+        // Row 3: input cells
+        ['A3', 'B3', 'C3'].forEach(applyInput);
 
-        // Row 4: Headers
-        wsInput.getRow(4).values = ["Rank", "Platform - Location Preference", "Narrative / Notes"];
-        wsInput.getRow(4).font = headerStyle;
+        // ─── Spacer ──────────────────────────────────────────────────
+        wsInput.getRow(4).values = [];
 
-        // Preferences (Rows 5-9)
-        for (let i = 0; i < 5; i++) {
-            const r = 5 + i;
+        // ─── Section 2: Preferences ──────────────────────────────────
+        wsInput.getRow(5).values = ["COMMAND PREFERENCES (Ranked)", "", ""];
+        wsInput.getRow(5).font = sectionHeaderStyle;
+        wsInput.getRow(6).values = ["Rank", "Platform - Location", "Narrative (why this preference?)"];
+        wsInput.getRow(6).font = columnHeaderStyle;
+
+        const prefStartRow = 7;
+        for (let i = 0; i < prefCount; i++) {
+            const r = prefStartRow + i;
             const row = wsInput.getRow(r);
             row.getCell(1).value = `Preference ${i + 1}`;
 
-            // B: Dropdown
+            // Dropdown for Platform-Location
             const cellB = row.getCell(2);
             cellB.fill = inputStyle.fill;
             cellB.border = inputStyle.border;
@@ -125,60 +117,59 @@ export async function generateCandidateTemplate(slate: Slate): Promise<Buffer> {
             cellB.dataValidation = {
                 type: 'list',
                 allowBlank: true,
-                formulae: [`'Data'!$A$1:$A$${finalOptions.length}`] // Direct ref or named range
+                formulae: [`'Data'!$A$1:$A$${finalOptions.length}`]
             };
 
-            // C: Narrative
+            // Narrative
             const cellC = row.getCell(3);
             cellC.fill = inputStyle.fill;
             cellC.border = inputStyle.border;
             cellC.protection = { locked: false };
         }
 
-        // Spacer
+        // ─── Spacer ──────────────────────────────────────────────────
+        let r = prefStartRow + prefCount + 1;
 
-        // Experience
-        let r = 11;
-        wsInput.getRow(r++).values = ["Experience", "Value"];
-        wsInput.getRow(r - 1).font = headerStyle;
-
-        const expFields = ["Total Months U/W", "Total Months Deployed", "Current Role", "Past Roles"];
-        expFields.forEach(field => {
-            const row = wsInput.getRow(r++);
-            row.getCell(1).value = field;
-
-            const cell = row.getCell(2);
-            cell.fill = inputStyle.fill;
-            cell.border = inputStyle.border;
-            cell.protection = { locked: false };
-        });
-
-        // Spacer
+        // ─── Section 3: Experience ───────────────────────────────────
+        wsInput.getRow(r).values = ["Experience", "Value"];
+        wsInput.getRow(r).font = sectionHeaderStyle;
         r++;
 
-        // Considerations
-        wsInput.getRow(r++).values = ["Considerations", "Notes"];
-        wsInput.getRow(r - 1).font = headerStyle;
-
-        const consFields = ["Co-Location", "EFM", "Education"];
-        consFields.forEach(field => {
-            const row = wsInput.getRow(r++);
-            row.getCell(1).value = field;
-
-            const cell = row.getCell(2);
-            cell.fill = inputStyle.fill;
-            cell.border = inputStyle.border;
-            cell.protection = { locked: false };
+        const expFields = [
+            "Total Months U/W",
+            "Total Months Deployed",
+            "Current Role",
+            "Past Roles (Key Tours)",
+            "JPME Completion / Plan",
+            "WTI Qualification (Type if applicable)",
+        ];
+        expFields.forEach(field => {
+            wsInput.getRow(r).getCell(1).value = field;
+            applyInput(`B${r}`);
+            r++;
         });
 
-        // Protect Input Sheet
+        // ─── Spacer ──────────────────────────────────────────────────
+        r++;
+
+        // ─── Section 4: Considerations ───────────────────────────────
+        wsInput.getRow(r).values = ["Considerations", "Notes"];
+        wsInput.getRow(r).font = sectionHeaderStyle;
+        r++;
+
+        const consFields = ["Co-Location Request", "EFM Considerations", "Education / Pipeline"];
+        consFields.forEach(field => {
+            wsInput.getRow(r).getCell(1).value = field;
+            applyInput(`B${r}`);
+            r++;
+        });
+
+        // Protect Input sheet (leaves unlocked cells editable)
         await wsInput.protect('password', {
             selectLockedCells: true,
             selectUnlockedCells: true
         });
 
-        // Write to Buffer
-        // ExcelJS writeBuffer returns Promise<Buffer>
         const uint8Array = await workbook.xlsx.writeBuffer();
         return Buffer.from(uint8Array);
     } catch (e: any) {

@@ -4,7 +4,7 @@ import type { OracleCommand, Officer, Slate, CdrCmdBoard } from '../lib/types';
 
 const DATA_DIR = path.join(process.cwd(), 'src', 'data');
 
-function writeJson(filename: string, data: unknown): void {
+export function writeJson(filename: string, data: unknown): void {
     const filePath = path.join(DATA_DIR, filename);
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
 }
