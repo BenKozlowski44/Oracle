@@ -124,13 +124,10 @@ export async function generateCandidateTemplate(slate: Slate): Promise<Buffer> {
 
         // ─── OFFICER INFORMATION ─────────────────────────────────────
         makeSectionHeader(r++, 'OFFICER INFORMATION');
-        makeSubHeader(r++, ['Full Name', 'Rank', 'Designator', 'Email', '']);
-        ['B', 'C', 'D', 'E'].forEach(col => makeInputCell(`A${r}`));
+        makeSubHeader(r++, ['Full Name', 'Rank', 'Designator', '', '']);
         makeInputCell(`A${r}`);
         makeInputCell(`B${r}`);
         makeInputCell(`C${r}`);
-        makeInputCell(`D${r}`);
-        makeInputCell(`E${r}`);
         r++;
 
         // spacer
@@ -154,8 +151,8 @@ export async function generateCandidateTemplate(slate: Slate): Promise<Buffer> {
         // spacer
         r++;
 
-        // ─── FLAG CONTACT ─────────────────────────────────────────────
-        makeSectionHeader(r++, 'FLAG CONTACT');
+        // ─── FLAG NOTIFIER ────────────────────────────────────────────
+        makeSectionHeader(r++, 'FLAG NOTIFIER');
         makeSubHeader(r++, ['Flag Officer Name', 'Relationship / Context', '', '', '']);
         makeInputCell(`A${r}`);
         makeInputCell(`B${r}`);

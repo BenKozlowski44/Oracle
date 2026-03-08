@@ -81,7 +81,7 @@ export async function POST(request: Request) {
         const mailingAddress = contactSection > 0 ? cellVal(contactSection + 4, 1) : '';
 
         // ── FLAG CONTACT ──────────────────────────────────────────────
-        const flagRow = findRow('FLAG CONTACT');
+        const flagRow = findRow('FLAG NOTIFIER');
         const flagName = flagRow > 0 ? cellVal(flagRow + 2, 1) : '';
         const flagRelationship = flagRow > 0 ? cellVal(flagRow + 2, 2) : '';
 
