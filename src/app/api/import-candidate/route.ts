@@ -60,14 +60,27 @@ export async function POST(request: Request) {
         // ── OFFICER INFORMATION (row 3 is input, row 1 = header, row 2 = col headers) ──
         const infoRow = findRow('OFFICER INFORMATION');
         const rawName = infoRow > 0 ? cellVal(infoRow + 2, 1) : '';
-        if (!rawName) {
-            return NextResponse.json({ error: 'Officer Name is required (cell A in the name input row)' }, { status: 400 });
-        }
+
+        // officerId may be passed directly from per-candidate upload (bypasses name lookup)
+        const officerIdOverride = formData.get('officerId') as string | null;
 
         const officers = readJson<Officer[]>('officers.json');
-        const officerId = findOfficerId(rawName, officers);
-        if (!officerId) {
-            return NextResponse.json({ error: `Officer '${rawName}' not found in system.` }, { status: 404 });
+        let officerId: string | undefined;
+
+        if (officerIdOverride) {
+            // Validate the override exists in the system
+            officerId = officers.find(o => o.id === officerIdOverride)?.id;
+            if (!officerId) {
+                return NextResponse.json({ error: `Officer ID '${officerIdOverride}' not found.` }, { status: 404 });
+            }
+        } else {
+            if (!rawName) {
+                return NextResponse.json({ error: 'Officer Name is required in cell A3 of the Input sheet' }, { status: 400 });
+            }
+            officerId = findOfficerId(rawName, officers);
+            if (!officerId) {
+                return NextResponse.json({ error: `Officer '${rawName}' not found in system.` }, { status: 404 });
+            }
         }
 
         // ── CONTACT INFORMATION ───────────────────────────────────────

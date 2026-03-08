@@ -1,10 +1,10 @@
 "use client"
 
-import { useState, use } from "react"
+import { useState, use, useRef } from "react"
 import { slates, officers, oracleData } from "@/lib/data"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, Trash2, Plus, Search, UserPlus, Edit } from "lucide-react"
+import { ArrowLeft, Trash2, Plus, Search, UserPlus, Edit, Upload } from "lucide-react"
 import Link from "next/link"
 import {
     Table,
@@ -47,6 +47,11 @@ export default function SlateDetailPage({ params }: SlateDetailPageProps) {
 
     // Profile Edit State
     const [editingOfficerId, setEditingOfficerId] = useState<string | null>(null);
+
+    // Per-candidate upload state
+    const [uploadTargetOfficerId, setUploadTargetOfficerId] = useState<string | null>(null);
+    const [uploadingOfficerId, setUploadingOfficerId] = useState<string | null>(null);
+    const perCandidateFileInputRef = useRef<HTMLInputElement>(null);
 
     // Selection States
     const [searchQuery, setSearchQuery] = useState("");
@@ -232,6 +237,38 @@ export default function SlateDetailPage({ params }: SlateDetailPageProps) {
         }
     }
 
+    const handlePerCandidateUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files || e.target.files.length === 0 || !uploadTargetOfficerId) return;
+        const file = e.target.files[0];
+        setUploadingOfficerId(uploadTargetOfficerId);
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('slateId', slate.id);
+        formData.append('officerId', uploadTargetOfficerId);
+
+        try {
+            const res = await fetch('/api/import-candidate', { method: 'POST', body: formData });
+            if (res.ok) {
+                const data = await res.json();
+                if (data.success && data.profile) {
+                    handleSaveProfile(data.profile);
+                }
+            } else {
+                const err = await res.json();
+                alert(`Import failed: ${err.error}`);
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Error uploading file.');
+        } finally {
+            setUploadingOfficerId(null);
+            setUploadTargetOfficerId(null);
+            if (perCandidateFileInputRef.current) perCandidateFileInputRef.current.value = '';
+        }
+    }
+
+
     return (
         <div className="space-y-6">
             <div className="flex items-center gap-4">
@@ -251,17 +288,6 @@ export default function SlateDetailPage({ params }: SlateDetailPageProps) {
                         <Button variant="outline" size="sm" onClick={handleDownloadTemplate}>
                             Download Template
                         </Button>
-                        <div className="relative">
-                            <Button variant="outline" size="sm" className="relative cursor-pointer">
-                                Upload Completed Form
-                                <input
-                                    type="file"
-                                    accept=".xlsx"
-                                    className="absolute inset-0 opacity-0 cursor-pointer"
-                                    onChange={handleFileUpload}
-                                />
-                            </Button>
-                        </div>
                     </div>
                     <Link href={`/slates/${id}/alignment`}>
                         <Button variant="outline">Alignment Matrix</Button>
@@ -573,6 +599,18 @@ export default function SlateDetailPage({ params }: SlateDetailPageProps) {
                                                     </div>
                                                 </div>
                                                 <div className="flex gap-1">
+                                                    {/* Per-candidate upload icon */}
+                                                    <Button
+                                                        variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground"
+                                                        title="Upload Completed Form"
+                                                        disabled={uploadingOfficerId === c.id}
+                                                        onClick={() => {
+                                                            setUploadTargetOfficerId(c.id);
+                                                            perCandidateFileInputRef.current?.click();
+                                                        }}
+                                                    >
+                                                        <Upload className={`h-3 w-3 ${uploadingOfficerId === c.id ? 'animate-pulse text-primary' : ''}`} />
+                                                    </Button>
                                                     <Button
                                                         variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground"
                                                         onClick={() => setEditingOfficerId(c.id)}
@@ -688,11 +726,20 @@ export default function SlateDetailPage({ params }: SlateDetailPageProps) {
                                         </Button>
                                     ))}
                                 </div>
-                            )
+                            );
                         })()}
                     </div>
                 </DialogContent>
             </Dialog>
+
+            {/* Hidden shared file input for per-candidate upload */}
+            <input
+                ref={perCandidateFileInputRef}
+                type="file"
+                accept=".xlsx"
+                className="hidden"
+                onChange={handlePerCandidateUpload}
+            />
         </div>
     )
 }
