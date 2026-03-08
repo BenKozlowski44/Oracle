@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
 import { saveMetrics } from '@/lib/metrics-service';
 import { updateDataFile } from '@/services/data-service';
-import fs from 'fs';
-import path from 'path';
 import { Officer } from '@/lib/types';
 
 export async function POST(request: Request) {
@@ -18,67 +16,22 @@ export async function POST(request: Request) {
 
         // Perform intelligent merge if partial upload requested
         if (mergeBank || mergeCosm) {
-            const dataFilePath = path.join(process.cwd(), 'src', 'lib', 'data.ts');
-            const fileContent = fs.readFileSync(dataFilePath, 'utf8');
-            const startMarker = 'export const officers: Officer[] =';
-            const searchStartIndex = fileContent.indexOf(startMarker);
+            const { readJson } = await import('@/services/data-service');
+            const currentOfficers = readJson<Officer[]>('officers.json');
 
-            if (searchStartIndex !== -1) {
-                const openBracketIndex = fileContent.indexOf('[', searchStartIndex + startMarker.length);
-                if (openBracketIndex !== -1) {
-                    let depth = 0;
-                    let inString = false;
-                    let quoteChar = '';
-                    let closeBracketIndex = -1;
-
-                    for (let i = openBracketIndex; i < fileContent.length; i++) {
-                        const char = fileContent[i];
-                        if (inString) {
-                            if (char === quoteChar && fileContent[i - 1] !== '\\') inString = false;
-                        } else {
-                            if (char === '"' || char === "'" || char === '`') {
-                                inString = true;
-                                quoteChar = char;
-                            } else if (char === '[') depth++;
-                            else if (char === ']') {
-                                depth--;
-                                if (depth === 0) {
-                                    closeBracketIndex = i;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-                    if (closeBracketIndex !== -1) {
-                        const jsonString = fileContent.substring(openBracketIndex, closeBracketIndex + 1);
-                        try {
-                            const parseFn = new Function(`return ${jsonString}`);
-                            const currentOfficers = parseFn() as Officer[];
-
-                            if (mergeBank) {
-                                // Keep CO-SM officers, replace standard bank
-                                const cosmOfficers = currentOfficers.filter(o => o.listShift === 'CO-SM' || o.screened?.includes('CO-SM'));
-                                finalOfficers = [...cosmOfficers, ...mergeBank];
-                            } else if (mergeCosm) {
-                                // Keep standard bank
-                                const standardOfficers = currentOfficers.filter(o => !(o.listShift === 'CO-SM' || o.screened?.includes('CO-SM')));
-
-                                // Also keep existing CO-SM officers that ARE NOT natively in the new mergeCosm upload
-                                const newCosmIds = new Set(mergeCosm.map((o: any) => o.id));
-                                const existingCosmToKeep = currentOfficers.filter(o =>
-                                    (o.listShift === 'CO-SM' || o.screened?.includes('CO-SM')) &&
-                                    !newCosmIds.has(o.id)
-                                );
-
-                                finalOfficers = [...standardOfficers, ...existingCosmToKeep, ...mergeCosm];
-                            }
-                        } catch (e) {
-                            console.error("Failed to parse existing officers for merge", e);
-                            return NextResponse.json({ error: 'Failed to read current bank data' }, { status: 500 });
-                        }
-                    }
-                }
+            if (mergeBank) {
+                // Keep CO-SM officers, replace standard bank
+                const cosmOfficers = currentOfficers.filter((o: Officer) => o.listShift === 'CO-SM' || o.screened?.includes('CO-SM'));
+                finalOfficers = [...cosmOfficers, ...mergeBank];
+            } else if (mergeCosm) {
+                // Keep standard bank officers
+                const standardOfficers = currentOfficers.filter((o: Officer) => !(o.listShift === 'CO-SM' || o.screened?.includes('CO-SM')));
+                // Keep existing CO-SM officers not in the new upload
+                const newCosmIds = new Set(mergeCosm.map((o: Officer) => o.id));
+                const existingCosmToKeep = currentOfficers.filter((o: Officer) =>
+                    (o.listShift === 'CO-SM' || o.screened?.includes('CO-SM')) && !newCosmIds.has(o.id)
+                );
+                finalOfficers = [...standardOfficers, ...existingCosmToKeep, ...mergeCosm];
             }
         }
 

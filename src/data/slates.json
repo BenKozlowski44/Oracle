@@ -1,0 +1,208 @@
+[
+  {
+    "id": "slate-1772671162167",
+    "name": "FY26-2",
+    "windowStart": "2026-07-01",
+    "windowEnd": "2027-08-31",
+    "requirements": [
+      {
+        "id": "req-cmd_86-xo",
+        "commandName": "USS COMSTOCK",
+        "commandId": "cmd_86",
+        "role": "XO",
+        "incumbent": "HODGEMAN JESSICA LYN",
+        "incumbentPrd": "2027-02-01",
+        "status": "Draft"
+      },
+      {
+        "id": "req-cmd_100-xo",
+        "commandName": "USS GABRIELLE GIFFORDS",
+        "commandId": "cmd_100",
+        "role": "XO",
+        "incumbent": "LILEKS WAYNE D",
+        "incumbentPrd": "2027-02-01",
+        "status": "Draft"
+      },
+      {
+        "id": "req-cmd_124-xo",
+        "commandName": "USS PREBLE",
+        "commandId": "cmd_124",
+        "role": "XO",
+        "incumbent": "FORWARD DOUGLAS THEODORE",
+        "incumbentPrd": "2027-05-01",
+        "status": "Draft"
+      },
+      {
+        "id": "req-cmd_89-xo",
+        "commandName": "USS HARPER'S FERRY",
+        "commandId": "cmd_89",
+        "role": "XO",
+        "incumbent": "CHALLBURG MARIBEL",
+        "incumbentPrd": "2027-06-01",
+        "status": "Draft"
+      },
+      {
+        "id": "req-cmd_108-xo",
+        "commandName": "USS MANCHESTER",
+        "commandId": "cmd_108",
+        "role": "XO",
+        "incumbent": "THURMAN JEREMY S",
+        "incumbentPrd": "2027-06-01",
+        "status": "Draft"
+      },
+      {
+        "id": "req-cmd_121-xo",
+        "commandName": "USS MILIUS",
+        "commandId": "cmd_121",
+        "role": "XO",
+        "incumbent": "MARTIN PHILLIP DEJUAN",
+        "incumbentPrd": "2027-06-01",
+        "status": "Draft"
+      },
+      {
+        "id": "req-cmd_47-xo",
+        "commandName": "USS BAINBRIDGE",
+        "commandId": "cmd_47",
+        "role": "XO",
+        "incumbent": "PETERS SAVANNAH JUNE",
+        "incumbentPrd": "2027-07-01",
+        "status": "Filled",
+        "filledBy": "vansicekara_12"
+      },
+      {
+        "id": "req-cmd_56-xo",
+        "commandName": "USS OAK HILL",
+        "commandId": "cmd_56",
+        "role": "XO",
+        "incumbent": "KIRBY MATTHEW DAVID",
+        "incumbentPrd": "2027-07-01",
+        "status": "Filled",
+        "filledBy": "brinsonsamuelfelton_21"
+      },
+      {
+        "id": "req-cmd_23-xo-1772671797558",
+        "commandName": "USS BILLINGS",
+        "commandId": "cmd_23",
+        "role": "XO",
+        "incumbent": "BURNS JOHN A",
+        "incumbentPrd": "2026-08-25",
+        "status": "Filled",
+        "filledBy": "dennellytimothyr_18"
+      },
+      {
+        "id": "req-cmd_27-xo-1772671839198",
+        "commandName": "USS COOPERSTOWN",
+        "commandId": "cmd_27",
+        "role": "XO",
+        "incumbent": "HEILIGER NICHOLAS SEAN",
+        "incumbentPrd": "2026-11-25",
+        "status": "Filled",
+        "filledBy": "tyeandrewj_12"
+      },
+      {
+        "id": "req-cmd_60-xo-1772671919157",
+        "commandName": "USS WILLIAM P LAWRENCE",
+        "commandId": "cmd_60",
+        "role": "XO",
+        "incumbent": "HARRIS ROBERT NELSON III",
+        "incumbentPrd": "2027-04-05",
+        "status": "Filled",
+        "filledBy": "tanalegajohnfrancis_21"
+      },
+      {
+        "id": "req-cmd_67-xo-1772671927548",
+        "commandName": "USS PAUL IGNATIUS",
+        "commandId": "cmd_67",
+        "role": "XO",
+        "incumbent": "SISLER RYAN J",
+        "incumbentPrd": "",
+        "status": "Filled",
+        "filledBy": "stensonfosterparris_21"
+      },
+      {
+        "id": "req-cmd_88-xo-1772671937382",
+        "commandName": "USS ASHLAND",
+        "commandId": "cmd_88",
+        "role": "XO",
+        "incumbent": "Cranford, Marcus (XO-A)",
+        "incumbentPrd": "2025-07-24",
+        "status": "Draft"
+      },
+      {
+        "id": "req-cmd_93-xo-1772671948550",
+        "commandName": "USS MONTGOMERY",
+        "commandId": "cmd_93",
+        "role": "XO",
+        "incumbent": "HAUGAN NATHAN DANIEL",
+        "incumbentPrd": "",
+        "status": "Draft"
+      },
+      {
+        "id": "req-cmd_113-xo-1772671964175",
+        "commandName": "USS CANBERRA  GOLD (CREW 228)",
+        "commandId": "cmd_113",
+        "role": "XO",
+        "incumbent": "Towles, Courtney (XO/CO)",
+        "incumbentPrd": "2025-05-23",
+        "status": "Draft"
+      },
+      {
+        "id": "req-cmd_114-xo-1772671982803",
+        "commandName": "USS SANTA BARBARA  BLUE (CREW 229)",
+        "commandId": "cmd_114",
+        "role": "XO",
+        "incumbent": "Buss, Johnathan (XO/CO)",
+        "incumbentPrd": "2025-08-23",
+        "status": "Draft"
+      },
+      {
+        "id": "req-cmd_40-xo-1772672011635",
+        "commandName": "USS COLE",
+        "commandId": "cmd_40",
+        "role": "XO",
+        "incumbent": "GOSTEL CHRISTOPHER RANSOMA",
+        "incumbentPrd": "2026-01-24",
+        "status": "Filled",
+        "filledBy": "gubanchamiltonr_17"
+      },
+      {
+        "id": "req-cmd_2-xo-1772672042961",
+        "commandName": "USS TULSA",
+        "commandId": "cmd_2",
+        "role": "XO",
+        "incumbent": "BENKO RYAN EMERY",
+        "incumbentPrd": "2025-06-24",
+        "status": "Draft"
+      }
+    ],
+    "candidates": [
+      "dennellytimothyr_18",
+      "tyeandrewj_12",
+      "gubanchamiltonr_17",
+      "vansicekara_12",
+      "brinsonsamuelfelton_21",
+      "tanalegajohnfrancis_21",
+      "stensonfosterparris_21",
+      "kowatchjustinedward_21",
+      "vandecastlethomasedward_25",
+      "piresmichaeljoseph_20",
+      "whitmerandrewrobert_21",
+      "smithcodyt_12",
+      "barnerseanj_1772671666454",
+      "geerrichardgreyson_20",
+      "carballocarlosalberto_23",
+      "withrowgraigallen_19",
+      "strifflerbriangarret_22",
+      "englishjayc_13",
+      "collinstravisanthony_22"
+    ],
+    "status": "Active",
+    "approvals": {
+      "branchHead": false,
+      "pers41": false,
+      "swcc": false,
+      "swoboss": false
+    },
+    "candidateProfiles": []
+  }
+]
