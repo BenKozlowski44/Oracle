@@ -48,7 +48,8 @@
     "prospectiveCO": {
       "name": "",
       "prd": ""
-    }
+    },
+    "hullNumber": "18"
   },
   {
     "id": "cmd_2",
@@ -105,7 +106,8 @@
         "m": "JAN30",
         "q": "JUL31"
       }
-    }
+    },
+    "hullNumber": "16"
   },
   {
     "id": "cmd_4",
@@ -162,7 +164,8 @@
         "m": "DEC27",
         "q": "JUN29"
       }
-    }
+    },
+    "hullNumber": "12"
   },
   {
     "id": "cmd_5",
@@ -219,7 +222,8 @@
         "m": "SEP29",
         "q": "MAR31"
       }
-    }
+    },
+    "hullNumber": "38"
   },
   {
     "id": "cmd_6",
@@ -283,7 +287,8 @@
         "m": "2029-07-01",
         "q": "2031-01-01"
       }
-    }
+    },
+    "hullNumber": "52"
   },
   {
     "id": "cmd_7",
@@ -340,7 +345,8 @@
         "m": "2030-01-01",
         "q": "2031-07-01"
       }
-    }
+    },
+    "hullNumber": "53"
   },
   {
     "id": "cmd_8",
@@ -404,7 +410,8 @@
       "pco": true,
       "orders": false,
       "coc": false
-    }
+    },
+    "hullNumber": "56"
   },
   {
     "id": "cmd_9",
@@ -465,7 +472,8 @@
         "m": "MAY29",
         "q": "NOV30"
       }
-    }
+    },
+    "hullNumber": "65"
   },
   {
     "id": "cmd_10",
@@ -516,7 +524,8 @@
         "m": "2030-05-25",
         "q": "2031-11-25"
       }
-    }
+    },
+    "hullNumber": "100"
   },
   {
     "id": "cmd_11",
@@ -573,7 +582,8 @@
         "m": "2030-06-01",
         "q": "2031-12-01"
       }
-    }
+    },
+    "hullNumber": "101"
   },
   {
     "id": "cmd_12",
@@ -634,7 +644,8 @@
         "m": "2029-09-01",
         "q": "2031-03-01"
       }
-    }
+    },
+    "hullNumber": "102"
   },
   {
     "id": "cmd_13",
@@ -691,7 +702,8 @@
         "m": "MAR30",
         "q": "SEP31"
       }
-    }
+    },
+    "hullNumber": "61"
   },
   {
     "id": "cmd_14",
@@ -742,7 +754,8 @@
     "prospectiveCO": {
       "name": "",
       "prd": ""
-    }
+    },
+    "hullNumber": "64"
   },
   {
     "id": "cmd_15",
@@ -793,7 +806,8 @@
         "m": "2030-06-27",
         "q": "2031-12-27"
       }
-    }
+    },
+    "hullNumber": "68"
   },
   {
     "id": "cmd_16",
@@ -854,7 +868,8 @@
     "prospectiveCO": {
       "name": "",
       "prd": ""
-    }
+    },
+    "hullNumber": "75"
   },
   {
     "id": "cmd_17",
@@ -911,7 +926,8 @@
         "m": "2029-04-27",
         "q": "2029-07-27"
       }
-    }
+    },
+    "hullNumber": "99"
   },
   {
     "id": "cmd_18",
@@ -968,7 +984,8 @@
         "m": "FEB29",
         "q": "AUG30"
       }
-    }
+    },
+    "hullNumber": "109"
   },
   {
     "id": "cmd_19",
@@ -1025,7 +1042,8 @@
         "m": "SEP29",
         "q": "MAR31"
       }
-    }
+    },
+    "hullNumber": "116"
   },
   {
     "id": "cmd_20",
@@ -1087,7 +1105,8 @@
       "name": "",
       "prd": ""
     },
-    "notes": "26-4 VANWINTER ROBERT"
+    "notes": "26-4 VANWINTER ROBERT",
+    "hullNumber": "119"
   },
   {
     "id": "cmd_21",
@@ -1132,7 +1151,8 @@
     "inboundXO": {
       "name": "NO FILL - MAJCOM",
       "reportDate": ""
-    }
+    },
+    "hullNumber": "82"
   },
   {
     "id": "cmd_22",
@@ -1194,7 +1214,8 @@
     "inboundXO": {
       "name": "CROCKETT MATRAKO FASHAUN",
       "reportDate": "JUN26"
-    }
+    },
+    "hullNumber": "13"
   },
   {
     "id": "cmd_23",
@@ -1251,7 +1272,8 @@
         "m": "2029-10-01",
         "q": "2031-04-01"
       }
-    }
+    },
+    "hullNumber": "15"
   },
   {
     "id": "cmd_24",
@@ -1308,7 +1330,8 @@
         "m": "2029-08-26",
         "q": "2031-02-26"
       }
-    }
+    },
+    "hullNumber": "17"
   },
   {
     "id": "cmd_25",
@@ -1365,7 +1388,8 @@
         "m": "2029-08-01",
         "q": "2031-02-01"
       }
-    }
+    },
+    "hullNumber": "19"
   },
   {
     "id": "cmd_26",
@@ -1408,7 +1432,8 @@
     "prospectiveCO": {
       "name": "",
       "prd": ""
-    }
+    },
+    "hullNumber": "21"
   },
   {
     "id": "cmd_27",
@@ -1465,7 +1490,8 @@
         "m": "2030-03-04",
         "q": "2031-09-04"
       }
-    }
+    },
+    "hullNumber": "23"
   },
   {
     "id": "cmd_28",
@@ -1522,7 +1548,8 @@
         "m": "2030-02-26",
         "q": "2031-08-26"
       }
-    }
+    },
+    "hullNumber": "25"
   },
   {
     "id": "cmd_29",
@@ -1586,7 +1613,8 @@
       "pco": true,
       "orders": true,
       "coc": true
-    }
+    },
+    "hullNumber": "27"
   },
   {
     "id": "cmd_30",
@@ -1643,7 +1671,8 @@
         "m": "2029-03-01",
         "q": "2030-09-01"
       }
-    }
+    },
+    "hullNumber": "29"
   },
   {
     "id": "cmd_31",
@@ -1700,7 +1729,8 @@
         "m": "2028-11-27",
         "q": "2030-05-27"
       }
-    }
+    },
+    "hullNumber": "31"
   },
   {
     "id": "cmd_36",
@@ -1757,7 +1787,8 @@
         "m": "NOV29",
         "q": "MAY31"
       }
-    }
+    },
+    "hullNumber": "55"
   },
   {
     "id": "cmd_37",
@@ -1814,7 +1845,8 @@
         "m": "OCT29",
         "q": "APR31"
       }
-    }
+    },
+    "hullNumber": "57"
   },
   {
     "id": "cmd_38",
@@ -1871,7 +1903,8 @@
         "m": "OCT29",
         "q": "APR31"
       }
-    }
+    },
+    "hullNumber": "58"
   },
   {
     "id": "cmd_39",
@@ -1928,7 +1961,8 @@
         "m": "NOV29",
         "q": "MAY31"
       }
-    }
+    },
+    "hullNumber": "66"
   },
   {
     "id": "cmd_40",
@@ -1985,7 +2019,8 @@
         "m": "MAY29",
         "q": "NOV30"
       }
-    }
+    },
+    "hullNumber": "67"
   },
   {
     "id": "cmd_41",
@@ -2042,7 +2077,8 @@
         "m": "DEC29",
         "q": "JUN31"
       }
-    }
+    },
+    "hullNumber": "71"
   },
   {
     "id": "cmd_42",
@@ -2099,7 +2135,8 @@
         "m": "JAN29",
         "q": "JUL30"
       }
-    }
+    },
+    "hullNumber": "72"
   },
   {
     "id": "cmd_43",
@@ -2156,7 +2193,8 @@
         "m": "JUN29",
         "q": "DEC30"
       }
-    }
+    },
+    "hullNumber": "74"
   },
   {
     "id": "cmd_44",
@@ -2213,7 +2251,8 @@
         "m": "JUL30",
         "q": "JAN32"
       }
-    }
+    },
+    "hullNumber": "78"
   },
   {
     "id": "cmd_45",
@@ -2270,7 +2309,8 @@
         "m": "APR30",
         "q": "OCT31"
       }
-    }
+    },
+    "hullNumber": "94"
   },
   {
     "id": "cmd_46",
@@ -2327,7 +2367,8 @@
         "m": "MAY30",
         "q": "NOV31"
       }
-    }
+    },
+    "hullNumber": "95"
   },
   {
     "id": "cmd_47",
@@ -2385,7 +2426,8 @@
         "q": "SEP30"
       }
     },
-    "notes": "FONTANA VINCE"
+    "notes": "FONTANA VINCE",
+    "hullNumber": "96"
   },
   {
     "id": "cmd_48",
@@ -2442,7 +2484,8 @@
         "m": "OCT29",
         "q": "APR31"
       }
-    }
+    },
+    "hullNumber": "98"
   },
   {
     "id": "cmd_49",
@@ -2501,7 +2544,8 @@
       }
     },
     "tourLength": 24,
-    "notes": "Pilot Program Ship with GRAVLEY"
+    "notes": "Pilot Program Ship with GRAVLEY",
+    "hullNumber": "103"
   },
   {
     "id": "cmd_50",
@@ -2558,7 +2602,8 @@
         "m": "MAR28",
         "q": "SEP29"
       }
-    }
+    },
+    "hullNumber": "107"
   },
   {
     "id": "cmd_51",
@@ -2615,7 +2660,8 @@
         "m": "MAR29",
         "q": "SEP30"
       }
-    }
+    },
+    "hullNumber": "124"
   },
   {
     "id": "cmd_52",
@@ -2729,7 +2775,8 @@
         "m": "APR30",
         "q": "OCT31"
       }
-    }
+    },
+    "hullNumber": "44"
   },
   {
     "id": "cmd_54",
@@ -2786,7 +2833,8 @@
         "m": "MAR29",
         "q": "SEP30"
       }
-    }
+    },
+    "hullNumber": "46"
   },
   {
     "id": "cmd_55",
@@ -2843,7 +2891,8 @@
         "m": "MAR30",
         "q": "SEP31"
       }
-    }
+    },
+    "hullNumber": "50"
   },
   {
     "id": "cmd_56",
@@ -2900,7 +2949,8 @@
         "m": "MAR29",
         "q": "SEP30"
       }
-    }
+    },
+    "hullNumber": "51"
   },
   {
     "id": "cmd_57",
@@ -2957,7 +3007,8 @@
         "m": "NOV29",
         "q": "MAY31"
       }
-    }
+    },
+    "hullNumber": "70"
   },
   {
     "id": "cmd_58",
@@ -3018,7 +3069,8 @@
     "prospectiveCO": {
       "name": "",
       "prd": ""
-    }
+    },
+    "hullNumber": "73"
   },
   {
     "id": "cmd_59",
@@ -3079,7 +3131,8 @@
     "prospectiveCO": {
       "name": "",
       "prd": ""
-    }
+    },
+    "hullNumber": "108"
   },
   {
     "id": "cmd_60",
@@ -3126,7 +3179,8 @@
         "m": "",
         "q": ""
       }
-    }
+    },
+    "hullNumber": "110"
   },
   {
     "id": "cmd_61",
@@ -3183,7 +3237,8 @@
         "m": "APR30",
         "q": "OCT31"
       }
-    }
+    },
+    "hullNumber": "112"
   },
   {
     "id": "cmd_62",
@@ -3240,7 +3295,8 @@
         "m": "MAY29",
         "q": "NOV30"
       }
-    }
+    },
+    "hullNumber": "120"
   },
   {
     "id": "cmd_63",
@@ -3291,7 +3347,8 @@
     "inboundXO": {
       "name": "NO FILL - MAJCOM",
       "reportDate": ""
-    }
+    },
+    "hullNumber": "118"
   },
   {
     "id": "cmd_64",
@@ -3355,7 +3412,8 @@
       "pco": true,
       "orders": true,
       "coc": true
-    }
+    },
+    "hullNumber": "51"
   },
   {
     "id": "cmd_65",
@@ -3416,7 +3474,8 @@
         "k": "SEP27",
         "q": "MAY29"
       }
-    }
+    },
+    "hullNumber": "80"
   },
   {
     "id": "cmd_66",
@@ -3478,7 +3537,8 @@
         "k": "JUN28"
       }
     },
-    "notes": "BONSALL NICK"
+    "notes": "BONSALL NICK",
+    "hullNumber": "84"
   },
   {
     "id": "cmd_67",
@@ -3529,7 +3589,8 @@
     "prospectiveCO": {
       "name": "BURKE WILLIAM HENRY",
       "prd": ""
-    }
+    },
+    "hullNumber": "117"
   },
   {
     "id": "cmd_68",
@@ -3586,7 +3647,8 @@
         "m": "SEP29",
         "q": "MAR31"
       }
-    }
+    },
+    "hullNumber": "79"
   },
   {
     "id": "cmd_69",
@@ -3643,7 +3705,8 @@
         "m": "AUG29",
         "q": "FEB31"
       }
-    }
+    },
+    "hullNumber": "122"
   },
   {
     "id": "cmd_70",
@@ -3700,7 +3763,8 @@
         "m": "APR29",
         "q": "OCT30"
       }
-    }
+    },
+    "hullNumber": "54"
   },
   {
     "id": "cmd_71",
@@ -3757,7 +3821,8 @@
         "m": "JUN29",
         "q": "DEC30"
       }
-    }
+    },
+    "hullNumber": "59"
   },
   {
     "id": "cmd_72",
@@ -3814,7 +3879,8 @@
         "m": "JUN28",
         "q": "DEC29"
       }
-    }
+    },
+    "hullNumber": "60"
   },
   {
     "id": "cmd_73",
@@ -3871,7 +3937,8 @@
         "m": "DEC27",
         "q": "JUN29"
       }
-    }
+    },
+    "hullNumber": "62"
   },
   {
     "id": "cmd_74",
@@ -3932,7 +3999,8 @@
     "prospectiveCO": {
       "name": "",
       "prd": ""
-    }
+    },
+    "hullNumber": "63"
   },
   {
     "id": "cmd_75",
@@ -3989,7 +4057,8 @@
         "m": "DEC29",
         "q": "JUN31"
       }
-    }
+    },
+    "hullNumber": "77"
   },
   {
     "id": "cmd_76",
@@ -4050,7 +4119,8 @@
         "m": "JUL30",
         "q": "JAN32"
       }
-    }
+    },
+    "hullNumber": "90"
   },
   {
     "id": "cmd_77",
@@ -4107,7 +4177,8 @@
         "m": "MAY28",
         "q": "NOV29"
       }
-    }
+    },
+    "hullNumber": "91"
   },
   {
     "id": "cmd_78",
@@ -4164,7 +4235,8 @@
         "k": "OCT28",
         "q": "JUN30"
       }
-    }
+    },
+    "hullNumber": "92"
   },
   {
     "id": "cmd_79",
@@ -4221,7 +4293,8 @@
         "m": "APR30",
         "q": "OCT31"
       }
-    }
+    },
+    "hullNumber": "93"
   },
   {
     "id": "cmd_81",
@@ -4278,7 +4351,8 @@
         "m": "FEB30",
         "q": "AUG31"
       }
-    }
+    },
+    "hullNumber": "97"
   },
   {
     "id": "cmd_82",
@@ -4335,7 +4409,8 @@
         "m": "DEC29",
         "q": "JUN31"
       }
-    }
+    },
+    "hullNumber": "104"
   },
   {
     "id": "cmd_83",
@@ -4390,7 +4465,8 @@
     "prospectiveCO": {
       "name": "",
       "prd": ""
-    }
+    },
+    "hullNumber": "106"
   },
   {
     "id": "cmd_84",
@@ -4451,7 +4527,8 @@
     "prospectiveCO": {
       "name": "",
       "prd": ""
-    }
+    },
+    "hullNumber": "111"
   },
   {
     "id": "cmd_85",
@@ -4508,7 +4585,8 @@
         "m": "JAN28",
         "q": "JUL29"
       }
-    }
+    },
+    "hullNumber": "123"
   },
   {
     "id": "cmd_86",
@@ -4565,7 +4643,8 @@
         "m": "OCT28",
         "q": "APR30"
       }
-    }
+    },
+    "hullNumber": "45"
   },
   {
     "id": "cmd_87",
@@ -4616,7 +4695,8 @@
     "inboundXO": {
       "name": "NO FILL - DECOM",
       "reportDate": ""
-    }
+    },
+    "hullNumber": "42"
   },
   {
     "id": "cmd_88",
@@ -4673,7 +4753,8 @@
         "m": "DEC27",
         "q": "JUN29"
       }
-    }
+    },
+    "hullNumber": "48"
   },
   {
     "id": "cmd_89",
@@ -4734,7 +4815,8 @@
     "prospectiveCO": {
       "name": "",
       "prd": ""
-    }
+    },
+    "hullNumber": "49"
   },
   {
     "id": "cmd_90",
@@ -4791,7 +4873,8 @@
         "m": "JAN30",
         "q": "JUL31"
       }
-    }
+    },
+    "hullNumber": "52"
   },
   {
     "id": "cmd_92",
@@ -4860,7 +4943,8 @@
       "orders": false,
       "coc": false
     },
-    "notes": "BRINKMAN IS RETIRING AND NOT FLEETING UP.  MCLAUGHLIN WILL REPLACE VANWAGONER."
+    "notes": "BRINKMAN IS RETIRING AND NOT FLEETING UP.  MCLAUGHLIN WILL REPLACE VANWAGONER.",
+    "hullNumber": "6"
   },
   {
     "id": "cmd_93",
@@ -4917,7 +5001,8 @@
         "m": "JUN30",
         "q": "DEC31"
       }
-    }
+    },
+    "hullNumber": "8"
   },
   {
     "id": "cmd_98",
@@ -4974,7 +5059,8 @@
         "m": "",
         "q": ""
       }
-    }
+    },
+    "hullNumber": "22"
   },
   {
     "id": "cmd_99",
@@ -5037,7 +5123,8 @@
     "inboundXO": {
       "name": "NO FILL - DECOM",
       "reportDate": ""
-    }
+    },
+    "hullNumber": "3"
   },
   {
     "id": "cmd_100",
@@ -5089,7 +5176,8 @@
       "pco": false,
       "orders": false,
       "coc": false
-    }
+    },
+    "hullNumber": "10"
   },
   {
     "id": "cmd_106",
@@ -5146,7 +5234,8 @@
         "m": "APR30",
         "q": "OCT31"
       }
-    }
+    },
+    "hullNumber": "12"
   },
   {
     "id": "cmd_108",
@@ -5204,7 +5293,8 @@
       "pco": false,
       "orders": false,
       "coc": false
-    }
+    },
+    "hullNumber": "14"
   },
   {
     "id": "cmd_110",
@@ -5265,7 +5355,8 @@
     "prospectiveCO": {
       "name": "RIVERS WILLIAM MASON JR",
       "prd": ""
-    }
+    },
+    "hullNumber": "20"
   },
   {
     "id": "cmd_111",
@@ -5326,7 +5417,8 @@
     "prospectiveCO": {
       "name": "BRADFORD JORDAN PAUL",
       "prd": ""
-    }
+    },
+    "hullNumber": "28"
   },
   {
     "id": "cmd_112",
@@ -5383,7 +5475,8 @@
         "m": "MAY29",
         "q": "NOV30"
       }
-    }
+    },
+    "hullNumber": "30"
   },
   {
     "id": "cmd_113",
@@ -5440,7 +5533,8 @@
         "m": "NOV29",
         "q": "MAY31"
       }
-    }
+    },
+    "hullNumber": "30"
   },
   {
     "id": "cmd_114",
@@ -5497,7 +5591,8 @@
         "m": "JAN30",
         "q": "JUL31"
       }
-    }
+    },
+    "hullNumber": "32"
   },
   {
     "id": "cmd_115",
@@ -5554,7 +5649,8 @@
         "m": "",
         "q": ""
       }
-    }
+    },
+    "hullNumber": "32"
   },
   {
     "id": "cmd_116",
@@ -5622,7 +5718,8 @@
       "pco": false,
       "orders": false,
       "coc": false
-    }
+    },
+    "hullNumber": "34"
   },
   {
     "id": "cmd_117",
@@ -5690,7 +5787,8 @@
       "pco": false,
       "orders": false,
       "coc": false
-    }
+    },
+    "hullNumber": "36"
   },
   {
     "id": "cmd_118",
@@ -5747,7 +5845,8 @@
         "m": "DEC28",
         "q": "JUN30"
       }
-    }
+    },
+    "hullNumber": "47"
   },
   {
     "id": "cmd_119",
@@ -5815,7 +5914,8 @@
       "pco": false,
       "orders": false,
       "coc": false
-    }
+    },
+    "hullNumber": "24"
   },
   {
     "id": "cmd_120",
@@ -5883,7 +5983,8 @@
       "pco": false,
       "orders": false,
       "coc": false
-    }
+    },
+    "hullNumber": "26"
   },
   {
     "id": "cmd_121",
@@ -5940,7 +6041,8 @@
         "m": "FEB29",
         "q": "AUG30"
       }
-    }
+    },
+    "hullNumber": "69"
   },
   {
     "id": "cmd_122",
@@ -5997,7 +6099,8 @@
         "m": "JUL29",
         "q": "JAN31"
       }
-    }
+    },
+    "hullNumber": "76"
   },
   {
     "id": "cmd_123",
@@ -6048,7 +6151,8 @@
         "m": "APR30",
         "q": "OCT31"
       }
-    }
+    },
+    "hullNumber": "83"
   },
   {
     "id": "cmd_124",
@@ -6105,7 +6209,8 @@
         "m": "JAN29",
         "q": "JUL30"
       }
-    }
+    },
+    "hullNumber": "88"
   },
   {
     "id": "cmd_125",
@@ -6162,7 +6267,8 @@
         "m": "OCT29",
         "q": "APR31"
       }
-    }
+    },
+    "hullNumber": "89"
   },
   {
     "id": "cmd_126",
@@ -6219,7 +6325,8 @@
         "m": "FEB30",
         "q": "AUG31"
       }
-    }
+    },
+    "hullNumber": "105"
   },
   {
     "id": "cmd_127",
@@ -6276,7 +6383,8 @@
         "m": "JUN30",
         "q": "DEC31"
       }
-    }
+    },
+    "hullNumber": "114"
   },
   {
     "id": "cmd_128",
@@ -6333,7 +6441,8 @@
         "m": "OCT29",
         "q": "APR31"
       }
-    }
+    },
+    "hullNumber": "115"
   },
   {
     "id": "cmd_129",
@@ -6401,7 +6510,8 @@
       "pco": false,
       "orders": false,
       "coc": false
-    }
+    },
+    "hullNumber": "113"
   },
   {
     "id": "constitution_12",
