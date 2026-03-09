@@ -68,10 +68,10 @@ export function BoardsClient({ initialBoards }: { initialBoards: CdrCmdBoard[] }
         const updatedBoards = [...localBoards, newBoard]
 
         try {
-            const res = await fetch('/api/update-data', {
+            const res = await fetch('/api/boards', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ boards: updatedBoards })
+                body: JSON.stringify({ board: newBoard })
             })
 
             if (res.ok) {

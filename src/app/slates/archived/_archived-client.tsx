@@ -26,17 +26,21 @@ export function ArchivedSlatesClient({ allSlates }: { allSlates: Slate[] }) {
     const handleRestore = async (e: React.MouseEvent, id: string) => {
         e.preventDefault(); e.stopPropagation()
         if (!confirm("Are you sure you want to restore this slate to Active?")) return
-        const updated = localSlates.map(s => s.id === id ? { ...s, status: "Active" as const } : s)
-        setLocalSlates(updated)
-        await persist(updated)
+        setLocalSlates(prev => prev.map(s => s.id === id ? { ...s, status: "Active" as const } : s))
+        await fetch(`/api/slates/${id}/status`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: 'Active' }),
+        })
+        router.refresh()
     }
 
     const handleDelete = async (e: React.MouseEvent, id: string) => {
         e.preventDefault(); e.stopPropagation()
         if (!confirm("Are you sure you want to PERMANENTLY delete this archived slate?")) return
-        const updated = localSlates.filter(s => s.id !== id)
-        setLocalSlates(updated)
-        await persist(updated)
+        setLocalSlates(prev => prev.filter(s => s.id !== id))
+        await fetch(`/api/slates/${id}`, { method: 'DELETE' })
+        router.refresh()
     }
 
     return (

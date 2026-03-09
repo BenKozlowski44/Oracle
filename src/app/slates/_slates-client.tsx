@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import { Plus, Trash2, Archive } from "lucide-react"
 import Link from "next/link"
 import { formatToMMMyy } from "@/lib/utils"
-import { applySlateToOracle } from "@/lib/slate-migration"
 import type { Slate, Officer, OracleCommand } from "@/lib/types"
 
 interface SlatesPageClientProps {
@@ -35,15 +34,20 @@ export function SlatesPageClient({ allSlates, officers, oracleData }: SlatesPage
         if (!confirm("Are you sure you want to archive this slate? It will move to the Archived Slates view.")) return
         const updated = localSlates.map(s => s.id === id ? { ...s, status: "Archived" as const } : s)
         setLocalSlates(updated)
-        await persist(updated)
+        await fetch(`/api/slates/${id}/status`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: 'Archived' }),
+        })
+        router.refresh()
     }
 
     const handleDelete = async (e: React.MouseEvent, id: string) => {
         e.preventDefault(); e.stopPropagation()
         if (!confirm("Are you sure you want to PERMANENTLY delete this slate?")) return
-        const updated = localSlates.filter(s => s.id !== id)
-        setLocalSlates(updated)
-        await persist(updated)
+        setLocalSlates(prev => prev.filter(s => s.id !== id))
+        await fetch(`/api/slates/${id}`, { method: 'DELETE' })
+        router.refresh()
     }
 
     const handleApprovalToggle = async (e: React.MouseEvent, id: string, entity: keyof Slate['approvals']) => {
@@ -59,18 +63,18 @@ export function SlatesPageClient({ allSlates, officers, oracleData }: SlatesPage
             if (!confirmed) return
         }
 
-        const updated = localSlates.map(s =>
+        // Optimistic update
+        setLocalSlates(prev => prev.map(s =>
             s.id === id ? { ...s, approvals: { ...s.approvals, [entity]: willBeTrue } } : s
-        )
-        setLocalSlates(updated)
+        ))
 
-        let extraPayload: Record<string, unknown> = {}
-        if (entity === 'swoboss' && willBeTrue) {
-            const updatedOracleData = applySlateToOracle(slate, officers, oracleData)
-            extraPayload = { oracleData: updatedOracleData }
-        }
-
-        await persist(updated, extraPayload)
+        // Server handles oracle migration for SWOBOSS
+        await fetch(`/api/slates/${id}/approvals`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ entity, value: willBeTrue }),
+        })
+        router.refresh()
     }
 
     return (

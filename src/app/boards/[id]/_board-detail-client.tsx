@@ -51,16 +51,12 @@ export function BoardDetailClient({ id, allBoards, allOfficers }: BoardDetailCli
 
     // Core save function
     const performSave = useCallback(async (candidatesToSave: BoardCandidate[], currentBoard: CdrCmdBoard) => {
-        const boardIndex = allBoards.findIndex(b => b.id === currentBoard.id);
-        if (boardIndex < 0) return;
-        const updatedBoards = [...allBoards];
-        updatedBoards[boardIndex] = { ...updatedBoards[boardIndex], candidates: [...candidatesToSave] };
         setSaveStatus('saving');
         try {
-            const res = await fetch('/api/update-data', {
-                method: 'POST',
+            const res = await fetch(`/api/boards/${currentBoard.id}/candidates`, {
+                method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ boards: updatedBoards })
+                body: JSON.stringify({ candidates: candidatesToSave })
             });
             if (res.ok) {
                 setSaveStatus('saved');
@@ -70,7 +66,7 @@ export function BoardDetailClient({ id, allBoards, allOfficers }: BoardDetailCli
         } catch {
             setSaveStatus('error');
         }
-    }, [allBoards])
+    }, [])
 
     // Debounced auto-save: fires 2s after candidates last changed
     useEffect(() => {
@@ -258,30 +254,22 @@ export function BoardDetailClient({ id, allBoards, allOfficers }: BoardDetailCli
     const clearCandidates = async () => {
         if (!confirm("Are you sure you want to clear all candidates from this board? This cannot be undone if saved.")) return;
         setCandidates([]);
-
-        const boardIndex = allBoards.findIndex(b => b.id === board.id)
-        if (boardIndex >= 0) {
-            const updatedBoards = [...allBoards];
-            updatedBoards[boardIndex] = { ...updatedBoards[boardIndex], candidates: [] };
-            setBoard({ ...updatedBoards[boardIndex] });
-
-            try {
-                const res = await fetch('/api/update-data', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ boards: updatedBoards })
-                });
-
-                if (res.ok) {
-                    alert("Board cleared successfully!");
-                    router.refresh()
-                } else {
-                    alert("Failed to clear board data");
-                }
-            } catch (e) {
-                console.error("Save error", e);
+        setBoard(prev => prev ? { ...prev, candidates: [] } : prev);
+        try {
+            const res = await fetch(`/api/boards/${board.id}/candidates`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ candidates: [] })
+            });
+            if (res.ok) {
+                alert("Board cleared successfully!");
+                router.refresh()
+            } else {
                 alert("Failed to clear board data");
             }
+        } catch (e) {
+            console.error("Save error", e);
+            alert("Failed to clear board data");
         }
     }
     // Helper: resolve YG and YCS from stored fields or rawData fallback
@@ -342,23 +330,12 @@ export function BoardDetailClient({ id, allBoards, allOfficers }: BoardDetailCli
             .filter(c => getMigrationConfig(c.result) !== null)
             .map(c => boardCandidateToOfficer(c));
 
-        const boardIndex = allBoards.findIndex(b => b.id === board!.id);
-        const updatedBoards = [...allBoards];
-        if (boardIndex >= 0) {
-            updatedBoards[boardIndex] = {
-                ...updatedBoards[boardIndex],
-                candidates: [...candidates],
-                status: 'Closed'
-            };
-        }
-
-        const updatedOfficers = [...allOfficers, ...newOfficers];
 
         try {
-            const res = await fetch('/api/update-data', {
-                method: 'POST',
+            const res = await fetch(`/api/boards/${board!.id}/close`, {
+                method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ boards: updatedBoards, officers: updatedOfficers })
+                body: JSON.stringify({ candidates, newOfficers })
             });
             if (res.ok) {
                 setBoard(prev => prev ? { ...prev, status: 'Closed' } : prev);

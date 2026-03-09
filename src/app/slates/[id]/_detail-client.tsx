@@ -156,12 +156,10 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
 
     const persistSlates = async (reqs: SlateRequirement[], cands: string[], profiles: SlateCandidateProfile[]) => {
         try {
-            const updatedSlate = { ...slate!, requirements: reqs, candidates: cands, candidateProfiles: profiles }
-            const updatedAllSlates = allSlates.map(s => s.id === id ? updatedSlate : s)
-            await fetch('/api/update-data', {
-                method: 'POST',
+            await fetch(`/api/slates/${id}/requirements`, {
+                method: 'PATCH',
                 headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-                body: JSON.stringify({ slates: updatedAllSlates }),
+                body: JSON.stringify({ requirements: reqs, candidates: cands, candidateProfiles: profiles }),
             });
             router.refresh()
         } catch (error) {

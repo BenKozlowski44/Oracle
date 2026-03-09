@@ -50,13 +50,12 @@ export function SlateGeneratorClient({ oracleData, allSlates }: SlateGeneratorCl
             }
         }
 
-        // Build updated slates array and persist
-        const updatedSlates = [...allSlates, newSlate]
+        // Persist via targeted endpoint
         try {
-            const response = await fetch('/api/update-data', {
+            const response = await fetch('/api/slates', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ slates: updatedSlates }),
+                body: JSON.stringify({ slate: newSlate }),
             });
 
             if (response.ok) {
