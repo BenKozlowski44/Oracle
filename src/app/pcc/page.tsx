@@ -1,10 +1,10 @@
-"use client"
-
 import { OfficerTable } from "@/components/officers/officer-table"
-import { officers } from "@/lib/data"
+import { getOfficers } from "@/lib/data"
+
+export const dynamic = 'force-dynamic'
 
 export default function PCCPage() {
-    const pccOfficers = officers.filter(o => o.status === "PCC")
+    const pccOfficers = getOfficers().filter(o => o.status === "PCC")
 
     return (
         <div className="space-y-6">

@@ -1,16 +1,13 @@
-import type { Officer, Billet, OracleCommand, Slate, Metrics, CdrCmdBoard } from "./types"
+import { readJson } from '@/services/data-service'
+import type { Officer, Billet, OracleCommand, Slate, Metrics, CdrCmdBoard } from './types'
 
-import boardsJson from "../data/boards.json"
-import slatesJson from "../data/slates.json"
-import officersJson from "../data/officers.json"
-import oracleDataJson from "../data/oracle-data.json"
+// Fresh-read functions — each call reads directly from disk.
+// Use these in server components so data is never stale after API mutations.
+export const getSlates = () => readJson<Slate[]>('slates.json')
+export const getOfficers = () => readJson<Officer[]>('officers.json')
+export const getOracleData = () => readJson<OracleCommand[]>('oracle-data.json')
+export const getBoards = () => readJson<CdrCmdBoard[]>('boards.json')
 
-// Mutable exports — in-memory mutations work exactly as before (module cache is shared).
-// Persistence is via the update-data API which writes to the individual JSON files.
-export const boards: CdrCmdBoard[] = boardsJson as CdrCmdBoard[]
-export const slates: Slate[] = slatesJson as Slate[]
-export const officers: Officer[] = officersJson as Officer[]
-export const oracleData: OracleCommand[] = oracleDataJson as OracleCommand[]
-
+// Static exports kept for compatibility (non-persisted, app-lifetime values)
 export const billets: Billet[] = []
 export const metrics: Metrics = { resolvedConflicts: 0 }

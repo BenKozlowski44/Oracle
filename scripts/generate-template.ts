@@ -1,5 +1,6 @@
 import ExcelJS from 'exceljs';
-import { oracleData } from '../src/lib/data';
+import { getOracleData }
+const oracleData = getOracleData() from '../src/lib/data';
 
 async function generateTemplate() {
     // 1. Extract Platform-Location Pairs

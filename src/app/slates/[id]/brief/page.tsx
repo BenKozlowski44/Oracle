@@ -1,13 +1,13 @@
-"use client"
-
+// Server Component — reads fresh data on every navigation
 import { use } from "react"
 import Link from "next/link"
-import { slates, officers, oracleData } from "@/lib/data"
+import { getSlates, getOfficers, getOracleData } from "@/lib/data"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { ArrowLeft, Printer, CheckCircle2, AlertTriangle, Circle, FileDown } from "lucide-react"
+import { ArrowLeft, CheckCircle2, AlertTriangle, Circle } from "lucide-react"
 import { formatToMMMyy } from "@/lib/utils"
+import { BriefButtons } from "./_brief-buttons"
 
 interface BriefPageProps {
     params: Promise<{ id: string }>
@@ -24,9 +24,13 @@ function hasPipelineConflict(availDate: string | undefined, fillDate: string | u
     return pipelineEnd > fill
 }
 
-export default function SlateBriefPage({ params }: BriefPageProps) {
-    const { id } = use(params)
-    const slate = slates.find(s => s.id === id)
+export const dynamic = 'force-dynamic'
+
+export default async function SlateBriefPage({ params }: BriefPageProps) {
+    const { id } = await params
+    const slate = getSlates().find(s => s.id === id)
+    const officers = getOfficers()
+    const oracleData = getOracleData()
 
     if (!slate) {
         return <div className="p-8 text-center text-muted-foreground">Slate not found.</div>
@@ -57,14 +61,7 @@ export default function SlateBriefPage({ params }: BriefPageProps) {
                         <ArrowLeft className="h-4 w-4 mr-1" /> Back to Slate
                     </Button>
                 </Link>
-                <div className="flex gap-2">
-                    <Button variant="outline" onClick={() => window.location.href = `/api/slates/${id}/generate-excel`}>
-                        <FileDown className="h-4 w-4 mr-2" /> Download Briefing Slate
-                    </Button>
-                    <Button onClick={() => window.print()}>
-                        <Printer className="h-4 w-4 mr-2" /> Print / Save PDF
-                    </Button>
-                </div>
+                <BriefButtons id={id} />
             </div>
 
             {/* ══ DOCUMENT ══════════════════════════════════════════════════════ */}

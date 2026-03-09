@@ -1,63 +1,11 @@
-"use client"
+// Server Component
+import { getOracleData, getOfficers } from "@/lib/data"
+import { OraclePageClient } from "./_oracle-client"
 
-import { useState, Suspense } from "react"
-import dynamic from 'next/dynamic'
-import { OracleTable } from "@/components/oracle/oracle-table"
-import { oracleData, officers as initialOfficers } from "@/lib/data"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ErrorBoundary } from "@/components/ui/error-boundary"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Skeleton } from "@/components/ui/skeleton"
+export const dynamic = 'force-dynamic'
 
-// Dynamically import map to avoid hydration errors with react-simple-maps
-const OracleMap = dynamic(() => import("@/components/oracle/oracle-map"), {
-    ssr: false,
-    loading: () => <Skeleton className="w-full h-[400px] rounded-md" />
-})
-
-export default function OraclePage() {
-    const [selectedLocation, setSelectedLocation] = useState<string>("All")
-    const [officers, setOfficers] = useState(initialOfficers)
-
-
-    return (
-        <div className="space-y-6">
-            <div>
-                <h1 className="text-3xl font-bold tracking-tight">The Oracle</h1>
-                <p className="text-muted-foreground">
-                    Command Succession Management & Tracking.
-                </p>
-            </div>
-
-            <Card>
-                <CardHeader>
-                    <CardTitle>Global Fleet Laydown</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <ErrorBoundary fallback={
-                        <Alert>
-                            <AlertDescription>
-                                Map visualization temporarily unavailable. Using table view below.
-                            </AlertDescription>
-                        </Alert>
-                    }>
-                        <OracleMap
-                            onLocationSelect={setSelectedLocation}
-                            selectedLocation={selectedLocation}
-                        />
-                    </ErrorBoundary>
-                </CardContent>
-            </Card>
-
-            <Suspense fallback={<div>Loading Oracle Table...</div>}>
-                <OracleTable
-                    data={oracleData}
-                    selectedLocation={selectedLocation}
-                    onLocationChange={setSelectedLocation}
-                    officers={officers}
-                    setOfficers={setOfficers}
-                />
-            </Suspense>
-        </div>
-    )
+export default async function OraclePage() {
+    const oracleData = getOracleData()
+    const officers = getOfficers()
+    return <OraclePageClient initialOracleData={oracleData} initialOfficers={officers} />
 }

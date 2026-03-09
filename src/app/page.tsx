@@ -9,7 +9,7 @@ import {
 
 import { CommandAlerts } from "@/components/dashboard/command-alerts"
 import { PersonnelAlerts } from "@/components/dashboard/personnel-alerts"
-import { oracleData } from "@/lib/data"
+import { getOracleData } from "@/lib/data"
 import { getMetrics } from "@/lib/metrics-service"
 import { readJson } from "@/services/data-service"
 import { Officer } from "@/lib/types"
@@ -20,6 +20,7 @@ export const dynamic = 'force-dynamic'
 export default async function DashboardPage() {
   const metrics = getMetrics()
   const currentOfficers = readJson<Officer[]>('officers.json')
+  const oracleData = getOracleData()
 
   return (
     <div className="space-y-6">

@@ -1,4 +1,5 @@
-import { oracleData } from './src/lib/data';
+import { getOracleData }
+const oracleData = getOracleData() from './src/lib/data';
 import { predictNextVacancyDate } from './src/lib/utils';
 const cmds = oracleData.filter(c => c.name.toUpperCase().includes("TULSA"));
 if (cmds.length > 0) {

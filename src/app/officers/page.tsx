@@ -1,7 +1,8 @@
 import { OfficerTable } from "@/components/officers/officer-table"
-import { officers } from "@/lib/data"
+import { getOfficers } from "@/lib/data"
 
 export default function OfficersPage() {
+    const officers = getOfficers()
     return (
         <div className="space-y-6">
             <div>

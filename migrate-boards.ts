@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { oracleData } from './src/lib/data';
+import { getOracleData }
+const oracleData = getOracleData() from './src/lib/data';
 import { predictNextVacancyDate } from './src/lib/utils';
 import { OracleCommand } from './src/lib/types';
 

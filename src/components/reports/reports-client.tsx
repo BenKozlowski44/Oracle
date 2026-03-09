@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { formatToMMMyy } from "@/lib/utils"
-import { Officer, Slate } from "@/lib/types"
+import { Officer, OracleCommand, Slate } from "@/lib/types"
 import {
     Select,
     SelectContent,
@@ -20,9 +20,10 @@ import { PreferenceSummaryReport } from "@/components/reports/preference-summary
 interface ReportsClientProps {
     officers: Officer[]
     slates: Slate[]
+    oracleData: OracleCommand[]
 }
 
-export function ReportsClient({ officers, slates }: ReportsClientProps) {
+export function ReportsClient({ officers, slates, oracleData }: ReportsClientProps) {
     const [selectedReport, setSelectedReport] = useState("preferences")
     const [selectedSlateId, setSelectedSlateId] = useState<string>("")
 
@@ -87,13 +88,13 @@ export function ReportsClient({ officers, slates }: ReportsClientProps) {
 
             {selectedReport === "alignment" && slate && (
                 <div className="animate-in fade-in duration-300">
-                    <AlignmentMatrixReport slateId={slate.id} />
+                    <AlignmentMatrixReport slateId={slate.id} slate={slate} officers={officers} oracleData={oracleData} />
                 </div>
             )}
 
             {selectedReport === "commands" && slate && (
                 <div className="animate-in fade-in duration-300">
-                    <CommandsReport slateId={slate.id} />
+                    <CommandsReport slate={slate} oracleData={oracleData} />
                 </div>
             )}
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { oracleData, slates } from "@/lib/data"
+import type { Slate, OracleCommand } from "@/lib/types"
 import {
     Table,
     TableBody,
@@ -11,17 +11,7 @@ import {
 } from "@/components/ui/table"
 import { formatToMMMyy } from "@/lib/utils"
 
-export function CommandsReport({ slateId }: { slateId: string }) {
-    const slate = slates.find(s => s.id === slateId)
-
-    if (!slate) {
-        return (
-            <div className="p-8 text-center text-muted-foreground border border-dashed rounded-md">
-                Slate not found.
-            </div>
-        )
-    }
-
+export function CommandsReport({ slate, oracleData }: { slate: Slate; oracleData: OracleCommand[] }) {
     const requirements = slate.requirements || [];
 
     // Map requirements to full command details from the Oracle

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { officers, oracleData, slates } from "@/lib/data"
+import type { Officer, OracleCommand, Slate } from "@/lib/types"
 import { AlertTriangle, ArrowUpDown, ArrowUp, ArrowDown, CheckCircle2, ChevronRight } from "lucide-react"
 import {
     Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
@@ -16,8 +16,14 @@ import { formatToMMMyy } from "@/lib/utils"
 import { SlateRequirement } from "@/lib/types"
 import { toast } from "sonner"
 
-export function AlignmentMatrixReport({ slateId }: { slateId: string }) {
-    const slate = slates.find(s => s.id === slateId)
+interface AlignmentMatrixReportProps {
+    slateId: string
+    slate: Slate | undefined
+    officers: Officer[]
+    oracleData: OracleCommand[]
+}
+
+export function AlignmentMatrixReport({ slateId, slate, officers, oracleData }: AlignmentMatrixReportProps) {
 
     // ── Local mutable requirements state ─────────────────────────────
     const [requirements, setRequirements] = useState<SlateRequirement[]>(

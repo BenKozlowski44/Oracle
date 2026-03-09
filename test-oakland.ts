@@ -1,4 +1,5 @@
-import { oracleData } from './src/lib/data';
+import { getOracleData }
+const oracleData = getOracleData() from './src/lib/data';
 import { predictNextVacancyDate, calculateTargetBoard } from './src/lib/utils';
 const cmd = oracleData.find(c => c.name.includes("OAKLAND"));
 if (cmd) {

@@ -203,6 +203,127 @@
       "swcc": false,
       "swoboss": false
     },
-    "candidateProfiles": []
+    "candidateProfiles": [
+      {
+        "id": "prof-1773009162774",
+        "slateId": "slate-1772671162167",
+        "officerId": "gubanchamiltonr_17",
+        "preferences": [
+          {
+            "key": "DDG - Norfolk, VA",
+            "rank": 1
+          },
+          {
+            "key": "DDG - Pearl Harbor, HI",
+            "rank": 2
+          },
+          {
+            "key": "LCS - San Diego, CA",
+            "rank": 3
+          },
+          {
+            "key": "DDG - Yokosuka, JP",
+            "rank": 4
+          },
+          {
+            "key": "LCS - Manama, BH",
+            "rank": 5
+          },
+          {
+            "key": "LSD - Sasebo, Japan",
+            "rank": 6
+          }
+        ],
+        "experienceSummary": "[1st Division Officer Tour] N/A (?) · OFRP: ? · U/W: 10mo · Dep: 0mo · OOD: 0mo · Evo: OOD 0, CONN 0, JOOD 0",
+        "notes": "Candidate Notes: I really want a DDG | Co-Location: YES | EFM: YES",
+        "tourHistory": [
+          {
+            "period": "1st Division Officer Tour",
+            "ship": "USS LAST SHIP",
+            "platform": "DDG",
+            "ofrpPhase": "BASIC",
+            "monthsUW": "10",
+            "monthsDeployed": "10",
+            "monthsAsOOD": "2",
+            "oodEvolutions": "2",
+            "connEvolutions": "2",
+            "joodEvolutions": "2"
+          },
+          {
+            "period": "2nd Division Officer Tour",
+            "ship": "USS MASON",
+            "platform": "DDG",
+            "ofrpPhase": "MAINT",
+            "monthsUW": "10",
+            "monthsDeployed": "10",
+            "monthsAsOOD": "3",
+            "oodEvolutions": "3",
+            "connEvolutions": "3",
+            "joodEvolutions": "3"
+          },
+          {
+            "period": "Post-Division Officer Tour",
+            "ship": "USS LABOON",
+            "platform": "DDG",
+            "ofrpPhase": "DEPLOY",
+            "monthsUW": "19",
+            "monthsDeployed": "10",
+            "monthsAsOOD": "2",
+            "oodEvolutions": "2",
+            "connEvolutions": "2",
+            "joodEvolutions": "2"
+          },
+          {
+            "period": "1st Department Head Tour",
+            "ship": "s",
+            "platform": "",
+            "ofrpPhase": "",
+            "monthsUW": "",
+            "monthsDeployed": "",
+            "monthsAsOOD": "",
+            "oodEvolutions": "",
+            "connEvolutions": "",
+            "joodEvolutions": ""
+          },
+          {
+            "period": "2nd Department Head Tour",
+            "ship": "s",
+            "platform": "",
+            "ofrpPhase": "",
+            "monthsUW": "",
+            "monthsDeployed": "",
+            "monthsAsOOD": "",
+            "oodEvolutions": "",
+            "connEvolutions": "",
+            "joodEvolutions": ""
+          },
+          {
+            "period": "Post-Department Head Tour",
+            "ship": "s",
+            "platform": "s",
+            "ofrpPhase": "s",
+            "monthsUW": "",
+            "monthsDeployed": "",
+            "monthsAsOOD": "",
+            "oodEvolutions": "",
+            "connEvolutions": "",
+            "joodEvolutions": ""
+          }
+        ],
+        "jpme": "Complete",
+        "wti": "KW2",
+        "contactInfo": {
+          "workEmail": "adsfsd@gmail.com",
+          "homeEmail": "278-278-2000",
+          "workPhone": "278-278-2000",
+          "personalPhone": "278-278-2000"
+        },
+        "flagContact": {
+          "name": "RADM CAHILL",
+          "relationship": "Former CoC"
+        },
+        "availabilityDate": "2026-07-08"
+      }
+    ]
   }
 ]

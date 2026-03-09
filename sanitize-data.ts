@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { oracleData, officers as bankOfficers, slates } from './src/lib/data';
+import { getOracleData, officers as bankOfficers, slates }
+const oracleData = getOracleData() from './src/lib/data';
 
 function sanitizeObject(obj: any): any {
     if (obj === null || obj === undefined) return obj;

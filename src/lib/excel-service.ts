@@ -3,7 +3,7 @@
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const ExcelJS = require('exceljs');
 import { Slate, OracleCommand } from '@/lib/types';
-import { oracleData } from '@/lib/data';
+import { getOracleData } from '@/lib/data';
 
 // OFRP Phase dropdown options
 const OFRP_PHASES = [
@@ -30,6 +30,9 @@ const TOUR_PERIODS = [
 export async function generateCandidateTemplate(slate: Slate): Promise<Buffer> {
     console.log('[ExcelService] Starting generation...');
     try {
+        // Fresh read — avoid stale module-level data
+        const oracleData = getOracleData()
+
         // --- Scoped preference options ---
         const relevantCommands = slate.requirements
             .map(req => oracleData.find(c => c.id === req.commandId))

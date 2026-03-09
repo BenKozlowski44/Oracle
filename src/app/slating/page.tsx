@@ -1,7 +1,9 @@
 import { SlatingBoard } from "@/components/slating/slating-board"
-import { officers, oracleData } from "@/lib/data"
+import { getOfficers, getOracleData } from "@/lib/data"
 
 export default function SlatingPage() {
+    const officers = getOfficers()
+    const oracleData = getOracleData()
     return (
         <div className="space-y-4 h-full flex flex-col">
             <div>

@@ -1,6 +1,6 @@
 
 import { NextResponse } from 'next/server';
-import { slates } from '@/lib/data';
+import { getSlates } from '@/lib/data';
 import { generateCandidateTemplate } from '@/lib/excel-service';
 
 export async function GET(
@@ -9,7 +9,7 @@ export async function GET(
 ) {
     const { id } = await params;
     console.log(`[TEMPLATE-API] Generating template for Slate ID: ${id}`);
-    const slate = slates.find(s => s.id === id);
+    const slate = getSlates().find(s => s.id === id);
 
     if (!slate) {
         return NextResponse.json({ error: 'Slate not found' }, { status: 404 });

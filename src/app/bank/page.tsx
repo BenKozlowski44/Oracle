@@ -1,8 +1,9 @@
 import { Suspense } from "react"
 import { TheBank } from "@/components/bank/the-bank"
-import { officers } from "@/lib/data"
+import { getOfficers } from "@/lib/data"
 
 export default function BankPage() {
+    const officers = getOfficers()
     return (
         <div className="space-y-6">
             <div>
