@@ -21,10 +21,9 @@ import { useRouter } from "next/navigation"
 
 interface SlateGeneratorClientProps {
     oracleData: OracleCommand[]
-    allSlates: Slate[]
 }
 
-export function SlateGeneratorClient({ oracleData, allSlates }: SlateGeneratorClientProps) {
+export function SlateGeneratorClient({ oracleData }: SlateGeneratorClientProps) {
     const [slateName, setSlateName] = useState("FY26-3")
     const [startDate, setStartDate] = useState("2026-07-01")
     const [endDate, setEndDate] = useState("2026-09-30")

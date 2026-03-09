@@ -7,27 +7,16 @@ import { Button } from "@/components/ui/button"
 import { Plus, Trash2, Archive } from "lucide-react"
 import Link from "next/link"
 import { formatToMMMyy } from "@/lib/utils"
-import type { Slate, Officer, OracleCommand } from "@/lib/types"
+import type { Slate } from "@/lib/types"
 
 interface SlatesPageClientProps {
     allSlates: Slate[]
-    officers: Officer[]
-    oracleData: OracleCommand[]
 }
 
-export function SlatesPageClient({ allSlates, officers, oracleData }: SlatesPageClientProps) {
+export function SlatesPageClient({ allSlates }: SlatesPageClientProps) {
     const router = useRouter()
     const [localSlates, setLocalSlates] = useState(allSlates)
     const activeSlates = localSlates.filter(s => s.status !== "Archived")
-
-    const persist = async (updatedSlates: Slate[], extraPayload?: Record<string, unknown>) => {
-        await fetch('/api/update-data', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ slates: updatedSlates, ...extraPayload }),
-        })
-        router.refresh()
-    }
 
     const handleArchive = async (e: React.MouseEvent, id: string) => {
         e.preventDefault(); e.stopPropagation()
