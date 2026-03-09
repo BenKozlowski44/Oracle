@@ -206,24 +206,13 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
         setData(newData)
 
         try {
-            const response = await fetch('/api/update-data', {
-                method: 'POST',
+            await fetch(`/api/oracle/${updatedCommand.id}`, {
+                method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    oracleData: newData,
-                    metrics: newMetrics,
-                    updatedCommand: updatedCommand
-                }),
+                body: JSON.stringify({ updatedCommand, metrics: newMetrics }),
             });
-
-            if (!response.ok) {
-                throw new Error("Failed to save changes");
-            }
-            // Optional: Add toast notification here
-            console.log("Data persisted successfully");
         } catch (error) {
             console.error("Error saving data:", error);
-            // Optional: Revert state or show error
             alert("Failed to save changes to disk. check console.");
         }
     }
@@ -235,16 +224,7 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
         setIsEditOpen(false)
 
         try {
-            const response = await fetch('/api/update-data', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    oracleData: newData,
-                    deletedCommand: commandToDelete
-                }),
-            });
-            if (!response.ok) throw new Error("Failed to save changes");
-            console.log("Command deleted from DB and Excel");
+            await fetch(`/api/oracle/${commandId}`, { method: 'DELETE' });
         } catch (error) {
             console.error(error);
             alert("Failed to delete command");
@@ -257,18 +237,11 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
         setIsEditOpen(false);
 
         try {
-            const response = await fetch('/api/update-data', {
-                method: 'POST',
+            await fetch(`/api/oracle/${updatedCommand.id}`, {
+                method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    oracleData: newData,
-                    officers: currentOfficers,
-                    updatedCommand: updatedCommand
-                }),
+                body: JSON.stringify({ updatedCommand, officers: currentOfficers }),
             });
-
-            if (!response.ok) throw new Error("Failed to save changes");
-            console.log(message);
         } catch (error) {
             console.error(error);
             alert("Failed to save changes: " + message);

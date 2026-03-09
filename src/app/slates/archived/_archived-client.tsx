@@ -14,14 +14,6 @@ export function ArchivedSlatesClient({ allSlates }: { allSlates: Slate[] }) {
     const [localSlates, setLocalSlates] = useState(allSlates)
     const archivedSlates = localSlates.filter(s => s.status === "Archived")
 
-    const persist = async (updated: Slate[]) => {
-        await fetch('/api/update-data', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ slates: updated }),
-        })
-        router.refresh()
-    }
 
     const handleRestore = async (e: React.MouseEvent, id: string) => {
         e.preventDefault(); e.stopPropagation()

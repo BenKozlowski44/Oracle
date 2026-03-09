@@ -44,11 +44,12 @@ function DataImportCard({ title, description, onParse, dataKey }: DataImportCard
 
             setStatus("uploading")
 
-            // Send to API
-            const response = await fetch('/api/update-data', {
+            // Determine import mode from dataKey
+            const mode = dataKey === "mergeBank" ? "bank" : "cosm"
+            const response = await fetch('/api/import/officers', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ [dataKey]: data }),
+                body: JSON.stringify({ mode, data }),
             });
 
             if (!response.ok) {
