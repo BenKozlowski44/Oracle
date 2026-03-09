@@ -6,7 +6,9 @@ const DATA_DIR = path.join(process.cwd(), 'src', 'data');
 
 export function writeJson(filename: string, data: unknown): void {
     const filePath = path.join(DATA_DIR, filename);
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
+    const tmp = filePath + '.tmp';
+    fs.writeFileSync(tmp, JSON.stringify(data, null, 2), 'utf8');
+    fs.renameSync(tmp, filePath); // atomic: old file stays intact if crash occurs mid-write
 }
 
 export function readJson<T>(filename: string): T {
