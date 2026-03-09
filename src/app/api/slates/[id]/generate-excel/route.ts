@@ -134,9 +134,9 @@ function buildSheetA(
         if (jpme) nameParts.push({ text: `\n\n${jpme}`, font: { size: 20, name: 'Arial', color: { argb: 'FF000000' } } })
         if (wti) nameParts.push({ text: `\n${wti}`, font: { size: 20, name: 'Arial', color: { argb: 'FF000000' } } })
 
-        // C3 Slate — bold: command + UIC + location
+        // C3 Slate — bold: command name + UIC + location
         const slateLine = [
-            cmd?.platform || requirement.commandName,
+            requirement.commandName,
             cmd?.uic ? `(${cmd.uic})` : '',
             cmd?.location || '',
         ].filter(Boolean).join('\n')
@@ -227,7 +227,7 @@ function buildSheetB(
 
         // C4 Intended Slate (bold in reference)
         const commandLine = [
-            cmd?.platform || requirement.commandName,
+            requirement.commandName,
             cmd?.uic ? `(${cmd.uic})` : '',
         ].filter(Boolean).join(' ')
         const fleetUpType = requirement.role === 'CO' ? 'Direct Input CO' : `${requirement.role} Fleet-Up`
