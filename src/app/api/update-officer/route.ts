@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { Officer } from '@/lib/types';
 import { readJson, writeJson, withWriteLock } from '@/services/data-service';
-import { updateOfficerInExcel } from '@/lib/excel-writer';
 import { getPersonnelAlerts } from '@/lib/alerts';
 import { getMetrics, saveMetrics } from '@/lib/metrics-service';
 
@@ -38,12 +37,6 @@ export async function POST(request: Request) {
         if (!saved) {
             return NextResponse.json({ error: 'Officer not found' }, { status: 404 });
         }
-
-        // Fire-and-forget Excel write-back (outside lock)
-        updateOfficerInExcel(saved).then(result => {
-            if (!result.success) console.warn(`[API] Excel update failed: ${result.message}`);
-            else console.log(`[API] Updated Excel for ${saved.name}`);
-        }).catch(err => console.error('[update-officer] Excel sync error:', err));
 
         return NextResponse.json({ success: true });
 

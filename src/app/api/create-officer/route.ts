@@ -26,13 +26,6 @@ export async function POST(request: Request) {
             writeJson('officers.json', officers);
         });
 
-        // Fire-and-forget Excel write-back (outside lock)
-        import('@/lib/excel-writer').then(({ appendOfficersToExcel }) => {
-            appendOfficersToExcel([newOfficer]).then(res => {
-                if (!res.success) console.warn(`[API] Excel append failed: ${res.message}`);
-            }).catch(err => console.error('Failed to append officer to Excel:', err));
-        });
-
         return NextResponse.json({ success: true, officer: newOfficer });
 
     } catch (error) {

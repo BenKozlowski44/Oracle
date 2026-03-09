@@ -54,13 +54,6 @@ export async function POST(request: Request) {
             return [merged, newlyAdded] as const;
         });
 
-        // Fire and forget Excel sync for genuinely new officers only
-        if (genuinelyNewOfficers.length > 0) {
-            import('@/lib/excel-writer').then(({ appendOfficersToExcel }) => {
-                appendOfficersToExcel(genuinelyNewOfficers).catch(console.error);
-            });
-        }
-
         return NextResponse.json({
             success: true,
             total: mergedOfficers.length
