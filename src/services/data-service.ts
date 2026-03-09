@@ -13,7 +13,23 @@ export function writeJson(filename: string, data: unknown): void {
 
 export function readJson<T>(filename: string): T {
     const filePath = path.join(DATA_DIR, filename);
-    return JSON.parse(fs.readFileSync(filePath, 'utf8')) as T;
+    let raw: string;
+    try {
+        raw = fs.readFileSync(filePath, 'utf8');
+    } catch {
+        throw new Error(
+            `Data file not found: ${filename}. ` +
+            `Expected at ${filePath}. Restore from a backup or re-import data.`
+        );
+    }
+    try {
+        return JSON.parse(raw) as T;
+    } catch {
+        throw new Error(
+            `Data file is corrupted: ${filename}. ` +
+            `The file contains invalid JSON. Check ${filePath} and fix or restore it.`
+        );
+    }
 }
 
 /**
