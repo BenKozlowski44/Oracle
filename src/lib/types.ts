@@ -41,6 +41,7 @@ export interface OracleCommand {
     name: string
     uic: string
     platform?: string
+    hullNumber?: string  // e.g. "66" → renders as "DDG 66" in briefing slate
     location: string
     currentCO: {
         name: string

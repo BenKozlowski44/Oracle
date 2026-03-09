@@ -134,10 +134,11 @@ function buildSheetA(
         if (jpme) nameParts.push({ text: `\n\n${jpme}`, font: { size: 20, name: 'Arial', color: { argb: 'FF000000' } } })
         if (wti) nameParts.push({ text: `\n${wti}`, font: { size: 20, name: 'Arial', color: { argb: 'FF000000' } } })
 
-        // C3 Slate — bold: command name + UIC + location
+        // C3 Slate — bold: command name, platform+hull, location
+        const platformHull = [cmd?.platform, cmd?.hullNumber].filter(Boolean).join(' ')
         const slateLine = [
             requirement.commandName,
-            cmd?.uic ? `(${cmd.uic})` : '',
+            platformHull || '',
             cmd?.location || '',
         ].filter(Boolean).join('\n')
         const slateParts: ExcelJS.RichText[] = [
@@ -226,10 +227,11 @@ function buildSheetB(
         const currentAssign = [officer.currentCommand, officer.billet].filter(Boolean).join('\n')
 
         // C4 Intended Slate (bold in reference)
+        const platformHull = [cmd?.platform, cmd?.hullNumber].filter(Boolean).join(' ')
         const commandLine = [
             requirement.commandName,
-            cmd?.uic ? `(${cmd.uic})` : '',
-        ].filter(Boolean).join(' ')
+            platformHull || '',
+        ].filter(Boolean).join('\n')
         const fleetUpType = requirement.role === 'CO' ? 'Direct Input CO' : `${requirement.role} Fleet-Up`
         const intendedSlate = `${commandLine}\n${fleetUpType}`
 
