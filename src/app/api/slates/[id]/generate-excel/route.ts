@@ -124,7 +124,7 @@ function buildSheetA(
     // Data rows
     for (const { officer, profile, requirement, cmd } of rows) {
         const lookLabel = getLookLabel(officer)
-        const jpme = profile?.jpme ?? ''
+        const jpme = profile?.jpme ? `JPME ${profile.jpme}` : ''
         const wti = profile?.wti ?? ''
 
         // C1 Name — bold name line, regular JPME/WTI
@@ -214,7 +214,7 @@ function buildSheetB(
     // Data rows
     for (const { officer, profile, requirement, cmd } of rows) {
         const lookLabel = getLookLabel(officer)
-        const jpme = profile?.jpme ?? ''
+        const jpme = profile?.jpme ? `JPME ${profile.jpme}` : ''
 
         // C1 Name — bold name, regular JPME
         const nameParts: ExcelJS.RichText[] = [
