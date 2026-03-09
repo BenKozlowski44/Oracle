@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { Officer } from '@/lib/types';
-import { readJson, writeJson } from '@/services/data-service';
+import { readJson, writeJson, withWriteLock } from '@/services/data-service';
 
 export async function POST(request: Request) {
     try {
@@ -21,10 +21,12 @@ export async function POST(request: Request) {
         if (!newOfficer.preferredPlatforms) newOfficer.preferredPlatforms = [];
 
         const officers = readJson<Officer[]>('officers.json');
-        officers.unshift(newOfficer);
-        writeJson('officers.json', officers);
+        await withWriteLock(() => {
+            officers.unshift(newOfficer);
+            writeJson('officers.json', officers);
+        });
 
-        // Fire and forget Excel write-back
+        // Fire-and-forget Excel write-back (outside lock)
         import('@/lib/excel-writer').then(({ appendOfficersToExcel }) => {
             appendOfficersToExcel([newOfficer]).then(res => {
                 if (!res.success) console.warn(`[API] Excel append failed: ${res.message}`);

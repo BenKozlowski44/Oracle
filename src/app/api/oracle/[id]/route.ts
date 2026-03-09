@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { readJson, writeJson } from '@/services/data-service'
+import { readJson, writeJson, withWriteLock } from '@/services/data-service'
 import { saveMetrics } from '@/lib/metrics-service'
 import type { OracleCommand, Officer, Metrics } from '@/lib/types'
 
@@ -18,21 +18,18 @@ export async function PATCH(
             officers?: Officer[]
         } = await request.json()
 
-        // Update oracle JSON
-        const oracleData = readJson<OracleCommand[]>('oracle-data.json')
-        const exists = oracleData.some(c => c.id === updatedCommand.id)
-        const newData = exists
-            ? oracleData.map(c => c.id === updatedCommand.id ? updatedCommand : c)
-            : [...oracleData, updatedCommand]
-        writeJson('oracle-data.json', newData)
+        const result = withWriteLock(() => {
+            const oracleData = readJson<OracleCommand[]>('oracle-data.json')
+            const exists = oracleData.some(c => c.id === updatedCommand.id)
+            const newData = exists
+                ? oracleData.map(c => c.id === updatedCommand.id ? updatedCommand : c)
+                : [...oracleData, updatedCommand]
+            writeJson('oracle-data.json', newData)
+            if (metrics) saveMetrics(metrics)
+            if (officers) writeJson('officers.json', officers)
+        })
 
-        // Save metrics if provided
-        if (metrics) saveMetrics(metrics)
-
-        // Save officers if provided (e.g. CO turnover)
-        if (officers) writeJson('officers.json', officers)
-
-        // Fire-and-forget Excel write-back
+        // Fire-and-forget Excel write-back (outside lock — non-blocking)
         import('@/lib/excel-writer').then(({ updateCommandInExcel }) => {
             updateCommandInExcel(updatedCommand)
                 .then(res => {
@@ -42,7 +39,7 @@ export async function PATCH(
                 .catch(err => console.error('[PATCH /api/oracle] Excel sync error:', err))
         })
 
-        return NextResponse.json({ ok: true })
+        return result.then(() => NextResponse.json({ ok: true }))
     } catch (error) {
         console.error('[PATCH /api/oracle/[id]]', error)
         return NextResponse.json({ error: 'Failed to update oracle command' }, { status: 500 })
@@ -57,14 +54,19 @@ export async function DELETE(
 ) {
     try {
         const { id } = await params
-        const oracleData = readJson<OracleCommand[]>('oracle-data.json')
-        const commandToDelete = oracleData.find(c => c.id === id)
+        const commandToDelete = await withWriteLock(() => {
+            const oracleData = readJson<OracleCommand[]>('oracle-data.json')
+            const cmd = oracleData.find(c => c.id === id)
+            if (!cmd) return null
+            writeJson('oracle-data.json', oracleData.filter(c => c.id !== id))
+            return cmd
+        })
+
         if (!commandToDelete) {
             return NextResponse.json({ error: 'Command not found' }, { status: 404 })
         }
-        writeJson('oracle-data.json', oracleData.filter(c => c.id !== id))
 
-        // Fire-and-forget Excel deletion
+        // Fire-and-forget Excel deletion (outside lock)
         import('@/lib/excel-writer').then(({ deleteCommandFromExcel }) => {
             deleteCommandFromExcel(commandToDelete)
                 .then(res => {

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { readJson, writeJson } from '@/services/data-service'
+import { readJson, writeJson, withWriteLock } from '@/services/data-service'
 import { Slate } from '@/lib/types'
 
 export async function PATCH(
@@ -14,32 +14,28 @@ export async function PATCH(
             return NextResponse.json({ error: 'slateId and requirementId are required' }, { status: 400 })
         }
 
-        const slates = readJson<Slate[]>('slates.json')
-        const slateIndex = slates.findIndex(s => s.id === slateId)
-        if (slateIndex === -1) {
-            return NextResponse.json({ error: `Slate '${slateId}' not found` }, { status: 404 })
-        }
+        return withWriteLock(() => {
+            const slates = readJson<Slate[]>('slates.json')
+            const slateIndex = slates.findIndex(s => s.id === slateId)
+            if (slateIndex === -1) return NextResponse.json({ error: `Slate '${slateId}' not found` }, { status: 404 })
 
-        const reqIndex = slates[slateIndex].requirements.findIndex(r => r.id === requirementId)
-        if (reqIndex === -1) {
-            return NextResponse.json({ error: `Requirement '${requirementId}' not found` }, { status: 404 })
-        }
+            const reqIndex = slates[slateIndex].requirements.findIndex(r => r.id === requirementId)
+            if (reqIndex === -1) return NextResponse.json({ error: `Requirement '${requirementId}' not found` }, { status: 404 })
 
-        if (officerId) {
-            // Assign: set filledBy and mark Filled
-            slates[slateIndex].requirements[reqIndex].filledBy = officerId
-            slates[slateIndex].requirements[reqIndex].status = 'Filled'
-        } else {
-            // Unassign: clear filledBy and revert to Confirmed
-            delete slates[slateIndex].requirements[reqIndex].filledBy
-            slates[slateIndex].requirements[reqIndex].status = 'Confirmed'
-        }
+            if (officerId) {
+                slates[slateIndex].requirements[reqIndex].filledBy = officerId
+                slates[slateIndex].requirements[reqIndex].status = 'Filled'
+            } else {
+                delete slates[slateIndex].requirements[reqIndex].filledBy
+                slates[slateIndex].requirements[reqIndex].status = 'Confirmed'
+            }
 
-        writeJson('slates.json', slates)
+            writeJson('slates.json', slates)
 
-        return NextResponse.json({
-            success: true,
-            requirement: slates[slateIndex].requirements[reqIndex]
+            return NextResponse.json({
+                success: true,
+                requirement: slates[slateIndex].requirements[reqIndex]
+            })
         })
     } catch (err) {
         console.error('[assign route]', err)

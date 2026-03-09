@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { readJson, writeJson } from '@/services/data-service'
+import { readJson, writeJson, withWriteLock } from '@/services/data-service'
 import type { Slate, SlateRequirement, SlateCandidateProfile } from '@/lib/types'
 
 // PATCH /api/slates/[id]/requirements
@@ -20,15 +20,16 @@ export async function PATCH(
             candidateProfiles: SlateCandidateProfile[]
         } = await request.json()
 
-        const slates = readJson<Slate[]>('slates.json')
-        const idx = slates.findIndex(s => s.id === id)
-        if (idx === -1) {
-            return NextResponse.json({ error: 'Slate not found' }, { status: 404 })
-        }
-
-        slates[idx] = { ...slates[idx], requirements, candidates, candidateProfiles }
-        writeJson('slates.json', slates)
-        return NextResponse.json({ ok: true })
+        return withWriteLock(() => {
+            const slates = readJson<Slate[]>('slates.json')
+            const idx = slates.findIndex(s => s.id === id)
+            if (idx === -1) {
+                return NextResponse.json({ error: 'Slate not found' }, { status: 404 })
+            }
+            slates[idx] = { ...slates[idx], requirements, candidates, candidateProfiles }
+            writeJson('slates.json', slates)
+            return NextResponse.json({ ok: true })
+        })
     } catch (error) {
         console.error('[PATCH /api/slates/[id]/requirements]', error)
         return NextResponse.json({ error: 'Failed to update requirements' }, { status: 500 })

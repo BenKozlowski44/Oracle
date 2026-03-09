@@ -4,6 +4,20 @@ import type { OracleCommand, Officer, Slate, CdrCmdBoard } from '../lib/types';
 
 const DATA_DIR = path.join(process.cwd(), 'src', 'data');
 
+// ─── Concurrency lock ─────────────────────────────────────────────────────────
+// Serializes all read-modify-write cycles across API routes.
+// Since readJson/writeJson are synchronous, fn() runs without async gaps —
+// no two callers can interleave their reads and writes.
+let _lockChain: Promise<unknown> = Promise.resolve();
+
+export function withWriteLock<T>(fn: () => T): Promise<T> {
+    const result = _lockChain.then(() => fn());
+    // Keep the chain alive even if this slot errors
+    _lockChain = result.then(() => undefined, () => undefined);
+    return result;
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 export function writeJson(filename: string, data: unknown): void {
     const filePath = path.join(DATA_DIR, filename);
     const tmp = filePath + '.tmp';

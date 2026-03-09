@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import ExcelJS from 'exceljs';
 import { SlateCandidateProfile, TourEntry, Slate, Officer } from '@/lib/types';
-import { readJson, writeJson } from '@/services/data-service';
+import { readJson, writeJson, withWriteLock } from '@/services/data-service';
 
 // Helper to find officer by name (exact then fuzzy)
 function findOfficerId(name: string, officers: Officer[]): string | undefined {
@@ -209,25 +209,25 @@ export async function POST(request: Request) {
                 : undefined,
         };
 
-        // ── Persist to slates.json ────────────────────────────────────
-        const slates = readJson<Slate[]>('slates.json');
-        const slateIndex = slates.findIndex(s => s.id === slateId);
-        if (slateIndex === -1) {
-            return NextResponse.json({ error: 'Slate not found' }, { status: 404 });
-        }
+        return withWriteLock(() => {
+            const slates = readJson<Slate[]>('slates.json');
+            const slateIndex = slates.findIndex(s => s.id === slateId);
+            if (slateIndex === -1) {
+                return NextResponse.json({ error: 'Slate not found' }, { status: 404 });
+            }
 
-        const existing = slates[slateIndex].candidateProfiles || [];
-        const profileIndex = existing.findIndex(p => p.officerId === officerId);
-        if (profileIndex >= 0) {
-            existing[profileIndex] = newProfile;
-        } else {
-            existing.push(newProfile);
-        }
+            const existing = slates[slateIndex].candidateProfiles || [];
+            const profileIndex = existing.findIndex(p => p.officerId === officerId);
+            if (profileIndex >= 0) {
+                existing[profileIndex] = newProfile;
+            } else {
+                existing.push(newProfile);
+            }
 
-        slates[slateIndex].candidateProfiles = existing;
-        writeJson('slates.json', slates);
-
-        return NextResponse.json({ success: true, profile: newProfile });
+            slates[slateIndex].candidateProfiles = existing;
+            writeJson('slates.json', slates);
+            return NextResponse.json({ success: true, profile: newProfile });
+        });
 
     } catch (e) {
         console.error('[import-candidate]', e);

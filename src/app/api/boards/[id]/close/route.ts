@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { readJson, writeJson } from '@/services/data-service'
+import { readJson, writeJson, withWriteLock } from '@/services/data-service'
 import type { CdrCmdBoard, BoardCandidate, Officer } from '@/lib/types'
 
 // PATCH /api/boards/[id]/close
@@ -16,22 +16,24 @@ export async function PATCH(
             newOfficers,
         }: { candidates: BoardCandidate[]; newOfficers: Officer[] } = await request.json()
 
-        // Update board status
-        const boards = readJson<CdrCmdBoard[]>('boards.json')
-        const idx = boards.findIndex(b => b.id === id)
-        if (idx === -1) {
-            return NextResponse.json({ error: 'Board not found' }, { status: 404 })
-        }
-        boards[idx] = { ...boards[idx], candidates, status: 'Closed' }
-        writeJson('boards.json', boards)
+        return withWriteLock(() => {
+            // Update board status
+            const boards = readJson<CdrCmdBoard[]>('boards.json')
+            const idx = boards.findIndex(b => b.id === id)
+            if (idx === -1) {
+                return NextResponse.json({ error: 'Board not found' }, { status: 404 })
+            }
+            boards[idx] = { ...boards[idx], candidates, status: 'Closed' }
+            writeJson('boards.json', boards)
 
-        // Append migrated officers
-        if (newOfficers.length > 0) {
-            const officers = readJson<Officer[]>('officers.json')
-            writeJson('officers.json', [...officers, ...newOfficers])
-        }
+            // Append migrated officers
+            if (newOfficers.length > 0) {
+                const officers = readJson<Officer[]>('officers.json')
+                writeJson('officers.json', [...officers, ...newOfficers])
+            }
 
-        return NextResponse.json({ ok: true, migratedCount: newOfficers.length })
+            return NextResponse.json({ ok: true, migratedCount: newOfficers.length })
+        })
     } catch (error) {
         console.error('[PATCH /api/boards/[id]/close]', error)
         return NextResponse.json({ error: 'Failed to close board' }, { status: 500 })

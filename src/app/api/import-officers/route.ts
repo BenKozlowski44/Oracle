@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { Officer } from '@/lib/types';
-import { readJson, writeJson } from '@/services/data-service';
+import { readJson, writeJson, withWriteLock } from '@/services/data-service';
 import { parseBankExcel } from '@/lib/excel-parser';
 
 export async function POST(request: Request) {
@@ -21,44 +21,38 @@ export async function POST(request: Request) {
 
         const currentOfficers = readJson<Officer[]>('officers.json');
 
-        // Merge: update existing, add new
-        const mergedOfficers = [...currentOfficers];
-        let addedCount = 0;
-        let updatedCount = 0;
-        const genuinelyNewOfficers: Officer[] = [];
+        const [mergedOfficers, genuinelyNewOfficers] = await withWriteLock(() => {
+            const currentOfficers = readJson<Officer[]>('officers.json');
+            const merged = [...currentOfficers];
+            let added = 0;
+            const newlyAdded: Officer[] = [];
 
-        newOfficers.forEach(newOfficer => {
-            const index = mergedOfficers.findIndex(o => o.name === newOfficer.name);
+            newOfficers.forEach(newOfficer => {
+                const index = merged.findIndex(o => o.name === newOfficer.name);
+                if (index !== -1) {
+                    const existing = merged[index];
+                    merged[index] = {
+                        ...newOfficer,
+                        id: existing.id, status: existing.status, listShift: existing.listShift,
+                        notes: existing.notes || '',
+                        rank: existing.rank || newOfficer.rank,
+                        designator: existing.designator || newOfficer.designator,
+                        tentativeSlate: existing.tentativeSlate || newOfficer.tentativeSlate,
+                        preferences: existing.preferences || [],
+                        preferredLocations: existing.preferredLocations?.length ? existing.preferredLocations : newOfficer.preferredLocations,
+                        preferredPlatforms: existing.preferredPlatforms?.length ? existing.preferredPlatforms : newOfficer.preferredPlatforms,
+                        preferencePriority: (existing.preferencePriority === 'Homeport' || existing.preferencePriority === 'Platform')
+                            ? existing.preferencePriority : newOfficer.preferencePriority,
+                    };
+                } else {
+                    newOfficer.status = 'Available'; newOfficer.listShift = '';
+                    merged.push(newOfficer); newlyAdded.push(newOfficer); added++;
+                }
+            });
 
-            if (index !== -1) {
-                const existing = mergedOfficers[index];
-                mergedOfficers[index] = {
-                    ...newOfficer,
-                    id: existing.id,
-                    status: existing.status,
-                    listShift: existing.listShift,
-                    notes: existing.notes || '',
-                    rank: existing.rank || newOfficer.rank,
-                    designator: existing.designator || newOfficer.designator,
-                    tentativeSlate: existing.tentativeSlate || newOfficer.tentativeSlate,
-                    preferences: existing.preferences || [],
-                    preferredLocations: existing.preferredLocations?.length ? existing.preferredLocations : newOfficer.preferredLocations,
-                    preferredPlatforms: existing.preferredPlatforms?.length ? existing.preferredPlatforms : newOfficer.preferredPlatforms,
-                    preferencePriority: (existing.preferencePriority === 'Homeport' || existing.preferencePriority === 'Platform')
-                        ? existing.preferencePriority
-                        : newOfficer.preferencePriority,
-                };
-                updatedCount++;
-            } else {
-                newOfficer.status = 'Available';
-                newOfficer.listShift = '';
-                mergedOfficers.push(newOfficer);
-                genuinelyNewOfficers.push(newOfficer);
-                addedCount++;
-            }
+            writeJson('officers.json', merged);
+            return [merged, newlyAdded] as const;
         });
-
-        writeJson('officers.json', mergedOfficers);
 
         // Fire and forget Excel sync for genuinely new officers only
         if (genuinelyNewOfficers.length > 0) {
@@ -69,8 +63,6 @@ export async function POST(request: Request) {
 
         return NextResponse.json({
             success: true,
-            added: addedCount,
-            updated: updatedCount,
             total: mergedOfficers.length
         });
 
