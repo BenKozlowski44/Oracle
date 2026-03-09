@@ -48,10 +48,10 @@ function formatPreferences(profile: SlateCandidateProfile | undefined, count = 3
 }
 
 /** Shared header row style */
-function styleHeaderRow(row: ExcelJS.Row, fillColor: string) {
-    row.height = 30
+function styleHeaderRow(row: ExcelJS.Row, fillColor: string, height = 53.25) {
+    row.height = height
     row.eachCell({ includeEmpty: true }, cell => {
-        cell.font = { bold: true, size: 11, color: { argb: 'FFFFFFFF' } }
+        cell.font = { bold: true, size: 20, color: { argb: 'FF000000' } }
         cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: fillColor } }
         cell.alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' }
         cell.border = {
@@ -92,15 +92,15 @@ function buildSheetA(
     // Row 1 — title banner (merged)
     const titleRow = ws.addRow([sheetTitle])
     ws.mergeCells(`A${titleRow.number}:G${titleRow.number}`)
-    titleRow.height = 28
+    titleRow.height = 40.5
     const titleCell = titleRow.getCell(1)
-    titleCell.font = { bold: true, size: 14, color: { argb: 'FFFFFFFF' } }
-    titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F3864' } }
+    titleCell.font = { bold: true, size: 36, color: { argb: 'FFFFFFFF' } }
+    titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF000000' } }
     titleCell.alignment = { horizontal: 'center', vertical: 'middle' }
 
     // Row 2 — column headers
     const headerRow = ws.addRow(['Name', 'Flag Notifier', 'Slate', 'Experience and Billet History', 'Timing', 'Incumbent', 'Preferences / Notes'])
-    styleHeaderRow(headerRow, 'FF2E75B6')
+    styleHeaderRow(headerRow, 'FF00B0F0', 96.75)
 
     // Data rows
     for (const { officer, profile, requirement, cmd } of rows) {
@@ -188,15 +188,15 @@ function buildSheetB(
     // Row 1 — title banner
     const titleRow = ws.addRow([sheetTitle])
     ws.mergeCells(`A${titleRow.number}:I${titleRow.number}`)
-    titleRow.height = 28
+    titleRow.height = 40.5
     const titleCell = titleRow.getCell(1)
-    titleCell.font = { bold: true, size: 14, color: { argb: 'FFFFFFFF' } }
-    titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F3864' } }
+    titleCell.font = { bold: true, size: 36, color: { argb: 'FFFFFFFF' } }
+    titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF000000' } }
     titleCell.alignment = { horizontal: 'center', vertical: 'middle' }
 
     // Row 2 — column headers
     const headerRow = ws.addRow(['Name', 'Flag Notifier', 'Current Assignment', 'Intended Slate', 'Billet History', 'Incumbent', 'RPT as XO/CO', 'IZ O-6', 'Notes'])
-    styleHeaderRow(headerRow, 'FF2E75B6')
+    styleHeaderRow(headerRow, 'FF00B0F0')
 
     // Data rows
     for (const { officer, profile, requirement, cmd } of rows) {
