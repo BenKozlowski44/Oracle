@@ -16,10 +16,9 @@ import { boardCandidateToOfficer, getMigrationConfig } from "@/lib/board-migrati
 interface BoardDetailClientProps {
     id: string
     allBoards: CdrCmdBoard[]
-    allOfficers: Officer[]
 }
 
-export function BoardDetailClient({ id, allBoards, allOfficers }: BoardDetailClientProps) {
+export function BoardDetailClient({ id, allBoards }: BoardDetailClientProps) {
     const router = useRouter()
     const [board, setBoard] = useState<CdrCmdBoard | null>(null)
     const [candidates, setCandidates] = useState<BoardCandidate[]>([])

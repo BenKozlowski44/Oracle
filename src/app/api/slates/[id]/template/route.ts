@@ -8,7 +8,6 @@ export async function GET(
     { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
-    console.log(`[TEMPLATE-API] Generating template for Slate ID: ${id}`);
     const slate = getSlates().find(s => s.id === id);
 
     if (!slate) {
