@@ -6,7 +6,7 @@ import { slates, officers, oracleData } from "@/lib/data"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { ArrowLeft, Printer, CheckCircle2, AlertTriangle, Circle } from "lucide-react"
+import { ArrowLeft, Printer, CheckCircle2, AlertTriangle, Circle, FileDown } from "lucide-react"
 import { formatToMMMyy } from "@/lib/utils"
 
 interface BriefPageProps {
@@ -57,9 +57,14 @@ export default function SlateBriefPage({ params }: BriefPageProps) {
                         <ArrowLeft className="h-4 w-4 mr-1" /> Back to Slate
                     </Button>
                 </Link>
-                <Button onClick={() => window.print()}>
-                    <Printer className="h-4 w-4 mr-2" /> Print / Save PDF
-                </Button>
+                <div className="flex gap-2">
+                    <Button variant="outline" onClick={() => window.location.href = `/api/slates/${id}/generate-excel`}>
+                        <FileDown className="h-4 w-4 mr-2" /> Download Briefing Slate
+                    </Button>
+                    <Button onClick={() => window.print()}>
+                        <Printer className="h-4 w-4 mr-2" /> Print / Save PDF
+                    </Button>
+                </div>
             </div>
 
             {/* ══ DOCUMENT ══════════════════════════════════════════════════════ */}
