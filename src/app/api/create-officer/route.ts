@@ -1,10 +1,6 @@
 import { NextResponse } from 'next/server';
 import { Officer } from '@/lib/types';
-import { readJson } from '@/services/data-service';
-import fs from 'fs';
-import path from 'path';
-
-const DATA_DIR = path.join(process.cwd(), 'src', 'data');
+import { readJson, writeJson } from '@/services/data-service';
 
 export async function POST(request: Request) {
     try {
@@ -25,9 +21,8 @@ export async function POST(request: Request) {
         if (!newOfficer.preferredPlatforms) newOfficer.preferredPlatforms = [];
 
         const officers = readJson<Officer[]>('officers.json');
-        officers.unshift(newOfficer); // Add to top of list
-
-        fs.writeFileSync(path.join(DATA_DIR, 'officers.json'), JSON.stringify(officers, null, 2), 'utf8');
+        officers.unshift(newOfficer);
+        writeJson('officers.json', officers);
 
         // Fire and forget Excel write-back
         import('@/lib/excel-writer').then(({ appendOfficersToExcel }) => {

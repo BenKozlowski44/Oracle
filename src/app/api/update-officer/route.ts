@@ -1,13 +1,10 @@
 import { NextResponse } from 'next/server';
 import { Officer } from '@/lib/types';
-import { readJson } from '@/services/data-service';
+import { readJson, writeJson } from '@/services/data-service';
 import { updateOfficerInExcel } from '@/lib/excel-writer';
 import { getPersonnelAlerts } from '@/lib/alerts';
 import { getMetrics, saveMetrics } from '@/lib/metrics-service';
-import fs from 'fs';
-import path from 'path';
 
-const DATA_DIR = path.join(process.cwd(), 'src', 'data');
 
 export async function POST(request: Request) {
     try {
@@ -44,16 +41,13 @@ export async function POST(request: Request) {
         }
 
         officers[index] = newOfficerObj;
+        writeJson('officers.json', officers);
 
-        // Persist to JSON
-        fs.writeFileSync(path.join(DATA_DIR, 'officers.json'), JSON.stringify(officers, null, 2), 'utf8');
-
-        // Write-Back to Excel (Fire and Forget)
-        console.log(`[API] Updating Excel for ${officers[index].name}`);
-        const excelResult = await updateOfficerInExcel(officers[index]);
-        if (!excelResult.success) {
-            console.warn(`[API] Excel update failed: ${excelResult.message}`);
-        }
+        // Fire-and-forget Excel write-back
+        updateOfficerInExcel(officers[index]).then(result => {
+            if (!result.success) console.warn(`[API] Excel update failed: ${result.message}`);
+            else console.log(`[API] Updated Excel for ${officers[index].name}`);
+        }).catch(err => console.error('[update-officer] Excel sync error:', err));
 
         return NextResponse.json({ success: true });
 

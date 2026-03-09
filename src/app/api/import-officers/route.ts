@@ -1,11 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Officer } from '@/lib/types';
-import { readJson } from '@/services/data-service';
+import { readJson, writeJson } from '@/services/data-service';
 import { parseBankExcel } from '@/lib/excel-parser';
-import fs from 'fs';
-import path from 'path';
-
-const DATA_DIR = path.join(process.cwd(), 'src', 'data');
 
 export async function POST(request: Request) {
     try {
@@ -62,7 +58,7 @@ export async function POST(request: Request) {
             }
         });
 
-        fs.writeFileSync(path.join(DATA_DIR, 'officers.json'), JSON.stringify(mergedOfficers, null, 2), 'utf8');
+        writeJson('officers.json', mergedOfficers);
 
         // Fire and forget Excel sync for genuinely new officers only
         if (genuinelyNewOfficers.length > 0) {
