@@ -28,13 +28,12 @@ function completeness(o: Officer) {
         (o.preferredLocations?.length ?? 0) > 0 ||
         (o.preferredPlatforms?.length ?? 0) > 0 ||
         (o.preferences?.length ?? 0) > 0
-    const hasNotes = !!(o.notes?.trim())
     const hasCsr = !!(o.csr?.trim())
     // "Slate" = officer has been assigned to a slate (i.e. screened),
     // stored in assignedSlate — same field the bank's "Screened" column reads.
     const hasSlate = !!(o.assignedSlate?.trim())
-    const score = [hasPrefs, hasNotes, hasCsr, hasSlate].filter(Boolean).length
-    return { hasPrefs, hasNotes, hasCsr, hasSlate, score }
+    const score = [hasPrefs, hasCsr, hasSlate].filter(Boolean).length
+    return { hasPrefs, hasCsr, hasSlate, score }
 }
 
 function CheckBadge({ ok, label }: { ok: boolean; label: string }) {
@@ -111,7 +110,7 @@ export function CandidatePipelineReport({ officers }: CandidatePipelineReportPro
     const total = eligible.length
     const firefighters = eligible.filter(o => o.status === "Ready FF").length
     const available = eligible.filter(o => o.status === "Available").length
-    const fullyReady = eligible.filter(o => completeness(o).score === 4).length
+    const fullyReady = eligible.filter(o => completeness(o).score === 3).length
 
     // Filtered rows
     const rows = useMemo(() => {
@@ -119,8 +118,8 @@ export function CandidatePipelineReport({ officers }: CandidatePipelineReportPro
         return eligible
             .filter(o => {
                 if (statusFilter !== "all" && o.status !== statusFilter) return false
-                if (completenessFilter === "complete" && completeness(o).score < 4) return false
-                if (completenessFilter === "incomplete" && completeness(o).score === 4) return false
+                if (completenessFilter === "complete" && completeness(o).score < 3) return false
+                if (completenessFilter === "incomplete" && completeness(o).score === 3) return false
                 if (q && !o.name.toLowerCase().includes(q) && !o.currentCommand.toLowerCase().includes(q)) return false
                 return true
             })
@@ -147,7 +146,7 @@ export function CandidatePipelineReport({ officers }: CandidatePipelineReportPro
                 <SummaryCard icon={Users} label="Total in Bank" value={total} color="bg-blue-500" />
                 <SummaryCard icon={Flame} label="Firefighters" value={firefighters} sub="Ready FF" color="bg-orange-500" />
                 <SummaryCard icon={Clock} label="Available" value={available} color="bg-emerald-500" />
-                <SummaryCard icon={ShieldCheck} label="Fully Ready" value={fullyReady} sub="All 4 fields ✓" color="bg-violet-500" />
+                <SummaryCard icon={ShieldCheck} label="Fully Ready" value={fullyReady} sub="All 3 fields ✓" color="bg-violet-500" />
             </div>
 
             {/* Filters */}
@@ -211,7 +210,7 @@ export function CandidatePipelineReport({ officers }: CandidatePipelineReportPro
                                 const c = completeness(o)
                                 const statusColor = STATUS_COLORS[o.status] ?? "bg-muted text-muted-foreground"
                                 const scoreColor =
-                                    c.score === 4 ? "text-emerald-600 font-bold" :
+                                    c.score === 3 ? "text-emerald-600 font-bold" :
                                         c.score >= 2 ? "text-amber-600 font-semibold" :
                                             "text-red-500 font-semibold"
                                 return (
@@ -235,13 +234,12 @@ export function CandidatePipelineReport({ officers }: CandidatePipelineReportPro
                                         <td className="px-4 py-2.5">
                                             <div className="flex flex-wrap gap-1">
                                                 <CheckBadge ok={c.hasPrefs} label="Prefs" />
-                                                <CheckBadge ok={c.hasNotes} label="Notes" />
                                                 <CheckBadge ok={c.hasCsr} label="CSR" />
                                                 <CheckBadge ok={c.hasSlate} label="Slate" />
                                             </div>
                                         </td>
                                         <td className={`px-3 py-2.5 text-center text-sm ${scoreColor}`}>
-                                            {c.score}/4
+                                            {c.score}/3
                                         </td>
                                     </tr>
                                 )
