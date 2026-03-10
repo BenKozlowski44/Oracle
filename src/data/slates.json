@@ -184,6 +184,35 @@
         "incumbentPrd": "2025-06-24",
         "status": "Filled",
         "filledBy": "geerrichardgreyson_20"
+      },
+      {
+        "id": "req-cmd_38-co-1773110206925",
+        "commandName": "USS LABOON",
+        "commandId": "cmd_38",
+        "role": "CO",
+        "incumbent": "DORE FRANCIS KENNETH",
+        "incumbentPrd": "2025-01-01",
+        "status": "Filled",
+        "filledBy": "jonesantoniot_15"
+      },
+      {
+        "id": "req-cmd_50-co-1773110231944",
+        "commandName": "USS GRAVELY",
+        "commandId": "cmd_50",
+        "role": "CO",
+        "incumbent": "PIORUN GREGORY JOSEPH JR",
+        "incumbentPrd": "2024-11-23",
+        "status": "Draft"
+      },
+      {
+        "id": "req-cmd_12-co-1773110238161",
+        "commandName": "USS SAMPSON",
+        "commandId": "cmd_12",
+        "role": "CO",
+        "incumbent": "LONG CATHERINE SUSAN",
+        "incumbentPrd": "SEP26",
+        "status": "Filled",
+        "filledBy": "karlobrianj_13"
       }
     ],
     "candidates": [
@@ -204,7 +233,9 @@
       "carballocarlosalberto_23",
       "strifflerbriangarret_22",
       "englishjayc_13",
-      "collinstravisanthony_22"
+      "collinstravisanthony_22",
+      "jonesantoniot_15",
+      "karlobrianj_13"
     ],
     "status": "Active",
     "approvals": {
