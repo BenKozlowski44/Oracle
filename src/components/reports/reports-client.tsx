@@ -16,6 +16,7 @@ import { AlignmentMatrixReport } from "@/components/reports/alignment-matrix"
 import { CandidatePipelineReport } from "@/components/reports/candidate-pipeline-report"
 import { CommandsReport } from "@/components/reports/commands-report"
 import { MissingInputsReport } from "@/components/reports/missing-inputs-report"
+import { PreferenceAlignmentReport } from "@/components/reports/preference-alignment-report"
 import { PreferenceSummaryReport } from "@/components/reports/preference-summary-report"
 import { SlateSummaryReport } from "@/components/reports/slate-summary-report"
 
@@ -41,7 +42,7 @@ export function ReportsClient({ officers, slates, oracleData }: ReportsClientPro
                         Generate global reports across your slates and officers.
                     </p>
                 </div>
-                {selectedReport && (selectedReport === "missing" || selectedReport === "preferences" || selectedReport === "pipeline" || slate) && (
+                {selectedReport && (selectedReport === "missing" || selectedReport === "preferences" || selectedReport === "pipeline" || selectedReport === "pref-alignment" || slate) && (
                     <Button variant="outline" onClick={() => window.print()}>
                         <Printer className="mr-2 h-4 w-4" />
                         Print Report
@@ -59,6 +60,7 @@ export function ReportsClient({ officers, slates, oracleData }: ReportsClientPro
                         <SelectContent>
                             <SelectItem value="preferences">Preference Summary</SelectItem>
                             <SelectItem value="alignment">Alignment Matrix</SelectItem>
+                            <SelectItem value="pref-alignment">Preference Alignment</SelectItem>
                             <SelectItem value="commands">Commands on Slate</SelectItem>
                             <SelectItem value="summary">Slate Summary</SelectItem>
                             <SelectItem value="missing">Missing Inputs</SelectItem>
@@ -67,7 +69,7 @@ export function ReportsClient({ officers, slates, oracleData }: ReportsClientPro
                     </Select>
                 </div>
 
-                {["alignment", "commands", "summary"].includes(selectedReport) && (
+                {["alignment", "commands", "summary", "pref-alignment"].includes(selectedReport) && (
                     <div className="space-y-2 flex-1 max-w-[300px]">
                         <label className="text-sm font-medium">Target Slate</label>
                         <Select value={selectedSlateId} onValueChange={setSelectedSlateId}>
@@ -84,7 +86,7 @@ export function ReportsClient({ officers, slates, oracleData }: ReportsClientPro
                 )}
             </div>
 
-            {["alignment", "commands", "summary"].includes(selectedReport) && !slate && (
+            {["alignment", "commands", "summary", "pref-alignment"].includes(selectedReport) && !slate && (
                 <div className="p-8 text-center text-muted-foreground border border-dashed rounded-md print:hidden">
                     Please select a Slate to generate the report.
                 </div>
@@ -117,6 +119,12 @@ export function ReportsClient({ officers, slates, oracleData }: ReportsClientPro
             {selectedReport === "preferences" && (
                 <div className="animate-in fade-in duration-300 pt-6">
                     <PreferenceSummaryReport officers={officers} />
+                </div>
+            )}
+
+            {selectedReport === "pref-alignment" && slate && (
+                <div className="animate-in fade-in duration-300 pt-6">
+                    <PreferenceAlignmentReport slate={slate} officers={officers} oracleData={oracleData} />
                 </div>
             )}
 
