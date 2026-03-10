@@ -157,7 +157,9 @@ export function SlateSummaryReport({ slate, officers, oracleData }: SlateSummary
                 <div className="flex flex-wrap gap-3">
                     <StatChip label="Total Filled" value={allFilled} total={requirements.length} color="bg-blue-500" />
                     <StatChip label="XO Filled" value={filled(xo)} total={xo.length} color="bg-indigo-400" />
-                    <StatChip label="CO Filled" value={filled(co)} total={co.length} color="bg-violet-400" />
+                    {co.length > 0 && (
+                        <StatChip label="Direct CO" value={filled(co)} total={co.length} color="bg-violet-400" />
+                    )}
                     {cosm.length > 0 && (
                         <StatChip label="CO-SM Filled" value={filled(cosm)} total={cosm.length} color="bg-sky-400" />
                     )}

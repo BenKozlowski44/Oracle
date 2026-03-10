@@ -309,7 +309,7 @@ export async function GET(
         const slateName = slate.name.toUpperCase().replace(/^SLATE\s+/i, '')
 
         buildSheetA(wb.addWorksheet('XO CO AFLOAT'), `SLATE ${slateName} XO CO AFLOAT`, xoAfloat)
-        buildSheetB(wb.addWorksheet('CO AFLOAT'), `SLATE ${slateName} CO AFLOAT`, coAfloat)
+        buildSheetB(wb.addWorksheet('DIRECT CO INPUT'), `SLATE ${slateName} DIRECT CO INPUT`, coAfloat)
         buildSheetB(wb.addWorksheet('CO SM'), `SLATE ${slateName} CO SM`, coSm)
 
         const buffer = await wb.xlsx.writeBuffer()
