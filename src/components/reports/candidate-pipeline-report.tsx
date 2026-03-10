@@ -30,9 +30,11 @@ function completeness(o: Officer) {
         (o.preferences?.length ?? 0) > 0
     const hasNotes = !!(o.notes?.trim())
     const hasCsr = !!(o.csr?.trim())
-    const hasScreened = (o.screened?.length ?? 0) > 0
-    const score = [hasPrefs, hasNotes, hasCsr, hasScreened].filter(Boolean).length
-    return { hasPrefs, hasNotes, hasCsr, hasScreened, score }
+    // "Slate" = officer has been assigned to a slate (i.e. screened),
+    // stored in assignedSlate — same field the bank's "Screened" column reads.
+    const hasSlate = !!(o.assignedSlate?.trim())
+    const score = [hasPrefs, hasNotes, hasCsr, hasSlate].filter(Boolean).length
+    return { hasPrefs, hasNotes, hasCsr, hasSlate, score }
 }
 
 function CheckBadge({ ok, label }: { ok: boolean; label: string }) {
@@ -235,7 +237,7 @@ export function CandidatePipelineReport({ officers }: CandidatePipelineReportPro
                                                 <CheckBadge ok={c.hasPrefs} label="Prefs" />
                                                 <CheckBadge ok={c.hasNotes} label="Notes" />
                                                 <CheckBadge ok={c.hasCsr} label="CSR" />
-                                                <CheckBadge ok={c.hasScreened} label="Screened" />
+                                                <CheckBadge ok={c.hasSlate} label="Slate" />
                                             </div>
                                         </td>
                                         <td className={`px-3 py-2.5 text-center text-sm ${scoreColor}`}>
