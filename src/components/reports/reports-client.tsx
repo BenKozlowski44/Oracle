@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Printer } from "lucide-react"
 import { AlignmentMatrixReport } from "@/components/reports/alignment-matrix"
+import { CandidatePipelineReport } from "@/components/reports/candidate-pipeline-report"
 import { CommandsReport } from "@/components/reports/commands-report"
 import { MissingInputsReport } from "@/components/reports/missing-inputs-report"
 import { PreferenceSummaryReport } from "@/components/reports/preference-summary-report"
@@ -40,7 +41,7 @@ export function ReportsClient({ officers, slates, oracleData }: ReportsClientPro
                         Generate global reports across your slates and officers.
                     </p>
                 </div>
-                {selectedReport && (selectedReport === "missing" || selectedReport === "preferences" || slate) && (
+                {selectedReport && (selectedReport === "missing" || selectedReport === "preferences" || selectedReport === "pipeline" || slate) && (
                     <Button variant="outline" onClick={() => window.print()}>
                         <Printer className="mr-2 h-4 w-4" />
                         Print Report
@@ -61,6 +62,7 @@ export function ReportsClient({ officers, slates, oracleData }: ReportsClientPro
                             <SelectItem value="commands">Commands on Slate</SelectItem>
                             <SelectItem value="summary">Slate Summary</SelectItem>
                             <SelectItem value="missing">Missing Inputs</SelectItem>
+                            <SelectItem value="pipeline">Candidate Pipeline</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
@@ -115,6 +117,12 @@ export function ReportsClient({ officers, slates, oracleData }: ReportsClientPro
             {selectedReport === "preferences" && (
                 <div className="animate-in fade-in duration-300 pt-6">
                     <PreferenceSummaryReport officers={officers} />
+                </div>
+            )}
+
+            {selectedReport === "pipeline" && (
+                <div className="animate-in fade-in duration-300 pt-6">
+                    <CandidatePipelineReport officers={officers} />
                 </div>
             )}
         </div>
