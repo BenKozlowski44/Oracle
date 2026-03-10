@@ -77,16 +77,16 @@ function SummaryCard({
 }
 
 const STATUS_COLORS: Record<string, string> = {
-    Available: "bg-emerald-100 text-emerald-800",
-    "Ready FF": "bg-orange-100 text-orange-800",
-    Slated: "bg-blue-100 text-blue-800",
-    Hold: "bg-yellow-100 text-yellow-800",
-    Defer: "bg-slate-100 text-slate-700",
-    "Verify PD2": "bg-purple-100 text-purple-800",
-    "Joint Lock": "bg-indigo-100 text-indigo-800",
-    "War College": "bg-teal-100 text-teal-800",
-    "Family Planning": "bg-pink-100 text-pink-800",
-    "List Shift": "bg-cyan-100 text-cyan-800",
+    "Available": "bg-green-500 text-white",
+    "Verify PD2": "bg-green-500 text-white",
+    "Slated": "bg-blue-500 text-white",
+    "Ready FF": "bg-blue-500 text-white",
+    "Defer": "bg-yellow-500 text-white",
+    "Family Planning": "bg-yellow-500 text-white",
+    "Hold": "bg-red-500 text-white",
+    "List Shift": "bg-red-500 text-white",
+    "Joint Lock": "bg-purple-500 text-white",
+    "War College": "bg-orange-500 text-white",
 }
 
 const ALL_STATUSES = [
