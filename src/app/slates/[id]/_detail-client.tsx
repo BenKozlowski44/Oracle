@@ -48,6 +48,7 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
 
     // Dialog States
     const [isAddReqDialogOpen, setIsAddReqDialogOpen] = useState(false);
+    const [isAddDirectCoDialogOpen, setIsAddDirectCoDialogOpen] = useState(false);
     const [isAddCandidateDialogOpen, setIsAddCandidateDialogOpen] = useState(false);
     const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
 
@@ -62,7 +63,9 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
 
     // Selection States
     const [searchQuery, setSearchQuery] = useState("");
+    const [directCoSearchQuery, setDirectCoSearchQuery] = useState("");
     const [candidateSearchQuery, setCandidateSearchQuery] = useState("");
+    const [candidateTab, setCandidateTab] = useState<"firefighters" | "bank">("firefighters");
     const [selectedReqId, setSelectedReqId] = useState<string | null>(null);
     const [cosmFilter, setCosmFilter] = useState(false); // Toggle to show only CO-SM screened
 
@@ -97,6 +100,27 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
         updateSlateData(updatedReqs, candidates, candidateProfiles);
         setIsAddReqDialogOpen(false);
         setSearchQuery("");
+    }
+
+    const handleAddDirectCoCommand = async (commandId: string) => {
+        const cmd = oracleData.find(c => c.id === commandId);
+        if (!cmd) return;
+
+        const newReq: SlateRequirement = {
+            id: `req-${cmd.id}-co-${Date.now()}`,
+            commandName: cmd.name,
+            commandId: cmd.id,
+            role: "CO",
+            incumbent: cmd.currentCO?.name || "Unknown",
+            incumbentPrd: cmd.currentCO?.prd || "",
+            status: "Draft"
+        };
+
+        const updatedReqs = [...requirements, newReq];
+        setRequirements(updatedReqs);
+        updateSlateData(updatedReqs, candidates, candidateProfiles);
+        setIsAddDirectCoDialogOpen(false);
+        setDirectCoSearchQuery("");
     }
 
     const handleAddCandidate = async (officerId: string) => {
@@ -170,23 +194,33 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
     const filledCount = requirements.filter(r => r.status === "Filled").length
     const totalCount = requirements.length
 
-    // Filter oracle commands for the add requirement dialog
+    // Split requirements by role
+    const xoReqs = requirements.filter(r => r.role === 'XO')
+    const directCoReqs = requirements.filter(r => r.role === 'CO')
+    const cosmReqs = requirements.filter(r => r.role === 'CO-SM')
+
+    // Search filters
     const availableCommands = oracleData
         .filter(c => !requirements.some(r => r.commandId === c.id))
         .filter(c => c.name?.toLowerCase().includes(searchQuery.toLowerCase()) || (c.uic || "").includes(searchQuery));
 
+    const availableDirectCoCommands = oracleData
+        .filter(c => !directCoReqs.some(r => r.commandId === c.id))
+        .filter(c => c.name?.toLowerCase().includes(directCoSearchQuery.toLowerCase()) || (c.uic || "").includes(directCoSearchQuery));
+
     // Valid candidates from global pool (Bank)
-    const availableOfficers = officers
-        .filter(o => o.status !== "PCC")
-        .filter(o => {
-            const matchesSearch = o.name?.toLowerCase().includes(candidateSearchQuery.toLowerCase()) ||
-                (o.designator || "").includes(candidateSearchQuery);
+    const firefighterOfficers = officers.filter(o => o.status === 'Ready FF')
+    const bankOfficers = officers.filter(o => o.status !== 'Ready FF' && o.status !== 'PCC')
 
-            // If CO-SM Filter is ON, only show screened officers
-            const matchesCosm = cosmFilter ? o.screened?.includes("CO-SM") : true;
+    const filterBySearch = (list: typeof officers) =>
+        list.filter(o =>
+            o.name?.toLowerCase().includes(candidateSearchQuery.toLowerCase()) ||
+            (o.designator || "").includes(candidateSearchQuery)
+        )
 
-            return matchesSearch && matchesCosm;
-        });
+    const displayedCandidateTab = candidateTab === 'firefighters'
+        ? filterBySearch(firefighterOfficers)
+        : filterBySearch(bankOfficers)
 
     // Hydrate candidates for display
     const slateCandidates = candidates
@@ -370,16 +404,8 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
                         </Dialog>
                     </CardHeader>
                     <CardContent className="space-y-8">
-                        {/* Helper function to check if a requirement is for a CO-SM command */}
+                        {/* ── Shared renderReqTable ────────────────────────────────── */}
                         {(() => {
-                            const isCosm = (req: SlateRequirement) => {
-                                const cmd = oracleData.find(c => c.id === req.commandId);
-                                return cmd?.tags?.includes("CO-SM");
-                            };
-
-                            const standardReqs = requirements.filter(r => !isCosm(r));
-                            const cosmReqs = requirements.filter(r => isCosm(r));
-
                             const renderReqTable = (reqs: SlateRequirement[], title: string) => (
                                 <div className="space-y-4">
                                     <div className="flex items-center justify-between">
@@ -415,20 +441,15 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
                                                                 {(() => {
                                                                     const cmd = oracleData.find(c => c.id === req.commandId);
                                                                     if (!cmd) return <div className="text-xs text-muted-foreground font-normal">{req.role}</div>;
-
                                                                     const tags = cmd.tags ? cmd.tags.filter(t => t !== "CO-SM" && t !== "CDR CMD").join(", ") : "";
                                                                     const locationInfo = [cmd.uic, cmd.location, tags].filter(Boolean).join(" • ");
-
                                                                     let roleDetails = `Role: ${req.role}`;
                                                                     if (cmd.tags?.includes("CO-SM") || title === "CO-SM") {
                                                                         const style = cmd.rotationStyle === "DirectCO" ? "Direct Input CO" : "Fleet Up CO";
                                                                         const length = cmd.tourLength ? `${cmd.tourLength} mos` : "";
                                                                         roleDetails += ` (${style} ${length}`.trim() + `)`;
                                                                     }
-                                                                    if (cmd.notes) {
-                                                                        roleDetails += ` • ${cmd.notes}`;
-                                                                    }
-
+                                                                    if (cmd.notes) roleDetails += ` • ${cmd.notes}`;
                                                                     return (
                                                                         <div className="mt-1 space-y-0.5">
                                                                             {locationInfo && <div className="text-[11px] text-muted-foreground font-normal leading-tight">{locationInfo}</div>}
@@ -479,12 +500,158 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
 
                             return (
                                 <>
-                                    {renderReqTable(standardReqs, "CDR CMD")}
-                                    {renderReqTable(cosmReqs, "CO-SM")}
+                                    {/* ── CDR CMD ───────────────────────────── */}
+                                    {renderReqTable(xoReqs, "CDR CMD")}
+
+                                    {/* ── Direct CO Input ───────────────────── */}
+                                    <div className="space-y-4 pt-2 border-t">
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <h3 className="text-lg font-semibold">Direct CO Input</h3>
+                                                <p className="text-xs text-muted-foreground">Officers appointed directly as CO (no fleet-up)</p>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Badge variant="secondary" className="text-xs">{directCoReqs.length} Commands</Badge>
+                                                {/* Add Direct CO dialog */}
+                                                <Dialog open={isAddDirectCoDialogOpen} onOpenChange={setIsAddDirectCoDialogOpen}>
+                                                    <DialogTrigger asChild>
+                                                        <Button size="sm" variant="outline">
+                                                            <Plus className="mr-2 h-4 w-4" />
+                                                            Add Direct CO
+                                                        </Button>
+                                                    </DialogTrigger>
+                                                    <DialogContent className="sm:max-w-[600px]" aria-describedby={undefined}>
+                                                        <DialogHeader>
+                                                            <DialogTitle>Add Direct CO Command</DialogTitle>
+                                                        </DialogHeader>
+                                                        <div className="grid gap-4 py-4">
+                                                            <div className="relative">
+                                                                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                                                                <Input
+                                                                    placeholder="Search commands..."
+                                                                    value={directCoSearchQuery}
+                                                                    onChange={(e) => setDirectCoSearchQuery(e.target.value)}
+                                                                    className="pl-8"
+                                                                />
+                                                            </div>
+                                                            <div className="max-h-[300px] overflow-y-auto border rounded-md">
+                                                                <Table>
+                                                                    <TableHeader>
+                                                                        <TableRow>
+                                                                            <TableHead>Command</TableHead>
+                                                                            <TableHead>Current CO</TableHead>
+                                                                            <TableHead></TableHead>
+                                                                        </TableRow>
+                                                                    </TableHeader>
+                                                                    <TableBody>
+                                                                        {availableDirectCoCommands.length === 0 ? (
+                                                                            <TableRow>
+                                                                                <TableCell colSpan={3} className="text-center h-24 text-muted-foreground">
+                                                                                    No commands found.
+                                                                                </TableCell>
+                                                                            </TableRow>
+                                                                        ) : (
+                                                                            availableDirectCoCommands.slice(0, 50).map((cmd) => (
+                                                                                <TableRow key={cmd.id}>
+                                                                                    <TableCell className="font-medium">
+                                                                                        <div>{cmd.name}</div>
+                                                                                        <div className="text-xs text-muted-foreground">{cmd.uic}</div>
+                                                                                    </TableCell>
+                                                                                    <TableCell>
+                                                                                        <div className="text-sm">{cmd.currentCO?.name}</div>
+                                                                                    </TableCell>
+                                                                                    <TableCell className="text-right">
+                                                                                        <Button size="sm" variant="ghost" onClick={() => handleAddDirectCoCommand(cmd.id)}>
+                                                                                            Add
+                                                                                        </Button>
+                                                                                    </TableCell>
+                                                                                </TableRow>
+                                                                            ))
+                                                                        )}
+                                                                    </TableBody>
+                                                                </Table>
+                                                            </div>
+                                                        </div>
+                                                    </DialogContent>
+                                                </Dialog>
+                                            </div>
+                                        </div>
+                                        <Table>
+                                            <TableHeader>
+                                                <TableRow>
+                                                    <TableHead>Command</TableHead>
+                                                    <TableHead>Current CO</TableHead>
+                                                    <TableHead>Rotate Date</TableHead>
+                                                    <TableHead>Status</TableHead>
+                                                    <TableHead className="text-right">Action</TableHead>
+                                                </TableRow>
+                                            </TableHeader>
+                                            <TableBody>
+                                                {directCoReqs.length === 0 ? (
+                                                    <TableRow>
+                                                        <TableCell colSpan={5} className="h-16 text-center text-muted-foreground">
+                                                            No direct CO inputs added.
+                                                        </TableCell>
+                                                    </TableRow>
+                                                ) : (
+                                                    directCoReqs.map((req) => {
+                                                        const filledOfficer = req.filledBy ? officers.find(o => o.id === req.filledBy) : null;
+                                                        const cmd = oracleData.find(c => c.id === req.commandId);
+                                                        const locationInfo = cmd ? [cmd.uic, cmd.location].filter(Boolean).join(" • ") : "";
+                                                        return (
+                                                            <TableRow key={req.id}>
+                                                                <TableCell className="font-medium">
+                                                                    <div>{req.commandName}</div>
+                                                                    {locationInfo && <div className="text-[11px] text-muted-foreground">{locationInfo}</div>}
+                                                                </TableCell>
+                                                                <TableCell>{req.incumbent}</TableCell>
+                                                                <TableCell>{formatToMMMyy(req.incumbentPrd)}</TableCell>
+                                                                <TableCell>
+                                                                    {filledOfficer ? (
+                                                                        <div className="flex flex-col">
+                                                                            <Badge variant="default">Filled</Badge>
+                                                                            <span className="text-xs mt-1 text-muted-foreground">{filledOfficer.name}</span>
+                                                                        </div>
+                                                                    ) : (
+                                                                        <Badge variant="secondary">Open</Badge>
+                                                                    )}
+                                                                </TableCell>
+                                                                <TableCell className="text-right">
+                                                                    <div className="flex justify-end gap-2">
+                                                                        <Button
+                                                                            size="sm"
+                                                                            variant={req.status === "Filled" ? "outline" : "default"}
+                                                                            onClick={() => openAssignDialog(req.id)}
+                                                                        >
+                                                                            {req.status === "Filled" ? "Edit" : "Assign"}
+                                                                        </Button>
+                                                                        <Button
+                                                                            size="sm"
+                                                                            variant="ghost"
+                                                                            className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                                                                            onClick={() => handleRemoveRequirement(req.id)}
+                                                                        >
+                                                                            <Trash2 className="h-4 w-4" />
+                                                                        </Button>
+                                                                    </div>
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        )
+                                                    })
+                                                )}
+                                            </TableBody>
+                                        </Table>
+                                    </div>
+
+                                    {/* ── CO-SM ─────────────────────────────── */}
+                                    <div className="pt-2 border-t">
+                                        {renderReqTable(cosmReqs, "CO-SM")}
+                                    </div>
                                 </>
                             );
                         })()}
                     </CardContent>
+
                 </Card>
 
                 {/* Candidates / Bench Card */}
@@ -507,34 +674,39 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
                                 <div className="grid gap-4 py-4">
                                     <div className="relative">
                                         <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                                        <div className="flex gap-2">
-                                            <Input
-                                                placeholder="Search officers..."
-                                                value={candidateSearchQuery}
-                                                onChange={(e) => setCandidateSearchQuery(e.target.value)}
-                                                className="pl-8"
-                                            />
-                                            <Button
-                                                variant={cosmFilter ? "default" : "outline"}
-                                                onClick={() => setCosmFilter(!cosmFilter)}
-                                                size="icon"
-                                                title="Filter CO-SM Screened"
-                                            >
-                                                <span className="text-xs font-bold">SM</span>
-                                            </Button>
-                                        </div>
+                                        <Input
+                                            placeholder="Search officers..."
+                                            value={candidateSearchQuery}
+                                            onChange={(e) => setCandidateSearchQuery(e.target.value)}
+                                            className="pl-8"
+                                        />
+                                    </div>
+                                    {/* Tabs */}
+                                    <div className="flex gap-1 border-b pb-2">
+                                        <button
+                                            className={`px-3 py-1 text-sm rounded-t font-medium transition-colors ${candidateTab === 'firefighters' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                                            onClick={() => setCandidateTab('firefighters')}
+                                        >
+                                            Firefighters ({firefighterOfficers.length})
+                                        </button>
+                                        <button
+                                            className={`px-3 py-1 text-sm rounded-t font-medium transition-colors ${candidateTab === 'bank' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                                            onClick={() => setCandidateTab('bank')}
+                                        >
+                                            Officer Bank ({bankOfficers.length})
+                                        </button>
                                     </div>
                                     <div className="max-h-[300px] overflow-y-auto border rounded-md">
                                         <Table>
                                             <TableBody>
-                                                {availableOfficers.length === 0 ? (
+                                                {displayedCandidateTab.length === 0 ? (
                                                     <TableRow>
                                                         <TableCell className="text-center h-24 text-muted-foreground">
                                                             No matching officers found.
                                                         </TableCell>
                                                     </TableRow>
                                                 ) : (
-                                                    availableOfficers.map((officer) => {
+                                                    displayedCandidateTab.map((officer: Officer) => {
                                                         const isAdded = candidates.includes(officer.id);
                                                         return (
                                                             <TableRow key={officer.id}>
@@ -792,25 +964,27 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
             />
 
             {/* Candidate Profile Viewer */}
-            {viewingOfficerId && (() => {
-                const officer = officers.find(o => o.id === viewingOfficerId);
-                const profile = candidateProfiles.find(p => p.officerId === viewingOfficerId);
-                if (!officer) return null;
-                return (
-                    <CandidateProfileView
-                        officer={officer}
-                        profile={profile ?? {
-                            id: '',
-                            slateId: slate.id,
-                            officerId: viewingOfficerId,
-                            preferences: [],
-                        }}
-                        open={!!viewingOfficerId}
-                        onClose={() => setViewingOfficerId(null)}
-                        onSave={handleSaveProfile}
-                    />
-                );
-            })()}
-        </div>
+            {
+                viewingOfficerId && (() => {
+                    const officer = officers.find(o => o.id === viewingOfficerId);
+                    const profile = candidateProfiles.find(p => p.officerId === viewingOfficerId);
+                    if (!officer) return null;
+                    return (
+                        <CandidateProfileView
+                            officer={officer}
+                            profile={profile ?? {
+                                id: '',
+                                slateId: slate.id,
+                                officerId: viewingOfficerId,
+                                preferences: [],
+                            }}
+                            open={!!viewingOfficerId}
+                            onClose={() => setViewingOfficerId(null)}
+                            onSave={handleSaveProfile}
+                        />
+                    );
+                })()
+            }
+        </div >
     )
 }

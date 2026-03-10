@@ -12,7 +12,8 @@
         "role": "XO",
         "incumbent": "HODGEMAN JESSICA LYN",
         "incumbentPrd": "2027-02-01",
-        "status": "Draft"
+        "status": "Filled",
+        "filledBy": "kowatchjustinedward_21"
       },
       {
         "id": "req-cmd_100-xo",
@@ -21,7 +22,8 @@
         "role": "XO",
         "incumbent": "LILEKS WAYNE D",
         "incumbentPrd": "2027-02-01",
-        "status": "Draft"
+        "status": "Filled",
+        "filledBy": "strifflerbriangarret_22"
       },
       {
         "id": "req-cmd_124-xo",
@@ -30,7 +32,8 @@
         "role": "XO",
         "incumbent": "FORWARD DOUGLAS THEODORE",
         "incumbentPrd": "2027-05-01",
-        "status": "Draft"
+        "status": "Filled",
+        "filledBy": "collinstravisanthony_22"
       },
       {
         "id": "req-cmd_89-xo",
@@ -39,7 +42,8 @@
         "role": "XO",
         "incumbent": "CHALLBURG MARIBEL",
         "incumbentPrd": "2027-06-01",
-        "status": "Draft"
+        "status": "Filled",
+        "filledBy": "piresmichaeljoseph_20"
       },
       {
         "id": "req-cmd_108-xo",
@@ -48,7 +52,8 @@
         "role": "XO",
         "incumbent": "THURMAN JEREMY S",
         "incumbentPrd": "2027-06-01",
-        "status": "Draft"
+        "status": "Filled",
+        "filledBy": "barnerseanj_1772671666454"
       },
       {
         "id": "req-cmd_121-xo",
@@ -57,7 +62,8 @@
         "role": "XO",
         "incumbent": "MARTIN PHILLIP DEJUAN",
         "incumbentPrd": "2027-06-01",
-        "status": "Draft"
+        "status": "Filled",
+        "filledBy": "englishjayc_13"
       },
       {
         "id": "req-cmd_47-xo",
@@ -126,7 +132,8 @@
         "role": "XO",
         "incumbent": "Cranford, Marcus (XO-A)",
         "incumbentPrd": "2025-07-24",
-        "status": "Draft"
+        "status": "Filled",
+        "filledBy": "vandecastlethomasedward_25"
       },
       {
         "id": "req-cmd_93-xo-1772671948550",
@@ -135,7 +142,8 @@
         "role": "XO",
         "incumbent": "HAUGAN NATHAN DANIEL",
         "incumbentPrd": "",
-        "status": "Draft"
+        "status": "Filled",
+        "filledBy": "whitmerandrewrobert_21"
       },
       {
         "id": "req-cmd_113-xo-1772671964175",
@@ -144,7 +152,8 @@
         "role": "XO",
         "incumbent": "Towles, Courtney (XO/CO)",
         "incumbentPrd": "2025-05-23",
-        "status": "Draft"
+        "status": "Filled",
+        "filledBy": "carballocarlosalberto_23"
       },
       {
         "id": "req-cmd_114-xo-1772671982803",
@@ -153,7 +162,8 @@
         "role": "XO",
         "incumbent": "Buss, Johnathan (XO/CO)",
         "incumbentPrd": "2025-08-23",
-        "status": "Draft"
+        "status": "Filled",
+        "filledBy": "smithcodyt_12"
       },
       {
         "id": "req-cmd_40-xo-1772672011635",
@@ -172,7 +182,8 @@
         "role": "XO",
         "incumbent": "BENKO RYAN EMERY",
         "incumbentPrd": "2025-06-24",
-        "status": "Draft"
+        "status": "Filled",
+        "filledBy": "geerrichardgreyson_20"
       }
     ],
     "candidates": [
@@ -191,7 +202,6 @@
       "barnerseanj_1772671666454",
       "geerrichardgreyson_20",
       "carballocarlosalberto_23",
-      "withrowgraigallen_19",
       "strifflerbriangarret_22",
       "englishjayc_13",
       "collinstravisanthony_22"

@@ -1,11 +1,12 @@
 import { Slate, Officer, OracleCommand } from './types'
 
 /**
- * Applies a SWOBOSS-approved slate to the Oracle by setting the `slatedXO`
- * field on each command that has a filled requirement.
+ * Applies a SWOBOSS-approved slate to the Oracle.
  *
- * Returns the mutated oracleData array (the same reference, modified in place,
- * and also returned for convenience).
+ * - role === 'XO'  → sets `slatedXO`       (fleet-up pipeline)
+ * - role === 'CO'  → sets `prospectiveCO`   (direct CO input)
+ *
+ * Returns the mutated oracleData array.
  */
 export function applySlateToOracle(
     slate: Slate,
@@ -23,18 +24,22 @@ export function applySlateToOracle(
         const cmdIndex = oracleData.findIndex(c => c.id === req.commandId)
         if (cmdIndex === -1) continue
 
-        // Set the slatedXO — name is the key piece; reportDate left empty until known
-        oracleData[cmdIndex] = {
-            ...oracleData[cmdIndex],
-            slatedXO: {
-                name: officer.name,
-                reportDate: ''
+        if (req.role === 'XO') {
+            // Fleet-up: slated XO advances through pipeline
+            oracleData[cmdIndex] = {
+                ...oracleData[cmdIndex],
+                slatedXO: { name: officer.name, reportDate: '' }
             }
-        }
+            console.log(`[slate-migration] Set slatedXO on ${oracleData[cmdIndex].name}: ${officer.name}`)
 
-        console.log(
-            `[slate-migration] Set slatedXO on ${oracleData[cmdIndex].name}: ${officer.name}`
-        )
+        } else if (req.role === 'CO') {
+            // Direct CO input: officer becomes Prospective CO (P-CO)
+            oracleData[cmdIndex] = {
+                ...oracleData[cmdIndex],
+                prospectiveCO: { name: officer.name, prd: '' }
+            }
+            console.log(`[slate-migration] Set prospectiveCO on ${oracleData[cmdIndex].name}: ${officer.name}`)
+        }
     }
 
     return oracleData
