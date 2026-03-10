@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import { OfficerTable } from "@/components/officers/officer-table"
 import { getOfficers } from "@/lib/data"
 
@@ -11,7 +12,9 @@ export default function OfficersPage() {
                     Manage and view O-5 Command Eligible Officers.
                 </p>
             </div>
-            <OfficerTable data={officers} />
+            <Suspense fallback={<div className="text-muted-foreground text-sm p-4">Loading officers...</div>}>
+                <OfficerTable data={officers} />
+            </Suspense>
         </div>
     )
 }
