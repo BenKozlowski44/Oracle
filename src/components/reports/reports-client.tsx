@@ -16,6 +16,7 @@ import { AlignmentMatrixReport } from "@/components/reports/alignment-matrix"
 import { CommandsReport } from "@/components/reports/commands-report"
 import { MissingInputsReport } from "@/components/reports/missing-inputs-report"
 import { PreferenceSummaryReport } from "@/components/reports/preference-summary-report"
+import { SlateSummaryReport } from "@/components/reports/slate-summary-report"
 
 interface ReportsClientProps {
     officers: Officer[]
@@ -58,12 +59,13 @@ export function ReportsClient({ officers, slates, oracleData }: ReportsClientPro
                             <SelectItem value="preferences">Preference Summary</SelectItem>
                             <SelectItem value="alignment">Alignment Matrix</SelectItem>
                             <SelectItem value="commands">Commands on Slate</SelectItem>
+                            <SelectItem value="summary">Slate Summary</SelectItem>
                             <SelectItem value="missing">Missing Inputs</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
 
-                {["alignment", "commands"].includes(selectedReport) && (
+                {["alignment", "commands", "summary"].includes(selectedReport) && (
                     <div className="space-y-2 flex-1 max-w-[300px]">
                         <label className="text-sm font-medium">Target Slate</label>
                         <Select value={selectedSlateId} onValueChange={setSelectedSlateId}>
@@ -80,9 +82,15 @@ export function ReportsClient({ officers, slates, oracleData }: ReportsClientPro
                 )}
             </div>
 
-            {["alignment", "commands"].includes(selectedReport) && !slate && (
+            {["alignment", "commands", "summary"].includes(selectedReport) && !slate && (
                 <div className="p-8 text-center text-muted-foreground border border-dashed rounded-md print:hidden">
                     Please select a Slate to generate the report.
+                </div>
+            )}
+
+            {selectedReport === "summary" && slate && (
+                <div className="animate-in fade-in duration-300">
+                    <SlateSummaryReport slate={slate} officers={officers} oracleData={oracleData} />
                 </div>
             )}
 

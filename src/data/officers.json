@@ -4964,11 +4964,11 @@
     "csr": "7AGAZ",
     "assignedSlate": "FY27 2nd Look",
     "preferredLocations": [
-      "YJ",
-      "RS",
       "MP",
       "EV",
-      "SD"
+      "SD",
+      "PH",
+      "RS"
     ],
     "preferredPlatforms": [
       "DDG",

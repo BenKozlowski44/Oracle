@@ -287,7 +287,7 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
                 <div className="ml-auto flex items-center gap-2">
                     <div className="flex gap-2 mr-4 border-r pr-4">
                         <Button variant="outline" size="sm" onClick={handleDownloadTemplate}>
-                            Download Template
+                            Preference Template
                         </Button>
                     </div>
                     <Link href={`/slates/${id}/alignment`}>
