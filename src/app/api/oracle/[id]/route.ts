@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server'
 import { readJson, writeJson, withWriteLock } from '@/services/data-service'
 import { saveMetrics } from '@/lib/metrics-service'
+import { parseBody } from '@/lib/validate'
+import { OracleCommandPatchBodySchema } from '@/lib/schemas'
 import type { OracleCommand, Officer, Metrics } from '@/lib/types'
+
 // PATCH /api/oracle/[id] — update or add a command
 // Body: { updatedCommand, metrics?, officers? }
 export async function PATCH(
@@ -10,21 +13,19 @@ export async function PATCH(
 ) {
     try {
         await params
-        const { updatedCommand, metrics, officers }: {
-            updatedCommand: OracleCommand
-            metrics?: Metrics
-            officers?: Officer[]
-        } = await request.json()
+        const parsed = parseBody(OracleCommandPatchBodySchema, await request.json())
+        if (!parsed.ok) return parsed.response
+        const { updatedCommand, metrics, officers } = parsed.data
 
         return withWriteLock(() => {
             const oracleData = readJson<OracleCommand[]>('oracle-data.json')
             const exists = oracleData.some(c => c.id === updatedCommand.id)
             const newData = exists
-                ? oracleData.map(c => c.id === updatedCommand.id ? updatedCommand : c)
-                : [...oracleData, updatedCommand]
+                ? oracleData.map(c => c.id === updatedCommand.id ? updatedCommand as unknown as OracleCommand : c)
+                : [...oracleData, updatedCommand as unknown as OracleCommand]
             writeJson('oracle-data.json', newData)
-            if (metrics) saveMetrics(metrics)
-            if (officers) writeJson('officers.json', officers)
+            if (metrics) saveMetrics(metrics as Metrics)
+            if (officers) writeJson('officers.json', officers as Officer[])
             return NextResponse.json({ ok: true })
         })
     } catch (error) {
@@ -34,7 +35,6 @@ export async function PATCH(
 }
 
 // DELETE /api/oracle/[id] — remove a command
-// Triggers fire-and-forget Excel deletion
 export async function DELETE(
     _request: Request,
     { params }: { params: Promise<{ id: string }> }

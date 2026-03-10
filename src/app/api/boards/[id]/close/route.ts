@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 import { readJson, writeJson, withWriteLock } from '@/services/data-service'
+import { parseBody } from '@/lib/validate'
+import { BoardCloseBodySchema } from '@/lib/schemas'
 import type { CdrCmdBoard, BoardCandidate, Officer } from '@/lib/types'
 
 // PATCH /api/boards/[id]/close
@@ -11,10 +13,9 @@ export async function PATCH(
 ) {
     try {
         const { id } = await params
-        const {
-            candidates,
-            newOfficers,
-        }: { candidates: BoardCandidate[]; newOfficers: Officer[] } = await request.json()
+        const parsed = parseBody(BoardCloseBodySchema, await request.json())
+        if (!parsed.ok) return parsed.response
+        const { candidates, newOfficers } = parsed.data
 
         return withWriteLock(() => {
             // Update board status
@@ -23,13 +24,13 @@ export async function PATCH(
             if (idx === -1) {
                 return NextResponse.json({ error: 'Board not found' }, { status: 404 })
             }
-            boards[idx] = { ...boards[idx], candidates, status: 'Closed' }
+            boards[idx] = { ...boards[idx], candidates: candidates as unknown as BoardCandidate[], status: 'Closed' }
             writeJson('boards.json', boards)
 
             // Append migrated officers
             if (newOfficers.length > 0) {
                 const officers = readJson<Officer[]>('officers.json')
-                writeJson('officers.json', [...officers, ...newOfficers])
+                writeJson('officers.json', [...officers, ...newOfficers as unknown as Officer[]])
             }
 
             return NextResponse.json({ ok: true, migratedCount: newOfficers.length })

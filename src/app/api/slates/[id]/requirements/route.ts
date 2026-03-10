@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { readJson, writeJson, withWriteLock } from '@/services/data-service'
-import type { Slate, SlateRequirement, SlateCandidateProfile } from '@/lib/types'
+import { parseBody } from '@/lib/validate'
+import { RequirementsBodySchema } from '@/lib/schemas'
+import type { Slate } from '@/lib/types'
 
 // PATCH /api/slates/[id]/requirements
 // Body: { requirements, candidates, candidateProfiles }
@@ -10,15 +12,9 @@ export async function PATCH(
 ) {
     try {
         const { id } = await params
-        const {
-            requirements,
-            candidates,
-            candidateProfiles,
-        }: {
-            requirements: SlateRequirement[]
-            candidates: string[]
-            candidateProfiles: SlateCandidateProfile[]
-        } = await request.json()
+        const parsed = parseBody(RequirementsBodySchema, await request.json())
+        if (!parsed.ok) return parsed.response
+        const { requirements, candidates, candidateProfiles } = parsed.data
 
         return withWriteLock(() => {
             const slates = readJson<Slate[]>('slates.json')

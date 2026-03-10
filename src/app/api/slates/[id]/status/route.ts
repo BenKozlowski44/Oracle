@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 import { readJson, writeJson, withWriteLock } from '@/services/data-service'
+import { parseBody } from '@/lib/validate'
+import { SlateStatusBodySchema } from '@/lib/schemas'
 import type { Slate } from '@/lib/types'
 
 // PATCH /api/slates/[id]/status — archive or restore a slate
@@ -10,7 +12,10 @@ export async function PATCH(
 ) {
     try {
         const { id } = await params
-        const { status }: { status: Slate['status'] } = await request.json()
+        const parsed = parseBody(SlateStatusBodySchema, await request.json())
+        if (!parsed.ok) return parsed.response
+        const { status } = parsed.data
+
         return withWriteLock(() => {
             const slates = readJson<Slate[]>('slates.json')
             const idx = slates.findIndex(s => s.id === id)

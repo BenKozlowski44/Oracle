@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { readJson, writeJson, withWriteLock } from '@/services/data-service'
 import { applySlateToOracle } from '@/lib/slate-migration'
+import { parseBody } from '@/lib/validate'
+import { ApprovalsBodySchema } from '@/lib/schemas'
 import type { Slate, Officer, OracleCommand } from '@/lib/types'
 
 // PATCH /api/slates/[id]/approvals
@@ -12,7 +14,9 @@ export async function PATCH(
 ) {
     try {
         const { id } = await params
-        const { entity, value }: { entity: keyof Slate['approvals'], value: boolean } = await request.json()
+        const parsed = parseBody(ApprovalsBodySchema, await request.json())
+        if (!parsed.ok) return parsed.response
+        const { entity, value } = parsed.data
 
         return withWriteLock(() => {
             const slates = readJson<Slate[]>('slates.json')

@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 import { readJson, writeJson, withWriteLock } from '@/services/data-service'
+import { parseBody } from '@/lib/validate'
+import { AssignBodySchema } from '@/lib/schemas'
 import { Slate } from '@/lib/types'
 
 export async function PATCH(
@@ -8,11 +10,9 @@ export async function PATCH(
 ) {
     try {
         const { id: slateId } = await params
-        const { requirementId, officerId } = await request.json()
-
-        if (!slateId || !requirementId) {
-            return NextResponse.json({ error: 'slateId and requirementId are required' }, { status: 400 })
-        }
+        const parsed = parseBody(AssignBodySchema, await request.json())
+        if (!parsed.ok) return parsed.response
+        const { requirementId, officerId } = parsed.data
 
         return withWriteLock(() => {
             const slates = readJson<Slate[]>('slates.json')

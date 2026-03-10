@@ -3,14 +3,14 @@ import { Officer } from '@/lib/types';
 import { readJson, writeJson, withWriteLock } from '@/services/data-service';
 import { getPersonnelAlerts } from '@/lib/alerts';
 import { getMetrics, saveMetrics } from '@/lib/metrics-service';
+import { parseBody } from '@/lib/validate';
+import { OfficerSchema } from '@/lib/schemas';
 
 export async function POST(request: Request) {
     try {
-        const body = await request.json() as Officer;
-
-        if (!body || !body.id) {
-            return NextResponse.json({ error: 'Invalid officer data' }, { status: 400 });
-        }
+        const parsed = parseBody(OfficerSchema, await request.json())
+        if (!parsed.ok) return parsed.response
+        const body = parsed.data as unknown as Officer
 
         const saved = await withWriteLock(() => {
             const officers = readJson<Officer[]>('officers.json');

@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 import { readJson, writeJson, withWriteLock } from '@/services/data-service'
+import { parseBody } from '@/lib/validate'
+import { BoardCandidatesBodySchema } from '@/lib/schemas'
 import type { CdrCmdBoard, BoardCandidate } from '@/lib/types'
 
 // PATCH /api/boards/[id]/candidates — save candidates (auto-save)
@@ -10,7 +12,9 @@ export async function PATCH(
 ) {
     try {
         const { id } = await params
-        const { candidates }: { candidates: BoardCandidate[] } = await request.json()
+        const parsed = parseBody(BoardCandidatesBodySchema, await request.json())
+        if (!parsed.ok) return parsed.response
+        const { candidates } = parsed.data
 
         return withWriteLock(() => {
             const boards = readJson<CdrCmdBoard[]>('boards.json')
@@ -18,7 +22,7 @@ export async function PATCH(
             if (idx === -1) {
                 return NextResponse.json({ error: 'Board not found' }, { status: 404 })
             }
-            boards[idx] = { ...boards[idx], candidates }
+            boards[idx] = { ...boards[idx], candidates: candidates as unknown as BoardCandidate[] }
             writeJson('boards.json', boards)
             return NextResponse.json({ ok: true })
         })

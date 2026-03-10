@@ -1,24 +1,26 @@
 import { NextResponse } from 'next/server';
 import { Officer } from '@/lib/types';
 import { readJson, writeJson, withWriteLock } from '@/services/data-service';
+import { parseBody } from '@/lib/validate';
+import { CreateOfficerBodySchema } from '@/lib/schemas';
 
 export async function POST(request: Request) {
     try {
-        const newOfficer = await request.json() as Officer;
-
-        if (!newOfficer || !newOfficer.name) {
-            return NextResponse.json({ error: 'Invalid officer data' }, { status: 400 });
-        }
+        const parsed = parseBody(CreateOfficerBodySchema, await request.json())
+        if (!parsed.ok) return parsed.response
+        const data = parsed.data as Partial<Officer>
 
         // Generate ID if missing
-        if (!newOfficer.id) {
-            newOfficer.id = newOfficer.name.toLowerCase().replace(/[^a-z0-9]/g, '') + '_' + Date.now();
+        if (!data.id) {
+            data.id = data.name!.toLowerCase().replace(/[^a-z0-9]/g, '') + '_' + Date.now();
         }
 
         // Ensure defaults
-        if (!newOfficer.preferences) newOfficer.preferences = [];
-        if (!newOfficer.preferredLocations) newOfficer.preferredLocations = [];
-        if (!newOfficer.preferredPlatforms) newOfficer.preferredPlatforms = [];
+        if (!data.preferences) data.preferences = [];
+        if (!data.preferredLocations) data.preferredLocations = [];
+        if (!data.preferredPlatforms) data.preferredPlatforms = [];
+
+        const newOfficer = data as Officer
 
         const officers = readJson<Officer[]>('officers.json');
         await withWriteLock(() => {
