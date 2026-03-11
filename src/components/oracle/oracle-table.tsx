@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge"
 import { EditCommandDialog } from "./edit-command-dialog"
 import { FleetUpChecklist } from "./fleet-up-checklist"
 import { Pencil, Search, Plus } from "lucide-react"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { formatToMMMyy } from "@/lib/utils"
 import { format, parseISO, isValid } from "date-fns"
@@ -206,14 +207,16 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
         setData(newData)
 
         try {
-            await fetch(`/api/oracle/${updatedCommand.id}`, {
+            const res = await fetch(`/api/oracle/${updatedCommand.id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ updatedCommand, metrics: newMetrics }),
             });
+            if (!res.ok) throw new Error()
+            toast.success('Command saved')
         } catch (error) {
             console.error("Error saving data:", error);
-            alert("Failed to save changes to disk. check console.");
+            toast.error('Failed to save command — changes may not have persisted');
         }
     }
 
@@ -224,10 +227,12 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
         setIsEditOpen(false)
 
         try {
-            await fetch(`/api/oracle/${commandId}`, { method: 'DELETE' });
+            const res = await fetch(`/api/oracle/${commandId}`, { method: 'DELETE' });
+            if (!res.ok) throw new Error()
+            toast.success('Command deleted')
         } catch (error) {
             console.error(error);
-            alert("Failed to delete command");
+            toast.error('Failed to delete command');
         }
     }
 
@@ -237,14 +242,16 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
         setIsEditOpen(false);
 
         try {
-            await fetch(`/api/oracle/${updatedCommand.id}`, {
+            const res = await fetch(`/api/oracle/${updatedCommand.id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ updatedCommand, officers: currentOfficers }),
             });
+            if (!res.ok) throw new Error()
+            toast.success(message)
         } catch (error) {
             console.error(error);
-            alert("Failed to save changes: " + message);
+            toast.error('Failed to save: ' + message);
         }
     }
 

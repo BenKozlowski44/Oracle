@@ -8,6 +8,7 @@ import { Plus, Trash2, Archive } from "lucide-react"
 import Link from "next/link"
 import { formatToMMMyy } from "@/lib/utils"
 import type { Slate } from "@/lib/types"
+import { toast } from "sonner"
 
 interface SlatesPageClientProps {
     allSlates: Slate[]
@@ -23,20 +24,30 @@ export function SlatesPageClient({ allSlates }: SlatesPageClientProps) {
         if (!confirm("Are you sure you want to archive this slate? It will move to the Archived Slates view.")) return
         const updated = localSlates.map(s => s.id === id ? { ...s, status: "Archived" as const } : s)
         setLocalSlates(updated)
-        await fetch(`/api/slates/${id}/status`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status: 'Archived' }),
-        })
-        router.refresh()
+        try {
+            const res = await fetch(`/api/slates/${id}/status`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: 'Archived' }),
+            })
+            if (!res.ok) throw new Error()
+            router.refresh()
+        } catch {
+            toast.error('Failed to archive slate')
+        }
     }
 
     const handleDelete = async (e: React.MouseEvent, id: string) => {
         e.preventDefault(); e.stopPropagation()
         if (!confirm("Are you sure you want to PERMANENTLY delete this slate?")) return
         setLocalSlates(prev => prev.filter(s => s.id !== id))
-        await fetch(`/api/slates/${id}`, { method: 'DELETE' })
-        router.refresh()
+        try {
+            const res = await fetch(`/api/slates/${id}`, { method: 'DELETE' })
+            if (!res.ok) throw new Error()
+            router.refresh()
+        } catch {
+            toast.error('Failed to delete slate')
+        }
     }
 
     const handleApprovalToggle = async (e: React.MouseEvent, id: string, entity: keyof Slate['approvals']) => {
@@ -57,13 +68,17 @@ export function SlatesPageClient({ allSlates }: SlatesPageClientProps) {
             s.id === id ? { ...s, approvals: { ...s.approvals, [entity]: willBeTrue } } : s
         ))
 
-        // Server handles oracle migration for SWOBOSS
-        await fetch(`/api/slates/${id}/approvals`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ entity, value: willBeTrue }),
-        })
-        router.refresh()
+        try {
+            const res = await fetch(`/api/slates/${id}/approvals`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ entity, value: willBeTrue }),
+            })
+            if (!res.ok) throw new Error()
+            router.refresh()
+        } catch {
+            toast.error('Failed to save approval — changes may not have persisted')
+        }
     }
 
     return (

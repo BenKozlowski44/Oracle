@@ -18,6 +18,7 @@ import { OracleCommand, SlateRequirement, Slate } from "@/lib/types"
 import { formatToMMMyy } from "@/lib/utils"
 import { addMonths, parseISO, isValid, parse } from "date-fns"
 import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 
 interface SlateGeneratorClientProps {
     oracleData: OracleCommand[]
@@ -58,12 +59,15 @@ export function SlateGeneratorClient({ oracleData }: SlateGeneratorClientProps) 
             });
 
             if (response.ok) {
+                toast.success(`Slate "${slateName}" saved`)
                 router.push('/slates');
             } else {
+                toast.error('Failed to save slate — server returned an error')
                 console.error("Failed to save slate");
             }
         } catch (error) {
             console.error("Error saving slate:", error);
+            toast.error('Error saving slate — check console for details')
         }
     }
 

@@ -8,6 +8,7 @@ import { RotateCcw, Trash2 } from "lucide-react"
 import Link from "next/link"
 import type { Slate } from "@/lib/types"
 import { formatToMMMyy } from "@/lib/utils"
+import { toast } from "sonner"
 
 export function ArchivedSlatesClient({ allSlates }: { allSlates: Slate[] }) {
     const router = useRouter()
@@ -19,20 +20,30 @@ export function ArchivedSlatesClient({ allSlates }: { allSlates: Slate[] }) {
         e.preventDefault(); e.stopPropagation()
         if (!confirm("Are you sure you want to restore this slate to Active?")) return
         setLocalSlates(prev => prev.map(s => s.id === id ? { ...s, status: "Active" as const } : s))
-        await fetch(`/api/slates/${id}/status`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status: 'Active' }),
-        })
-        router.refresh()
+        try {
+            const res = await fetch(`/api/slates/${id}/status`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: 'Active' }),
+            })
+            if (!res.ok) throw new Error()
+            router.refresh()
+        } catch {
+            toast.error('Failed to restore slate')
+        }
     }
 
     const handleDelete = async (e: React.MouseEvent, id: string) => {
         e.preventDefault(); e.stopPropagation()
         if (!confirm("Are you sure you want to PERMANENTLY delete this archived slate?")) return
         setLocalSlates(prev => prev.filter(s => s.id !== id))
-        await fetch(`/api/slates/${id}`, { method: 'DELETE' })
-        router.refresh()
+        try {
+            const res = await fetch(`/api/slates/${id}`, { method: 'DELETE' })
+            if (!res.ok) throw new Error()
+            router.refresh()
+        } catch {
+            toast.error('Failed to delete slate')
+        }
     }
 
     return (

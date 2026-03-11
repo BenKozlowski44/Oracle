@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Loader2, FileSpreadsheet } from "lucide-react"
+import { toast } from "sonner"
 
 interface DataImportCardProps {
     title: string
@@ -57,12 +58,16 @@ function DataImportCard({ title, description, onParse, dataKey }: DataImportCard
             }
 
             setStatus("success")
-            setMessage(`Successfully imported ${data.length} records from ${file.name}.`)
+            const successMsg = `Successfully imported ${data.length} records from ${file.name}.`
+            setMessage(successMsg)
+            toast.success(successMsg)
 
         } catch (error) {
             console.error(error)
             setStatus("error")
-            setMessage("An error occurred during import. Check console for details.")
+            const errMsg = "An error occurred during import. Check console for details."
+            setMessage(errMsg)
+            toast.error(errMsg)
         }
     }
 
