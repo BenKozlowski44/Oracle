@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/popover"
 import { formatToMMMyy } from "@/lib/utils"
 import { SlateRequirement } from "@/lib/types"
-import { toast } from "sonner"
+import { saveError, notifySuccess } from "@/lib/notify"
 
 interface AlignmentMatrixReportProps {
     slateId: string
@@ -180,7 +180,7 @@ export function AlignmentMatrixReport({ slateId, slate, officers, oracleData }: 
             const pf = `${cmd?.platform || 'Unknown'} - ${cmd?.location || 'Unknown'}`
             return pf === prefFormat && !r.filledBy
         })
-        if (!openReq) { toast.error('No open slots for this command'); return }
+        if (!openReq) { saveError('No open slots for this command'); return }
 
         setAssigning(openReq.id)
         try {
@@ -193,13 +193,13 @@ export function AlignmentMatrixReport({ slateId, slate, officers, oracleData }: 
                 const data = await res.json()
                 setRequirements(prev => prev.map(r => r.id === openReq.id ? data.requirement : r))
                 const officerName = officers.find(o => o.id === candidateId)?.name ?? 'Officer'
-                toast.success(`${officerName} assigned to ${prefFormat}`)
+                notifySuccess(`${officerName} assigned to ${prefFormat}`)
             } else {
                 const err = await res.json()
-                toast.error(`Assignment failed: ${err.error}`)
+                saveError(`Assignment failed: ${err.error}`)
             }
         } catch {
-            toast.error('Error saving assignment')
+            saveError('Error saving assignment')
         } finally {
             setAssigning(null)
         }
@@ -217,13 +217,13 @@ export function AlignmentMatrixReport({ slateId, slate, officers, oracleData }: 
                 const data = await res.json()
                 setRequirements(prev => prev.map(r => r.id === requirementId ? data.requirement : r))
                 const officerName = officers.find(o => o.id === candidateId)?.name ?? 'Officer'
-                toast.success(`${officerName} unassigned`)
+                notifySuccess(`${officerName} unassigned`)
             } else {
                 const err = await res.json()
-                toast.error(`Unassign failed: ${err.error}`)
+                saveError(`Unassign failed: ${err.error}`)
             }
         } catch {
-            toast.error('Error saving change')
+            saveError('Error saving change')
         } finally {
             setAssigning(null)
         }

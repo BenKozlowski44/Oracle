@@ -16,7 +16,7 @@ import { Badge } from "@/components/ui/badge"
 import { EditCommandDialog } from "./edit-command-dialog"
 import { FleetUpChecklist } from "./fleet-up-checklist"
 import { Pencil, Search, Plus } from "lucide-react"
-import { toast } from "sonner"
+import { saveError, notifySuccess } from "@/lib/notify"
 import { Button } from "@/components/ui/button"
 import { formatToMMMyy } from "@/lib/utils"
 import { format, parseISO, isValid } from "date-fns"
@@ -213,10 +213,10 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                 body: JSON.stringify({ updatedCommand, metrics: newMetrics }),
             });
             if (!res.ok) throw new Error()
-            toast.success('Command saved')
+            notifySuccess('Command saved')
         } catch (error) {
             console.error("Error saving data:", error);
-            toast.error('Failed to save command — changes may not have persisted');
+            saveError('Failed to save command — changes may not have persisted');
         }
     }
 
@@ -229,10 +229,10 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
         try {
             const res = await fetch(`/api/oracle/${commandId}`, { method: 'DELETE' });
             if (!res.ok) throw new Error()
-            toast.success('Command deleted')
+            notifySuccess('Command deleted')
         } catch (error) {
             console.error(error);
-            toast.error('Failed to delete command');
+            saveError('Failed to delete command');
         }
     }
 
@@ -248,10 +248,10 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                 body: JSON.stringify({ updatedCommand, officers: currentOfficers }),
             });
             if (!res.ok) throw new Error()
-            toast.success(message)
+            notifySuccess(message)
         } catch (error) {
             console.error(error);
-            toast.error('Failed to save: ' + message);
+            saveError('Failed to save: ' + message);
         }
     }
 

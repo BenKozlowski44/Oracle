@@ -22,7 +22,7 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useRouter } from "next/navigation"
-import { toast } from "sonner"
+import { saveError, notifySuccess } from "@/lib/notify"
 
 interface EditOfficerDialogProps {
     officer: Officer | null
@@ -68,12 +68,12 @@ export function EditOfficerDialog({ officer, open, onOpenChange }: EditOfficerDi
 
             if (!res.ok) throw new Error(isNew ? "Failed to create officer" : "Failed to update officer")
 
-            toast.success(isNew ? "Officer created" : "Officer saved")
+            notifySuccess(isNew ? "Officer created" : "Officer saved")
             router.refresh()
             onOpenChange(false)
         } catch (error) {
             console.error(error)
-            toast.error("Failed to save changes")
+            saveError("Failed to save changes")
         } finally {
             setLoading(false)
         }

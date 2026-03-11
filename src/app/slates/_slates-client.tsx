@@ -8,7 +8,7 @@ import { Plus, Trash2, Archive } from "lucide-react"
 import Link from "next/link"
 import { formatToMMMyy } from "@/lib/utils"
 import type { Slate } from "@/lib/types"
-import { toast } from "sonner"
+import { saveError, notifySuccess } from "@/lib/notify"
 
 interface SlatesPageClientProps {
     allSlates: Slate[]
@@ -33,7 +33,7 @@ export function SlatesPageClient({ allSlates }: SlatesPageClientProps) {
             if (!res.ok) throw new Error()
             router.refresh()
         } catch {
-            toast.error('Failed to archive slate')
+            saveError('Failed to archive slate')
         }
     }
 
@@ -46,7 +46,7 @@ export function SlatesPageClient({ allSlates }: SlatesPageClientProps) {
             if (!res.ok) throw new Error()
             router.refresh()
         } catch {
-            toast.error('Failed to delete slate')
+            saveError('Failed to delete slate')
         }
     }
 
@@ -77,7 +77,7 @@ export function SlatesPageClient({ allSlates }: SlatesPageClientProps) {
             if (!res.ok) throw new Error()
             router.refresh()
         } catch {
-            toast.error('Failed to save approval — changes may not have persisted')
+            saveError('Failed to save approval — changes may not have persisted')
         }
     }
 

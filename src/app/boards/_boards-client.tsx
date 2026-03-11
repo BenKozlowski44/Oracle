@@ -25,7 +25,7 @@ import type { CdrCmdBoard } from "@/lib/types"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { toast } from "sonner"
+import { saveError, notifySuccess } from "@/lib/notify"
 
 // Safely format a date that may be ISO or a display string (e.g. "Dec 3-5")
 function formatBoardDate(dateStr: string): string {
@@ -80,7 +80,7 @@ export function BoardsClient({ initialBoards }: { initialBoards: CdrCmdBoard[] }
                 setIsCreateDialogOpen(false)
                 setNewBoardFy("")
                 setNewBoardDate("")
-                toast.success(`Board ${newBoard.fy} created`)
+                notifySuccess(`Board ${newBoard.fy} created`)
                 router.refresh()
             } else {
                 setCreateError("Failed to save board. Please try again.")

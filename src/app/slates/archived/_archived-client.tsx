@@ -8,7 +8,7 @@ import { RotateCcw, Trash2 } from "lucide-react"
 import Link from "next/link"
 import type { Slate } from "@/lib/types"
 import { formatToMMMyy } from "@/lib/utils"
-import { toast } from "sonner"
+import { saveError, notifySuccess } from "@/lib/notify"
 
 export function ArchivedSlatesClient({ allSlates }: { allSlates: Slate[] }) {
     const router = useRouter()
@@ -29,7 +29,7 @@ export function ArchivedSlatesClient({ allSlates }: { allSlates: Slate[] }) {
             if (!res.ok) throw new Error()
             router.refresh()
         } catch {
-            toast.error('Failed to restore slate')
+            saveError('Failed to restore slate')
         }
     }
 
@@ -42,7 +42,7 @@ export function ArchivedSlatesClient({ allSlates }: { allSlates: Slate[] }) {
             if (!res.ok) throw new Error()
             router.refresh()
         } catch {
-            toast.error('Failed to delete slate')
+            saveError('Failed to delete slate')
         }
     }
 
