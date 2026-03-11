@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation"
 import { OfficerTable } from "@/components/officers/officer-table"
 import { Officer } from "@/lib/types"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { isFirefighter } from "@/components/dashboard/stats-cards"
+import { isFirefighter } from "@/lib/officer-utils"
 
 interface BankProps {
     data: Officer[]

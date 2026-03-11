@@ -2,16 +2,7 @@
 
 import { Officer, Billet, OracleCommand, Metrics } from "@/lib/types"
 import { getAllAlerts, getAllPersonnelAlerts } from "@/lib/alerts"
-
-export const isFirefighter = (o: Officer) => {
-    if (o.status === "Slated" || o.listShift === "Slated" || o.status === "Declined" || o.status === "No Opportunity" || o.status === "De-screened" || o.listShift === "Declined/Descreened") return false;
-    if (o.listShift === "CO-SM" || o.screened?.includes("CO-SM")) return false;
-    const slate = o.assignedSlate?.toLowerCase() || ""
-    const shift = o.listShift || ""
-    return shift === "Firefighters" || o.status === "Ready FF" ||
-        slate.includes("3rd look") ||
-        slate.includes("no command")
-}
+import { isFirefighter } from "@/lib/officer-utils"
 
 export function CommandInventoryCard({ oracleData }: { oracleData: OracleCommand[] }) {
     return (

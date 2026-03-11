@@ -35,18 +35,18 @@ describe('utils', () => {
         });
 
         it('calculates the target board correctly from ISO date', () => {
+            // Uses 2028 dates so results are never clamped by getCurrentActiveSlate().
+            // Formula: vacancy year 2028 → slate year 27 (year - 1).
             // Spring (Mar-May) -> Q1
-            expect(calculateTargetBoard('2026-04-15')).toBe('26-1');
+            expect(calculateTargetBoard('2028-04-15')).toBe('27-1');
             // Summer (Jun-Aug) -> Q2
-            expect(calculateTargetBoard('2026-07-01')).toBe('26-2');
+            expect(calculateTargetBoard('2028-07-01')).toBe('27-2');
             // Fall (Sep-Nov) -> Q3
-            expect(calculateTargetBoard('2026-10-15')).toBe('26-3');
-            // Winter (Dec) -> Q4 of same year? Wait, let's trace:
-            // month 12 -> quarter 4, year 26 -> '26-4'
-            expect(calculateTargetBoard('2026-12-15')).toBe('26-4');
-            // Winter (Jan-Feb) -> Q4 of PREVIOUS year
-            // month 1 -> quarter 4, year 27 - 1 = 26 -> '26-4'
-            expect(calculateTargetBoard('2027-01-15')).toBe('26-4');
+            expect(calculateTargetBoard('2028-10-15')).toBe('27-3');
+            // Winter Dec -> Q4 same slate year
+            expect(calculateTargetBoard('2028-12-15')).toBe('27-4');
+            // Winter Jan -> Q4 of prior slate year (2029 → 28-1 = 27-4)
+            expect(calculateTargetBoard('2029-01-15')).toBe('27-4');
         });
     });
 });
