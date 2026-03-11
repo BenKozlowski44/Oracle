@@ -37,8 +37,6 @@ export function BankOfficersCard({ officers }: { officers: Officer[] }) {
     // Filter out PCCs and Slated officers as requested, AND CO-SM screened/listShift
     const validOfficers = officers.filter(o =>
         o.status !== "PCC" &&
-        o.status !== "Retire" &&
-        o.status !== "Policy" &&
         o.status !== "Slated" &&
         o.listShift !== "Slated" &&
         o.status !== "Declined" &&

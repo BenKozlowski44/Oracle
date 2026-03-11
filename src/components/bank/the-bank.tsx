@@ -16,7 +16,6 @@ export function TheBank({ data }: BankProps) {
 
     const bankOfficers = data.filter(o => {
         if (isDeclined(o)) return false;
-        if (o.status === "Retire" || o.status === "Policy") return false;
         const shift = o.listShift || ""
         return shift !== "CO-SM" && shift !== "Slated" && shift !== "XO Screened" && o.status !== "PCC" && !isFirefighter(o)
     })
