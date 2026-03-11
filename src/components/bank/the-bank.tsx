@@ -5,27 +5,18 @@ import { useSearchParams } from "next/navigation"
 import { OfficerTable } from "@/components/officers/officer-table"
 import { Officer } from "@/lib/types"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { isFirefighter } from "@/components/dashboard/stats-cards"
 
 interface BankProps {
     data: Officer[]
 }
 
 export function TheBank({ data }: BankProps) {
-    const isFirefighter = (o: Officer) => {
-        if (o.status === "Slated" || o.listShift === "Slated") return false;
-        if (o.listShift === "CO-SM" || o.screened?.includes("CO-SM")) return false;
-
-        const slate = o.assignedSlate?.toLowerCase() || ""
-        const shift = o.listShift || ""
-        return shift === "Firefighters" ||
-            slate.includes("3rd look") ||
-            slate.includes("no command")
-    }
-
     const isDeclined = (o: Officer) => o.status === "Declined" || o.status === "No Opportunity" || o.status === "De-screened" || o.listShift === "Declined/Descreened"
 
     const bankOfficers = data.filter(o => {
         if (isDeclined(o)) return false;
+        if (o.status === "Retire" || o.status === "Policy") return false;
         const shift = o.listShift || ""
         return shift !== "CO-SM" && shift !== "Slated" && shift !== "XO Screened" && o.status !== "PCC" && !isFirefighter(o)
     })
