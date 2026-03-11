@@ -1,13 +1,26 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Edit2, MapPin, Anchor, ClipboardList, FileText } from "lucide-react"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { Edit2, MapPin, Anchor, ClipboardList, FileText, Trash2 } from "lucide-react"
 import { Officer } from "@/lib/types"
 import { EditOfficerDialog } from "./edit-officer-dialog"
 import { formatToMMMyy } from "@/lib/utils"
+import { saveError, notifySuccess } from "@/lib/notify"
 
 interface OfficerDetailSheetProps {
     officer: Officer | null
@@ -46,6 +59,28 @@ const STATUS_COLORS: Record<string, string> = {
 
 export function OfficerDetailSheet({ officer, open, onOpenChange }: OfficerDetailSheetProps) {
     const [editOpen, setEditOpen] = useState(false)
+    const [deleting, setDeleting] = useState(false)
+    const router = useRouter()
+
+    const handleDelete = async () => {
+        if (!officer) return
+        setDeleting(true)
+        try {
+            const res = await fetch('/api/delete-officer', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: officer.id }),
+            })
+            if (!res.ok) throw new Error()
+            notifySuccess(`${officer.name} removed from bank`)
+            onOpenChange(false)
+            router.refresh()
+        } catch {
+            saveError(`Failed to delete ${officer.name}`)
+        } finally {
+            setDeleting(false)
+        }
+    }
 
     if (!officer) return null
 
@@ -175,7 +210,34 @@ export function OfficerDetailSheet({ officer, open, onOpenChange }: OfficerDetai
                     </div>
 
                     {/* Footer */}
-                    <div className="px-6 py-4 border-t bg-muted/20 flex justify-end">
+                    <div className="px-6 py-4 border-t bg-muted/20 flex items-center justify-between">
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10" disabled={deleting}>
+                                    <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                                    Delete
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Remove officer from bank?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        This will permanently remove <strong>{officer.name}</strong> from the officer bank.
+                                        This action cannot be undone.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction
+                                        onClick={handleDelete}
+                                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                    >
+                                        Yes, remove officer
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+
                         <Button onClick={() => setEditOpen(true)} size="sm">
                             <Edit2 className="h-3.5 w-3.5 mr-1.5" />
                             Edit Officer
