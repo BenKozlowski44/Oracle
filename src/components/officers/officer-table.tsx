@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ArrowUpDown, Search, Edit2 } from "lucide-react"
+import { ArrowUpDown, Search, Edit2, StickyNote } from "lucide-react"
 import {
     Tooltip,
     TooltipContent,
@@ -29,6 +29,8 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { EditOfficerDialog } from "./edit-officer-dialog"
+import { OfficerDetailSheet } from "./officer-detail-sheet"
+import { saveError, notifySuccess } from "@/lib/notify"
 
 interface OfficerTableProps {
     data: Officer[]
@@ -39,9 +41,14 @@ export function OfficerTable({ data, variant = "default" }: OfficerTableProps) {
     const searchParams = useSearchParams()
     const [search, setSearch] = useState(searchParams.get("search") || "")
     const [rankFilter, setRankFilter] = useState<string>("all")
+    const [statusFilter, setStatusFilter] = useState<string>("all")
+    const [ygFrom, setYgFrom] = useState<string>("")
+    const [ygTo, setYgTo] = useState<string>("")
     const [sortConfig, setSortConfig] = useState<{ key: keyof Officer; direction: "asc" | "desc" } | null>(null)
     const [editingOfficer, setEditingOfficer] = useState<Officer | null>(null)
     const [isDialogOpen, setIsDialogOpen] = useState(false)
+    const [viewingOfficer, setViewingOfficer] = useState<Officer | null>(null)
+    const [isDetailOpen, setIsDetailOpen] = useState(false)
     const fileInputRef = useRef<HTMLInputElement>(null)
     const router = useRouter()
 
@@ -64,11 +71,11 @@ export function OfficerTable({ data, variant = "default" }: OfficerTableProps) {
                 throw new Error(result.error || "Failed to import officers")
             }
 
-            alert(`Successfully imported officers!\nAdded: ${result.added}\nUpdated: ${result.updated}`)
+            notifySuccess(`Imported: ${result.added} added, ${result.updated} updated`)
             router.refresh()
         } catch (error: any) {
             console.error(error)
-            alert(`Import failed: ${error.message}`)
+            saveError(`Import failed: ${error.message}`)
         } finally {
             if (fileInputRef.current) {
                 fileInputRef.current.value = ""
@@ -87,8 +94,12 @@ export function OfficerTable({ data, variant = "default" }: OfficerTableProps) {
             (officer.notes && officer.notes.toLowerCase().includes(search.toLowerCase()))
 
         const matchesRank = rankFilter === "all" || officer.rank === rankFilter
+        const matchesStatus = statusFilter === "all" || officer.status === statusFilter
+        const ygNum = officer.yearGroup ?? 0
+        const matchesYgFrom = !ygFrom || ygNum >= parseInt(ygFrom)
+        const matchesYgTo = !ygTo || ygNum <= parseInt(ygTo)
 
-        return matchesSearch && matchesRank
+        return matchesSearch && matchesRank && matchesStatus && matchesYgFrom && matchesYgTo
     })
 
     const requestSort = (key: keyof Officer) => {
@@ -244,8 +255,9 @@ export function OfficerTable({ data, variant = "default" }: OfficerTableProps) {
 
     return (
         <div className="space-y-4">
-            <div className="flex items-center gap-4">
-                <div className="relative flex-1">
+            {/* Primary filter row */}
+            <div className="flex items-center gap-3 flex-wrap">
+                <div className="relative flex-1 min-w-[200px]">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
                         placeholder="Search officers..."
@@ -255,7 +267,7 @@ export function OfficerTable({ data, variant = "default" }: OfficerTableProps) {
                     />
                 </div>
                 <Select value={rankFilter} onValueChange={setRankFilter}>
-                    <SelectTrigger className="w-[180px]">
+                    <SelectTrigger className="w-[130px]">
                         <SelectValue placeholder="Rank" />
                     </SelectTrigger>
                     <SelectContent>
@@ -265,6 +277,49 @@ export function OfficerTable({ data, variant = "default" }: OfficerTableProps) {
                         <SelectItem value="CAPT">CAPT</SelectItem>
                     </SelectContent>
                 </Select>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger className="w-[160px]">
+                        <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">All Statuses</SelectItem>
+                        <SelectItem value="Available">Available</SelectItem>
+                        <SelectItem value="Verify PD2">Verify PD2</SelectItem>
+                        <SelectItem value="Ready FF">Ready FF</SelectItem>
+                        <SelectItem value="Defer">Defer</SelectItem>
+                        <SelectItem value="Family Planning">Family Planning</SelectItem>
+                        <SelectItem value="War College">War College</SelectItem>
+                        <SelectItem value="Joint Lock">Joint Lock</SelectItem>
+                        <SelectItem value="Hold">Hold</SelectItem>
+                        <SelectItem value="List Shift">List Shift</SelectItem>
+                        <SelectItem value="Slated">Slated</SelectItem>
+                        <SelectItem value="PCC">PCC</SelectItem>
+                        <SelectItem value="Retire">Retire</SelectItem>
+                        <SelectItem value="Policy">Policy</SelectItem>
+                        <SelectItem value="Declined">Declined</SelectItem>
+                        <SelectItem value="No Opportunity">No Opportunity</SelectItem>
+                        <SelectItem value="De-screened">De-screened</SelectItem>
+                    </SelectContent>
+                </Select>
+                {/* YG range */}
+                <div className="flex items-center gap-1.5">
+                    <span className="text-xs text-muted-foreground whitespace-nowrap">YG</span>
+                    <Input
+                        placeholder="From"
+                        value={ygFrom}
+                        onChange={(e) => setYgFrom(e.target.value)}
+                        className="w-[70px] text-center"
+                        maxLength={4}
+                    />
+                    <span className="text-xs text-muted-foreground">–</span>
+                    <Input
+                        placeholder="To"
+                        value={ygTo}
+                        onChange={(e) => setYgTo(e.target.value)}
+                        className="w-[70px] text-center"
+                        maxLength={4}
+                    />
+                </div>
                 <Button onClick={() => {
                     setEditingOfficer({
                         id: "",
@@ -348,9 +403,14 @@ export function OfficerTable({ data, variant = "default" }: OfficerTableProps) {
                                     </TableCell>
                                     <TableCell
                                         className="font-medium cursor-pointer hover:underline text-primary"
-                                        onClick={() => handleEdit(officer)}
+                                        onClick={() => { setViewingOfficer(officer); setIsDetailOpen(true) }}
                                     >
-                                        {officer.name}
+                                        <span className="flex items-center gap-1.5">
+                                            {officer.name}
+                                            {officer.notes?.trim() && (
+                                                <StickyNote className="h-3 w-3 text-muted-foreground shrink-0" />
+                                            )}
+                                        </span>
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex flex-col">
@@ -459,6 +519,11 @@ export function OfficerTable({ data, variant = "default" }: OfficerTableProps) {
                 officer={editingOfficer}
                 open={isDialogOpen}
                 onOpenChange={setIsDialogOpen}
+            />
+            <OfficerDetailSheet
+                officer={viewingOfficer}
+                open={isDetailOpen}
+                onOpenChange={setIsDetailOpen}
             />
         </div>
     )
