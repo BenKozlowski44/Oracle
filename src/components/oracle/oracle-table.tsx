@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
 import { OracleCommand, Officer, Metrics } from "@/lib/types"
 import {
@@ -418,7 +418,7 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                             </TableRow>
                         ) : (
                             filteredData.map((cmd) => (
-                                <>
+                                <React.Fragment key={cmd.id}>
                                     <TableRow key={cmd.id}>
                                         {/* Expand chevron */}
                                         <TableCell className="w-8 p-1.5">
@@ -512,7 +512,7 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                                             </TableCell>
                                         </TableRow>
                                     )}
-                                </>
+                                </React.Fragment>
                             ))
                         )}
                     </TableBody>
