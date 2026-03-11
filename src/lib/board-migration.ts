@@ -34,7 +34,8 @@ export function boardCandidateToOfficer(candidate: BoardCandidate): Officer {
 
     // Pull yearGroup from rawData 'year group' or fall back to 0
     const ygEntry = Object.entries(raw).find(([k]) => k.toLowerCase().startsWith('year'));
-    const yearGroup = ygEntry ? parseInt(ygEntry[1], 10) || 0 : 0;
+    const rawYg = ygEntry ? parseInt(ygEntry[1], 10) || 0 : 0;
+    const yearGroup = rawYg > 9999 ? Math.floor(rawYg / 10) : rawYg;
 
     // Pull CSR from rawData
     const csrEntry = Object.entries(raw).find(([k]) => k.toLowerCase() === 'csr');

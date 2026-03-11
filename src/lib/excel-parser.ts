@@ -266,7 +266,8 @@ export async function parseBankExcel(fileData: ArrayBuffer, importType: "bank" |
         const designator = String(getVal('designator', 'desig') || "1110");
         const currentCommand = String(getVal('command', 'currentcommand', 'current command') || "Unassigned");
 
-        const yearGroup = parseInt(String(getVal('yg', 'year group') || 0)) || 0;
+        const rawYg = parseInt(String(getVal('yg', 'year group') || 0)) || 0;
+        const yearGroup = rawYg > 9999 ? Math.floor(rawYg / 10) : rawYg;
         const billet = String(getVal('btitle', 'billet') || "");
         const csr = String(getVal('csr') || "");
         const assignedSlate = String(getVal('slate', 'assigned slate', 'look') || "");

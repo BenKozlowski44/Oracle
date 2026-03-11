@@ -2603,7 +2603,14 @@
         "q": "SEP29"
       }
     },
-    "hullNumber": "107"
+    "hullNumber": "107",
+    "fleetUpProgress": {
+      "isic": true,
+      "tycom": false,
+      "pco": false,
+      "orders": false,
+      "coc": false
+    }
   },
   {
     "id": "cmd_51",
