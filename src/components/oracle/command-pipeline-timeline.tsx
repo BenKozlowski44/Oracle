@@ -117,7 +117,7 @@ export function CommandPipelineTimeline({ command: cmd }: Props) {
         }
 
         if (row.coc) {
-            phases.push({ start: row.coc, end: row.coPrd, color: "bg-blue-700", text: "text-white", phaseLabel: "CO" })
+            phases.push({ start: row.coc, end: row.coPrd, color: "bg-blue-500", text: "text-white", phaseLabel: "CO" })
         }
 
         return phases
@@ -192,6 +192,8 @@ export function CommandPipelineTimeline({ command: cmd }: Props) {
                                     const w = Math.max(e - s, 0.4)
                                     const isPast = phase.end && phase.end < today
                                     const isOpenRight = !phase.end
+                                    // Segment spans today → officer is currently in this role
+                                    const isActive = !!(phase.start && phase.start <= today && (!phase.end || phase.end >= today))
 
                                     // Label: only show name on first phase segment
                                     const showName = pi === 0
@@ -203,6 +205,7 @@ export function CommandPipelineTimeline({ command: cmd }: Props) {
                                                 ${phase.color}
                                                 ${row.isForecast ? "opacity-70" : ""}
                                                 ${isPast ? "opacity-55" : ""}
+                                                ${isActive && !row.isForecast ? "ring-2 ring-white ring-inset brightness-110" : ""}
                                             `}
                                             style={{
                                                 left: `${s}%`,
@@ -319,7 +322,7 @@ export function CommandPipelineTimeline({ command: cmd }: Props) {
                 {[
                     { color: "bg-green-500", label: "XO Tour" },
                     { color: "bg-sky-400", label: "Turnover (P-CO)" },
-                    { color: "bg-blue-700", label: "CO Tour" },
+                    { color: "bg-blue-500", label: "CO Tour" },
                     { color: "bg-muted", label: "Next Req (TBD)" },
                 ].filter(({ label }) => !isDirectCO || !label.startsWith("XO"))
                     .map(({ color, label }) => (

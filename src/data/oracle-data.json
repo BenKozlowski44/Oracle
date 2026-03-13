@@ -3573,7 +3573,7 @@
       }
     },
     "nextSlateParams": {
-      "targetBoardDate": "TBD",
+      "targetBoardDate": "27-3",
       "requirement": "XO"
     },
     "timeline": {
@@ -3597,7 +3597,11 @@
       "name": "BURKE WILLIAM HENRY",
       "prd": ""
     },
-    "hullNumber": "117"
+    "hullNumber": "117",
+    "inboundXO": {
+      "name": "",
+      "reportDate": ""
+    }
   },
   {
     "id": "cmd_68",
@@ -3693,7 +3697,7 @@
       }
     },
     "nextSlateParams": {
-      "targetBoardDate": "26-4",
+      "targetBoardDate": "28-2",
       "requirement": "XO"
     },
     "timeline": {
