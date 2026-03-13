@@ -151,6 +151,39 @@ export function EditCommandDialog({
         }
     }
 
+    // Auto-populate Inbound XO timeline dates when a real person name is selected
+    const autoPopulateInboundXODates = (prev: OracleCommand, name: string) => {
+        const isRealPerson = /[a-zA-Z]{2,}/.test(name) && !name.match(/^\d{2}-\d/)
+        if (!isRealPerson) {
+            return { name, reportDate: prev.inboundXO?.reportDate || "", timelineData: prev.inboundXO?.timelineData }
+        }
+        // Anchor: current XO's fleet-up date = when the inbound XO reports
+        const anchorStr = prev.currentXO?.timelineData?.k
+        let anchorDate: Date | null = null
+        if (anchorStr) {
+            let d = parseISO(anchorStr)
+            if (isValid(d)) anchorDate = d
+            else {
+                d = parse(anchorStr, 'MMMyy', new Date())
+                if (isValid(d)) anchorDate = d
+            }
+        }
+        if (!anchorDate) {
+            return { name, reportDate: prev.inboundXO?.reportDate || "", timelineData: prev.inboundXO?.timelineData }
+        }
+        const tourLen = prev.tourLength || 18
+        const kDate = addMonths(anchorDate, tourLen)
+        const mDate = addMonths(kDate, 2)
+        const qDate = addMonths(mDate, tourLen)
+        const fmt = (d: Date) => format(d, 'MMMyy').toUpperCase()
+        const iStr = fmt(anchorDate)
+        return {
+            name,
+            reportDate: iStr,
+            timelineData: { i: iStr, k: fmt(kDate), m: fmt(mDate), q: fmt(qDate) }
+        }
+    }
+
     // Helper needed because nextSlateParams has nested object but strict types
     const handleNextSlateChange = (field: "targetBoardDate" | "requirement", value: string) => {
         setFormData((prev) => {
@@ -455,8 +488,13 @@ export function EditCommandDialog({
                                             officers={officers}
                                             placeholder="Leave empty if none"
                                             value={formData.inboundXO?.name || ""}
-                                            onChange={(v) => handleNestedChange("inboundXO", "name", v)}
+                                            onChange={(v) => setFormData(prev =>
+                                                prev ? { ...prev, inboundXO: autoPopulateInboundXODates(prev, v) } : null
+                                            )}
                                         />
+                                        <div className="text-[10px] text-muted-foreground pt-1">
+                                            * Dates auto-fill from Current XO fleet-up when a name is selected.
+                                        </div>
                                     </div>
                                     <div className="grid gap-2">
                                         <Label htmlFor="inboundReport">Report Date</Label>
