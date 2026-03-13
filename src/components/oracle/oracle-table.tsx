@@ -18,6 +18,7 @@ import { FleetUpChecklist } from "./fleet-up-checklist"
 import { Pencil, Search, Plus, ChevronDown, ChevronRight } from "lucide-react"
 import { saveError, notifySuccess } from "@/lib/notify"
 import { CommandPipelineTimeline } from "./command-pipeline-timeline"
+import { CommandMiniTimeline } from "./command-mini-timeline"
 import { Button } from "@/components/ui/button"
 import { formatToMMMyy } from "@/lib/utils"
 import { format, parseISO, isValid } from "date-fns"
@@ -504,7 +505,13 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                                             </Button>
                                         </TableCell>
                                     </TableRow>
-                                    {/* Expandable timeline row */}
+                                    {/* Always-visible mini timeline strip */}
+                                    <TableRow key={cmd.id + "-mini"} className="hover:bg-transparent">
+                                        <TableCell colSpan={7} className="p-0 border-t-0">
+                                            <CommandMiniTimeline command={cmd} />
+                                        </TableCell>
+                                    </TableRow>
+                                    {/* Expandable full timeline row */}
                                     {expandedRows.has(cmd.id) && (
                                         <TableRow key={cmd.id + "-timeline"} className="bg-muted/20 hover:bg-muted/20">
                                             <TableCell colSpan={7} className="p-0 border-t-0">
