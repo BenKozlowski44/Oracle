@@ -19,7 +19,7 @@ import { Pencil, Search, Plus, ChevronDown, ChevronRight } from "lucide-react"
 import { saveError, notifySuccess } from "@/lib/notify"
 import { CommandPipelineTimeline } from "./command-pipeline-timeline"
 import { Button } from "@/components/ui/button"
-import { formatToMMMyy } from "@/lib/utils"
+import { formatToMMMyy, getPipelineHealth } from "@/lib/utils"
 import { format, parseISO, isValid } from "date-fns"
 import { getCommandAlerts } from "@/lib/alerts"
 import {
@@ -435,19 +435,36 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                                             </Button>
                                         </TableCell>
                                         <TableCell className="max-w-[200px] whitespace-normal">
-                                            <div className="font-semibold leading-tight">{cmd.name}</div>
-                                            <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-muted-foreground mt-0.5">
-                                                <span>{cmd.uic !== "N/A" ? cmd.uic : ""}</span>
-                                                {cmd.uic !== "N/A" && <span>•</span>}
-                                                <span className="whitespace-nowrap">
-                                                    {cmd.tags?.includes("CO-SM")
-                                                        ? `${cmd.rotationStyle === "DirectCO" ? "Direct Input" : "Fleet Up"} ${cmd.tourLength ? `• ${cmd.tourLength} mos` : ""}`
-                                                        : (cmd.platform || "N/A")
-                                                    }
-                                                </span>
-                                                <span>•</span>
-                                                <span className="whitespace-nowrap">{cmd.location}</span>
-                                            </div>
+                                            {(() => {
+                                                const health = getPipelineHealth(cmd)
+                                                const dotColor =
+                                                    health.status === 'green' ? 'bg-green-500'
+                                                        : health.status === 'yellow' ? 'bg-amber-400'
+                                                            : 'bg-red-500'
+                                                return (
+                                                    <div className="flex items-start gap-2">
+                                                        <span
+                                                            className={`mt-1.5 flex-shrink-0 w-2 h-2 rounded-full ${dotColor}`}
+                                                            title={`${health.label}: ${health.detail}`}
+                                                        />
+                                                        <div>
+                                                            <div className="font-semibold leading-tight">{cmd.name}</div>
+                                                            <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-muted-foreground mt-0.5">
+                                                                <span>{cmd.uic !== "N/A" ? cmd.uic : ""}</span>
+                                                                {cmd.uic !== "N/A" && <span>•</span>}
+                                                                <span className="whitespace-nowrap">
+                                                                    {cmd.tags?.includes("CO-SM")
+                                                                        ? `${cmd.rotationStyle === "DirectCO" ? "Direct Input" : "Fleet Up"} ${cmd.tourLength ? `• ${cmd.tourLength} mos` : ""}`
+                                                                        : (cmd.platform || "N/A")
+                                                                    }
+                                                                </span>
+                                                                <span>•</span>
+                                                                <span className="whitespace-nowrap">{cmd.location}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )
+                                            })()}
                                         </TableCell>
                                         <TableCell className="max-w-[140px]">
                                             <div className="text-sm font-medium truncate text-blue-600" title={cmd.currentCO.name}>{cmd.currentCO.name}</div>
@@ -489,14 +506,31 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                                             )}
                                         </TableCell>
                                         <TableCell className="max-w-[140px]">
-                                            <Badge variant="outline" className="border-primary text-primary w-full justify-center truncate">
-                                                {cmd.nextSlateParams.requirement} via {cmd.nextSlateParams.targetBoardDate}
-                                            </Badge>
-                                            {cmd.slatedXO && cmd.slatedXO.reportDate && (
-                                                <div className="text-xs text-muted-foreground mt-1 text-center">
-                                                    XO RPT: {formatToMMMyy(cmd.slatedXO.reportDate)}
-                                                </div>
-                                            )}
+                                            {(() => {
+                                                const health = getPipelineHealth(cmd)
+                                                const badgeClass =
+                                                    health.status === 'green'
+                                                        ? 'border-green-500 text-green-600 bg-green-500/10'
+                                                        : health.status === 'yellow'
+                                                            ? 'border-amber-400 text-amber-600 bg-amber-400/10'
+                                                            : 'border-red-500 text-red-600 bg-red-500/10'
+                                                return (
+                                                    <>
+                                                        <Badge
+                                                            variant="outline"
+                                                            className={`w-full justify-center truncate ${badgeClass}`}
+                                                            title={health.detail}
+                                                        >
+                                                            {cmd.nextSlateParams.requirement} via {cmd.nextSlateParams.targetBoardDate}
+                                                        </Badge>
+                                                        {cmd.slatedXO?.reportDate && (
+                                                            <div className="text-xs text-muted-foreground mt-1 text-center">
+                                                                XO RPT: {formatToMMMyy(cmd.slatedXO.reportDate)}
+                                                            </div>
+                                                        )}
+                                                    </>
+                                                )
+                                            })()}
                                         </TableCell>
                                         <TableCell>
                                             <Button variant="ghost" size="icon" onClick={() => handleEditClick(cmd)}>

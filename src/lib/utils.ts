@@ -23,6 +23,65 @@ export function getCurrentActiveSlate(today: Date = new Date()): string {
   return `${yearStr}-${quarter}`;
 }
 
+// Convert a slate code like "26-4" to a monotonic integer for ordering
+function slateToNum(code: string): number {
+  const m = code.match(/^(\d{2})-(\d)$/)
+  if (!m) return 0
+  return (2000 + parseInt(m[1])) * 4 + parseInt(m[2])
+}
+
+export type PipelineStatus = 'green' | 'yellow' | 'red'
+
+export function getPipelineHealth(cmd: OracleCommand): {
+  status: PipelineStatus
+  label: string
+  detail: string
+} {
+  const isPersonName = (n?: string) =>
+    !!n && /[a-zA-Z]{2,}/.test(n) && !/^\d{2}-\d/.test(n)
+
+  const slatedName = cmd.slatedXO?.name?.trim()
+  const targetSlate = cmd.nextSlateParams?.targetBoardDate
+  const currentSlate = getCurrentActiveSlate()
+  const currentNum = slateToNum(currentSlate)
+  const targetNum = targetSlate ? slateToNum(targetSlate) : 0
+  const slateIsPast = targetNum > 0 && targetNum <= currentNum
+
+  // Green: a real officer is already named
+  if (isPersonName(slatedName)) {
+    return {
+      status: 'green',
+      label: 'Healthy',
+      detail: `${slatedName} slated`
+    }
+  }
+
+  // Past or current slate with no named officer — overdue
+  if (slateIsPast) {
+    return {
+      status: 'red',
+      label: 'Overdue',
+      detail: `Slate ${targetSlate} has passed — no officer named for ${cmd.nextSlateParams?.requirement}`
+    }
+  }
+
+  // Slate label present but no real person yet — pending
+  if (slatedName) {
+    return {
+      status: 'yellow',
+      label: 'Pending',
+      detail: `${slatedName} — officer not yet named (Slate ${targetSlate})`
+    }
+  }
+
+  // Nothing at all in the slated slot
+  return {
+    status: 'red',
+    label: 'Unfilled',
+    detail: `No officer or slate code — next ${cmd.nextSlateParams?.requirement} needed via Slate ${targetSlate}`
+  }
+}
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
