@@ -38,8 +38,15 @@ export function getPipelineHealth(cmd: OracleCommand): {
   detail: string
   approaching: boolean  // target slate is exactly one cycle away — act now
 } {
-  const isPersonName = (n?: string) =>
-    !!n && /[a-zA-Z]{2,}/.test(n) && !/^\d{2}-\d/.test(n)
+  const PLACEHOLDERS = new Set([
+    'forecast', 'tbd', 'vacant', 'unknown', 'n/a', 'none', 'open', 'fill', 'placeholder'
+  ])
+  const isPersonName = (n?: string) => {
+    if (!n) return false
+    const lower = n.trim().toLowerCase()
+    if (PLACEHOLDERS.has(lower)) return false
+    return /[a-zA-Z]{2,}/.test(n) && !/^\d{2}-\d/.test(n)
+  }
 
   const slatedName = cmd.slatedXO?.name?.trim()
   const targetSlate = cmd.nextSlateParams?.targetBoardDate

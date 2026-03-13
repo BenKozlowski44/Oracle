@@ -3126,7 +3126,7 @@
     },
     "platform": "DDG",
     "slatedXO": {
-      "name": "Forecast",
+      "name": "",
       "reportDate": "NOV27",
       "timelineData": {
         "i": "NOV27",
@@ -3294,7 +3294,7 @@
     },
     "platform": "DDG",
     "slatedXO": {
-      "name": "Forecast",
+      "name": "",
       "reportDate": "SEP27",
       "timelineData": {
         "i": "SEP27",
@@ -3824,7 +3824,7 @@
     },
     "platform": "DDG",
     "slatedXO": {
-      "name": "Forecast",
+      "name": "",
       "reportDate": "OCT27",
       "timelineData": {
         "i": "OCT27",
