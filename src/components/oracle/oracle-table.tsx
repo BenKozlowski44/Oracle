@@ -133,6 +133,14 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                 const comparison = aValue.localeCompare(bValue);
                 return sortConfig.direction === 'asc' ? comparison : -comparison;
             }
+            if (sortConfig.key === 'health') {
+                // red=0, yellow=1, green=2 — asc puts most urgent (red) first
+                const order = { red: 0, yellow: 1, green: 2 } as const
+                const aH = getPipelineHealth(a).status
+                const bH = getPipelineHealth(b).status
+                const comparison = order[aH] - order[bH]
+                return sortConfig.direction === 'asc' ? comparison : -comparison
+            }
 
             if (aValue < bValue) {
                 return sortConfig.direction === 'asc' ? -1 : 1;
@@ -406,13 +414,16 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                             <TableHead className="cursor-pointer hover:bg-muted/50" onClick={() => requestSort('slate')}>
                                 Slate {sortConfig?.key === 'slate' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
                             </TableHead>
+                            <TableHead className="cursor-pointer hover:bg-muted/50 w-[80px]" onClick={() => requestSort('health')}>
+                                Health {sortConfig?.key === 'health' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                            </TableHead>
                             <TableHead className="w-[50px]"></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {filteredData.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={6} className="h-24 text-center">
+                                <TableCell colSpan={7} className="h-24 text-center">
                                     No commands found in The Oracle.
                                 </TableCell>
                             </TableRow>
@@ -541,7 +552,7 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                                     {/* Expandable full timeline row */}
                                     {expandedRows.has(cmd.id) && (
                                         <TableRow key={cmd.id + "-timeline"} className="bg-muted/20 hover:bg-muted/20">
-                                            <TableCell colSpan={7} className="p-0 border-t-0">
+                                            <TableCell colSpan={8} className="p-0 border-t-0">
                                                 <CommandPipelineTimeline command={cmd} />
                                             </TableCell>
                                         </TableRow>
