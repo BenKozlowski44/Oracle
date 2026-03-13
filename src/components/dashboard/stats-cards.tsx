@@ -61,7 +61,7 @@ export function PipelineHealthCard({ oracleData }: { oracleData: OracleCommand[]
 
     return (
         <Link href="/oracle" className="block rounded-xl border bg-card text-card-foreground shadow p-6 hover:bg-muted/30 transition-colors">
-            <h3 className="tracking-tight text-sm font-medium text-muted-foreground text-center mb-4">Pipeline Health</h3>
+            <h3 className="tracking-tight text-sm font-medium text-muted-foreground text-center mb-4">Command Relief Health</h3>
             <div className="space-y-4">
                 <div>
                     <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mb-2">CDR CMD</p>
