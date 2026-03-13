@@ -36,62 +36,41 @@ export function getPipelineHealth(cmd: OracleCommand): {
   status: PipelineStatus
   label: string
   detail: string
-  approaching: boolean  // target slate is exactly one cycle away — act now
+  approaching: boolean
 } {
-  const PLACEHOLDERS = new Set([
-    'forecast', 'tbd', 'vacant', 'unknown', 'n/a', 'none', 'open', 'fill', 'placeholder'
-  ])
-  const isPersonName = (n?: string) => {
-    if (!n) return false
-    const lower = n.trim().toLowerCase()
-    if (PLACEHOLDERS.has(lower)) return false
-    return /[a-zA-Z]{2,}/.test(n) && !/^\d{2}-\d/.test(n)
-  }
-
-  const slatedName = cmd.slatedXO?.name?.trim()
   const targetSlate = cmd.nextSlateParams?.targetBoardDate
-  const currentSlate = getCurrentActiveSlate()
-  const currentNum = slateToNum(currentSlate)
+  const req = cmd.nextSlateParams?.requirement ?? 'XO'
+  const currentNum = slateToNum(getCurrentActiveSlate())
   const targetNum = targetSlate ? slateToNum(targetSlate) : 0
+  const distance = targetNum - currentNum   // cycles ahead of today
 
-  // Green: a real officer is already named in the slated slot
-  if (isPersonName(slatedName)) {
-    return {
-      status: 'green',
-      label: 'Healthy',
-      detail: `${slatedName} slated`,
-      approaching: false
-    }
-  }
-
-  // Red: the required slate cycle has already passed with no officer named
-  if (targetNum > 0 && targetNum <= currentNum) {
+  // Past or current slate — overdue, needs action immediately
+  if (!targetSlate || targetSlate === 'TBD' || distance <= 0) {
     return {
       status: 'red',
       label: 'Overdue',
-      detail: `Slate ${targetSlate} has passed — no officer named for ${cmd.nextSlateParams?.requirement}`,
+      detail: distance <= 0
+        ? `Slate ${targetSlate} has passed — ${req} slot unfilled`
+        : `No slate target — check pipeline dates`,
       approaching: false
     }
   }
 
-  // Yellow: target slate is still upcoming — needs to be filled at that slate
-  if (targetSlate && targetSlate !== 'TBD') {
-    const approaching = targetNum === currentNum + 1
+  // Next slate — act now before it closes
+  if (distance === 1) {
     return {
       status: 'yellow',
-      label: approaching ? 'Act Now' : 'Pending',
-      detail: approaching
-        ? `⚠️ Next ${cmd.nextSlateParams?.requirement} needed via Slate ${targetSlate} — closing soon!`
-        : `Next ${cmd.nextSlateParams?.requirement} needed via Slate ${targetSlate}`,
-      approaching
+      label: 'Act Now',
+      detail: `⚠️ ${req} needed via Slate ${targetSlate} — closing soon!`,
+      approaching: true
     }
   }
 
-  // Fallback red: no useful slate data at all
+  // 2+ slates ahead — healthy lead time
   return {
-    status: 'red',
-    label: 'Unfilled',
-    detail: `No slate target computed — check pipeline dates`,
+    status: 'green',
+    label: 'Healthy',
+    detail: `${req} needed via Slate ${targetSlate} (${distance} slates ahead)`,
     approaching: false
   }
 }
