@@ -45,9 +45,8 @@ export function getPipelineHealth(cmd: OracleCommand): {
   const currentSlate = getCurrentActiveSlate()
   const currentNum = slateToNum(currentSlate)
   const targetNum = targetSlate ? slateToNum(targetSlate) : 0
-  const slateIsPast = targetNum > 0 && targetNum <= currentNum
 
-  // Green: a real officer is already named
+  // Green: a real officer is already named in the slated slot
   if (isPersonName(slatedName)) {
     return {
       status: 'green',
@@ -56,8 +55,8 @@ export function getPipelineHealth(cmd: OracleCommand): {
     }
   }
 
-  // Past or current slate with no named officer — overdue
-  if (slateIsPast) {
+  // Red: the required slate cycle has already passed with no officer named
+  if (targetNum > 0 && targetNum <= currentNum) {
     return {
       status: 'red',
       label: 'Overdue',
@@ -65,20 +64,20 @@ export function getPipelineHealth(cmd: OracleCommand): {
     }
   }
 
-  // Slate label present but no real person yet — pending
-  if (slatedName) {
+  // Yellow: target slate is still upcoming — needs to be filled at that slate
+  if (targetSlate && targetSlate !== 'TBD') {
     return {
       status: 'yellow',
       label: 'Pending',
-      detail: `${slatedName} — officer not yet named (Slate ${targetSlate})`
+      detail: `Next ${cmd.nextSlateParams?.requirement} needed via Slate ${targetSlate}`
     }
   }
 
-  // Nothing at all in the slated slot
+  // Fallback red: no useful slate data at all
   return {
     status: 'red',
     label: 'Unfilled',
-    detail: `No officer or slate code — next ${cmd.nextSlateParams?.requirement} needed via Slate ${targetSlate}`
+    detail: `No slate target computed — check pipeline dates`
   }
 }
 
