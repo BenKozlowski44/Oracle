@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo, useState, useCallback } from "react"
-import { parseISO, isValid, differenceInDays, format, parse } from "date-fns"
+import { parseISO, isValid, differenceInDays, format, parse, subMonths } from "date-fns"
 import { OracleCommand } from "@/lib/types"
 
 // ── Date parsing ───────────────────────────────────────────────────────────────
@@ -55,13 +55,16 @@ export function CommandPipelineTimeline({ command: cmd }: Props) {
         return slots
             .filter(({ slot }) => !!slot?.name?.trim() && isPersonName(slot.name))
             .map(({ slot, isForecast }) => {
-                // Use timelineData.i as primary; fall back to reportDate so the
-                // green XO bar renders even when only reportDate is populated
+                // Use timelineData.i first; fall back to reportDate;
+                // last resort: estimate backwards from coc for fleet-up forecast officers
                 const reportDate = 'reportDate' in slot! ? (slot as { reportDate: string }).reportDate : undefined
-                const xoStart = parseDate(slot!.timelineData?.i) ?? parseDate(reportDate)
+                const rawXoStart = parseDate(slot!.timelineData?.i) ?? parseDate(reportDate)
                 const fleetUp = parseDate(slot!.timelineData?.k)
                 const coc = parseDate(slot!.timelineData?.m)
                 const coPrd = parseDate(slot!.timelineData?.q)
+                const tourLen = cmd.tourLength || 18
+                // Estimate xoStart = coc - (tourLen + 2 months) when no direct date available
+                const xoStart = rawXoStart ?? (coc && !isDirectCO ? subMonths(coc, tourLen + 2) : null)
                 const isOnboard = !isForecast && (
                     (xoStart && xoStart <= now && (!fleetUp || fleetUp >= now)) ||
                     (coc && coc <= now && (!coPrd || coPrd >= now))
@@ -225,14 +228,14 @@ export function CommandPipelineTimeline({ command: cmd }: Props) {
                                     // Segment spans today → officer is currently in this role
                                     const isActive = !!(phase.start && phase.start <= today && (!phase.end || phase.end >= today))
 
-                                    // Show name on the ACTIVE segment (spans today); for forecast officers, show on
-                                    // first segment (XO bar — where they currently are); for fully-past, show on last.
+                                    // Show name on the ACTIVE segment (spans today); for forecast officers,
+                                    // show on the XO (green) bar specifically; for fully-past, show on last.
                                     const anyActive = phases.some(p => p.start && p.start <= today && (!p.end || p.end >= today))
                                     const showName = anyActive
                                         ? isActive
                                         : row.isForecast
-                                            ? pi === 0               // forecast: name on green XO bar
-                                            : pi === phases.length - 1 // past: name on most-recent bar
+                                            ? phase.phaseLabel === 'XO'      // forecast: name always on green XO bar
+                                            : pi === phases.length - 1        // past: name on most-recent bar
 
                                     return (
                                         <div
