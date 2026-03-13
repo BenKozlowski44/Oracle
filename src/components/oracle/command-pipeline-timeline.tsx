@@ -55,7 +55,10 @@ export function CommandPipelineTimeline({ command: cmd }: Props) {
         return slots
             .filter(({ slot }) => !!slot?.name?.trim() && isPersonName(slot.name))
             .map(({ slot, isForecast }) => {
-                const xoStart = parseDate(slot!.timelineData?.i)
+                // Use timelineData.i as primary; fall back to reportDate so the
+                // green XO bar renders even when only reportDate is populated
+                const reportDate = 'reportDate' in slot! ? (slot as { reportDate: string }).reportDate : undefined
+                const xoStart = parseDate(slot!.timelineData?.i) ?? parseDate(reportDate)
                 const fleetUp = parseDate(slot!.timelineData?.k)
                 const coc = parseDate(slot!.timelineData?.m)
                 const coPrd = parseDate(slot!.timelineData?.q)
