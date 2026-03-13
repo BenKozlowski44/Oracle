@@ -62,10 +62,21 @@ export function CommandPipelineTimeline({ command: cmd }: Props) {
             }))
     }, [cmd])
 
+    // ── Next fill anchor ─────────────────────────────────────────────────────
+    // The next open XO slot begins when the last pipeline person fleets up
+    const nextFillStart = useMemo<Date | null>(() => {
+        const fleetUpDates = rows
+            .map(r => r.fleetUp)
+            .filter((d): d is Date => d !== null)
+        if (fleetUpDates.length === 0) return null
+        return new Date(Math.max(...fleetUpDates.map(d => d.getTime())))
+    }, [rows])
+
     // ── Compute global time range ──────────────────────────────────────────────
     const allDates = [
         today,
         ...rows.flatMap(r => [r.xoStart, r.fleetUp, r.coc, r.coPrd]),
+        nextFillStart,
     ].filter((d): d is Date => d !== null)
 
     if (rows.length === 0 || allDates.length <= 1) {
@@ -139,6 +150,17 @@ export function CommandPipelineTimeline({ command: cmd }: Props) {
                             </span>
                         </div>
                     ))}
+                    {/* TBD next fill label */}
+                    {nextFillStart && cmd.nextSlateParams && (
+                        <div
+                            className="flex items-center justify-end pr-3 text-[11px] font-semibold leading-tight text-right"
+                            style={{ height: ROW_H }}
+                        >
+                            <span className="text-muted-foreground/70 italic">
+                                TBD — {cmd.nextSlateParams.requirement} Slate {cmd.nextSlateParams.targetBoardDate}
+                            </span>
+                        </div>
+                    )}
                     {/* Axis spacer */}
                     <div style={{ height: 28 }} />
                 </div>
@@ -228,6 +250,45 @@ export function CommandPipelineTimeline({ command: cmd }: Props) {
                         )
                     })}
 
+                    {/* TBD next fill row */}
+                    {nextFillStart && cmd.nextSlateParams && (() => {
+                        const s = pct(nextFillStart)
+                        return (
+                            <div className="relative border-b border-muted/30" style={{ height: ROW_H }}>
+                                <div className="absolute inset-x-0 top-1/2 h-px bg-muted/50" />
+                                <div
+                                    className="absolute top-0 bottom-0 w-px bg-primary/60 z-20 pointer-events-none"
+                                    style={{ left: `${todayPct}%` }}
+                                />
+                                {/* Open-right dashed bar */}
+                                <div
+                                    className="absolute z-10 flex items-center overflow-hidden"
+                                    style={{
+                                        left: `${s}%`,
+                                        right: 0,
+                                        height: BAR_H,
+                                        top: `calc(50% - ${BAR_H / 2}px)`,
+                                        borderRadius: "4px 0 0 4px",
+                                        background: "repeating-linear-gradient(90deg, hsl(var(--muted)) 0px, hsl(var(--muted)) 6px, transparent 6px, transparent 12px)",
+                                        border: "1.5px dashed hsl(var(--muted-foreground) / 0.35)",
+                                    }}
+                                    title={`Next ${cmd.nextSlateParams.requirement} needed — Slate ${cmd.nextSlateParams.targetBoardDate}`}
+                                >
+                                    <span className="px-2 text-[11px] text-muted-foreground font-semibold truncate leading-none">
+                                        Next {cmd.nextSlateParams.requirement} — Slate {cmd.nextSlateParams.targetBoardDate}
+                                    </span>
+                                </div>
+                                {/* Start date tick */}
+                                <span
+                                    className="absolute bottom-1 text-[9px] text-muted-foreground font-mono whitespace-nowrap"
+                                    style={{ left: `${s}%`, transform: "translateX(-50%)" }}
+                                >
+                                    {fmtDate(nextFillStart)}
+                                </span>
+                            </div>
+                        )
+                    })()}
+
                     {/* Time axis */}
                     <div className="relative h-7 border-t border-muted/60">
                         {/* Today marker */}
@@ -259,6 +320,7 @@ export function CommandPipelineTimeline({ command: cmd }: Props) {
                     { color: "bg-green-500", label: "XO Tour" },
                     { color: "bg-sky-400", label: "Turnover (P-CO)" },
                     { color: "bg-blue-700", label: "CO Tour" },
+                    { color: "bg-muted", label: "Next Req (TBD)" },
                 ].filter(({ label }) => !isDirectCO || !label.startsWith("XO"))
                     .map(({ color, label }) => (
                         <div key={label} className="flex items-center gap-1.5">
