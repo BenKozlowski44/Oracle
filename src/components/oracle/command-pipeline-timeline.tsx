@@ -207,8 +207,9 @@ export function CommandPipelineTimeline({ command: cmd }: Props) {
                                     // Segment spans today → officer is currently in this role
                                     const isActive = !!(phase.start && phase.start <= today && (!phase.end || phase.end >= today))
 
-                                    // Label: only show name on first phase segment
-                                    const showName = pi === 0
+                                    // Show name on the ACTIVE segment (spans today); for fully-past rows, show on last segment
+                                    const anyActive = phases.some(p => p.start && p.start <= today && (!p.end || p.end >= today))
+                                    const showName = anyActive ? isActive : (pi === phases.length - 1)
 
                                     return (
                                         <div
