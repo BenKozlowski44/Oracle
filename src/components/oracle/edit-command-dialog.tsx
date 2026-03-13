@@ -69,7 +69,9 @@ export function EditCommandDialog({
             }
         }
     }, [
+        formData?.slatedXO?.name,
         formData?.slatedXO?.reportDate,
+        formData?.slatedXO?.timelineData?.k,
         formData?.inboundXO?.reportDate,
         formData?.currentXO?.prd,
         formData?.currentCO?.prd

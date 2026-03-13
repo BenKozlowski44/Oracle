@@ -140,8 +140,17 @@ export function predictNextVacancyDate(command: OracleCommand): string {
 
     } else {
       // SAFE PIPELINE: Inbound XO is filled. The *next* hole is the Slated XO.
-      // 1. If explicit forecast available:
-      if (isFilled(command.slatedXO?.reportDate)) {
+      // If the slated XO is a real named officer (not just a slate label like "26-3"),
+      // look PAST them to their fleet-up date — that's when the next hole opens.
+      const slatedName = command.slatedXO?.name || "";
+      const slatedIsRealPerson = /[a-zA-Z]{2,}/.test(slatedName) && !slatedName.match(/^\d{2}-\d/);
+      const slatedFleetUp = command.slatedXO?.timelineData?.k;
+
+      if (slatedIsRealPerson && isFilled(slatedFleetUp ?? undefined)) {
+        // Named officer slated — next hole opens when they fleet up
+        baseDate = parseAnyDate(slatedFleetUp ?? undefined);
+      } else if (isFilled(command.slatedXO?.reportDate)) {
+        // Slate label or no fleet-up data — use report date as before
         baseDate = parseAnyDate(command.slatedXO!.reportDate);
       }
 
@@ -149,7 +158,6 @@ export function predictNextVacancyDate(command: OracleCommand): string {
       if (!baseDate && isFilled(command.inboundXO?.reportDate)) {
         const inboundArrival = parseAnyDate(command.inboundXO!.reportDate);
         if (inboundArrival) {
-          // The vacancy opens approximately 18 months after the Inbound XO arrives (CO fleet up cycle)
           baseDate = addMonths(inboundArrival, 18);
         }
       }
