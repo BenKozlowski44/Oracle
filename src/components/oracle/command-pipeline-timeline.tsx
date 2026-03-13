@@ -26,6 +26,7 @@ function fmtDate(d: Date): string {
 interface OfficerRow {
     name: string
     isForecast: boolean
+    isOnboard: boolean   // a phase bar for this officer spans today
     // Phase dates
     xoStart: Date | null  // i — start of XO tour
     fleetUp: Date | null  // k — end of XO / start of P-CO
@@ -50,16 +51,20 @@ export function CommandPipelineTimeline({ command: cmd }: Props) {
             { slot: cmd.slatedXO, isForecast: true },
         ]
 
+        const now = new Date()
         return slots
             .filter(({ slot }) => !!slot?.name?.trim() && isPersonName(slot.name))
-            .map(({ slot, isForecast }) => ({
-                name: slot!.name,
-                isForecast,
-                xoStart: parseDate(slot!.timelineData?.i),
-                fleetUp: parseDate(slot!.timelineData?.k),
-                coc: parseDate(slot!.timelineData?.m),
-                coPrd: parseDate(slot!.timelineData?.q),
-            }))
+            .map(({ slot, isForecast }) => {
+                const xoStart = parseDate(slot!.timelineData?.i)
+                const fleetUp = parseDate(slot!.timelineData?.k)
+                const coc = parseDate(slot!.timelineData?.m)
+                const coPrd = parseDate(slot!.timelineData?.q)
+                const isOnboard = !isForecast && (
+                    (xoStart && xoStart <= now && (!fleetUp || fleetUp >= now)) ||
+                    (coc && coc <= now && (!coPrd || coPrd >= now))
+                )
+                return { name: slot!.name, isForecast, isOnboard: !!isOnboard, xoStart, fleetUp, coc, coPrd }
+            })
     }, [cmd])
 
     // ── Next fill anchor ─────────────────────────────────────────────────────
@@ -142,9 +147,16 @@ export function CommandPipelineTimeline({ command: cmd }: Props) {
                             style={{ height: ROW_H }}
                         >
                             <span
-                                className={row.isForecast
-                                    ? "text-muted-foreground italic"
-                                    : "text-foreground"}
+                                className={
+                                    row.isForecast
+                                        ? "text-muted-foreground italic"
+                                        : row.isOnboard
+                                            // CO phase active → blue-500; XO phase active → green-600
+                                            ? (row.coc && row.coc <= today)
+                                                ? "text-blue-500 font-bold text-[12px]"
+                                                : "text-green-600 font-bold text-[12px]"
+                                            : "text-foreground"
+                                }
                             >
                                 {row.name}
                             </span>
