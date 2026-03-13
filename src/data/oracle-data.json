@@ -725,13 +725,13 @@
       "prd": "",
       "timelineData": {
         "i": "2024-08-24",
-        "k": "2026-04-24",
+        "k": "MAR26",
         "m": "2026-05-24",
         "q": "2027-11-24"
       }
     },
     "nextSlateParams": {
-      "targetBoardDate": "26-2",
+      "targetBoardDate": "28-1",
       "requirement": "XO"
     },
     "timeline": {
@@ -742,20 +742,30 @@
     },
     "platform": "DDG",
     "slatedXO": {
-      "name": "26-3",
-      "reportDate": "2027-09-01",
+      "name": "Forecast",
+      "reportDate": "SEP27",
       "timelineData": {
-        "i": "2027-09-01",
-        "k": "2029-03-01",
-        "m": "2029-05-01",
-        "q": "2030-11-01"
+        "i": "SEP27",
+        "k": "MAR29",
+        "m": "MAY29",
+        "q": "NOV30"
       }
     },
     "prospectiveCO": {
       "name": "",
       "prd": ""
     },
-    "hullNumber": "64"
+    "hullNumber": "64",
+    "inboundXO": {
+      "name": "SEIBEL DAVID CHRISTOPH",
+      "reportDate": "MAR26",
+      "timelineData": {
+        "i": "MAR26",
+        "k": "SEP27",
+        "m": "NOV27",
+        "q": "MAY29"
+      }
+    }
   },
   {
     "id": "cmd_15",
@@ -2092,7 +2102,7 @@
         "i": "2023-03-01",
         "k": "2024-07-01",
         "m": "2024-09-01",
-        "q": "2026-03-01"
+        "q": "APR26"
       }
     },
     "currentXO": {
@@ -2100,8 +2110,8 @@
       "prd": "2025-11-01",
       "timelineData": {
         "i": "2024-07-01",
-        "k": "2025-12-01",
-        "m": "2026-03-01",
+        "k": "NOV25",
+        "m": "APR26",
         "q": "2027-09-01"
       }
     },
@@ -2110,13 +2120,13 @@
       "reportDate": "2025-11-25",
       "timelineData": {
         "i": "2025-11-25",
-        "k": "2027-03-25",
-        "m": "2027-05-25",
-        "q": "2028-11-25"
+        "k": "JUL27",
+        "m": "SEP27",
+        "q": "MAR29"
       }
     },
     "nextSlateParams": {
-      "targetBoardDate": "26-2",
+      "targetBoardDate": "27-4",
       "requirement": "XO"
     },
     "timeline": {
@@ -2127,13 +2137,13 @@
     },
     "platform": "DDG",
     "slatedXO": {
-      "name": "Forecast",
-      "reportDate": "MAY27",
+      "name": "MAHER MYRON JAMES KELL III",
+      "reportDate": "JUL27",
       "timelineData": {
-        "i": "MAY27",
-        "k": "NOV28",
-        "m": "JAN29",
-        "q": "JUL30"
+        "i": "JUL27",
+        "k": "JAN29",
+        "m": "MAR29",
+        "q": "SEP30"
       }
     },
     "hullNumber": "72"
@@ -5820,7 +5830,7 @@
       "name": "YOUNT BRET ALLEN",
       "prd": "2027-09-25",
       "timelineData": {
-        "i": "2026-04-25",
+        "i": "APR26",
         "k": "2027-10-25",
         "m": "2027-12-25",
         "q": "2029-06-25"
@@ -5849,7 +5859,7 @@
     },
     "inboundXO": {
       "name": "",
-      "reportDate": "APR27",
+      "reportDate": "",
       "timelineData": {
         "i": "APR27",
         "k": "OCT28",

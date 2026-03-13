@@ -3,6 +3,8 @@
 import { Officer, Billet, OracleCommand, Metrics } from "@/lib/types"
 import { getAllAlerts, getAllPersonnelAlerts } from "@/lib/alerts"
 import { isFirefighter } from "@/lib/officer-utils"
+import { getPipelineHealth } from "@/lib/utils"
+import Link from "next/link"
 
 export function CommandInventoryCard({ oracleData }: { oracleData: OracleCommand[] }) {
     return (
@@ -21,6 +23,59 @@ export function CommandInventoryCard({ oracleData }: { oracleData: OracleCommand
                 </div>
             </div>
         </div>
+    )
+}
+
+export function PipelineHealthCard({ oracleData }: { oracleData: OracleCommand[] }) {
+    const counts = oracleData.reduce(
+        (acc, cmd) => {
+            const { status } = getPipelineHealth(cmd)
+            acc[status]++
+            return acc
+        },
+        { green: 0, yellow: 0, red: 0 }
+    )
+    const total = oracleData.length || 1
+
+    return (
+        <Link href="/oracle" className="block rounded-xl border bg-card text-card-foreground shadow p-6 hover:bg-muted/30 transition-colors">
+            <h3 className="tracking-tight text-sm font-medium text-muted-foreground text-center mb-3">Pipeline Health</h3>
+            <div className="flex justify-between items-center gap-3">
+                {/* Red */}
+                <div className="flex-1 flex flex-col items-center gap-1">
+                    <div className="flex items-center gap-1.5">
+                        <span className="w-2.5 h-2.5 rounded-full bg-red-500 flex-shrink-0" />
+                        <span className="text-2xl font-bold text-red-600">{counts.red}</span>
+                    </div>
+                    <span className="text-[10px] text-muted-foreground uppercase tracking-wide">Overdue</span>
+                    <div className="w-full h-1 rounded-full bg-muted overflow-hidden">
+                        <div className="h-full bg-red-500 rounded-full" style={{ width: `${(counts.red / total) * 100}%` }} />
+                    </div>
+                </div>
+                {/* Yellow */}
+                <div className="flex-1 flex flex-col items-center gap-1">
+                    <div className="flex items-center gap-1.5">
+                        <span className="w-2.5 h-2.5 rounded-full bg-amber-400 flex-shrink-0" />
+                        <span className="text-2xl font-bold text-amber-600">{counts.yellow}</span>
+                    </div>
+                    <span className="text-[10px] text-muted-foreground uppercase tracking-wide">Act Now</span>
+                    <div className="w-full h-1 rounded-full bg-muted overflow-hidden">
+                        <div className="h-full bg-amber-400 rounded-full" style={{ width: `${(counts.yellow / total) * 100}%` }} />
+                    </div>
+                </div>
+                {/* Green */}
+                <div className="flex-1 flex flex-col items-center gap-1">
+                    <div className="flex items-center gap-1.5">
+                        <span className="w-2.5 h-2.5 rounded-full bg-green-500 flex-shrink-0" />
+                        <span className="text-2xl font-bold text-green-600">{counts.green}</span>
+                    </div>
+                    <span className="text-[10px] text-muted-foreground uppercase tracking-wide">Healthy</span>
+                    <div className="w-full h-1 rounded-full bg-muted overflow-hidden">
+                        <div className="h-full bg-green-500 rounded-full" style={{ width: `${(counts.green / total) * 100}%` }} />
+                    </div>
+                </div>
+            </div>
+        </Link>
     )
 }
 
