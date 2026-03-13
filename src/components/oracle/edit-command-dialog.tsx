@@ -249,7 +249,7 @@ export function EditCommandDialog({
                         Make changes to the command details, incumbents, and succession plan.
                     </DialogDescription>
                 </DialogHeader>
-                <form onSubmit={handleSubmit} className="grid gap-6 py-4">
+                <form onSubmit={handleSubmit} className="grid gap-6 py-4" autoComplete="off">
 
                     {/* Timeline Visualization */}
                     {formData && (
