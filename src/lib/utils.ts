@@ -36,6 +36,7 @@ export function getPipelineHealth(cmd: OracleCommand): {
   status: PipelineStatus
   label: string
   detail: string
+  approaching: boolean  // target slate is exactly one cycle away — act now
 } {
   const isPersonName = (n?: string) =>
     !!n && /[a-zA-Z]{2,}/.test(n) && !/^\d{2}-\d/.test(n)
@@ -51,7 +52,8 @@ export function getPipelineHealth(cmd: OracleCommand): {
     return {
       status: 'green',
       label: 'Healthy',
-      detail: `${slatedName} slated`
+      detail: `${slatedName} slated`,
+      approaching: false
     }
   }
 
@@ -60,16 +62,21 @@ export function getPipelineHealth(cmd: OracleCommand): {
     return {
       status: 'red',
       label: 'Overdue',
-      detail: `Slate ${targetSlate} has passed — no officer named for ${cmd.nextSlateParams?.requirement}`
+      detail: `Slate ${targetSlate} has passed — no officer named for ${cmd.nextSlateParams?.requirement}`,
+      approaching: false
     }
   }
 
   // Yellow: target slate is still upcoming — needs to be filled at that slate
   if (targetSlate && targetSlate !== 'TBD') {
+    const approaching = targetNum === currentNum + 1
     return {
       status: 'yellow',
-      label: 'Pending',
-      detail: `Next ${cmd.nextSlateParams?.requirement} needed via Slate ${targetSlate}`
+      label: approaching ? 'Act Now' : 'Pending',
+      detail: approaching
+        ? `⚠️ Next ${cmd.nextSlateParams?.requirement} needed via Slate ${targetSlate} — closing soon!`
+        : `Next ${cmd.nextSlateParams?.requirement} needed via Slate ${targetSlate}`,
+      approaching
     }
   }
 
@@ -77,7 +84,8 @@ export function getPipelineHealth(cmd: OracleCommand): {
   return {
     status: 'red',
     label: 'Unfilled',
-    detail: `No slate target computed — check pipeline dates`
+    detail: `No slate target computed — check pipeline dates`,
+    approaching: false
   }
 }
 

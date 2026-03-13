@@ -454,7 +454,7 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                                                 return (
                                                     <div className="flex items-start gap-2">
                                                         <span
-                                                            className={`mt-1.5 flex-shrink-0 w-2 h-2 rounded-full ${dotColor}`}
+                                                            className={`mt-1.5 flex-shrink-0 w-2 h-2 rounded-full ${dotColor} ${health.approaching ? 'animate-pulse ring-2 ring-amber-400/50 ring-offset-1' : ''}`}
                                                             title={`${health.label}: ${health.detail}`}
                                                         />
                                                         <div>
