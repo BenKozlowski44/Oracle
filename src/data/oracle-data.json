@@ -6449,7 +6449,14 @@
         "q": "APR31"
       }
     },
-    "hullNumber": "115"
+    "hullNumber": "115",
+    "fleetUpProgress": {
+      "isic": false,
+      "tycom": false,
+      "pco": true,
+      "orders": false,
+      "coc": false
+    }
   },
   {
     "id": "cmd_129",
