@@ -533,10 +533,10 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                                                     <>
                                                         <Badge
                                                             variant="outline"
-                                                            className={`w-full justify-center truncate ${badgeClass}`}
+                                                            className={`w-full justify-center truncate ${badgeClass} ${health.approaching ? 'animate-pulse ring-2 ring-amber-400/60 ring-offset-1 bg-amber-400/20 font-bold' : ''}`}
                                                             title={health.detail}
                                                         >
-                                                            {cmd.nextSlateParams.requirement} via {cmd.nextSlateParams.targetBoardDate}
+                                                            {health.approaching && '⚠ '}{cmd.nextSlateParams.requirement} via {cmd.nextSlateParams.targetBoardDate}
                                                         </Badge>
                                                         {cmd.slatedXO?.reportDate && (
                                                             <div className="text-xs text-muted-foreground mt-1 text-center">
