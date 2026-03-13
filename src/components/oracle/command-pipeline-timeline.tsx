@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo } from "react"
+import { useMemo, useState, useCallback } from "react"
 import { parseISO, isValid, differenceInDays, format, parse } from "date-fns"
 import { OracleCommand } from "@/lib/types"
 
@@ -106,6 +106,21 @@ export function CommandPipelineTimeline({ command: cmd }: Props) {
     const ROW_H = 38
     const BAR_H = 22
 
+    // ── Tooltip state ─────────────────────────────────────────────────────────
+    const [tooltip, setTooltip] = useState<{
+        x: number; y: number
+        name: string; phase: string
+        start: Date | null; end: Date | null
+    } | null>(null)
+
+    const showTooltip = useCallback((e: React.MouseEvent, name: string, phase: string, start: Date | null, end: Date | null) => {
+        const rect = (e.currentTarget.closest('.timeline-chart') as HTMLElement)?.getBoundingClientRect()
+        if (!rect) return
+        setTooltip({ x: e.clientX - rect.left, y: e.clientY - rect.top, name, phase, start, end })
+    }, [])
+
+    const hideTooltip = useCallback(() => setTooltip(null), [])
+
     // Phases for each officer: [start, end, color, textColor, label]
     const getPhases = (row: OfficerRow) => {
         const phases: { start: Date | null; end: Date | null; color: string; text: string; phaseLabel: string }[] = []
@@ -178,7 +193,7 @@ export function CommandPipelineTimeline({ command: cmd }: Props) {
                 </div>
 
                 {/* Chart area */}
-                <div className="relative flex-1 min-w-0">
+                <div className="relative flex-1 min-w-0 timeline-chart">
                     {rows.map((row, ri) => {
                         const phases = getPhases(row)
                         return (
@@ -238,7 +253,9 @@ export function CommandPipelineTimeline({ command: cmd }: Props) {
                                                     : "none",
                                                 outlineOffset: "-2px",
                                             }}
-                                            title={`${phase.phaseLabel}: ${fmtDate(phase.start)}${phase.end ? " → " + fmtDate(phase.end) : " → ongoing"}`}
+                                            title={undefined}
+                                            onMouseMove={(e) => showTooltip(e, row.name, phase.phaseLabel, phase.start, phase.end)}
+                                            onMouseLeave={hideTooltip}
                                         >
                                             {showName && (
                                                 <span className={`px-2 text-[11px] font-semibold truncate leading-none ${phase.text}`}>
@@ -310,7 +327,40 @@ export function CommandPipelineTimeline({ command: cmd }: Props) {
                         )
                     })()}
 
+                    {/* Floating tooltip */}
+                    {tooltip && (
+                        <div
+                            className="absolute z-50 pointer-events-none"
+                            style={{
+                                left: tooltip.x + 14,
+                                top: tooltip.y - 10,
+                                transform: tooltip.x > 60 ? "translateX(-100%) translateX(-28px)" : undefined,
+                            }}
+                        >
+                            <div className="bg-popover border border-border rounded-lg shadow-xl px-3 py-2.5 min-w-max">
+                                {/* Phase badge */}
+                                <div className="flex items-center gap-2 mb-1">
+                                    <span className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-sm
+                                        ${tooltip.phase === "CO" ? "bg-blue-500 text-white"
+                                            : tooltip.phase === "P-CO" ? "bg-sky-400 text-sky-900"
+                                                : tooltip.phase === "XO" ? "bg-green-500 text-white"
+                                                    : "bg-muted text-muted-foreground"}`}
+                                    >
+                                        {tooltip.phase}
+                                    </span>
+                                </div>
+                                {/* Name */}
+                                <p className="text-sm font-semibold text-foreground leading-tight">{tooltip.name}</p>
+                                {/* Date range */}
+                                <p className="text-[11px] text-muted-foreground mt-1 font-mono">
+                                    {tooltip.start ? fmtDate(tooltip.start) : "?"} → {tooltip.end ? fmtDate(tooltip.end) : "ongoing"}
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Time axis */}
+
                     <div className="relative h-7 border-t border-muted/60">
                         {/* Today marker */}
                         <div
