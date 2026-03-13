@@ -7,10 +7,8 @@ import { OracleCommand } from "@/lib/types"
 // ── Date parsing ───────────────────────────────────────────────────────────────
 function parseDate(str?: string | null): Date | null {
     if (!str || ["N/A", "TBD", "Unknown", "VACANT", ""].includes(str)) return null
-    // Try ISO first (2024-09-01)
     const iso = parseISO(str)
     if (isValid(iso)) return iso
-    // Try MMMyy (JUN26) or MMMMyy
     for (const fmt of ["MMMyy", "MMMMyy", "MMM yy", "MMM yyyy"]) {
         try {
             const d = parse(str, fmt, new Date())
@@ -25,49 +23,14 @@ function fmtDate(d: Date): string {
 }
 
 // ── Types ──────────────────────────────────────────────────────────────────────
-interface OfficerSpan {
+interface OfficerRow {
     name: string
-    start: Date | null
-    end: Date | null
-    isPast: boolean
     isForecast: boolean
-}
-
-interface Lane {
-    role: string
-    color: string        // Tailwind bg class
-    textColor: string    // Tailwind text class
-    spans: OfficerSpan[]
-}
-
-interface PersonSlot {
-    name: string
-    reportDate?: string
-    timelineData?: {
-        i?: string | null  // XO Report date
-        k?: string | null  // XO Fleet-Up date
-        m?: string | null  // CoC date
-        q?: string | null  // CO PRD
-    }
-}
-
-// ── Helpers ────────────────────────────────────────────────────────────────────
-function makeSpan(
-    name: string,
-    start: Date | null,
-    end: Date | null,
-    today: Date,
-    isForecast = false
-): OfficerSpan | null {
-    // Need at least one anchor date and a real name
-    if (!name?.trim() || name === "— Open —") return null
-    return {
-        name,
-        start,
-        end,
-        isPast: !!(end && end < today),
-        isForecast,
-    }
+    // Phase dates
+    xoStart: Date | null  // i — start of XO tour
+    fleetUp: Date | null  // k — end of XO / start of P-CO
+    coc: Date | null  // m — end of P-CO / start of CO
+    coPrd: Date | null  // q — end of CO tour
 }
 
 // ── Component ──────────────────────────────────────────────────────────────────
@@ -76,115 +39,39 @@ interface Props { command: OracleCommand }
 export function CommandPipelineTimeline({ command: cmd }: Props) {
     const today = useMemo(() => new Date(), [])
     const isDirectCO = cmd.rotationStyle === "DirectCO"
-
-    // Build the slot list
-    const slots: PersonSlot[] = [
-        cmd.currentCO,
-        cmd.currentXO,
-        cmd.inboundXO,
-        cmd.slatedXO,
-    ].filter((s): s is NonNullable<typeof s> => !!s && !!s.name?.trim()) as PersonSlot[]
-
-    // Check for names that are really slate labels not persons (e.g., "26-3")
     const isPersonName = (name: string) => /[a-zA-Z]{2,}/.test(name)
 
-    // ── Build lanes ────────────────────────────────────────────────────────────
-    const coLane: Lane = {
-        role: "CO",
-        color: "bg-blue-600",
-        textColor: "text-white",
-        spans: slots
-            .filter(s => isPersonName(s.name))
-            .map(s => makeSpan(
-                s.name,
-                parseDate(s.timelineData?.m),
-                parseDate(s.timelineData?.q),
-                today,
-            ))
-            .filter((s): s is OfficerSpan => s !== null),
-    }
+    // Build one row per officer in the pipeline
+    const rows = useMemo<OfficerRow[]>(() => {
+        const slots = [
+            { slot: cmd.currentCO, isForecast: false },
+            { slot: cmd.currentXO, isForecast: false },
+            { slot: cmd.inboundXO, isForecast: true },
+            { slot: cmd.slatedXO, isForecast: true },
+        ]
 
-    const pceLane: Lane = {
-        role: "P-CO",
-        color: "bg-sky-400",
-        textColor: "text-sky-900",
-        spans: slots
-            .filter(s => isPersonName(s.name))
-            .map(s => makeSpan(
-                s.name,
-                parseDate(s.timelineData?.k),
-                parseDate(s.timelineData?.m),
-                today,
-            ))
-            .filter((s): s is OfficerSpan => s !== null),
-    }
+        return slots
+            .filter(({ slot }) => !!slot?.name?.trim() && isPersonName(slot.name))
+            .map(({ slot, isForecast }) => ({
+                name: slot!.name,
+                isForecast,
+                xoStart: parseDate(slot!.timelineData?.i),
+                fleetUp: parseDate(slot!.timelineData?.k),
+                coc: parseDate(slot!.timelineData?.m),
+                coPrd: parseDate(slot!.timelineData?.q),
+            }))
+    }, [cmd])
 
-    const xoLane: Lane = {
-        role: "XO",
-        color: "bg-green-500",
-        textColor: "text-white",
-        spans: slots
-            .filter(s => isPersonName(s.name))
-            .map(s => makeSpan(
-                s.name,
-                parseDate(s.timelineData?.i ?? (s as any).reportDate),
-                parseDate(s.timelineData?.k),
-                today,
-            ))
-            .filter((s): s is OfficerSpan => s !== null),
-    }
+    // ── Compute global time range ──────────────────────────────────────────────
+    const allDates = [
+        today,
+        ...rows.flatMap(r => [r.xoStart, r.fleetUp, r.coc, r.coPrd]),
+    ].filter((d): d is Date => d !== null)
 
-    // P-XO: only the inboundXO slot (report date → XO start)
-    const inboundReport = parseDate((cmd.inboundXO as any)?.reportDate)
-    const inboundXOStart = parseDate(cmd.inboundXO?.timelineData?.i)
-    const pxoLane: Lane = {
-        role: "P-XO",
-        color: "bg-amber-400",
-        textColor: "text-amber-900",
-        spans: cmd.inboundXO?.name && isPersonName(cmd.inboundXO.name)
-            ? [makeSpan(
-                cmd.inboundXO.name,
-                inboundReport,
-                inboundXOStart && inboundReport && differenceInDays(inboundXOStart, inboundReport) > 7
-                    ? inboundXOStart
-                    : null,   // same date → no visible P-XO bar
-                today,
-                true,
-            )].filter((s): s is OfficerSpan => s !== null)
-            : [],
-    }
-
-    // Slated: slate name (may be a label like "26-3" or a real person)
-    const slatedLane: Lane = {
-        role: "Slated",
-        color: "bg-gray-300 dark:bg-gray-600",
-        textColor: "text-gray-700 dark:text-gray-100",
-        spans: cmd.slatedXO?.name
-            ? [makeSpan(
-                cmd.slatedXO.name,
-                parseDate((cmd.slatedXO as any).reportDate),
-                null,
-                today,
-                true,
-            )].filter((s): s is OfficerSpan => s !== null)
-            : [],
-    }
-
-    // DirectCO only shows CO + P-CO
-    const lanes = isDirectCO
-        ? [coLane, pceLane]
-        : [coLane, pceLane, xoLane, pxoLane, slatedLane]
-            .filter(l => l.spans.length > 0)
-
-    // ── Compute time range ─────────────────────────────────────────────────────
-    const allDates = lanes.flatMap(l => l.spans.flatMap(s => [s.start, s.end]))
-        .filter((d): d is Date => d !== null)
-    allDates.push(today)
-
-    if (allDates.length === 1) {
+    if (rows.length === 0 || allDates.length <= 1) {
         return (
             <div className="px-6 py-4 text-sm text-muted-foreground italic">
-                No timeline date data available for this command.
+                No timeline data available for this command.
             </div>
         )
     }
@@ -199,154 +86,186 @@ export function CommandPipelineTimeline({ command: cmd }: Props) {
         Math.max(0, Math.min(100, (differenceInDays(d, rangeStart) / totalDays) * 100))
 
     const todayPct = pct(today)
-    const LANE_H = 36
-    const LABEL_W = 58
+    const NAME_W = 160  // px for name labels
+    const ROW_H = 38
+    const BAR_H = 22
+
+    // Phases for each officer: [start, end, color, textColor, label]
+    const getPhases = (row: OfficerRow) => {
+        const phases: { start: Date | null; end: Date | null; color: string; text: string; phaseLabel: string }[] = []
+
+        if (!isDirectCO && row.xoStart && row.fleetUp) {
+            phases.push({ start: row.xoStart, end: row.fleetUp, color: "bg-green-500", text: "text-white", phaseLabel: "XO" })
+        } else if (!isDirectCO && row.xoStart && !row.fleetUp) {
+            // XO with no known end (current XO still serving)
+            phases.push({ start: row.xoStart, end: row.fleetUp, color: "bg-green-500", text: "text-white", phaseLabel: "XO" })
+        }
+
+        if (row.fleetUp && row.coc) {
+            phases.push({ start: row.fleetUp, end: row.coc, color: "bg-sky-400", text: "text-sky-900", phaseLabel: "P-CO" })
+        }
+
+        if (row.coc) {
+            phases.push({ start: row.coc, end: row.coPrd, color: "bg-blue-700", text: "text-white", phaseLabel: "CO" })
+        }
+
+        return phases
+    }
+
+    // Deduplicate axis tick dates (≥ 28 days apart)
+    const axisTickDates = rows
+        .flatMap(r => [r.xoStart, r.fleetUp, r.coc, r.coPrd])
+        .filter((d): d is Date => d !== null)
+        .sort((a, b) => a.getTime() - b.getTime())
+        .filter((d, i, arr) => i === 0 || differenceInDays(d, arr[i - 1]) >= 28)
 
     return (
-        <div className="px-6 py-5">
+        <div className="px-6 py-5 select-none">
             <div className="flex gap-0">
-                {/* Role labels */}
-                <div className="flex flex-col shrink-0" style={{ width: LABEL_W }}>
-                    {lanes.map(l => (
+                {/* Name labels */}
+                <div className="flex flex-col shrink-0" style={{ width: NAME_W }}>
+                    {rows.map(row => (
                         <div
-                            key={l.role}
-                            className="flex items-center justify-end pr-2.5 text-[11px] font-bold text-muted-foreground"
-                            style={{ height: LANE_H }}
+                            key={row.name}
+                            className="flex items-center justify-end pr-3 text-[11px] font-semibold leading-tight text-right"
+                            style={{ height: ROW_H }}
                         >
-                            {l.role}
+                            <span
+                                className={row.isForecast
+                                    ? "text-muted-foreground italic"
+                                    : "text-foreground"}
+                            >
+                                {row.name}
+                            </span>
                         </div>
                     ))}
                     {/* Axis spacer */}
-                    <div style={{ height: 24 }} />
+                    <div style={{ height: 28 }} />
                 </div>
 
-                {/* Chart */}
-                <div className="relative flex-1 overflow-hidden">
-                    {lanes.map((lane, li) => (
-                        <div
-                            key={lane.role}
-                            className="relative border-b border-muted/30"
-                            style={{ height: LANE_H }}
-                        >
-                            {/* Track */}
-                            <div className="absolute inset-x-0 top-1/2 h-px bg-muted/60" />
-
-                            {lane.spans.map((span, si) => {
-                                const s = span.start ? pct(span.start) : 0
-                                const e = span.end ? pct(span.end) : 100
-                                const w = Math.max(e - s, 0.5)
-                                const openLeft = span.start === null
-                                const openRight = span.end === null
-
-                                const opacity = span.isPast ? "opacity-60" : ""
-                                const outline = span.isForecast
-                                    ? "outline outline-2 outline-dashed outline-offset-[-2px] outline-gray-400/60"
-                                    : ""
-
-                                return (
-                                    <div
-                                        key={si}
-                                        className={`absolute flex items-center h-6 top-1/2 -translate-y-1/2 ${lane.color} ${opacity} ${outline}`}
-                                        style={{
-                                            left: `${s}%`,
-                                            width: `${w}%`,
-                                            borderRadius: openLeft && openRight ? 4
-                                                : openLeft ? "0 4px 4px 0"
-                                                    : openRight ? "4px 0 0 4px"
-                                                        : 4,
-                                        }}
-                                        title={`${span.name}: ${span.start ? fmtDate(span.start) : "?"} → ${span.end ? fmtDate(span.end) : "ongoing"}`}
-                                    >
-                                        <span className={`px-1.5 text-[11px] font-semibold truncate w-full leading-none ${lane.textColor}`}>
-                                            {span.name}
-                                        </span>
-
-                                        {/* Start endpoint tick */}
-                                        {span.start && (
-                                            <span
-                                                className="absolute -bottom-4 text-[9px] text-muted-foreground font-mono whitespace-nowrap"
-                                                style={{ left: 0, transform: "translateX(-50%)" }}
-                                            >
-                                                {fmtDate(span.start)}
-                                            </span>
-                                        )}
-                                        {/* End endpoint tick */}
-                                        {span.end && (
-                                            <span
-                                                className="absolute -top-3.5 text-[9px] text-muted-foreground font-mono whitespace-nowrap"
-                                                style={{ right: 0, transform: "translateX(50%)" }}
-                                            >
-                                                {fmtDate(span.end)}
-                                            </span>
-                                        )}
-                                    </div>
-                                )
-                            })}
-
-                            {/* Today line through this lane */}
+                {/* Chart area */}
+                <div className="relative flex-1 min-w-0">
+                    {rows.map((row, ri) => {
+                        const phases = getPhases(row)
+                        return (
                             <div
-                                className="absolute top-0 bottom-0 w-px bg-primary/60 z-20 pointer-events-none"
-                                style={{ left: `${todayPct}%` }}
-                            />
-                        </div>
-                    ))}
+                                key={row.name}
+                                className="relative border-b border-muted/30"
+                                style={{ height: ROW_H }}
+                            >
+                                {/* Background track */}
+                                <div className="absolute inset-x-0 top-1/2 h-px bg-muted/50" />
+
+                                {/* Today line */}
+                                <div
+                                    className="absolute top-0 bottom-0 w-px bg-primary/60 z-20 pointer-events-none"
+                                    style={{ left: `${todayPct}%` }}
+                                />
+
+                                {/* Phase bars */}
+                                {phases.map((phase, pi) => {
+                                    if (!phase.start) return null
+                                    const s = pct(phase.start)
+                                    const e = phase.end ? pct(phase.end) : 100
+                                    const w = Math.max(e - s, 0.4)
+                                    const isPast = phase.end && phase.end < today
+                                    const isOpenRight = !phase.end
+
+                                    // Label: only show name on first phase segment
+                                    const showName = pi === 0
+
+                                    return (
+                                        <div
+                                            key={pi}
+                                            className={`absolute z-10 flex items-center overflow-hidden
+                                                ${phase.color}
+                                                ${row.isForecast ? "opacity-70" : ""}
+                                                ${isPast ? "opacity-55" : ""}
+                                            `}
+                                            style={{
+                                                left: `${s}%`,
+                                                width: `${w}%`,
+                                                height: BAR_H,
+                                                top: `calc(50% - ${BAR_H / 2}px)`,
+                                                borderRadius: isOpenRight
+                                                    ? "4px 0 0 4px"
+                                                    : pi === 0 ? 4 : "0 4px 4px 0",
+                                                outline: row.isForecast
+                                                    ? "2px dashed rgba(100,100,100,0.35)"
+                                                    : "none",
+                                                outlineOffset: "-2px",
+                                            }}
+                                            title={`${phase.phaseLabel}: ${fmtDate(phase.start)}${phase.end ? " → " + fmtDate(phase.end) : " → ongoing"}`}
+                                        >
+                                            {showName && (
+                                                <span className={`px-2 text-[11px] font-semibold truncate leading-none ${phase.text}`}>
+                                                    {row.name}
+                                                </span>
+                                            )}
+                                        </div>
+                                    )
+                                })}
+
+                                {/* Date boundary ticks (top/bottom alternating per row) */}
+                                {[row.xoStart, row.fleetUp, row.coc, row.coPrd]
+                                    .filter((d): d is Date => d !== null)
+                                    .map((d, di) => (
+                                        <span
+                                            key={di}
+                                            className="absolute text-[9px] text-muted-foreground font-mono whitespace-nowrap pointer-events-none"
+                                            style={{
+                                                left: `${pct(d)}%`,
+                                                transform: "translateX(-50%)",
+                                                ...(ri % 2 === di % 2
+                                                    ? { bottom: 1 }
+                                                    : { top: 1 }),
+                                            }}
+                                        >
+                                            {fmtDate(d)}
+                                        </span>
+                                    ))}
+                            </div>
+                        )
+                    })}
 
                     {/* Time axis */}
-                    <div className="relative h-6 border-t border-muted/60 mt-0">
-                        {/* always show today label */}
+                    <div className="relative h-7 border-t border-muted/60">
+                        {/* Today marker */}
                         <div
-                            className="absolute top-0.5 w-px bg-primary"
+                            className="absolute top-0 w-px h-2 bg-primary"
                             style={{ left: `${todayPct}%` }}
                         >
-                            <span className="absolute top-0.5 left-1 text-[9px] font-bold text-primary whitespace-nowrap">
+                            <span className="absolute left-1 top-0 text-[9px] font-bold text-primary whitespace-nowrap">
                                 TODAY
                             </span>
                         </div>
-
-                        {/* Key date ticks on axis (deduplicated, ≥28 days apart) */}
-                        {(() => {
-                            const tickDates: Date[] = []
-                            for (const lane of lanes) {
-                                for (const span of lane.spans) {
-                                    if (span.start) tickDates.push(span.start)
-                                    if (span.end) tickDates.push(span.end)
-                                }
-                            }
-                            const unique = tickDates
-                                .sort((a, b) => a.getTime() - b.getTime())
-                                .filter((d, i, arr) =>
-                                    i === 0 || differenceInDays(d, arr[i - 1]) >= 28
-                                )
-                            return unique.map(d => (
-                                <span
-                                    key={d.toISOString()}
-                                    className="absolute top-2.5 text-[9px] text-muted-foreground font-mono whitespace-nowrap"
-                                    style={{ left: `${pct(d)}%`, transform: "translateX(-50%)" }}
-                                >
-                                    {fmtDate(d)}
-                                </span>
-                            ))
-                        })()}
+                        {/* Date ticks */}
+                        {axisTickDates.map(d => (
+                            <span
+                                key={d.toISOString()}
+                                className="absolute top-3 text-[9px] text-muted-foreground font-mono whitespace-nowrap"
+                                style={{ left: `${pct(d)}%`, transform: "translateX(-50%)" }}
+                            >
+                                {fmtDate(d)}
+                            </span>
+                        ))}
                     </div>
                 </div>
             </div>
 
             {/* Legend */}
-            <div className="flex items-center gap-4 mt-2 flex-wrap">
+            <div className="flex items-center gap-5 mt-2 flex-wrap">
                 {[
-                    { color: "bg-blue-600", label: "CO" },
-                    { color: "bg-sky-400", label: "P-CO" },
-                    { color: "bg-green-500", label: "XO" },
-                    { color: "bg-amber-400", label: "P-XO" },
-                    { color: "bg-gray-300", label: "Slated (forecast)" },
-                ].filter(({ label }) =>
-                    !isDirectCO || label === "CO" || label === "P-CO"
-                ).map(({ color, label }) => (
-                    <div key={label} className="flex items-center gap-1.5">
-                        <div className={`w-2.5 h-2.5 rounded-sm ${color}`} />
-                        <span className="text-[10px] text-muted-foreground">{label}</span>
-                    </div>
-                ))}
+                    { color: "bg-green-500", label: "XO Tour" },
+                    { color: "bg-sky-400", label: "Turnover (P-CO)" },
+                    { color: "bg-blue-700", label: "CO Tour" },
+                ].filter(({ label }) => !isDirectCO || !label.startsWith("XO"))
+                    .map(({ color, label }) => (
+                        <div key={label} className="flex items-center gap-1.5">
+                            <div className={`w-3 h-3 rounded-sm ${color}`} />
+                            <span className="text-[10px] text-muted-foreground">{label}</span>
+                        </div>
+                    ))}
                 <div className="ml-auto flex items-center gap-1.5">
                     <div className="w-px h-3.5 bg-primary" />
                     <span className="text-[10px] font-semibold text-primary">Today</span>
