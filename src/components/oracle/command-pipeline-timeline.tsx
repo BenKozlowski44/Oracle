@@ -262,19 +262,19 @@ export function CommandPipelineTimeline({ command: cmd }: Props) {
                                 />
                                 {/* Open-right dashed bar */}
                                 <div
-                                    className="absolute z-10 flex items-center overflow-hidden"
+                                    className="absolute z-10 flex items-center overflow-hidden bg-green-500 opacity-60"
                                     style={{
                                         left: `${s}%`,
                                         right: 0,
                                         height: BAR_H,
                                         top: `calc(50% - ${BAR_H / 2}px)`,
                                         borderRadius: "4px 0 0 4px",
-                                        background: "repeating-linear-gradient(90deg, hsl(var(--muted)) 0px, hsl(var(--muted)) 6px, transparent 6px, transparent 12px)",
-                                        border: "1.5px dashed hsl(var(--muted-foreground) / 0.35)",
+                                        outline: "2px dashed rgba(100,100,100,0.35)",
+                                        outlineOffset: "-2px",
                                     }}
                                     title={`Next ${cmd.nextSlateParams.requirement} needed — Slate ${cmd.nextSlateParams.targetBoardDate}`}
                                 >
-                                    <span className="px-2 text-[11px] text-muted-foreground font-semibold truncate leading-none">
+                                    <span className="px-2 text-[11px] text-white font-semibold truncate leading-none">
                                         Next {cmd.nextSlateParams.requirement} — Slate {cmd.nextSlateParams.targetBoardDate}
                                     </span>
                                 </div>
