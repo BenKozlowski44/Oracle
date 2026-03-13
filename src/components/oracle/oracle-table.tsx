@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { EditCommandDialog } from "./edit-command-dialog"
 import { FleetUpChecklist } from "./fleet-up-checklist"
-import { Pencil, Search, Plus, ChevronDown, ChevronRight } from "lucide-react"
+import { Search, Plus, ChevronDown, ChevronRight } from "lucide-react"
 import { saveError, notifySuccess } from "@/lib/notify"
 import { CommandPipelineTimeline } from "./command-pipeline-timeline"
 import { Button } from "@/components/ui/button"
@@ -417,7 +417,6 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                             <TableHead className="cursor-pointer hover:bg-muted/50 w-[80px]" onClick={() => requestSort('health')}>
                                 Health {sortConfig?.key === 'health' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
                             </TableHead>
-                            <TableHead className="w-[50px]"></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -459,7 +458,12 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                                                             title={`${health.label}: ${health.detail}`}
                                                         />
                                                         <div>
-                                                            <div className="font-semibold leading-tight">{cmd.name}</div>
+                                                            <button
+                                                                className="font-semibold leading-tight text-left hover:underline cursor-pointer"
+                                                                onClick={() => handleEditClick(cmd)}
+                                                            >
+                                                                {cmd.name}
+                                                            </button>
                                                             <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-muted-foreground mt-0.5">
                                                                 <span>{cmd.uic !== "N/A" ? cmd.uic : ""}</span>
                                                                 {cmd.uic !== "N/A" && <span>•</span>}
@@ -543,16 +547,11 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                                                 )
                                             })()}
                                         </TableCell>
-                                        <TableCell>
-                                            <Button variant="ghost" size="icon" onClick={() => handleEditClick(cmd)}>
-                                                <Pencil className="h-4 w-4" />
-                                            </Button>
-                                        </TableCell>
                                     </TableRow>
                                     {/* Expandable full timeline row */}
                                     {expandedRows.has(cmd.id) && (
                                         <TableRow key={cmd.id + "-timeline"} className="bg-muted/20 hover:bg-muted/20">
-                                            <TableCell colSpan={8} className="p-0 border-t-0">
+                                            <TableCell colSpan={7} className="p-0 border-t-0">
                                                 <CommandPipelineTimeline command={cmd} />
                                             </TableCell>
                                         </TableRow>
