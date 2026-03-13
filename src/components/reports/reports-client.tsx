@@ -19,6 +19,7 @@ import { MissingInputsReport } from "@/components/reports/missing-inputs-report"
 import { PreferenceAlignmentReport } from "@/components/reports/preference-alignment-report"
 import { PreferenceSummaryReport } from "@/components/reports/preference-summary-report"
 import { SlateSummaryReport } from "@/components/reports/slate-summary-report"
+import { PipelineGapsReport } from "@/components/reports/pipeline-gaps-report"
 
 interface ReportsClientProps {
     officers: Officer[]
@@ -42,7 +43,7 @@ export function ReportsClient({ officers, slates, oracleData }: ReportsClientPro
                         Generate global reports across your slates and officers.
                     </p>
                 </div>
-                {selectedReport && (selectedReport === "missing" || selectedReport === "preferences" || selectedReport === "pipeline" || selectedReport === "pref-alignment" || slate) && (
+                {selectedReport && (selectedReport === "missing" || selectedReport === "preferences" || selectedReport === "pipeline" || selectedReport === "pref-alignment" || selectedReport === "gaps" || slate) && (
                     <Button variant="outline" onClick={() => window.print()}>
                         <Printer className="mr-2 h-4 w-4" />
                         Print Report
@@ -65,6 +66,7 @@ export function ReportsClient({ officers, slates, oracleData }: ReportsClientPro
                             <SelectItem value="summary">Slate Summary</SelectItem>
                             <SelectItem value="missing">Missing Inputs</SelectItem>
                             <SelectItem value="pipeline">Candidate Pipeline</SelectItem>
+                            <SelectItem value="gaps">Pipeline Gaps</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
@@ -131,6 +133,12 @@ export function ReportsClient({ officers, slates, oracleData }: ReportsClientPro
             {selectedReport === "pipeline" && (
                 <div className="animate-in fade-in duration-300 pt-6">
                     <CandidatePipelineReport officers={officers} />
+                </div>
+            )}
+
+            {selectedReport === "gaps" && (
+                <div className="animate-in fade-in duration-300 pt-6">
+                    <PipelineGapsReport oracleData={oracleData} />
                 </div>
             )}
         </div>
