@@ -524,6 +524,7 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                 onOpenChange={setIsEditOpen}
                 command={editingCommand}
                 onSave={handleSaveCommand}
+                officers={officers}
                 onCOTurnover={(commandId) => {
                     setPendingTurnoverCommandId(commandId)
                     setCocDateInput(new Date().toISOString().split('T')[0])

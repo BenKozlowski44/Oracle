@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react"
 import { addMonths, parse, isValid, format, parseISO } from "date-fns"
 import { calculateTargetBoard, predictNextVacancyDate } from "@/lib/utils"
-import { OracleCommand } from "@/lib/types"
+import { OracleCommand, Officer } from "@/lib/types"
+import { OfficerNameInput } from "./officer-name-input"
 import { CommandTimeline } from "./command-timeline"
 import { Button } from "@/components/ui/button"
 import {
@@ -26,6 +27,7 @@ interface EditCommandDialogProps {
     onCOTurnover: (commandId: string) => void
     onXOFleetUp: (commandId: string) => void
     onDelete: (commandId: string) => void
+    officers?: Officer[]
 }
 
 export function EditCommandDialog({
@@ -36,6 +38,7 @@ export function EditCommandDialog({
     onCOTurnover,
     onXOFleetUp,
     onDelete,
+    officers = [],
 }: EditCommandDialogProps) {
     const [formData, setFormData] = useState<OracleCommand | null>(null)
     const [confirmAction, setConfirmAction] = useState<"delete" | "relieveCO" | "fleetUp" | null>(null)
@@ -341,10 +344,11 @@ export function EditCommandDialog({
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="grid gap-2 col-span-full">
                                 <Label htmlFor="coName">Name</Label>
-                                <Input
+                                <OfficerNameInput
                                     id="coName"
+                                    officers={officers}
                                     value={formData.currentCO.name}
-                                    onChange={(e) => handleNestedChange("currentCO", "name", e.target.value)}
+                                    onChange={(v) => handleNestedChange("currentCO", "name", v)}
                                 />
                             </div>
                         </div>
@@ -384,10 +388,11 @@ export function EditCommandDialog({
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <div className="grid gap-2 col-span-full">
                                         <Label htmlFor="xoName">Name</Label>
-                                        <Input
+                                        <OfficerNameInput
                                             id="xoName"
+                                            officers={officers}
                                             value={formData.currentXO.name}
-                                            onChange={(e) => handleNestedChange("currentXO", "name", e.target.value)}
+                                            onChange={(v) => handleNestedChange("currentXO", "name", v)}
                                         />
                                     </div>
                                 </div>
@@ -401,11 +406,12 @@ export function EditCommandDialog({
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <div className="grid gap-2 md:col-span-2 col-span-1">
                                         <Label htmlFor="inboundName">Name</Label>
-                                        <Input
+                                        <OfficerNameInput
                                             id="inboundName"
+                                            officers={officers}
                                             placeholder="Leave empty if none"
                                             value={formData.inboundXO?.name || ""}
-                                            onChange={(e) => handleNestedChange("inboundXO", "name", e.target.value)}
+                                            onChange={(v) => handleNestedChange("inboundXO", "name", v)}
                                         />
                                     </div>
                                     <div className="grid gap-2">
@@ -427,14 +433,15 @@ export function EditCommandDialog({
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <div className="grid gap-2 md:col-span-2 col-span-1">
                                         <Label htmlFor="slatedName">Name / Slate</Label>
-                                        <Input
+                                        <OfficerNameInput
                                             id="slatedName"
+                                            officers={officers}
                                             placeholder="e.g. 26-2 or Officer Name"
                                             value={formData.slatedXO?.name || ""}
-                                            onChange={(e) => setFormData(prev => prev ? ({
+                                            onChange={(v) => setFormData(prev => prev ? ({
                                                 ...prev,
                                                 slatedXO: {
-                                                    name: e.target.value,
+                                                    name: v,
                                                     reportDate: prev.slatedXO?.reportDate || "",
                                                     timelineData: prev.slatedXO?.timelineData
                                                 }
