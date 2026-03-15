@@ -1,3 +1,4 @@
+import { PageHeader } from '@/components/PageHeader'
 import { useState, Suspense } from "react"
 import dynamic from 'next/dynamic'
 import { OracleTable } from "@/components/oracle/oracle-table"
@@ -24,7 +25,10 @@ export function OraclePageClient({ initialOracleData, initialOfficers }: OracleP
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">The Oracle</h1>
+                <PageHeader
+                    label="PERS-41 · Command Management"
+                    title="The Oracle"
+                />
                 <p className="text-muted-foreground">Command Succession Management & Tracking.</p>
             </div>
 

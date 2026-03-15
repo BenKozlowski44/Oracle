@@ -7,12 +7,11 @@ export default function BankPage() {
     const officers = getOfficers()
     return (
         <div className="space-y-6">
-            <div>
-                <h1 className="text-3xl font-bold tracking-tight">The Bank</h1>
-                <p className="text-muted-foreground">
-                    Master Talent Inventory (Slated & Unslated).
-                </p>
-            </div>
+            <PageHeader
+                label="PERS-41 · Talent Management"
+                title="The Bank"
+                description="Master Talent Inventory (Slated &amp; Unslated)."
+            />
             <Suspense fallback={<div>Loading Bank...</div>}>
                 <TheBank data={officers} />
             </Suspense>
