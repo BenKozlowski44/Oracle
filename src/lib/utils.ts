@@ -268,3 +268,65 @@ export function predictNextVacancyDate(command: OracleCommand): string {
 
   return calculateTargetBoard(boardDateStr);
 }
+
+/**
+ * Returns the RPT sub-label date for CO-SM table badge (DirectCO or fleet-up).
+ * Logic is an exact lift of the inline IIFE from oracle-table.tsx — no change in behavior.
+ */
+export function getCoSmRptDisplay(
+  command: OracleCommand
+): { label: string; date: string } | null {
+  const isDirectCO = command.rotationStyle === 'DirectCO'
+
+  if (isDirectCO) {
+    const isNonSWOCurrentCO = command.currentCO?.fillCommunity && command.currentCO.fillCommunity !== '1110'
+    const pCOHasRealName = !!command.prospectiveCO?.name &&
+      command.prospectiveCO.name !== '' &&
+      command.prospectiveCO.name !== 'Forecast'
+
+    let date: string | null = null
+
+    if (isNonSWOCurrentCO && !pCOHasRealName) {
+      // Non-SWO incumbent, no named P-CO: SWO needed when current CO departs
+      date = command.currentCO?.prd || command.currentCO?.timelineData?.q || null
+    } else if (pCOHasRealName && command.prospectiveCO?.timelineData?.q) {
+      // Named P-CO (any community): show their departure as next need
+      date = command.prospectiveCO.timelineData.q
+    } else {
+      // No named P-CO: show when the new CO needs to ARRIVE (timelineData.i)
+      date = command.prospectiveCO?.timelineData?.i || command.slatedCO?.timelineData?.i || null
+    }
+
+    return date ? { label: 'CO RPT', date } : null
+
+  } else {
+    const isNonSWOInbound = command.inboundXO?.fillCommunity && command.inboundXO.fillCommunity !== '1110'
+
+    if (isNonSWOInbound) {
+      // Non-SWO fill in P-XO: show when a SWO is actually needed (fleet-up date)
+      const date = command.inboundXO?.timelineData?.k || command.inboundXO?.timelineData?.q || null
+      return date ? { label: 'SWO XO RPT', date } : null
+    }
+
+    // If P-XO is already named, next hole opens when they fleet-up → slatedXO.reportDate
+    // If P-XO is not yet named, immediate need is when someone needs to arrive → timelineData.i
+    const inboundHasName = !!command.inboundXO?.name &&
+      command.inboundXO.name !== '' &&
+      command.inboundXO.name !== 'VACANT'
+
+    const date = inboundHasName
+      ? (command.slatedXO?.reportDate || command.inboundXO?.timelineData?.k || null)
+      : (command.inboundXO?.timelineData?.i || command.slatedXO?.reportDate || null)
+
+    return date ? { label: 'XO RPT', date } : null
+  }
+}
+
+/**
+ * Returns the XO RPT date for the CDR CMD table badge.
+ * Logic is an exact lift of the inline expression from oracle-table.tsx — no change in behavior.
+ */
+export function getCdrCmdXoRptDate(command: OracleCommand): string | null {
+  return command.inboundXO?.timelineData?.i || command.slatedXO?.reportDate || null
+}
+

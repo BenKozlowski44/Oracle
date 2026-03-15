@@ -19,7 +19,7 @@ import { Search, Plus, ChevronDown, ChevronRight } from "lucide-react"
 import { saveError, notifySuccess } from "@/lib/notify"
 import { CommandPipelineTimeline } from "./command-pipeline-timeline"
 import { Button } from "@/components/ui/button"
-import { formatToMMMyy, getPipelineHealth, predictNextVacancyDate } from "@/lib/utils"
+import { formatToMMMyy, getPipelineHealth, predictNextVacancyDate, getCoSmRptDisplay, getCdrCmdXoRptDate } from "@/lib/utils"
 import { format, parseISO, isValid } from "date-fns"
 import { getCommandAlerts } from "@/lib/alerts"
 import {
@@ -448,51 +448,12 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                                             {health.approaching && '⚠ '}{isDirectCO ? 'CO' : 'XO'} via {cmdLive.nextSlateParams.targetBoardDate}
                                         </Badge>
                                         {(() => {
-                                            if (isDirectCO) {
-                                                const isNonSWOCurrentCO = cmd.currentCO?.fillCommunity && cmd.currentCO.fillCommunity !== '1110'
-                                                const pCOHasRealName = !!cmd.prospectiveCO?.name && cmd.prospectiveCO.name !== "" && cmd.prospectiveCO.name !== "Forecast"
-
-                                                let coRptDate: string | null = null
-
-                                                if (isNonSWOCurrentCO && !pCOHasRealName) {
-                                                    // Non-SWO incumbant, no named P-CO: SWO needed when current CO departs
-                                                    coRptDate = cmd.currentCO?.prd || cmd.currentCO?.timelineData?.q || null
-                                                } else if (pCOHasRealName && cmd.prospectiveCO?.timelineData?.q) {
-                                                    // Named P-CO (any community): show their departure as next need
-                                                    coRptDate = cmd.prospectiveCO.timelineData.q
-                                                } else {
-                                                    // No named P-CO: show when the new CO needs to ARRIVE (timelineData.i)
-                                                    coRptDate = cmd.prospectiveCO?.timelineData?.i || cmd.slatedCO?.timelineData?.i || null
-                                                }
-
-                                                return coRptDate ? (
-                                                    <div className="text-xs text-muted-foreground mt-1 text-center">
-                                                        CO RPT: {formatToMMMyy(coRptDate)}
-                                                    </div>
-                                                ) : null
-                                            } else {
-                                                const isNonSWOInbound = cmd.inboundXO?.fillCommunity && cmd.inboundXO.fillCommunity !== '1110'
-                                                if (isNonSWOInbound) {
-                                                    // Non-SWO fill in P-XO: show when a SWO is actually needed (fleet-up date)
-                                                    const swoNeededDate = cmd.inboundXO?.timelineData?.k || cmd.inboundXO?.timelineData?.q || null
-                                                    return swoNeededDate ? (
-                                                        <div className="text-xs text-muted-foreground mt-1 text-center">
-                                                            SWO XO RPT: {formatToMMMyy(swoNeededDate)}
-                                                        </div>
-                                                    ) : null
-                                                }
-                                                // If P-XO is already named, the next hole is when they fleet-up → slatedXO.reportDate
-                                                // If P-XO is not yet named, the immediate need is when someone needs to arrive → timelineData.i
-                                                const inboundHasName = !!cmd.inboundXO?.name && cmd.inboundXO.name !== "" && cmd.inboundXO.name !== "VACANT"
-                                                const nextDate = inboundHasName
-                                                    ? (cmd.slatedXO?.reportDate || cmd.inboundXO?.timelineData?.k || null)
-                                                    : (cmd.inboundXO?.timelineData?.i || cmd.slatedXO?.reportDate || null)
-                                                return nextDate ? (
-                                                    <div className="text-xs text-muted-foreground mt-1 text-center">
-                                                        XO RPT: {formatToMMMyy(nextDate)}
-                                                    </div>
-                                                ) : null
-                                            }
+                                            const rpt = getCoSmRptDisplay(cmd)
+                                            return rpt ? (
+                                                <div className="text-xs text-muted-foreground mt-1 text-center">
+                                                    {rpt.label}: {formatToMMMyy(rpt.date)}
+                                                </div>
+                                            ) : null
                                         })()}
                                         {cmd.nextSWOFillDate && (
                                             <div className="text-xs text-amber-600 mt-0.5 text-center font-medium">
@@ -876,7 +837,7 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                                                                 <Badge variant="outline" className={`w-full justify-center truncate ${badgeClass} ${health.approaching ? 'animate-pulse ring-2 ring-amber-400/60 ring-offset-1 bg-amber-400/20 font-bold' : ''} ${health.status === 'red' && !health.approaching ? 'animate-pulse ring-2 ring-red-500/60 ring-offset-1 font-bold' : ''}`} title={health.detail}>
                                                                     {health.approaching && '⚠ '}{cmd.nextSlateParams.requirement} via {cmd.nextSlateParams.targetBoardDate}
                                                                 </Badge>
-                                                                {nextDate && <div className="text-xs text-muted-foreground mt-1 text-center">XO RPT: {formatToMMMyy(nextDate)}</div>}
+                                                                {getCdrCmdXoRptDate(cmd) && <div className="text-xs text-muted-foreground mt-1 text-center">XO RPT: {formatToMMMyy(getCdrCmdXoRptDate(cmd)!)}</div>}
                                                             </>
                                                         )
                                                     })()}
