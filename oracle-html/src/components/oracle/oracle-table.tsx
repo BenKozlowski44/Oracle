@@ -519,7 +519,7 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
 
                     // Expand button cell
                     const expandCell = (
-                        <TableCell className="w-8 p-1.5">
+                        <TableCell className={`w-8 p-1.5 border-l-4 ${healthBorderClass}`}>
                             <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => toggleExpand(cmd.id)}>
                                 {expandedRows.has(cmd.id)
                                     ? <ChevronDown className="h-4 w-4 text-muted-foreground" />
@@ -736,10 +736,13 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                                         </TableCell>
                                     </TableRow>
                                 ) : (
-                                    filteredData.map((cmd) => (
+                                    filteredData.map((cmd) => {
+                                        const rowHealth = getPipelineHealth(cmd)
+                                        const rowBorder = rowHealth.status === 'green' ? 'border-l-green-500' : rowHealth.status === 'yellow' ? 'border-l-amber-400' : 'border-l-red-500'
+                                        return (
                                         <React.Fragment key={cmd.id}>
                                             <TableRow key={cmd.id}>
-                                                <TableCell className="w-8 p-1.5">
+                                                <TableCell className={`w-8 p-1.5 border-l-4 ${rowBorder}`}>
                                                     <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => toggleExpand(cmd.id)}>
                                                         {expandedRows.has(cmd.id) ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
                                                     </Button>
@@ -850,7 +853,7 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                                                 </TableRow>
                                             )}
                                         </React.Fragment>
-                                    ))
+                                    )})
                                 )}
                             </TableBody>
                         </Table>
