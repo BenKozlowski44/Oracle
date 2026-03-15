@@ -1,15 +1,8 @@
 import { Officer, Billet, OracleCommand, Metrics } from "@/lib/types"
 import { getAllAlerts, getAllPersonnelAlerts } from "@/lib/alerts"
-
-export const isFirefighter = (o: Officer) => {
-    if (o.status === "Slated" || o.listShift === "Slated" || o.status === "Declined" || o.status === "No Opportunity" || o.status === "De-screened" || o.listShift === "Declined/Descreened") return false;
-    if (o.listShift === "CO-SM" || o.screened?.includes("CO-SM")) return false;
-    const slate = o.assignedSlate?.toLowerCase() || ""
-    const shift = o.listShift || ""
-    return shift === "Firefighters" || o.status === "Ready FF" ||
-        slate.includes("3rd look") ||
-        slate.includes("no command")
-}
+import { isFirefighter } from "@/lib/officer-utils"
+import { getPipelineHealth } from "@/lib/utils"
+import { Link } from "react-router-dom"
 
 export function CommandInventoryCard({ oracleData }: { oracleData: OracleCommand[] }) {
     return (
@@ -28,6 +21,57 @@ export function CommandInventoryCard({ oracleData }: { oracleData: OracleCommand
                 </div>
             </div>
         </div>
+    )
+}
+
+export function PipelineHealthCard({ oracleData }: { oracleData: OracleCommand[] }) {
+    const countHealth = (cmds: OracleCommand[]) =>
+        cmds.reduce(
+            (acc, cmd) => { acc[getPipelineHealth(cmd).status]++; return acc },
+            { green: 0, yellow: 0, red: 0 }
+        )
+
+    const cdrCmds = oracleData.filter(c => !c.tags?.includes("CO-SM"))
+    const cosmCmds = oracleData.filter(c => c.tags?.includes("CO-SM"))
+    const cdrCounts = countHealth(cdrCmds)
+    const cosmCounts = countHealth(cosmCmds)
+
+    const HealthRow = ({ counts, total }: { counts: { red: number; yellow: number; green: number }; total: number }) => (
+        <div className="flex justify-between items-center gap-3">
+            {([
+                { key: 'red', color: 'bg-red-500', text: 'text-red-600', label: 'Overdue' },
+                { key: 'yellow', color: 'bg-amber-400', text: 'text-amber-600', label: 'Act Now' },
+                { key: 'green', color: 'bg-green-500', text: 'text-green-600', label: 'Healthy' },
+            ] as const).map(({ key, color, text, label }) => (
+                <div key={key} className="flex-1 flex flex-col items-center gap-0.5">
+                    <div className="flex items-center gap-1">
+                        <span className={`w-2 h-2 rounded-full ${color} flex-shrink-0`} />
+                        <span className={`text-xl font-bold ${text}`}>{counts[key]}</span>
+                    </div>
+                    <span className="text-[9px] text-muted-foreground uppercase tracking-wide">{label}</span>
+                    <div className="w-full h-0.5 rounded-full bg-muted overflow-hidden mt-0.5">
+                        <div className={`h-full ${color} rounded-full`} style={{ width: `${total ? (counts[key] / total) * 100 : 0}%` }} />
+                    </div>
+                </div>
+            ))}
+        </div>
+    )
+
+    return (
+        <Link to="/oracle" className="block rounded-xl border bg-card text-card-foreground shadow p-6 hover:bg-muted/30 transition-colors">
+            <h3 className="tracking-tight text-sm font-medium text-muted-foreground text-center mb-4">Command Relief Health</h3>
+            <div className="space-y-4">
+                <div>
+                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mb-2">CDR CMD</p>
+                    <HealthRow counts={cdrCounts} total={cdrCmds.length} />
+                </div>
+                <div className="border-t border-muted/50" />
+                <div>
+                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mb-2">CO-SM</p>
+                    <HealthRow counts={cosmCounts} total={cosmCmds.length} />
+                </div>
+            </div>
+        </Link>
     )
 }
 
