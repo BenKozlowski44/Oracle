@@ -11,6 +11,7 @@ import OraclePage from '@/pages/oracle/page'
 import BankPage from '@/pages/bank/page'
 import SlatesPage from '@/pages/slates/page'
 import SlateDetailPage from '@/pages/slates/[id]/page'
+import SlateGeneratorPage from '@/pages/slate-generator/page'
 import ArchivedSlatesPage from '@/pages/slates/archived/page'
 import BoardsPage from '@/pages/boards/page'
 import BoardDetailPage from '@/pages/boards/[id]/page'
@@ -100,8 +101,9 @@ export default function App() {
             <Route path="/oracle" element={<OraclePage />} />
             <Route path="/bank" element={<BankPage />} />
             <Route path="/slates" element={<SlatesPage />} />
-            <Route path="/slates/:id" element={<SlateDetailPage />} />
             <Route path="/slates/archived" element={<ArchivedSlatesPage />} />
+            <Route path="/slates/:id" element={<SlateDetailPage />} />
+            <Route path="/slate-generator" element={<SlateGeneratorPage />} />
             <Route path="/boards" element={<BoardsPage />} />
             <Route path="/boards/:id" element={<BoardDetailPage />} />
             <Route path="/pcc" element={<PccPage />} />

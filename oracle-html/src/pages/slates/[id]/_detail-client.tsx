@@ -1,5 +1,5 @@
 import { useState, useRef } from "react"
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { toast } from "sonner"
 import type { Slate, Officer, OracleCommand } from "@/lib/types"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -26,6 +26,7 @@ import { Badge } from "@/components/ui/badge"
 import { SlateRequirement, SlateCandidateProfile } from "@/lib/types"
 import { CandidateInputForm } from "@/components/slating/candidate-input-form"
 import { CandidateProfileView } from "@/components/slating/candidate-profile-view"
+import { saveSlate } from "@/services/storage"
 
 interface SlateDetailClientProps {
     id: string
@@ -177,8 +178,8 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
 
     const persistSlates = async (reqs: SlateRequirement[], cands: string[], profiles: SlateCandidateProfile[]) => {
         try {
-            saveSlate(slateWithReqs)
-            
+            const updatedSlate = { ...slate, requirements: reqs, candidates: cands, candidateProfiles: profiles }
+            saveSlate(updatedSlate)
         } catch (error) {
             console.error("Failed to update slate:", error);
         }
@@ -233,63 +234,15 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
         document.body.removeChild(link);
     }
 
-    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!e.target.files || e.target.files.length === 0) return;
-        const file = e.target.files[0];
-
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('slateId', slate.id);
-
-        try {
-            const ok = true
-            if (ok) {
-                const data = await res.json();
-                if (data.success && data.profile) {
-                    handleSaveProfile(data.profile);
-                    toast.success(`Profile imported successfully`);
-                }
-            } else {
-                const err = await res.json();
-                toast.error(`Import failed: ${err.error}`);
-            }
-        } catch (error) {
-            console.error(error);
-            toast.error("Error uploading file — check console for details.");
-        }
+    const handleFileUpload = async (_e: React.ChangeEvent<HTMLInputElement>) => {
+        toast.info("Bulk profile import is not available in the standalone HTML version. Use the manual candidate input form instead.");
     }
 
-    const handlePerCandidateUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!e.target.files || e.target.files.length === 0 || !uploadTargetOfficerId) return;
-        const file = e.target.files[0];
-        setUploadingOfficerId(uploadTargetOfficerId);
-
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('slateId', slate.id);
-        formData.append('officerId', uploadTargetOfficerId);
-
-        try {
-            const ok = true
-            if (ok) {
-                const data = await res.json();
-                if (data.success && data.profile) {
-                    handleSaveProfile(data.profile);
-                    const officerName = officers.find(o => o.id === uploadTargetOfficerId)?.name ?? 'Officer';
-                    toast.success(`Profile imported for ${officerName}`);
-                }
-            } else {
-                const err = await res.json();
-                toast.error(`Import failed: ${err.error}`);
-            }
-        } catch (err) {
-            console.error(err);
-            toast.error('Error uploading file — check console for details.');
-        } finally {
-            setUploadingOfficerId(null);
-            setUploadTargetOfficerId(null);
-            if (perCandidateFileInputRef.current) perCandidateFileInputRef.current.value = '';
-        }
+    const handlePerCandidateUpload = async (_e: React.ChangeEvent<HTMLInputElement>) => {
+        toast.info("Per-candidate file import is not available in the standalone HTML version. Use the manual candidate input form instead.");
+        setUploadingOfficerId(null);
+        setUploadTargetOfficerId(null);
+        if (perCandidateFileInputRef.current) perCandidateFileInputRef.current.value = '';
     }
 
 

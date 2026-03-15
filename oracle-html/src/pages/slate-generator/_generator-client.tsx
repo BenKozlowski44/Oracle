@@ -49,10 +49,13 @@ export function SlateGeneratorClient({ oracleData }: SlateGeneratorClientProps) 
 
         // Persist via targeted endpoint
         try {
-            saveSlate(newSlate)
-            navigate(`/slates/${newSlate.id}`)
-            const ok = false
-            if (ok) {
+            const response = await fetch('/api/slates', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ slate: newSlate }),
+            });
+
+            if (response.ok) {
                 navigate('/slates');
             } else {
                 console.error("Failed to save slate");
