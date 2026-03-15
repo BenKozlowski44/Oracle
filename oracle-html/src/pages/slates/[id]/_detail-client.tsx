@@ -250,16 +250,69 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
         .filter((o): o is Officer => !!o);
 
     const handleDownloadTemplate = () => {
-        // Use the new dynamic API endpoint
-        const link = document.createElement('a');
-        link.href = `/api/slates/${id}/template`;
-        // We don't need to set download attribute if the server sends Content-Disposition, 
-        // but setting it helps if the browser ignores headers or for testing.
-        // The server sends a filename, so we can let the browser handle it, or force one.
-        // Let's just click the link.
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        const TOURS = [
+            '1st Division Officer Tour', '2nd Division Officer Tour',
+            'Post-Division Officer Tour', '1st Department Head Tour',
+            '2nd Department Head Tour', 'Post-Department Head Tour',
+        ]
+        const prefOptions = Array.from(new Set(
+            slate.requirements
+                .map(req => oracleData.find(c => c.id === req.commandId))
+                .filter((c): c is OracleCommand => !!c && !!c.platform && !!c.location)
+                .map(cmd => `${cmd.platform} - ${cmd.location}`)
+        )).sort()
+
+        const rows: string[][] = []
+        const add = (label: string, value = '') => rows.push([label, value])
+        const section = (title: string) => rows.push([`=== ${title} ===`, ''])
+        const blank = () => rows.push(['', ''])
+
+        rows.push([`PERS-41 Candidate Preference Template — ${slate.name}`, ''])
+        rows.push([`Slate Window: ${slate.windowStart} — ${slate.windowEnd}`, ''])
+        blank()
+
+        section('OFFICER INFORMATION')
+        add('Full Name'); add('Rank'); add('Designator'); add('Availability Date (XO Pipeline Start)'); blank()
+
+        section('CONTACT INFORMATION')
+        add('Work Email'); add('Home / Personal Email'); add('Work Phone')
+        add('Personal Cell'); add('Mailing Address (Street, City, State ZIP)'); blank()
+
+        section('FLAG NOTIFIER')
+        add('Flag Officer Name'); add('Relationship / Context'); blank()
+
+        section(`COMMAND PREFERENCES — select one per row (${prefOptions.length} available)`)
+        rows.push(['Rank', 'Platform — Location', 'Narrative / Reasoning'])
+        prefOptions.forEach((opt, i) => rows.push([`Preference ${i + 1}`, '', '']))
+        if (prefOptions.length === 0) rows.push(['(No commands available in this slate)', '', ''])
+        blank()
+
+        section('CONSIDERATIONS & NOTES')
+        add('Amplifying info for Detailer (timing, family, career goals, etc.)')
+        blank()
+
+        section('TOUR HISTORY')
+        for (const tour of TOURS) {
+            rows.push([`--- ${tour} ---`, ''])
+            add('Ship / Command'); add('Platform (DDG/CG/etc.)'); add('OFRP Phase (majority)')
+            add('Months U/W'); add('Months Deployed'); add('Months stood as OOD')
+            add('# OOD Evolutions'); add('# CONN Evolutions'); add('# JOOD Evolutions'); blank()
+        }
+
+        section('PROFESSIONAL QUALIFICATIONS')
+        add('JPME Completion / Plan'); add('WTI Qualification (Type if applicable)'); blank()
+
+        section('PERSONAL CONSIDERATIONS')
+        add('Co-Location Request'); add('EFM Considerations'); add('Education / Pipeline')
+
+        const csv = rows.map(r => r.map(c => `"${c.replace(/"/g, '""')}"`).join(',')).join('\n')
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = `${slate.name.replace(/\s+/g, '_')}_candidate_template.csv`
+        document.body.appendChild(link); link.click()
+        document.body.removeChild(link); URL.revokeObjectURL(url)
     }
 
     const handleFileUpload = async (_e: React.ChangeEvent<HTMLInputElement>) => {
