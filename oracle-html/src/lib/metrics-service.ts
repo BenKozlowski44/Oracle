@@ -1,23 +1,20 @@
-import fs from 'fs';
-import path from 'path';
-import { Metrics } from './types';
+// Browser-compatible metrics service — reads/writes via localStorage
+import type { Metrics } from './types'
+import { readData, writeData } from '@/services/storage'
 
-const metricsPath = path.join(process.cwd(), 'src', 'data', 'metrics.json');
+const DEFAULT_METRICS: Metrics = {
+    resolvedConflicts: 0,
+}
 
 export function getMetrics(): Metrics {
     try {
-        const fileContent = fs.readFileSync(metricsPath, 'utf-8');
-        return JSON.parse(fileContent);
-    } catch (error) {
-        console.error("Error reading metrics:", error);
-        return { resolvedConflicts: 0 };
+        const data = readData<Metrics>('metrics')
+        return data ?? DEFAULT_METRICS
+    } catch {
+        return DEFAULT_METRICS
     }
 }
 
 export function saveMetrics(metrics: Metrics): void {
-    try {
-        fs.writeFileSync(metricsPath, JSON.stringify(metrics, null, 4));
-    } catch (error) {
-        console.error("Error writing metrics:", error);
-    }
+    writeData('metrics', metrics)
 }

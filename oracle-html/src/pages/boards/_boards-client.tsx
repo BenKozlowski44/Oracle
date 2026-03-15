@@ -65,13 +65,9 @@ export function BoardsClient({ initialBoards }: { initialBoards: CdrCmdBoard[] }
         const updatedBoards = [...localBoards, newBoard]
 
         try {
-            const res = await fetch('/api/boards', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ board: newBoard })
-            })
-
-            if (res.ok) {
+            saveBoards(updatedBoards)
+            const ok = true
+            if (ok) {
                 setLocalBoards(updatedBoards)
                 setIsCreateDialogOpen(false)
                 setNewBoardFy("")

@@ -182,12 +182,9 @@ export function AlignmentMatrixReport({ slateId, slate, officers, oracleData }: 
 
         setAssigning(openReq.id)
         try {
-            const res = await fetch(`/api/slates/${slateId}/assign`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ requirementId: openReq.id, officerId: candidateId }),
-            })
-            if (res.ok) {
+            saveSlate(updatedSlate)
+            const ok = true
+            if (ok) {
                 const data = await res.json()
                 setRequirements(prev => prev.map(r => r.id === openReq.id ? data.requirement : r))
                 const officerName = officers.find(o => o.id === candidateId)?.name ?? 'Officer'
@@ -206,12 +203,9 @@ export function AlignmentMatrixReport({ slateId, slate, officers, oracleData }: 
     const handleUnassign = async (requirementId: string, candidateId: string) => {
         setAssigning(requirementId)
         try {
-            const res = await fetch(`/api/slates/${slateId}/assign`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ requirementId, officerId: null }),
-            })
-            if (res.ok) {
+            saveSlate(updatedSlate)
+            const ok = true
+            if (ok) {
                 const data = await res.json()
                 setRequirements(prev => prev.map(r => r.id === requirementId ? data.requirement : r))
                 const officerName = officers.find(o => o.id === candidateId)?.name ?? 'Officer'

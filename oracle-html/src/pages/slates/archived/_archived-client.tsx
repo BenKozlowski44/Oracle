@@ -1,5 +1,6 @@
+import { saveSlate, deleteSlate } from '@/services/storage'
 import { useState } from "react"
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { RotateCcw, Trash2 } from "lucide-react"
@@ -16,19 +17,14 @@ export function ArchivedSlatesClient({ allSlates }: { allSlates: Slate[] }) {
         e.preventDefault(); e.stopPropagation()
         if (!confirm("Are you sure you want to restore this slate to Active?")) return
         setLocalSlates(prev => prev.map(s => s.id === id ? { ...s, status: "Active" as const } : s))
-        await fetch(`/api/slates/${id}/status`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status: 'Active' }),
-        })
-        
+        saveSlate({ ...localSlates.find(s => s.id === id)!, status: "Active" as const })
     }
 
     const handleDelete = async (e: React.MouseEvent, id: string) => {
         e.preventDefault(); e.stopPropagation()
         if (!confirm("Are you sure you want to PERMANENTLY delete this archived slate?")) return
         setLocalSlates(prev => prev.filter(s => s.id !== id))
-        await fetch(`/api/slates/${id}`, { method: 'DELETE' })
+        deleteSlate(id)
         
     }
 

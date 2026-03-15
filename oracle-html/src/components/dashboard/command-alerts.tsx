@@ -1,6 +1,6 @@
 import { OracleCommand } from "@/lib/types"
 import { AlertCircle, ArrowRight } from "lucide-react"
-import Link from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Button } from "@/components/ui/button"
 import { getAllAlerts } from "@/lib/alerts"
 

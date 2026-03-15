@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import { chooseBackupFile, restoreFromFile } from '@/services/storage'
 
 // ─── Lazy page imports ─────────────────────────────────────────────────────
+import DashboardPage from '@/pages/page'
 import OraclePage from '@/pages/oracle/page'
 import BankPage from '@/pages/bank/page'
 import SlatesPage from '@/pages/slates/page'
@@ -95,7 +96,7 @@ export default function App() {
 
         <main className="p-4">
           <Routes>
-            <Route path="/" element={<OraclePage />} />
+            <Route path="/" element={<DashboardPage />} />
             <Route path="/oracle" element={<OraclePage />} />
             <Route path="/bank" element={<BankPage />} />
             <Route path="/slates" element={<SlatesPage />} />

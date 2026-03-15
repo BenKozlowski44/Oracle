@@ -177,11 +177,7 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
 
     const persistSlates = async (reqs: SlateRequirement[], cands: string[], profiles: SlateCandidateProfile[]) => {
         try {
-            await fetch(`/api/slates/${id}/requirements`, {
-                method: 'PATCH',
-                headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-                body: JSON.stringify({ requirements: reqs, candidates: cands, candidateProfiles: profiles }),
-            });
+            saveSlate(slateWithReqs)
             
         } catch (error) {
             console.error("Failed to update slate:", error);
@@ -246,12 +242,8 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
         formData.append('slateId', slate.id);
 
         try {
-            const res = await fetch('/api/import-candidate', {
-                method: 'POST',
-                body: formData
-            });
-
-            if (res.ok) {
+            const ok = true
+            if (ok) {
                 const data = await res.json();
                 if (data.success && data.profile) {
                     handleSaveProfile(data.profile);
@@ -278,8 +270,8 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
         formData.append('officerId', uploadTargetOfficerId);
 
         try {
-            const res = await fetch('/api/import-candidate', { method: 'POST', body: formData });
-            if (res.ok) {
+            const ok = true
+            if (ok) {
                 const data = await res.json();
                 if (data.success && data.profile) {
                     handleSaveProfile(data.profile);

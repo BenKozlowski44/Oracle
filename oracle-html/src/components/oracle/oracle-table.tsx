@@ -62,17 +62,14 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
     const [cocDateInput, setCocDateInput] = useState(new Date().toISOString().split('T')[0])
     const [isCocDialogOpen, setIsCocDialogOpen] = useState(false)
 
-    // Hydrate metrics from API on mount
+    // Hydrate metrics from localStorage on mount
     useEffect(() => {
-        const fetchMetrics = async () => {
+        const fetchMetrics = () => {
             try {
-                const res = await fetch('/api/metrics');
-                if (res.ok) {
-                    const data = await res.json();
-                    setMetrics(data);
-                }
+                const data = getMetrics();
+                if (data) setMetrics(data);
             } catch (err) {
-                console.error("Failed to fetch metrics", err);
+                console.error("Failed to load metrics", err);
             }
         };
         fetchMetrics();
@@ -204,11 +201,8 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
         setData(newData)
 
         try {
-            await fetch(`/api/oracle/${updatedCommand.id}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ updatedCommand, metrics: newMetrics }),
-            });
+            saveOracleCommand(updatedCommand as OracleCommand);
+            if (newMetrics) saveMetrics(newMetrics as Metrics);
         } catch (error) {
             console.error("Error saving data:", error);
             alert("Failed to save changes to disk. check console.");
@@ -222,7 +216,7 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
         setIsEditOpen(false)
 
         try {
-            await fetch(`/api/oracle/${commandId}`, { method: 'DELETE' });
+            deleteOracleCommand(commandId);
         } catch (error) {
             console.error(error);
             alert("Failed to delete command");
@@ -235,11 +229,8 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
         setIsEditOpen(false);
 
         try {
-            await fetch(`/api/oracle/${updatedCommand.id}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ updatedCommand, officers: currentOfficers }),
-            });
+            saveOracleCommand(updatedCommand as OracleCommand);
+            saveOfficers(currentOfficers as Officer[]);
         } catch (error) {
             console.error(error);
             alert("Failed to save changes: " + message);
