@@ -9,30 +9,45 @@ import type { Slate } from "@/lib/types"
 import { getSlates, saveSlate, deleteSlate, getOracleData, saveOfficers, getOfficers } from "@/services/storage"
 import { applySlateToOracle } from "@/lib/slate-migration"
 import { writeData } from "@/services/storage"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 interface SlatesPageClientProps {
     allSlates: Slate[]
 }
 
+type PendingAction =
+    | { type: 'archive'; slateId: string; slateName: string }
+    | { type: 'delete';  slateId: string; slateName: string }
+    | { type: 'swoboss'; slateId: string; slateName: string }
+
 export function SlatesPageClient({ allSlates }: SlatesPageClientProps) {
     const navigate = useNavigate()
     const [localSlates, setLocalSlates] = useState(allSlates)
+    const [pending, setPending] = useState<PendingAction | null>(null)
     const activeSlates = localSlates.filter(s => s.status !== "Archived")
 
+    // ── Initiators (just open the dialog) ──────────────────────────────────
     const handleArchive = (e: React.MouseEvent, id: string) => {
         e.preventDefault(); e.stopPropagation()
-        if (!confirm("Are you sure you want to archive this slate?")) return
-        const updated = localSlates.map(s => s.id === id ? { ...s, status: "Archived" as const } : s)
-        setLocalSlates(updated)
-        const slate = updated.find(s => s.id === id)
-        if (slate) saveSlate(slate)
+        const slate = localSlates.find(s => s.id === id)
+        if (!slate) return
+        setPending({ type: 'archive', slateId: id, slateName: slate.name })
     }
 
     const handleDelete = (e: React.MouseEvent, id: string) => {
         e.preventDefault(); e.stopPropagation()
-        if (!confirm("Are you sure you want to PERMANENTLY delete this slate?")) return
-        setLocalSlates(prev => prev.filter(s => s.id !== id))
-        deleteSlate(id)
+        const slate = localSlates.find(s => s.id === id)
+        if (!slate) return
+        setPending({ type: 'delete', slateId: id, slateName: slate.name })
     }
 
     const handleApprovalToggle = (e: React.MouseEvent, id: string, entity: keyof Slate['approvals']) => {
@@ -42,24 +57,70 @@ export function SlatesPageClient({ allSlates }: SlatesPageClientProps) {
         const willBeTrue = !slate.approvals?.[entity]
 
         if (entity === 'swoboss' && willBeTrue) {
-            const confirmed = confirm(
-                `SWOBOSS APPROVAL CONFIRMATION\n\nAre you sure SWOBOSS has approved slate "${slate.name}"?\n\nThis will:\n• Mark the slate as SWOBOSS Approved\n• Populate the Oracle pipeline for all filled requirements\n\nThis action cannot be undone.`
-            )
-            if (!confirmed) return
+            // Open confirmation dialog instead of window.confirm()
+            setPending({ type: 'swoboss', slateId: id, slateName: slate.name })
+            return
         }
 
+        // All other approvals toggle immediately (no confirmation needed)
         const updatedSlate = { ...slate, approvals: { ...slate.approvals, [entity]: willBeTrue } }
         setLocalSlates(prev => prev.map(s => s.id === id ? updatedSlate : s))
         saveSlate(updatedSlate)
+    }
 
-        // SWOBOSS approval → apply slate to oracle (mirrors server-side logic)
-        if (entity === 'swoboss' && willBeTrue) {
+    // ── Executors (called when user clicks Confirm in dialog) ───────────────
+    const executeAction = () => {
+        if (!pending) return
+
+        if (pending.type === 'archive') {
+            const updated = localSlates.map(s =>
+                s.id === pending.slateId ? { ...s, status: "Archived" as const } : s
+            )
+            setLocalSlates(updated)
+            const slate = updated.find(s => s.id === pending.slateId)
+            if (slate) saveSlate(slate)
+
+        } else if (pending.type === 'delete') {
+            setLocalSlates(prev => prev.filter(s => s.id !== pending.slateId))
+            deleteSlate(pending.slateId)
+
+        } else if (pending.type === 'swoboss') {
+            const slate = localSlates.find(s => s.id === pending.slateId)
+            if (!slate) return
+            const updatedSlate = { ...slate, approvals: { ...slate.approvals, swoboss: true } }
+            setLocalSlates(prev => prev.map(s => s.id === pending.slateId ? updatedSlate : s))
+            saveSlate(updatedSlate)
+            // Apply slate to Oracle pipeline
             const officers = getOfficers()
             const oracleData = getOracleData()
             const updatedOracle = applySlateToOracle(updatedSlate, officers, oracleData)
             writeData('oracle-data', updatedOracle)
         }
+
+        setPending(null)
     }
+
+    // ── Dialog content by type ──────────────────────────────────────────────
+    const dialogContent = pending ? {
+        archive: {
+            title: 'Archive Slate',
+            description: `Archive "${pending.slateName}"? It will be moved to Archived Slates and hidden from the active view.`,
+            confirmLabel: 'Archive',
+            confirmClass: '',
+        },
+        delete: {
+            title: 'Delete Slate',
+            description: `Permanently delete "${pending.slateName}"? This cannot be undone.`,
+            confirmLabel: 'Delete',
+            confirmClass: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+        },
+        swoboss: {
+            title: 'SWOBOSS Approval Confirmation',
+            description: `Are you sure SWOBOSS has approved slate "${pending.slateName}"?\n\nThis will mark the slate as SWOBOSS Approved and populate the Oracle pipeline for all filled requirements. This action cannot be undone.`,
+            confirmLabel: 'Confirm SWOBOSS Approval',
+            confirmClass: 'bg-green-600 text-white hover:bg-green-700',
+        },
+    }[pending.type] : null
 
     return (
         <div className="space-y-6">
@@ -133,6 +194,27 @@ export function SlatesPageClient({ allSlates }: SlatesPageClientProps) {
                     ))
                 )}
             </div>
+
+            {/* ── Confirmation Dialog ──────────────────────────────────────── */}
+            <AlertDialog open={!!pending} onOpenChange={(open) => { if (!open) setPending(null) }}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>{dialogContent?.title}</AlertDialogTitle>
+                        <AlertDialogDescription className="whitespace-pre-line">
+                            {dialogContent?.description}
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            className={dialogContent?.confirmClass}
+                            onClick={executeAction}
+                        >
+                            {dialogContent?.confirmLabel}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     )
 }
