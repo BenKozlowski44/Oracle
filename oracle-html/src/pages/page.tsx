@@ -1,5 +1,6 @@
 import {
   CommandInventoryCard,
+  PipelineHealthCard,
   BankOfficersCard,
   CosmBankOfficersCard,
   FirefighterStatsCard,
@@ -32,6 +33,7 @@ export default function DashboardPage() {
         {/* Left Column: Personnel & Billets */}
         <div className="space-y-4">
           <CommandInventoryCard oracleData={oracleData} />
+          <PipelineHealthCard oracleData={oracleData} />
           <BankOfficersCard officers={currentOfficers} />
           <FirefighterStatsCard officers={currentOfficers} />
           <CosmBankOfficersCard officers={currentOfficers} />
