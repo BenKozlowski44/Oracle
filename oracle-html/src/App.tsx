@@ -67,7 +67,9 @@ export default function App() {
     <HashRouter>
       <div className="min-h-screen bg-background text-foreground">
         <AppHeader />
-        <nav className="border-b px-4 py-2 flex items-center gap-4 text-sm font-medium">
+        <nav className="bg-[#07111f] border-b border-[#c9a227]/30 px-6 py-0 flex items-center gap-1 text-xs font-semibold tracking-widest uppercase shadow-lg">
+          {/* Gold top accent line */}
+          <div className="absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-[#c9a227]/40 to-transparent pointer-events-none" />
           {[
             ['/', 'Command Center'],
             ['/oracle', 'Oracle'],
@@ -86,7 +88,9 @@ export default function App() {
               to={path}
               end={path === '/'}
               className={({ isActive }) =>
-                isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+                isActive
+                  ? 'relative px-3 py-3.5 text-[#c9a227] border-b-2 border-[#c9a227] transition-colors duration-150'
+                  : 'relative px-3 py-3.5 text-[#8a9bb0] hover:text-[#c9a227] border-b-2 border-transparent transition-colors duration-150'
               }
             >
               {label}
