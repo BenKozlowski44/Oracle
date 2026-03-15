@@ -153,6 +153,14 @@ export function predictNextVacancyDate(command: OracleCommand): string {
     return null;
   }
 
+  // CO-SM override: if a manual SWO fill date is set, use it directly
+  if (command.nextSWOFillDate) {
+    const swoDate = parseAnyDate(command.nextSWOFillDate)
+    if (swoDate) {
+      return calculateTargetBoard(format(swoDate, 'yyyy-MM-dd'))
+    }
+  }
+
   let baseDate: Date | null = null;
 
   // Helper to determine if a slot is truly empty/TBD
@@ -162,22 +170,57 @@ export function predictNextVacancyDate(command: OracleCommand): string {
   };
 
   if (command.rotationStyle === "DirectCO") {
-    // DIRECT CO PIPELINE: No XO fleet up. Vacancy is driven by CO departing.
-    if (isFilled(command.prospectiveCO?.prd)) {
-      baseDate = parseAnyDate(command.prospectiveCO!.prd);
+    // DIRECT CO PIPELINE — trace through community fills to find when a SWO is needed.
+    const isNonSWOCurrentCO = command.currentCO?.fillCommunity && command.currentCO.fillCommunity !== '1110'
+    const pCOName = command.prospectiveCO?.name
+    const pCOHasRealName = !!pCOName && pCOName !== "" && pCOName !== "Forecast"
+    const isNonSWOProspectiveCO = command.prospectiveCO?.fillCommunity && command.prospectiveCO.fillCommunity !== '1110'
+
+    if (pCOHasRealName && isFilled(command.prospectiveCO?.prd)) {
+      // A real officer is named as P-CO (SWO or non-SWO).
+      // Either way the next vacancy is after the P-CO departs.
+      baseDate = parseAnyDate(command.prospectiveCO!.prd)
+    } else if (isNonSWOCurrentCO && !pCOHasRealName) {
+      // Current CO is a non-SWO and no P-CO named yet.
+      // SWO is needed when the current non-SWO CO departs — prefer prd, fall back to timelineData.q
+      baseDate = parseAnyDate(command.currentCO!.prd)
+        ?? parseAnyDate(command.currentCO?.timelineData?.q ?? undefined)
+    } else if (isFilled(command.prospectiveCO?.timelineData?.i ?? undefined)) {
+      // Current CO is SWO, no named P-CO — vacancy is when the new CO needs to ARRIVE (timelineData.i),
+      // not when they'd depart (prd). This correctly drives the slate off the report date.
+      baseDate = parseAnyDate(command.prospectiveCO?.timelineData?.i ?? undefined)
     }
 
     if (!baseDate && isFilled(command.currentCO?.prd)) {
-      baseDate = parseAnyDate(command.currentCO!.prd);
+      baseDate = parseAnyDate(command.currentCO!.prd)
     }
   } else {
     // FLEET UP PIPELINE (Standard)
-    const hasInboundXO = isFilled(command.inboundXO?.reportDate) && command.inboundXO?.name && command.inboundXO?.name !== "VACANT";
+    const isNonSWOInbound = command.inboundXO?.fillCommunity && command.inboundXO.fillCommunity !== '1110'
+    // A P-XO is considered "filled" if they have a name AND any arrival date (reportDate or timelineData.i)
+    const inboundArrival = (command.inboundXO?.reportDate || command.inboundXO?.timelineData?.i) ?? undefined
+    const hasInboundXO = !isNonSWOInbound && isFilled(inboundArrival) && !!command.inboundXO?.name && command.inboundXO?.name !== "VACANT";
 
-    if (!hasInboundXO) {
+    if (isNonSWOInbound) {
+      // NON-SWO COMMUNITY FILL in P-XO: The SWO vacancy opens when the non-SWO fleets up (k date)
+      // e.g. a 1310 fill arrives DEC26 and fleets up JUN28 — SWO needed JUN28
+      const swoNeededDate = command.inboundXO?.timelineData?.k ?? undefined
+      if (isFilled(swoNeededDate)) {
+        baseDate = parseAnyDate(swoNeededDate)
+      } else {
+        // Fallback: use their departure date
+        const deptDate = command.inboundXO?.timelineData?.q ?? undefined
+        if (isFilled(deptDate)) baseDate = parseAnyDate(deptDate)
+      }
+    } else if (!hasInboundXO) {
       // IMMEDIATE HOLE: The Inbound XO seat is empty. We need to fill it based on when the Current XO leaves.
       if (isFilled(command.currentXO?.prd)) {
         baseDate = parseAnyDate(command.currentXO!.prd);
+      }
+
+      // Fallback: currentXO.prd may be empty but timelineData.k (fleet-up date) is auto-calculated
+      if (!baseDate && isFilled(command.currentXO?.timelineData?.k ?? undefined)) {
+        baseDate = parseAnyDate(command.currentXO?.timelineData?.k ?? undefined)
       }
 
       // Fallback: If Current XO PRD is missing/TBD, we check the CO to see when *they* leave (since XO fleets up)
@@ -191,7 +234,7 @@ export function predictNextVacancyDate(command: OracleCommand): string {
       }
 
     } else {
-      // SAFE PIPELINE: Inbound XO is filled. The *next* hole is the Slated XO.
+      // SAFE PIPELINE: Inbound XO is a real SWO. The *next* hole is the Slated XO.
       // If the slated XO is a real named officer (not just a slate label like "26-3"),
       // look PAST them to their fleet-up date — that's when the next hole opens.
       const slatedName = command.slatedXO?.name || "";
@@ -206,11 +249,12 @@ export function predictNextVacancyDate(command: OracleCommand): string {
         baseDate = parseAnyDate(command.slatedXO!.reportDate);
       }
 
-      // 2. Fallback: If no explicit Slated forecast, mathematically predict it as Inbound XO + 18mo
-      if (!baseDate && isFilled(command.inboundXO?.reportDate)) {
-        const inboundArrival = parseAnyDate(command.inboundXO!.reportDate);
-        if (inboundArrival) {
-          baseDate = addMonths(inboundArrival, 18);
+      // 2. Fallback: If no explicit Slated forecast, mathematically predict it as Inbound XO arrival + 18mo
+      if (!baseDate) {
+        const inboundI = command.inboundXO?.timelineData?.i
+        const inboundArrivalFallback = parseAnyDate(inboundI ?? undefined)
+        if (inboundArrivalFallback) {
+          baseDate = addMonths(inboundArrivalFallback, 18);
         }
       }
     }

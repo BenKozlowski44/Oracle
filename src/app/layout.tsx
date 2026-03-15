@@ -5,6 +5,7 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "sonner";
+import { ServerStatusBanner } from "@/components/server-status-banner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,6 +38,7 @@ export default function RootLayout({
             <Sidebar />
             <div className="flex-1 flex flex-col overflow-hidden print:block print:overflow-visible print:h-auto">
               <Header />
+              <ServerStatusBanner />
               <main className="flex-1 overflow-y-auto p-6 print:p-0 print:overflow-visible print:block print:h-auto">
                 {children}
               </main>

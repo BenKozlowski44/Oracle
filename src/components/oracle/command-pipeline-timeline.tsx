@@ -44,44 +44,56 @@ export function CommandPipelineTimeline({ command: cmd }: Props) {
 
     // Build one row per officer in the pipeline
     const rows = useMemo<OfficerRow[]>(() => {
-        const slots = [
-            { slot: cmd.currentCO, isForecast: false },
-            { slot: cmd.currentXO, isForecast: false },
-            { slot: cmd.inboundXO, isForecast: true },
-            { slot: cmd.slatedXO, isForecast: true },
-        ]
+        const slots = isDirectCO
+            ? [
+                { slot: cmd.currentCO as any,    isForecast: false },
+                { slot: cmd.prospectiveCO as any, isForecast: true },
+                { slot: cmd.slatedCO as any,      isForecast: true },
+              ]
+            : [
+                { slot: cmd.currentCO,  isForecast: false },
+                { slot: cmd.currentXO,  isForecast: false },
+                { slot: cmd.inboundXO,  isForecast: true },
+                { slot: cmd.slatedXO,   isForecast: true },
+              ]
 
         const now = new Date()
         return slots
             .filter(({ slot }) => !!slot?.name?.trim() && isPersonName(slot.name))
             .map(({ slot, isForecast }) => {
-                // Use timelineData.i first; fall back to reportDate;
-                // last resort: estimate backwards from coc for fleet-up forecast officers
                 const reportDate = 'reportDate' in slot! ? (slot as { reportDate: string }).reportDate : undefined
                 const rawXoStart = parseDate(slot!.timelineData?.i) ?? parseDate(reportDate)
-                const fleetUp = parseDate(slot!.timelineData?.k)
-                const coc = parseDate(slot!.timelineData?.m)
-                const coPrd = parseDate(slot!.timelineData?.q)
-                const tourLen = cmd.tourLength || 18
-                // Estimate xoStart = coc - (tourLen + 2 months) when no direct date available
-                const xoStart = rawXoStart ?? (coc && !isDirectCO ? subMonths(coc, tourLen + 2) : null)
-                const isOnboard = !isForecast && (
+                const fleetUp    = isDirectCO ? null : parseDate(slot!.timelineData?.k)
+                const coc        = parseDate(slot!.timelineData?.m)
+                const coPrd      = parseDate(slot!.timelineData?.q)
+                const tourLen    = cmd.tourLength || 18
+                const xoStart    = rawXoStart ?? (coc && !isDirectCO ? subMonths(coc, tourLen + 2) : null)
+                const isOnboard  = !isForecast && (
                     (xoStart && xoStart <= now && (!fleetUp || fleetUp >= now)) ||
-                    (coc && coc <= now && (!coPrd || coPrd >= now))
+                    (coc     && coc     <= now && (!coPrd   || coPrd   >= now))
                 )
                 return { name: slot!.name, isForecast, isOnboard: !!isOnboard, xoStart, fleetUp, coc, coPrd }
             })
-    }, [cmd])
+    }, [cmd, isDirectCO])
 
-    // ── Next fill anchor ─────────────────────────────────────────────────────
-    // The next open XO slot begins when the last pipeline person fleets up
+    // Next fill anchor:
+    // Direct CO: last P-CO or Slated CO departure date
+    // Fleet-Up: last fleet-up date
     const nextFillStart = useMemo<Date | null>(() => {
+        if (isDirectCO) {
+            const departures = rows
+                .filter(r => r.isForecast)
+                .map(r => r.coPrd)
+                .filter((d): d is Date => d !== null)
+            if (departures.length === 0) return null
+            return new Date(Math.max(...departures.map(d => d.getTime())))
+        }
         const fleetUpDates = rows
             .map(r => r.fleetUp)
             .filter((d): d is Date => d !== null)
         if (fleetUpDates.length === 0) return null
         return new Date(Math.max(...fleetUpDates.map(d => d.getTime())))
-    }, [rows])
+    }, [rows, isDirectCO])
 
     // ── Compute global time range ──────────────────────────────────────────────
     const allDates = [
@@ -127,23 +139,28 @@ export function CommandPipelineTimeline({ command: cmd }: Props) {
 
     const hideTooltip = useCallback(() => setTooltip(null), [])
 
-    // Phases for each officer: [start, end, color, textColor, label]
+    // Phases for each officer
     const getPhases = (row: OfficerRow) => {
         const phases: { start: Date | null; end: Date | null; color: string; text: string; phaseLabel: string }[] = []
 
-        if (!isDirectCO && row.xoStart && row.fleetUp) {
-            phases.push({ start: row.xoStart, end: row.fleetUp, color: "bg-green-500", text: "text-white", phaseLabel: "XO" })
-        } else if (!isDirectCO && row.xoStart && !row.fleetUp) {
-            // XO with no known end (current XO still serving)
-            phases.push({ start: row.xoStart, end: row.fleetUp, color: "bg-green-500", text: "text-white", phaseLabel: "XO" })
-        }
-
-        if (row.fleetUp && row.coc) {
-            phases.push({ start: row.fleetUp, end: row.coc, color: "bg-sky-400", text: "text-sky-900", phaseLabel: "P-CO" })
-        }
-
-        if (row.coc) {
-            phases.push({ start: row.coc, end: row.coPrd, color: "bg-blue-500", text: "text-white", phaseLabel: "CO" })
+        if (isDirectCO) {
+            // Direct CO: single CO bar from arrival (i=xoStart) to departure (q=coPrd)
+            if (row.xoStart) {
+                phases.push({ start: row.xoStart, end: row.coPrd, color: "bg-blue-500", text: "text-white", phaseLabel: "CO" })
+            }
+        } else {
+            // Fleet-Up: XO bar then optional P-CO turnover bar then CO bar
+            if (row.xoStart && row.fleetUp) {
+                phases.push({ start: row.xoStart, end: row.fleetUp, color: "bg-green-500", text: "text-white", phaseLabel: "XO" })
+            } else if (row.xoStart && !row.fleetUp) {
+                phases.push({ start: row.xoStart, end: row.fleetUp, color: "bg-green-500", text: "text-white", phaseLabel: "XO" })
+            }
+            if (row.fleetUp && row.coc) {
+                phases.push({ start: row.fleetUp, end: row.coc, color: "bg-sky-400", text: "text-sky-900", phaseLabel: "P-CO" })
+            }
+            if (row.coc) {
+                phases.push({ start: row.coc, end: row.coPrd, color: "bg-blue-500", text: "text-white", phaseLabel: "CO" })
+            }
         }
 
         return phases
@@ -190,7 +207,7 @@ export function CommandPipelineTimeline({ command: cmd }: Props) {
                             style={{ height: ROW_H }}
                         >
                             <span className="text-muted-foreground/70 italic">
-                                TBD — {cmd.nextSlateParams.requirement} Slate {cmd.nextSlateParams.targetBoardDate}
+                                TBD — {isDirectCO ? 'CO' : 'XO'} Slate {cmd.nextSlateParams.targetBoardDate}
                             </span>
                         </div>
                     )}
@@ -316,10 +333,10 @@ export function CommandPipelineTimeline({ command: cmd }: Props) {
                                         outline: "2px dashed rgba(100,100,100,0.35)",
                                         outlineOffset: "-2px",
                                     }}
-                                    title={`Next ${cmd.nextSlateParams.requirement} needed — Slate ${cmd.nextSlateParams.targetBoardDate}`}
+                                    title={`Next ${isDirectCO ? 'CO' : cmd.nextSlateParams.requirement} needed — Slate ${cmd.nextSlateParams.targetBoardDate}`}
                                 >
                                     <span className="px-2 text-[11px] text-white font-semibold truncate leading-none">
-                                        Next {cmd.nextSlateParams.requirement} — Slate {cmd.nextSlateParams.targetBoardDate}
+                                        Next {isDirectCO ? 'CO' : cmd.nextSlateParams.requirement} — Slate {cmd.nextSlateParams.targetBoardDate}
                                     </span>
                                 </div>
                                 {/* Start date tick */}

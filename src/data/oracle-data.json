@@ -25,7 +25,7 @@
       }
     },
     "nextSlateParams": {
-      "targetBoardDate": "26-2",
+      "targetBoardDate": "27-2",
       "requirement": "XO"
     },
     "timeline": {
@@ -49,7 +49,17 @@
       "name": "",
       "prd": ""
     },
-    "hullNumber": "18"
+    "hullNumber": "18",
+    "inboundXO": {
+      "name": "WOEWIYU MONCONJAY THOMAS",
+      "reportDate": "JUL26",
+      "timelineData": {
+        "i": "APR26",
+        "k": "OCT27",
+        "m": "DEC27",
+        "q": "JUN29"
+      }
+    }
   },
   {
     "id": "cmd_2",
@@ -1076,7 +1086,7 @@
       "timelineData": {
         "i": "APR25",
         "m": "OCT26",
-        "k": "OCT26",
+        "k": "AUG26",
         "q": "APR28"
       }
     },
@@ -1091,7 +1101,7 @@
       }
     },
     "nextSlateParams": {
-      "targetBoardDate": "26-2",
+      "targetBoardDate": "28-2",
       "requirement": "XO"
     },
     "timeline": {
@@ -1256,10 +1266,10 @@
       "name": "",
       "reportDate": "",
       "timelineData": {
-        "i": "2026-09-23",
-        "k": "2028-03-23",
-        "m": "2028-05-23",
-        "q": "2029-11-23"
+        "i": "SEP26",
+        "k": "MAR28",
+        "m": "MAY28",
+        "q": "NOV29"
       }
     },
     "nextSlateParams": {
@@ -1274,7 +1284,7 @@
     },
     "platform": "LCS",
     "slatedXO": {
-      "name": "26-2",
+      "name": "",
       "reportDate": "2028-02-01",
       "timelineData": {
         "i": "2028-02-01",
@@ -3707,7 +3717,7 @@
       }
     },
     "nextSlateParams": {
-      "targetBoardDate": "28-2",
+      "targetBoardDate": "26-4",
       "requirement": "XO"
     },
     "timeline": {
@@ -3718,7 +3728,7 @@
     },
     "platform": "DDG",
     "slatedXO": {
-      "name": "POUNDERS MICHAEL RYAN",
+      "name": "",
       "reportDate": "DEC27",
       "timelineData": {
         "i": "DEC27",
@@ -6545,7 +6555,7 @@
     "id": "constitution_12",
     "name": "CONSTITUTION",
     "uic": "01024",
-    "location": "Special Mission",
+    "location": "Boston, MA",
     "tags": [
       "CO-SM"
     ],
@@ -6554,10 +6564,10 @@
       "name": "SCHAEFER CRYSTAL L",
       "prd": "2024-07-21",
       "timelineData": {
-        "i": "2021-12-16",
-        "k": "2021-12-16",
-        "m": "2021-12-16",
-        "q": "2024-07-21"
+        "i": "MAY24",
+        "k": "",
+        "m": "MAY24",
+        "q": "AUG26"
       }
     },
     "currentXO": {
@@ -6581,7 +6591,7 @@
       }
     },
     "nextSlateParams": {
-      "targetBoardDate": "26-2",
+      "targetBoardDate": "27-2",
       "requirement": "CO"
     },
     "timeline": {
@@ -6600,25 +6610,44 @@
         "q": ""
       }
     },
-    "rotationStyle": "DirectCO"
+    "rotationStyle": "DirectCO",
+    "prospectiveCO": {
+      "name": "ANDERSON JONANDREW D",
+      "prd": "AUG28",
+      "timelineData": {
+        "i": "AUG26",
+        "m": "AUG26",
+        "q": "AUG28"
+      }
+    },
+    "slatedCO": {
+      "name": "Forecast",
+      "prd": "AUG30",
+      "timelineData": {
+        "i": "AUG28",
+        "m": "AUG28",
+        "q": "AUG30"
+      }
+    },
+    "tourLength": 24
   },
   {
     "id": "aamdsromania_13",
     "name": "AAMDS ROMANIA",
     "uic": "50460",
-    "location": "Special Mission",
+    "location": "Romania",
     "tags": [
       "CO-SM"
     ],
     "platform": "CO-SM",
     "currentCO": {
-      "name": "Gregory, Carleigh (25-1)",
+      "name": "GREGORY CARLEIGH REBECCA",
       "prd": "2026-12-21",
       "timelineData": {
         "i": "2025-11-16",
         "k": "2025-11-16",
         "m": "2025-11-16",
-        "q": "2026-12-21"
+        "q": "NOV26"
       }
     },
     "currentXO": {
@@ -6660,19 +6689,39 @@
         "m": "",
         "q": ""
       }
+    },
+    "tourLength": 12,
+    "rotationStyle": "DirectCO",
+    "prospectiveCO": {
+      "name": "",
+      "prd": "NOV27",
+      "timelineData": {
+        "i": "NOV26",
+        "m": "NOV26",
+        "q": "NOV27"
+      }
+    },
+    "slatedCO": {
+      "name": "Forecast",
+      "prd": "NOV28",
+      "timelineData": {
+        "i": "NOV27",
+        "m": "NOV27",
+        "q": "NOV28"
+      }
     }
   },
   {
     "id": "aamdspoland_12",
     "name": "AAMDS POLAND",
     "uic": "50462",
-    "location": "Special Mission",
+    "location": "Poland",
     "tags": [
       "CO-SM"
     ],
     "platform": "CO-SM",
     "currentCO": {
-      "name": "Cleveland, Andre",
+      "name": "CLEVELAND ANDREW DEVON",
       "prd": "2026-07-21",
       "timelineData": {
         "i": "2025-06-16",
@@ -6720,25 +6769,45 @@
         "m": "",
         "q": ""
       }
+    },
+    "rotationStyle": "DirectCO",
+    "tourLength": 12,
+    "prospectiveCO": {
+      "name": "MANCINI JOSEPH MICHAEL",
+      "prd": "JUN27",
+      "timelineData": {
+        "i": "JUN26",
+        "m": "JUN26",
+        "q": "JUN27"
+      }
+    },
+    "slatedCO": {
+      "name": "Forecast",
+      "prd": "JUN28",
+      "timelineData": {
+        "i": "JUN27",
+        "m": "JUN27",
+        "q": "JUN28"
+      }
     }
   },
   {
     "id": "atgpnw_7",
     "name": "ATG PNW",
     "uic": "31379",
-    "location": "Special Mission",
+    "location": "Everett, WA",
     "tags": [
       "CO-SM"
     ],
     "platform": "CO-SM",
     "currentCO": {
-      "name": "Collins, Ryan - retiring 2309",
+      "name": "BALLAS THEALOS CHARLES",
       "prd": "2023-01-31",
       "timelineData": {
-        "i": "2020-06-30",
+        "i": "SEP24",
         "k": "2020-06-30",
-        "m": "2020-06-30",
-        "q": "2023-01-31"
+        "m": "SEP24",
+        "q": "AUG26"
       }
     },
     "currentXO": {
@@ -6780,46 +6849,68 @@
         "m": "",
         "q": ""
       }
+    },
+    "rotationStyle": "DirectCO",
+    "tourLength": 24,
+    "prospectiveCO": {
+      "name": "DENTON KATARINA GABRIELLA",
+      "prd": "JUL28",
+      "timelineData": {
+        "i": "JUL26",
+        "m": "JUL26",
+        "q": "JUL28"
+      }
+    },
+    "slatedCO": {
+      "name": "Forecast",
+      "prd": "JUL30",
+      "timelineData": {
+        "i": "JUL28",
+        "m": "JUL28",
+        "q": "JUL30"
+      }
     }
   },
   {
     "id": "cfachinhae_11",
     "name": "CFA CHINHAE",
     "uic": "32778",
-    "location": "Special Mission",
+    "location": "CHINHAE, S KOREA",
     "tags": [
       "CO-SM"
     ],
     "platform": "CO-SM",
     "currentCO": {
-      "name": "Rackauskas, Preston",
+      "name": "SCHAEFFER LAWRENCE",
       "prd": "2023-12-22",
       "timelineData": {
-        "i": "2020-02-29",
-        "k": "2020-02-29",
-        "m": "2020-02-29",
-        "q": "2023-12-22"
-      }
+        "i": "JAN24",
+        "k": "JUN25",
+        "m": "JUL25",
+        "q": "JAN27"
+      },
+      "fillCommunity": "Other"
     },
     "currentXO": {
-      "name": "",
-      "prd": "",
+      "name": "GILLETT PAUL A",
+      "prd": "2024-07-01",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "SEP25",
+        "k": "DEC26",
+        "m": "JAN27",
+        "q": "JUL28"
       }
     },
     "inboundXO": {
       "name": "",
-      "reportDate": "",
+      "reportDate": "DEC26",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
-      }
+        "i": "DEC26",
+        "k": "MAY28",
+        "m": "JUL28",
+        "q": "JAN30"
+      },
+      "fillCommunity": "1310"
     },
     "nextSlateParams": {
       "targetBoardDate": "26-2",
@@ -6832,33 +6923,34 @@
       "coTurnover": "2023-12-22"
     },
     "slatedXO": {
-      "name": "",
-      "reportDate": "",
+      "name": "Forecast",
+      "reportDate": "MAY28",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "MAY28",
+        "k": "NOV29",
+        "m": "JAN30",
+        "q": "JUL31"
       }
-    }
+    },
+    "tourLength": 18
   },
   {
     "id": "ssuguam_8",
     "name": "SSU GUAM",
     "uic": "40446",
-    "location": "Special Mission",
+    "location": "Guam",
     "tags": [
       "CO-SM"
     ],
     "platform": "CO-SM",
     "currentCO": {
-      "name": "Medina, Gillian",
+      "name": "TORTORA PAUL J",
       "prd": "2022-06-30",
       "timelineData": {
-        "i": "2020-06-30",
+        "i": "MAY25",
         "k": "2020-06-30",
-        "m": "2020-06-30",
-        "q": "2022-06-30"
+        "m": "MAY25",
+        "q": "MAY27"
       }
     },
     "currentXO": {
@@ -6900,45 +6992,57 @@
         "m": "",
         "q": ""
       }
+    },
+    "rotationStyle": "DirectCO",
+    "tourLength": 24,
+    "notes": "Accompanied Tour",
+    "prospectiveCO": {
+      "name": "",
+      "prd": "MAY29",
+      "timelineData": {
+        "i": "MAY27",
+        "m": "MAY27",
+        "q": "MAY29"
+      }
     }
   },
   {
     "id": "nbu7_5",
     "name": "NBU 7",
     "uic": "57078",
-    "location": "Special Mission",
+    "location": "Sasebo, JP",
     "tags": [
       "CO-SM"
     ],
     "platform": "CO-SM",
     "currentCO": {
-      "name": "DeLoach, Michael",
+      "name": "DELOACH MICHAEL KEATING",
       "prd": "2027-02-23",
       "timelineData": {
-        "i": "2025-08-23",
+        "i": "MAR24",
         "k": "2025-08-23",
         "m": "2025-08-23",
         "q": "2027-02-23"
       }
     },
     "currentXO": {
-      "name": "",
-      "prd": "",
+      "name": "FETTING NATHANIEL C",
+      "prd": "2027-02-25",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "2025-06-25",
+        "k": "2026-12-25",
+        "m": "FEB27",
+        "q": "2028-07-25"
       }
     },
     "inboundXO": {
       "name": "",
-      "reportDate": "",
+      "reportDate": "DEC26",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "DEC26",
+        "k": "MAY28",
+        "m": "JUL28",
+        "q": "JAN30"
       }
     },
     "nextSlateParams": {
@@ -6952,27 +7056,28 @@
       "coTurnover": "2027-02-23"
     },
     "slatedXO": {
-      "name": "",
-      "reportDate": "",
+      "name": "Forecast",
+      "reportDate": "MAY28",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "MAY28",
+        "k": "NOV29",
+        "m": "JAN30",
+        "q": "JUL31"
       }
-    }
+    },
+    "tourLength": 18
   },
   {
     "id": "acu1_5",
     "name": "ACU 1",
     "uic": "55597",
-    "location": "Special Mission",
+    "location": "San Diego, CA",
     "tags": [
       "CO-SM"
     ],
     "platform": "CO-SM",
     "currentCO": {
-      "name": "Blomberg, Martin ",
+      "name": "BLOMBERG MARTIN JOSEPH",
       "prd": "2026-09-22",
       "timelineData": {
         "i": "2025-04-22",
@@ -6982,27 +7087,27 @@
       }
     },
     "currentXO": {
-      "name": "",
-      "prd": "",
+      "name": "KELSO JEFFERY JOSEPH",
+      "prd": "2026-10-25",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "2025-03-25",
+        "k": "2026-07-25",
+        "m": "2026-09-25",
+        "q": "2028-03-25"
       }
     },
     "inboundXO": {
-      "name": "",
-      "reportDate": "",
+      "name": "GARCIABRAGIEL MATTHEW RAY",
+      "reportDate": "JUL26",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "JUL26",
+        "k": "JAN28",
+        "m": "MAR28",
+        "q": "SEP29"
       }
     },
     "nextSlateParams": {
-      "targetBoardDate": "26-2",
+      "targetBoardDate": "26-4",
       "requirement": "CO"
     },
     "timeline": {
@@ -7020,19 +7125,20 @@
         "m": "",
         "q": ""
       }
-    }
+    },
+    "tourLength": 18
   },
   {
     "id": "acu2_5",
     "name": "ACU 2",
     "uic": "53210",
-    "location": "Special Mission",
+    "location": "Little Creek, VA",
     "tags": [
       "CO-SM"
     ],
     "platform": "CO-SM",
     "currentCO": {
-      "name": "Reber, Terra",
+      "name": "REBER TERRA ANGELA",
       "prd": "2027-03-23",
       "timelineData": {
         "i": "2025-09-23",
@@ -7042,23 +7148,23 @@
       }
     },
     "currentXO": {
-      "name": "",
-      "prd": "",
+      "name": "BLANDIN MATHIEW KRISTOPHER",
+      "prd": "2027-03-25",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "2025-07-25",
+        "k": "2027-01-25",
+        "m": "MAR27",
+        "q": "SEP28"
       }
     },
     "inboundXO": {
       "name": "",
-      "reportDate": "",
+      "reportDate": "JAN27",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "JAN27",
+        "k": "JUL28",
+        "m": "SEP28",
+        "q": "MAR30"
       }
     },
     "nextSlateParams": {
@@ -7072,57 +7178,58 @@
       "coTurnover": "2027-03-23"
     },
     "slatedXO": {
-      "name": "",
-      "reportDate": "",
+      "name": "Forecast",
+      "reportDate": "JUL28",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "JUL28",
+        "k": "JAN30",
+        "m": "MAR30",
+        "q": "SEP31"
       }
-    }
+    },
+    "tourLength": 18
   },
   {
     "id": "bmu1_5",
     "name": "BMU 1",
     "uic": "53212",
-    "location": "Special Mission",
+    "location": "San Diego, CA",
     "tags": [
       "CO-SM"
     ],
     "platform": "CO-SM",
     "currentCO": {
-      "name": "Morgan, Michelle",
+      "name": "JOSEPH MARVIN LYNDON",
       "prd": "1903-01-31",
       "timelineData": {
-        "i": "1901-07-31",
-        "k": "1901-07-31",
-        "m": "1901-07-31",
-        "q": "1903-01-31"
+        "i": "MAY23",
+        "k": "NOV24",
+        "m": "JAN25",
+        "q": "JUN26"
       }
     },
     "currentXO": {
-      "name": "",
-      "prd": "",
+      "name": "BARRY TIMOTHY SCOTT",
+      "prd": "2026-06-23",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "2024-11-23",
+        "k": "2026-04-23",
+        "m": "JUN26",
+        "q": "DEC27"
       }
     },
     "inboundXO": {
-      "name": "",
-      "reportDate": "",
+      "name": "POINT WALTER G",
+      "reportDate": "APR26",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "APR26",
+        "k": "OCT27",
+        "m": "DEC27",
+        "q": "JUN29"
       }
     },
     "nextSlateParams": {
-      "targetBoardDate": "26-2",
+      "targetBoardDate": "26-3",
       "requirement": "CO"
     },
     "timeline": {
@@ -7133,52 +7240,53 @@
     },
     "slatedXO": {
       "name": "",
-      "reportDate": "",
+      "reportDate": "SEP27",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "SEP27",
+        "k": "APR29",
+        "m": "JUN29",
+        "q": "DEC30"
       }
-    }
+    },
+    "tourLength": 18
   },
   {
     "id": "bmu2_5",
     "name": "BMU 2",
     "uic": "53211",
-    "location": "Special Mission",
+    "location": "Little Creek, VA",
     "tags": [
       "CO-SM"
     ],
     "platform": "CO-SM",
     "currentCO": {
-      "name": "Atherton, Glenn",
+      "name": "ATHERTON GLENN ALAN",
       "prd": "2027-06-23",
       "timelineData": {
-        "i": "2025-12-23",
-        "k": "2025-12-23",
+        "i": "AUG24",
+        "k": "NOV25",
         "m": "2025-12-23",
         "q": "2027-06-23"
       }
     },
     "currentXO": {
-      "name": "",
-      "prd": "",
+      "name": "MCGUINNIS EDWARD JOSEPH II",
+      "prd": "2027-05-26",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "2025-09-26",
+        "k": "APR27",
+        "m": "JUN27",
+        "q": "DEC28"
       }
     },
     "inboundXO": {
       "name": "",
-      "reportDate": "",
+      "reportDate": "APR27",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "APR27",
+        "k": "OCT28",
+        "m": "DEC28",
+        "q": "JUN30"
       }
     },
     "nextSlateParams": {
@@ -7192,57 +7300,58 @@
       "coTurnover": "2027-06-23"
     },
     "slatedXO": {
-      "name": "",
-      "reportDate": "",
+      "name": "Forecast",
+      "reportDate": "OCT28",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "OCT28",
+        "k": "APR30",
+        "m": "JUN30",
+        "q": "DEC31"
       }
-    }
+    },
+    "tourLength": 18
   },
   {
     "id": "msron2_7",
     "name": "MSRON 2",
     "uic": "3371B",
-    "location": "Special Mission",
+    "location": "Little Creek, VA",
     "tags": [
       "CO-SM"
     ],
     "platform": "CO-SM",
     "currentCO": {
-      "name": "Vitollo, Joey",
+      "name": "MILOTA JEFFERY ALLEN",
       "prd": "2024-11-23",
       "timelineData": {
-        "i": "2023-08-22",
-        "k": "2023-08-22",
-        "m": "2023-08-22",
-        "q": "2024-11-23"
+        "i": "SEP23",
+        "k": "NOV24",
+        "m": "JAN25",
+        "q": "MAY26"
       }
     },
     "currentXO": {
-      "name": "",
-      "prd": "",
+      "name": "PENROSE LUKE WILLIAM",
+      "prd": "2026-05-24",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "2024-10-24",
+        "k": "2026-03-24",
+        "m": "MAY26",
+        "q": "NOV27"
       }
     },
     "inboundXO": {
-      "name": "",
+      "name": "MILLS COURTNEY NATTER",
       "reportDate": "",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "MAR26",
+        "k": "SEP27",
+        "m": "NOV27",
+        "q": "MAY29"
       }
     },
     "nextSlateParams": {
-      "targetBoardDate": "26-2",
+      "targetBoardDate": "26-3",
       "requirement": "CO"
     },
     "timeline": {
@@ -7253,56 +7362,57 @@
     },
     "slatedXO": {
       "name": "",
-      "reportDate": "",
+      "reportDate": "SEP27",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "SEP27",
+        "k": "MAR29",
+        "m": "MAY29",
+        "q": "NOV30"
       }
-    }
+    },
+    "tourLength": 18
   },
   {
     "id": "msron3_7",
     "name": "MSRON 3",
     "uic": "3349A",
-    "location": "Special Mission",
+    "location": "San Diego, CA",
     "tags": [
       "CO-SM"
     ],
     "platform": "CO-SM",
     "currentCO": {
-      "name": "Armstrong, Alyssa",
+      "name": "ARMSTRONG ALYSSA BOW YEN",
       "prd": "2026-08-31",
       "timelineData": {
         "i": "2025-02-28",
         "k": "2025-02-28",
         "m": "2025-02-28",
-        "q": "2026-08-31"
+        "q": "SEP6"
       }
     },
     "currentXO": {
-      "name": "",
-      "prd": "",
+      "name": "MARTINEZ MICHELLE MAUREEN",
+      "prd": "2026-10-01",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "2025-02-01",
+        "k": "2026-08-01",
+        "m": "2026-09-01",
+        "q": "2028-03-01"
       }
     },
     "inboundXO": {
-      "name": "",
+      "name": "HOFFEN JENNIFER KRISTINE",
       "reportDate": "",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "AUG26",
+        "k": "FEB28",
+        "m": "MAR28",
+        "q": "SEP29"
       }
     },
     "nextSlateParams": {
-      "targetBoardDate": "26-2",
+      "targetBoardDate": "26-4",
       "requirement": "CO"
     },
     "timeline": {
@@ -7313,52 +7423,53 @@
     },
     "slatedXO": {
       "name": "",
-      "reportDate": "",
+      "reportDate": "FEB28",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "FEB28",
+        "k": "JUL29",
+        "m": "SEP29",
+        "q": "MAR31"
       }
-    }
+    },
+    "tourLength": 18
   },
   {
     "id": "msron4_7",
     "name": "MSRON 4",
     "uic": "30671",
-    "location": "Special Mission",
+    "location": "Little Creek, VA",
     "tags": [
       "CO-SM"
     ],
     "platform": "CO-SM",
     "currentCO": {
-      "name": "Ciullo, Daniel",
+      "name": "CIULLO DANIEL",
       "prd": "2027-01-23",
       "timelineData": {
-        "i": "2025-07-23",
-        "k": "2025-07-23",
+        "i": "JUN24",
+        "k": "JUN25",
         "m": "2025-07-23",
-        "q": "2027-01-23"
+        "q": "FEB27"
       }
     },
     "currentXO": {
-      "name": "",
-      "prd": "",
+      "name": "REYES JOSE JAMIE",
+      "prd": "2027-02-24",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "2025-06-24",
+        "k": "2026-12-24",
+        "m": "FEB27",
+        "q": "AUG28"
       }
     },
     "inboundXO": {
       "name": "",
-      "reportDate": "",
+      "reportDate": "DEC26",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "DEC26",
+        "k": "JUN28",
+        "m": "AUG28",
+        "q": "FEB30"
       }
     },
     "nextSlateParams": {
@@ -7372,53 +7483,54 @@
       "coTurnover": "2027-01-23"
     },
     "slatedXO": {
-      "name": "",
-      "reportDate": "",
+      "name": "Forecast",
+      "reportDate": "JUN28",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "JUN28",
+        "k": "DEC29",
+        "m": "FEB30",
+        "q": "AUG31"
       }
-    }
+    },
+    "tourLength": 18
   },
   {
     "id": "usvron1_8",
     "name": "USVRON 1",
-    "uic": "0101E XO/CO",
-    "location": "Special Mission",
+    "uic": "0101E",
+    "location": "Port Hueneme, CA",
     "tags": [
       "CO-SM"
     ],
     "platform": "CO-SM",
     "currentCO": {
-      "name": "Boston, Timothy",
+      "name": "BOSTON TIMOTHY J",
       "prd": "2027-01-22",
       "timelineData": {
-        "i": "2025-07-22",
+        "i": "DEC23",
         "k": "2025-07-22",
         "m": "2025-07-22",
         "q": "2027-01-22"
       }
     },
     "currentXO": {
-      "name": "",
-      "prd": "",
+      "name": "MULLEE MICHAEL ANTHONY",
+      "prd": "2027-02-23",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "2025-06-23",
+        "k": "2026-12-23",
+        "m": "2027-01-23",
+        "q": "2028-07-23"
       }
     },
     "inboundXO": {
       "name": "",
-      "reportDate": "",
+      "reportDate": "DEC26",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "DEC26",
+        "k": "MAY28",
+        "m": "JUL28",
+        "q": "JAN30"
       }
     },
     "nextSlateParams": {
@@ -7432,55 +7544,47 @@
       "coTurnover": "2027-01-22"
     },
     "slatedXO": {
-      "name": "",
-      "reportDate": "",
+      "name": "Forecast",
+      "reportDate": "MAY28",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "MAY28",
+        "k": "NOV29",
+        "m": "JAN30",
+        "q": "JUL31"
       }
-    }
+    },
+    "tourLength": 18
   },
   {
     "id": "usvron3_8",
     "name": "USVRON 3",
-    "uic": "SDGO Sequential Post Afloat Command",
-    "location": "Special Mission",
+    "uic": "42702",
+    "location": "San Diego, CA",
     "tags": [
       "CO-SM"
     ],
     "platform": "CO-SM",
     "currentCO": {
-      "name": "Martinez, Matthew G",
+      "name": "HABERMAN SOPHIA M",
       "prd": "2027-06-23",
       "timelineData": {
-        "i": "2025-12-23",
+        "i": "JUN26",
         "k": "2025-12-23",
-        "m": "2025-12-23",
-        "q": "2027-06-23"
+        "m": "JUN26",
+        "q": "DEC27"
       }
     },
     "currentXO": {
-      "name": "",
-      "prd": "",
+      "name": "Haberman, Sophia",
+      "prd": "2026-07-24",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "2024-08-24",
+        "k": "2026-05-24",
+        "m": "2026-06-24",
+        "q": "2027-12-24"
       }
     },
-    "inboundXO": {
-      "name": "",
-      "reportDate": "",
-      "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
-      }
-    },
+    "inboundXO": null,
     "nextSlateParams": {
       "targetBoardDate": "26-2",
       "requirement": "CO"
@@ -7500,19 +7604,39 @@
         "m": "",
         "q": ""
       }
+    },
+    "rotationStyle": "DirectCO",
+    "tourLength": 18,
+    "prospectiveCO": {
+      "name": "",
+      "prd": "JUN29",
+      "timelineData": {
+        "i": "DEC27",
+        "m": "DEC27",
+        "q": "JUN29"
+      }
+    },
+    "slatedCO": {
+      "name": "Forecast",
+      "prd": "DEC30",
+      "timelineData": {
+        "i": "JUN29",
+        "m": "JUN29",
+        "q": "DEC30"
+      }
     }
   },
   {
     "id": "usvron7_8",
     "name": "USVRON 7",
-    "uic": "SDGO CO",
-    "location": "Special Mission",
+    "uic": "55316",
+    "location": "San Diego, CA DET C7F",
     "tags": [
       "CO-SM"
     ],
     "platform": "CO-SM",
     "currentCO": {
-      "name": "Martinez, Matthew G",
+      "name": "MARTINEZ MATTHEW GLENN",
       "prd": "2028-03-23",
       "timelineData": {
         "i": "2026-09-23",
@@ -7523,12 +7647,12 @@
     },
     "currentXO": {
       "name": "",
-      "prd": "",
+      "prd": "2026-10-24",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "2025-02-24",
+        "k": "2026-08-24",
+        "m": "2026-09-24",
+        "q": "2028-03-24"
       }
     },
     "inboundXO": {
@@ -7542,7 +7666,7 @@
       }
     },
     "nextSlateParams": {
-      "targetBoardDate": "27-1",
+      "targetBoardDate": "26-2",
       "requirement": "CO"
     },
     "timeline": {
@@ -7565,44 +7689,36 @@
   {
     "id": "navsupactcrane_15",
     "name": "NAVSUPACT CRANE",
-    "uic": "3 YEAR CO ONLY",
-    "location": "Special Mission",
+    "uic": "61018",
+    "location": "Crane, IN",
     "tags": [
       "CO-SM"
     ],
     "platform": "CO-SM",
     "currentCO": {
-      "name": "1320 MARTINEZ, LUIS (RETIRING)",
+      "name": "MARTINEZ LUIS",
       "prd": "2026-06-21",
       "timelineData": {
         "i": "2023-05-16",
         "k": "2023-05-16",
         "m": "2023-05-16",
         "q": "2026-06-21"
-      }
+      },
+      "fillCommunity": "1320"
     },
     "currentXO": {
-      "name": "",
-      "prd": "",
+      "name": "Hill, Martina",
+      "prd": "2026-11-24",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "2025-03-24",
+        "k": "2026-09-24",
+        "m": "2026-10-24",
+        "q": "2028-04-24"
       }
     },
-    "inboundXO": {
-      "name": "",
-      "reportDate": "",
-      "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
-      }
-    },
+    "inboundXO": null,
     "nextSlateParams": {
-      "targetBoardDate": "26-2",
+      "targetBoardDate": "28-3",
       "requirement": "CO"
     },
     "timeline": {
@@ -7620,46 +7736,68 @@
         "m": "",
         "q": ""
       }
+    },
+    "tourLength": 36,
+    "rotationStyle": "DirectCO",
+    "prospectiveCO": {
+      "name": "",
+      "prd": "NOV29",
+      "timelineData": {
+        "i": "NOV26",
+        "m": "NOV26",
+        "q": "NOV29"
+      }
+    },
+    "slatedCO": {
+      "name": "Forecast",
+      "prd": "NOV32",
+      "timelineData": {
+        "i": "NOV29",
+        "m": "NOV29",
+        "q": "NOV32"
+      }
     }
   },
   {
     "id": "charlestonbrig_15",
-    "name": "Charleston BRIG",
+    "name": "CHARLESTON BRIG",
     "uic": "45610",
-    "location": "Special Mission",
+    "location": "Charleston, NC",
     "tags": [
       "CO-SM"
     ],
     "platform": "CO-SM",
     "currentCO": {
-      "name": "Howard, Kevin (1310)",
+      "name": "HOWARD KEVIN",
       "prd": "2028-07-23",
       "timelineData": {
         "i": "2027-01-23",
         "k": "2027-01-23",
         "m": "2027-01-23",
         "q": "2028-07-23"
-      }
+      },
+      "fillCommunity": "1310"
     },
     "currentXO": {
-      "name": "",
-      "prd": "",
+      "name": "WALK JAMES C",
+      "prd": "2027-02-24",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "2025-02-24",
+        "k": "2026-12-24",
+        "m": "2027-01-24",
+        "q": "2028-07-24"
       }
     },
     "inboundXO": {
       "name": "",
       "reportDate": "",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
-      }
+        "i": "2026-12-24",
+        "k": "2028-06-24",
+        "m": "2028-07-24",
+        "q": "2030-01-24"
+      },
+      "fillCommunity": "1310"
     },
     "nextSlateParams": {
       "targetBoardDate": "27-2",
@@ -7673,20 +7811,21 @@
     },
     "slatedXO": {
       "name": "",
-      "reportDate": "",
+      "reportDate": "JUN28",
       "timelineData": {
-        "i": "",
-        "k": "",
-        "m": "",
-        "q": ""
+        "i": "JUN28",
+        "k": "NOV29",
+        "m": "JAN30",
+        "q": "JUL31"
       }
-    }
+    },
+    "tourLength": 18
   },
   {
     "id": "scstcwestpac_13",
     "name": "SCSTC WESTPAC",
     "uic": "49017",
-    "location": "Special Mission",
+    "location": "Yokosuka, JP",
     "tags": [
       "CO-SM"
     ],
@@ -7699,7 +7838,8 @@
         "k": "2024-04-16",
         "m": "2024-04-16",
         "q": "2027-04-21"
-      }
+      },
+      "fillCommunity": "Other"
     },
     "currentXO": {
       "name": "",
@@ -7739,6 +7879,288 @@
         "k": "",
         "m": "",
         "q": ""
+      }
+    },
+    "rotationStyle": "DirectCO",
+    "tourLength": 36,
+    "prospectiveCO": {
+      "name": "",
+      "prd": "APR30",
+      "timelineData": {
+        "i": "apr27",
+        "m": "apr27",
+        "q": "APR30"
+      }
+    },
+    "slatedCO": {
+      "name": "Forecast",
+      "prd": "APR33",
+      "timelineData": {
+        "i": "APR30",
+        "m": "APR30",
+        "q": "APR33"
+      }
+    }
+  },
+  {
+    "id": "cmd_new_1773524065725",
+    "name": "NTAG HEARTLAND",
+    "uic": "62439",
+    "platform": "CO-SM",
+    "location": "Detroit, MI",
+    "currentCO": {
+      "name": "AGUILAR DAVID LUIS",
+      "prd": "",
+      "timelineData": {
+        "i": "SEP23",
+        "q": "SEP26",
+        "k": "MAR25",
+        "m": "MAR25"
+      }
+    },
+    "currentXO": {
+      "name": "WAKE JOHN ALAN",
+      "prd": "",
+      "timelineData": {
+        "m": "SEP26",
+        "i": "MAR25",
+        "k": "JUL26",
+        "q": "MAR28"
+      },
+      "fillCommunity": "1320"
+    },
+    "nextSlateParams": {
+      "requirement": "CO",
+      "targetBoardDate": "26-2"
+    },
+    "timeline": {},
+    "tourLength": 18,
+    "tags": [
+      "CO-SM"
+    ],
+    "inboundXO": {
+      "name": "",
+      "reportDate": "JUL26",
+      "timelineData": {
+        "i": "JUL26",
+        "k": "JAN28",
+        "m": "MAR28",
+        "q": "SEP29"
+      }
+    }
+  },
+  {
+    "id": "cmd_new_1773525181936",
+    "name": "CEREMONIAL GUARD",
+    "uic": "30027",
+    "platform": "CO-SM",
+    "location": "Navy Yard, D.C.",
+    "tags": [
+      "CO-SM"
+    ],
+    "currentCO": {
+      "name": "HESSELL WILLIAM EMANUEL",
+      "prd": "",
+      "timelineData": {
+        "i": "FEB24",
+        "k": "MAR25",
+        "m": "APR25",
+        "q": "OCT26"
+      }
+    },
+    "currentXO": {
+      "name": "HILL MARTINA R",
+      "prd": "",
+      "timelineData": {
+        "i": "MAR25",
+        "m": "OCT26",
+        "k": "SEP26",
+        "q": "APR28"
+      },
+      "fillCommunity": "1310"
+    },
+    "nextSlateParams": {
+      "requirement": "CO",
+      "targetBoardDate": "26-2"
+    },
+    "timeline": {},
+    "tourLength": 18,
+    "prospectiveCO": {
+      "name": "",
+      "prd": "",
+      "fillCommunity": "1110"
+    },
+    "inboundXO": {
+      "name": "",
+      "reportDate": "SEP26",
+      "timelineData": {
+        "i": "SEP26",
+        "k": "MAR28",
+        "m": "MAY28",
+        "q": "NOV29"
+      }
+    }
+  },
+  {
+    "id": "cmd_new_1773530859824",
+    "name": "NTAG NORTHERN PLAINS",
+    "uic": "N/A",
+    "platform": "CO-SM",
+    "location": "Minneapolis St. Paul, MN",
+    "tags": [
+      "CO-SM"
+    ],
+    "currentCO": {
+      "name": "RITTENHOUSE MARK",
+      "prd": "",
+      "timelineData": {
+        "m": "DEC26",
+        "q": "JUN27",
+        "i": "JUN24",
+        "k": "OCT26"
+      }
+    },
+    "currentXO": {
+      "name": "EDGE ZACHARY CHARLES",
+      "prd": "",
+      "fillCommunity": "1310",
+      "timelineData": {
+        "m": "JUN27",
+        "q": "DEC28",
+        "i": "OCT26",
+        "k": "APR27"
+      }
+    },
+    "nextSlateParams": {
+      "requirement": "CO",
+      "targetBoardDate": "26-2"
+    },
+    "timeline": {},
+    "tourLength": 18,
+    "inboundXO": {
+      "name": "",
+      "reportDate": "APR27",
+      "timelineData": {
+        "m": "DEC28",
+        "q": "JUN30",
+        "i": "APR27",
+        "k": "OCT28"
+      }
+    },
+    "slatedXO": {
+      "name": "Forecast",
+      "reportDate": "OCT28",
+      "timelineData": {
+        "i": "OCT28",
+        "k": "APR30",
+        "m": "JUN30",
+        "q": "DEC31"
+      }
+    }
+  },
+  {
+    "id": "cmd_new_1773531411735",
+    "name": "MWTC Point Loma",
+    "uic": "N/A",
+    "platform": "CO-SM",
+    "location": "Point Loma, CA",
+    "tags": [
+      "CO-SM"
+    ],
+    "currentCO": {
+      "name": "MOONEY RICHARD",
+      "prd": "",
+      "fillCommunity": "1310",
+      "timelineData": {
+        "i": "AUG25",
+        "m": "AUG25",
+        "q": "AUG27"
+      }
+    },
+    "currentXO": {
+      "name": "",
+      "prd": ""
+    },
+    "nextSlateParams": {
+      "requirement": "CO",
+      "targetBoardDate": "TBD"
+    },
+    "timeline": {},
+    "rotationStyle": "DirectCO",
+    "tourLength": 24,
+    "prospectiveCO": {
+      "name": "",
+      "prd": "AUG29",
+      "timelineData": {
+        "i": "AUG27",
+        "m": "AUG27",
+        "q": "AUG29"
+      }
+    },
+    "slatedCO": {
+      "name": "Forecast",
+      "prd": "AUG31",
+      "timelineData": {
+        "i": "AUG29",
+        "m": "AUG29",
+        "q": "AUG31"
+      }
+    }
+  },
+  {
+    "id": "cmd_new_1773532496403",
+    "name": "MIRAMAR BRIG",
+    "uic": "N/A",
+    "platform": "CO-SM",
+    "location": "Miramar, CA",
+    "tags": [
+      "CO-SM"
+    ],
+    "currentCO": {
+      "name": "MARCELO STEPHANIE",
+      "prd": "",
+      "timelineData": {
+        "i": "OCT22",
+        "k": "DEC24",
+        "m": "JAN25",
+        "q": "JAN26"
+      }
+    },
+    "currentXO": {
+      "name": "SCOTT HUNTER",
+      "prd": "",
+      "fillCommunity": "1310",
+      "timelineData": {
+        "i": "JUL24",
+        "k": "DEC25",
+        "m": "JAN26",
+        "q": "JUL27"
+      }
+    },
+    "nextSlateParams": {
+      "requirement": "CO",
+      "targetBoardDate": "27-3"
+    },
+    "timeline": {},
+    "tourLength": 18,
+    "inboundXO": {
+      "name": "USELEHONAN HELEN",
+      "reportDate": "DEC25",
+      "timelineData": {
+        "i": "DEC25",
+        "m": "JUL27",
+        "k": "MAY27",
+        "q": "JAN29"
+      }
+    },
+    "slatedXO": {
+      "name": "Forecast",
+      "reportDate": "MAY27",
+      "timelineData": {
+        "i": "MAY27",
+        "k": "NOV28",
+        "m": "JAN29",
+        "q": "JUL30"
       }
     }
   }

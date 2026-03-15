@@ -1,4 +1,8 @@
 #!/bin/bash
+# Ensure common tool paths are available regardless of how this script is launched
+# (macOS app/icon launches use a minimal PATH that excludes /usr/local/bin)
+export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+
 APP_DIR="/Users/benjaminkozlowski/Documents/Oracle"
 LOG="/tmp/oracle-dev.log"
 URL="http://localhost:3000"
@@ -11,7 +15,7 @@ fi
 
 # Start the dev server in background
 cd "$APP_DIR"
-nohup npm run dev > "$LOG" 2>&1 &
+nohup /usr/local/bin/npm run dev > "$LOG" 2>&1 &
 
 # Wait up to 30s for it to be ready
 for i in $(seq 1 30); do

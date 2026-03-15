@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input"
 interface CommandTimelineProps {
     command: OracleCommand
     editable?: boolean
-    onDateChange?: (role: 'currentCO' | 'currentXO' | 'inboundXO' | 'slatedXO', field: 'i' | 'k' | 'm' | 'q', value: string) => void
+    onDateChange?: (role: 'currentCO' | 'currentXO' | 'inboundXO' | 'slatedXO' | 'prospectiveCO' | 'slatedCO', field: 'i' | 'k' | 'm' | 'q', value: string) => void
 }
 
 export function CommandTimeline({ command, editable = false, onDateChange }: CommandTimelineProps) {
@@ -28,7 +28,7 @@ export function CommandTimeline({ command, editable = false, onDateChange }: Com
         return isValid(date) ? format(date, 'MMMyy').toUpperCase() : dateStr
     }
 
-    const renderCell = (role: 'currentCO' | 'currentXO' | 'inboundXO' | 'slatedXO', field: 'i' | 'k' | 'm' | 'q', value?: string | null) => {
+    const renderCell = (role: 'currentCO' | 'currentXO' | 'inboundXO' | 'slatedXO' | 'prospectiveCO' | 'slatedCO', field: 'i' | 'k' | 'm' | 'q', value?: string | null) => {
         // Prepare display value: try to format as MMMYY, otherwise show raw
         const displayValue = formatDate(value);
 
@@ -48,6 +48,8 @@ export function CommandTimeline({ command, editable = false, onDateChange }: Com
         return displayValue
     }
 
+    const isDirectCO = command.rotationStyle === 'DirectCO'
+
     return (
         <div className="w-full mt-4 space-y-4 border rounded-md p-4 bg-white/50">
             <h4 className="text-sm font-medium text-slate-700">Timeline Data {editable && "(Editable)"}</h4>
@@ -57,55 +59,99 @@ export function CommandTimeline({ command, editable = false, onDateChange }: Com
                     <TableRow>
                         <TableHead className="w-[100px]">Role</TableHead>
                         <TableHead>Name</TableHead>
-                        <TableHead className="text-center">XO REPORT</TableHead>
-                        <TableHead className="text-center">XO TURNOVER</TableHead>
-                        <TableHead className="text-center">COC</TableHead>
-                        <TableHead className="text-center">CO TURNOVER</TableHead>
+                        {isDirectCO ? (
+                            <>
+                                <TableHead className="text-center">CO ARRIVAL</TableHead>
+                                <TableHead className="text-center">CoC</TableHead>
+                                <TableHead className="text-center">CO DEPARTURE</TableHead>
+                            </>
+                        ) : (
+                            <>
+                                <TableHead className="text-center">XO REPORT</TableHead>
+                                <TableHead className="text-center">XO TURNOVER</TableHead>
+                                <TableHead className="text-center">COC</TableHead>
+                                <TableHead className="text-center">CO TURNOVER</TableHead>
+                            </>
+                        )}
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {/* Current CO */}
+                    {/* Current CO — always shown */}
                     <TableRow>
                         <TableCell className="font-medium text-slate-500">CO</TableCell>
                         <TableCell className="font-medium">{command.currentCO.name}</TableCell>
-                        <TableCell className="text-center font-mono text-xs">{renderCell('currentCO', 'i', command.currentCO.timelineData?.i)}</TableCell>
-                        <TableCell className="text-center font-mono text-xs">{renderCell('currentCO', 'k', command.currentCO.timelineData?.k)}</TableCell>
-                        <TableCell className="text-center font-mono text-xs">{renderCell('currentCO', 'm', command.currentCO.timelineData?.m)}</TableCell>
-                        <TableCell className="text-center font-mono text-xs">{renderCell('currentCO', 'q', command.currentCO.timelineData?.q)}</TableCell>
+                        {isDirectCO ? (
+                            <>
+                                <TableCell className="text-center font-mono text-xs">{renderCell('currentCO', 'i', command.currentCO.timelineData?.i)}</TableCell>
+                                <TableCell className="text-center font-mono text-xs">{renderCell('currentCO', 'm', command.currentCO.timelineData?.m)}</TableCell>
+                                <TableCell className="text-center font-mono text-xs">{renderCell('currentCO', 'q', command.currentCO.timelineData?.q)}</TableCell>
+                            </>
+                        ) : (
+                            <>
+                                <TableCell className="text-center font-mono text-xs">{renderCell('currentCO', 'i', command.currentCO.timelineData?.i)}</TableCell>
+                                <TableCell className="text-center font-mono text-xs">{renderCell('currentCO', 'k', command.currentCO.timelineData?.k)}</TableCell>
+                                <TableCell className="text-center font-mono text-xs">{renderCell('currentCO', 'm', command.currentCO.timelineData?.m)}</TableCell>
+                                <TableCell className="text-center font-mono text-xs">{renderCell('currentCO', 'q', command.currentCO.timelineData?.q)}</TableCell>
+                            </>
+                        )}
                     </TableRow>
 
-                    {/* Current XO */}
-                    <TableRow>
-                        <TableCell className="font-medium text-slate-500">XO</TableCell>
-                        <TableCell className="font-medium">{command.currentXO.name}</TableCell>
-                        <TableCell className="text-center font-mono text-xs">{renderCell('currentXO', 'i', command.currentXO.timelineData?.i)}</TableCell>
-                        <TableCell className="text-center font-mono text-xs">{renderCell('currentXO', 'k', command.currentXO.timelineData?.k)}</TableCell>
-                        <TableCell className="text-center font-mono text-xs">{renderCell('currentXO', 'm', command.currentXO.timelineData?.m)}</TableCell>
-                        <TableCell className="text-center font-mono text-xs">{renderCell('currentXO', 'q', command.currentXO.timelineData?.q)}</TableCell>
-                    </TableRow>
-
-                    {/* Inbound XO */}
-                    {command.inboundXO && (
+                    {/* P-CO row — only for Direct CO commands */}
+                    {isDirectCO && (
                         <TableRow className="bg-slate-50/50">
-                            <TableCell className="font-medium text-slate-500">P-XO</TableCell>
-                            <TableCell className="font-medium">{command.inboundXO.name}</TableCell>
-                            <TableCell className="text-center font-mono text-xs">{renderCell('inboundXO', 'i', command.inboundXO.timelineData?.i)}</TableCell>
-                            <TableCell className="text-center font-mono text-xs">{renderCell('inboundXO', 'k', command.inboundXO.timelineData?.k)}</TableCell>
-                            <TableCell className="text-center font-mono text-xs">{renderCell('inboundXO', 'm', command.inboundXO.timelineData?.m)}</TableCell>
-                            <TableCell className="text-center font-mono text-xs">{renderCell('inboundXO', 'q', command.inboundXO.timelineData?.q)}</TableCell>
+                            <TableCell className="font-medium text-slate-500">P-CO</TableCell>
+                            <TableCell className="font-medium">{command.prospectiveCO?.name || <span className="text-muted-foreground italic text-xs">TBD</span>}</TableCell>
+                            <TableCell className="text-center font-mono text-xs">{renderCell('prospectiveCO', 'i', command.prospectiveCO?.timelineData?.i)}</TableCell>
+                            <TableCell className="text-center font-mono text-xs">{renderCell('prospectiveCO', 'm', command.prospectiveCO?.timelineData?.m)}</TableCell>
+                            <TableCell className="text-center font-mono text-xs">{renderCell('prospectiveCO', 'q', command.prospectiveCO?.timelineData?.q)}</TableCell>
                         </TableRow>
                     )}
 
-                    {/* Slated XO */}
-                    {command.slatedXO && (
+                    {/* Slated CO row — only for Direct CO commands */}
+                    {isDirectCO && (
                         <TableRow className="bg-blue-50/50">
-                            <TableCell className="font-medium text-slate-500">Slated XO</TableCell>
-                            <TableCell className="font-medium">{command.slatedXO.name}</TableCell>
-                            <TableCell className="text-center font-mono text-xs">{renderCell('slatedXO', 'i', command.slatedXO.timelineData?.i)}</TableCell>
-                            <TableCell className="text-center font-mono text-xs">{renderCell('slatedXO', 'k', command.slatedXO.timelineData?.k)}</TableCell>
-                            <TableCell className="text-center font-mono text-xs">{renderCell('slatedXO', 'm', command.slatedXO.timelineData?.m)}</TableCell>
-                            <TableCell className="text-center font-mono text-xs">{renderCell('slatedXO', 'q', command.slatedXO.timelineData?.q)}</TableCell>
+                            <TableCell className="font-medium text-slate-500">Slated CO</TableCell>
+                            <TableCell className="font-medium">{command.slatedCO?.name || <span className="text-muted-foreground italic text-xs">Forecast</span>}</TableCell>
+                            <TableCell className="text-center font-mono text-xs">{renderCell('slatedCO', 'i', command.slatedCO?.timelineData?.i)}</TableCell>
+                            <TableCell className="text-center font-mono text-xs">{renderCell('slatedCO', 'm', command.slatedCO?.timelineData?.m)}</TableCell>
+                            <TableCell className="text-center font-mono text-xs">{renderCell('slatedCO', 'q', command.slatedCO?.timelineData?.q)}</TableCell>
                         </TableRow>
+                    )}
+
+                    {/* XO rows — only shown for Fleet-Up commands */}
+                    {!isDirectCO && (
+                        <>
+                            <TableRow>
+                                <TableCell className="font-medium text-slate-500">XO</TableCell>
+                                <TableCell className="font-medium">{command.currentXO.name}</TableCell>
+                                <TableCell className="text-center font-mono text-xs">{renderCell('currentXO', 'i', command.currentXO.timelineData?.i)}</TableCell>
+                                <TableCell className="text-center font-mono text-xs">{renderCell('currentXO', 'k', command.currentXO.timelineData?.k)}</TableCell>
+                                <TableCell className="text-center font-mono text-xs">{renderCell('currentXO', 'm', command.currentXO.timelineData?.m)}</TableCell>
+                                <TableCell className="text-center font-mono text-xs">{renderCell('currentXO', 'q', command.currentXO.timelineData?.q)}</TableCell>
+                            </TableRow>
+
+                            {command.inboundXO && (
+                                <TableRow className="bg-slate-50/50">
+                                    <TableCell className="font-medium text-slate-500">P-XO</TableCell>
+                                    <TableCell className="font-medium">{command.inboundXO.name}</TableCell>
+                                    <TableCell className="text-center font-mono text-xs">{renderCell('inboundXO', 'i', command.inboundXO.timelineData?.i)}</TableCell>
+                                    <TableCell className="text-center font-mono text-xs">{renderCell('inboundXO', 'k', command.inboundXO.timelineData?.k)}</TableCell>
+                                    <TableCell className="text-center font-mono text-xs">{renderCell('inboundXO', 'm', command.inboundXO.timelineData?.m)}</TableCell>
+                                    <TableCell className="text-center font-mono text-xs">{renderCell('inboundXO', 'q', command.inboundXO.timelineData?.q)}</TableCell>
+                                </TableRow>
+                            )}
+
+                            {command.slatedXO && (
+                                <TableRow className="bg-blue-50/50">
+                                    <TableCell className="font-medium text-slate-500">Slated XO</TableCell>
+                                    <TableCell className="font-medium">{command.slatedXO.name}</TableCell>
+                                    <TableCell className="text-center font-mono text-xs">{renderCell('slatedXO', 'i', command.slatedXO.timelineData?.i)}</TableCell>
+                                    <TableCell className="text-center font-mono text-xs">{renderCell('slatedXO', 'k', command.slatedXO.timelineData?.k)}</TableCell>
+                                    <TableCell className="text-center font-mono text-xs">{renderCell('slatedXO', 'm', command.slatedXO.timelineData?.m)}</TableCell>
+                                    <TableCell className="text-center font-mono text-xs">{renderCell('slatedXO', 'q', command.slatedXO.timelineData?.q)}</TableCell>
+                                </TableRow>
+                            )}
+                        </>
                     )}
                 </TableBody>
             </Table>

@@ -7,8 +7,8 @@
     "requirements": [
       {
         "id": "req-cmd_86-xo",
-        "commandName": "USS COMSTOCK",
         "commandId": "cmd_86",
+        "commandName": "USS COMSTOCK",
         "role": "XO",
         "incumbent": "HODGEMAN JESSICA LYN",
         "incumbentPrd": "2027-02-01",
@@ -17,8 +17,8 @@
       },
       {
         "id": "req-cmd_100-xo",
-        "commandName": "USS GABRIELLE GIFFORDS",
         "commandId": "cmd_100",
+        "commandName": "USS GABRIELLE GIFFORDS",
         "role": "XO",
         "incumbent": "LILEKS WAYNE D",
         "incumbentPrd": "2027-02-01",
@@ -27,8 +27,8 @@
       },
       {
         "id": "req-cmd_124-xo",
-        "commandName": "USS PREBLE",
         "commandId": "cmd_124",
+        "commandName": "USS PREBLE",
         "role": "XO",
         "incumbent": "FORWARD DOUGLAS THEODORE",
         "incumbentPrd": "2027-05-01",
@@ -37,8 +37,8 @@
       },
       {
         "id": "req-cmd_89-xo",
-        "commandName": "USS HARPER'S FERRY",
         "commandId": "cmd_89",
+        "commandName": "USS HARPER'S FERRY",
         "role": "XO",
         "incumbent": "CHALLBURG MARIBEL",
         "incumbentPrd": "2027-06-01",
@@ -47,8 +47,8 @@
       },
       {
         "id": "req-cmd_108-xo",
-        "commandName": "USS MANCHESTER",
         "commandId": "cmd_108",
+        "commandName": "USS MANCHESTER",
         "role": "XO",
         "incumbent": "THURMAN JEREMY S",
         "incumbentPrd": "2027-06-01",
@@ -57,8 +57,8 @@
       },
       {
         "id": "req-cmd_121-xo",
-        "commandName": "USS MILIUS",
         "commandId": "cmd_121",
+        "commandName": "USS MILIUS",
         "role": "XO",
         "incumbent": "MARTIN PHILLIP DEJUAN",
         "incumbentPrd": "2027-06-01",
@@ -67,8 +67,8 @@
       },
       {
         "id": "req-cmd_47-xo",
-        "commandName": "USS BAINBRIDGE",
         "commandId": "cmd_47",
+        "commandName": "USS BAINBRIDGE",
         "role": "XO",
         "incumbent": "PETERS SAVANNAH JUNE",
         "incumbentPrd": "2027-07-01",
@@ -77,8 +77,8 @@
       },
       {
         "id": "req-cmd_56-xo",
-        "commandName": "USS OAK HILL",
         "commandId": "cmd_56",
+        "commandName": "USS OAK HILL",
         "role": "XO",
         "incumbent": "KIRBY MATTHEW DAVID",
         "incumbentPrd": "2027-07-01",
@@ -87,8 +87,8 @@
       },
       {
         "id": "req-cmd_23-xo-1772671797558",
-        "commandName": "USS BILLINGS",
         "commandId": "cmd_23",
+        "commandName": "USS BILLINGS",
         "role": "XO",
         "incumbent": "BURNS JOHN A",
         "incumbentPrd": "2026-08-25",
@@ -97,8 +97,8 @@
       },
       {
         "id": "req-cmd_27-xo-1772671839198",
-        "commandName": "USS COOPERSTOWN",
         "commandId": "cmd_27",
+        "commandName": "USS COOPERSTOWN",
         "role": "XO",
         "incumbent": "HEILIGER NICHOLAS SEAN",
         "incumbentPrd": "2026-11-25",
@@ -107,8 +107,8 @@
       },
       {
         "id": "req-cmd_60-xo-1772671919157",
-        "commandName": "USS WILLIAM P LAWRENCE",
         "commandId": "cmd_60",
+        "commandName": "USS WILLIAM P LAWRENCE",
         "role": "XO",
         "incumbent": "HARRIS ROBERT NELSON III",
         "incumbentPrd": "2027-04-05",
@@ -117,8 +117,8 @@
       },
       {
         "id": "req-cmd_67-xo-1772671927548",
-        "commandName": "USS PAUL IGNATIUS",
         "commandId": "cmd_67",
+        "commandName": "USS PAUL IGNATIUS",
         "role": "XO",
         "incumbent": "SISLER RYAN J",
         "incumbentPrd": "",
@@ -127,8 +127,8 @@
       },
       {
         "id": "req-cmd_88-xo-1772671937382",
-        "commandName": "USS ASHLAND",
         "commandId": "cmd_88",
+        "commandName": "USS ASHLAND",
         "role": "XO",
         "incumbent": "Cranford, Marcus (XO-A)",
         "incumbentPrd": "2025-07-24",
@@ -137,8 +137,8 @@
       },
       {
         "id": "req-cmd_93-xo-1772671948550",
-        "commandName": "USS MONTGOMERY",
         "commandId": "cmd_93",
+        "commandName": "USS MONTGOMERY",
         "role": "XO",
         "incumbent": "HAUGAN NATHAN DANIEL",
         "incumbentPrd": "",
@@ -147,8 +147,8 @@
       },
       {
         "id": "req-cmd_113-xo-1772671964175",
-        "commandName": "USS CANBERRA  GOLD (CREW 228)",
         "commandId": "cmd_113",
+        "commandName": "USS CANBERRA  GOLD (CREW 228)",
         "role": "XO",
         "incumbent": "Towles, Courtney (XO/CO)",
         "incumbentPrd": "2025-05-23",
@@ -157,8 +157,8 @@
       },
       {
         "id": "req-cmd_114-xo-1772671982803",
-        "commandName": "USS SANTA BARBARA  BLUE (CREW 229)",
         "commandId": "cmd_114",
+        "commandName": "USS SANTA BARBARA  BLUE (CREW 229)",
         "role": "XO",
         "incumbent": "Buss, Johnathan (XO/CO)",
         "incumbentPrd": "2025-08-23",
@@ -167,8 +167,8 @@
       },
       {
         "id": "req-cmd_40-xo-1772672011635",
-        "commandName": "USS COLE",
         "commandId": "cmd_40",
+        "commandName": "USS COLE",
         "role": "XO",
         "incumbent": "GOSTEL CHRISTOPHER RANSOMA",
         "incumbentPrd": "2026-01-24",
@@ -177,8 +177,8 @@
       },
       {
         "id": "req-cmd_2-xo-1772672042961",
-        "commandName": "USS TULSA",
         "commandId": "cmd_2",
+        "commandName": "USS TULSA",
         "role": "XO",
         "incumbent": "BENKO RYAN EMERY",
         "incumbentPrd": "2025-06-24",
@@ -187,8 +187,8 @@
       },
       {
         "id": "req-cmd_38-co-1773110206925",
-        "commandName": "USS LABOON",
         "commandId": "cmd_38",
+        "commandName": "USS LABOON",
         "role": "CO",
         "incumbent": "DORE FRANCIS KENNETH",
         "incumbentPrd": "2025-01-01",
@@ -197,8 +197,8 @@
       },
       {
         "id": "req-cmd_50-co-1773110231944",
-        "commandName": "USS GRAVELY",
         "commandId": "cmd_50",
+        "commandName": "USS GRAVELY",
         "role": "CO",
         "incumbent": "PIORUN GREGORY JOSEPH JR",
         "incumbentPrd": "2024-11-23",
@@ -206,13 +206,153 @@
       },
       {
         "id": "req-cmd_12-co-1773110238161",
-        "commandName": "USS SAMPSON",
         "commandId": "cmd_12",
+        "commandName": "USS SAMPSON",
         "role": "CO",
         "incumbent": "LONG CATHERINE SUSAN",
         "incumbentPrd": "SEP26",
         "status": "Filled",
         "filledBy": "karlobrianj_13"
+      },
+      {
+        "id": "req-aamdsromania_13-cosm-1773533256379",
+        "commandId": "aamdsromania_13",
+        "commandName": "AAMDS ROMANIA",
+        "role": "CO-SM",
+        "incumbent": "GREGORY CARLEIGH REBECCA",
+        "incumbentPrd": "2026-12-21",
+        "status": "Filled",
+        "filledBy": "harneyseanmichael_19"
+      },
+      {
+        "id": "req-ssuguam_8-cosm-1773533260548",
+        "commandId": "ssuguam_8",
+        "commandName": "SSU GUAM",
+        "role": "CO-SM",
+        "incumbent": "TORTORA PAUL J",
+        "incumbentPrd": "2022-06-30",
+        "status": "Filled",
+        "filledBy": "woodsdanielmccarthy_21"
+      },
+      {
+        "id": "req-bmu2_5-cosm-1773533272683",
+        "commandId": "bmu2_5",
+        "commandName": "BMU 2",
+        "role": "CO-SM",
+        "incumbent": "ATHERTON GLENN ALAN",
+        "incumbentPrd": "2027-06-23",
+        "status": "Filled",
+        "filledBy": "catalanomichael_16"
+      },
+      {
+        "id": "req-msron4_7-cosm-1773533300663",
+        "commandId": "msron4_7",
+        "commandName": "MSRON 4",
+        "role": "CO-SM",
+        "incumbent": "CIULLO DANIEL",
+        "incumbentPrd": "2027-01-23",
+        "status": "Filled",
+        "filledBy": "dietzelmorganmichelle_23"
+      },
+      {
+        "id": "req-nbu7_5-cosm-1773533328784",
+        "commandId": "nbu7_5",
+        "commandName": "NBU 7",
+        "role": "CO-SM",
+        "incumbent": "DELOACH MICHAEL KEATING",
+        "incumbentPrd": "2027-02-23",
+        "status": "Filled",
+        "filledBy": "reschmeierwernerrudolph_25"
+      },
+      {
+        "id": "req-usvron1_8-cosm-1773533334667",
+        "commandId": "usvron1_8",
+        "commandName": "USVRON 1",
+        "role": "CO-SM",
+        "incumbent": "BOSTON TIMOTHY J",
+        "incumbentPrd": "2027-01-22",
+        "status": "Filled",
+        "filledBy": "dillardcalvinw_16"
+      },
+      {
+        "id": "req-usvron3_8-cosm-1773533340389",
+        "commandId": "usvron3_8",
+        "commandName": "USVRON 3",
+        "role": "CO-SM",
+        "incumbent": "HABERMAN SOPHIA M",
+        "incumbentPrd": "2027-06-23",
+        "status": "Filled",
+        "filledBy": "samardzicsrdan_15"
+      },
+      {
+        "id": "req-navsupactcrane_15-cosm-1773533366864",
+        "commandId": "navsupactcrane_15",
+        "commandName": "NAVSUPACT CRANE",
+        "role": "CO-SM",
+        "incumbent": "MARTINEZ LUIS",
+        "incumbentPrd": "2026-06-21",
+        "status": "Filled",
+        "filledBy": "steppnathant_14"
+      },
+      {
+        "id": "req-cmd_new_1773524065725-cosm-1773533372557",
+        "commandId": "cmd_new_1773524065725",
+        "commandName": "NTAG HEARTLAND",
+        "role": "CO-SM",
+        "incumbent": "AGUILAR DAVID LUIS",
+        "incumbentPrd": "SEP26",
+        "status": "Filled",
+        "filledBy": "johnsonrobertojose_20"
+      },
+      {
+        "id": "req-cmd_new_1773525181936-cosm-1773533378022",
+        "commandId": "cmd_new_1773525181936",
+        "commandName": "CEREMONIAL GUARD",
+        "role": "CO-SM",
+        "incumbent": "HESSELL WILLIAM EMANUEL",
+        "incumbentPrd": "OCT26",
+        "status": "Filled",
+        "filledBy": "stokesisaiaht_15"
+      },
+      {
+        "id": "req-cmd_new_1773530859824-cosm-1773533384512",
+        "commandId": "cmd_new_1773530859824",
+        "commandName": "NTAG NORTHERN PLAINS",
+        "role": "CO-SM",
+        "incumbent": "RITTENHOUSE MARK",
+        "incumbentPrd": "JUN27",
+        "status": "Filled",
+        "filledBy": "tribbledrewanthony_20"
+      },
+      {
+        "id": "req-cmd_new_1773531411735-cosm-1773533388659",
+        "commandId": "cmd_new_1773531411735",
+        "commandName": "MWTC Point Loma",
+        "role": "CO-SM",
+        "incumbent": "MOONEY RICHARD",
+        "incumbentPrd": "AUG27",
+        "status": "Filled",
+        "filledBy": "eastonryanj_13"
+      },
+      {
+        "id": "req-scstcwestpac_13-cosm-1773533393155",
+        "commandId": "scstcwestpac_13",
+        "commandName": "SCSTC WESTPAC",
+        "role": "CO-SM",
+        "incumbent": "LEE HUNGCHI (6180)",
+        "incumbentPrd": "2027-04-21",
+        "status": "Filled",
+        "filledBy": "wilkinsdouglasc_17"
+      },
+      {
+        "id": "req-acu2_5-cosm-1773533459656",
+        "commandId": "acu2_5",
+        "commandName": "ACU 2",
+        "role": "CO-SM",
+        "incumbent": "REBER TERRA ANGELA",
+        "incumbentPrd": "2027-03-23",
+        "status": "Filled",
+        "filledBy": "kachmanricharda_17"
       }
     ],
     "candidates": [
@@ -235,7 +375,21 @@
       "englishjayc_13",
       "collinstravisanthony_22",
       "jonesantoniot_15",
-      "karlobrianj_13"
+      "karlobrianj_13",
+      "catalanomichael_16",
+      "dietzelmorganmichelle_23",
+      "dillardcalvinw_16",
+      "eastonryanj_13",
+      "harneyseanmichael_19",
+      "johnsonrobertojose_20",
+      "kachmanricharda_17",
+      "reschmeierwernerrudolph_25",
+      "samardzicsrdan_15",
+      "steppnathant_14",
+      "stokesisaiaht_15",
+      "wilkinsdouglasc_17",
+      "woodsdanielmccarthy_21",
+      "tribbledrewanthony_20"
     ],
     "status": "Active",
     "approvals": {
@@ -276,7 +430,10 @@
           }
         ],
         "experienceSummary": "[1st Division Officer Tour] N/A (?) · OFRP: ? · U/W: 10mo · Dep: 0mo · OOD: 0mo · Evo: OOD 0, CONN 0, JOOD 0",
+        "availabilityDate": "2026-07-08",
         "notes": "Candidate Notes: I really want a DDG | Co-Location: YES | EFM: YES",
+        "jpme": "Complete",
+        "wti": "KW2",
         "tourHistory": [
           {
             "period": "1st Division Officer Tour",
@@ -351,8 +508,6 @@
             "joodEvolutions": ""
           }
         ],
-        "jpme": "Complete",
-        "wti": "KW2",
         "contactInfo": {
           "workEmail": "adsfsd@gmail.com",
           "homeEmail": "278-278-2000",
@@ -362,8 +517,7 @@
         "flagContact": {
           "name": "RADM CAHILL",
           "relationship": "Former CoC"
-        },
-        "availabilityDate": "2026-07-08"
+        }
       }
     ]
   }

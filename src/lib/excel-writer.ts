@@ -265,7 +265,9 @@ export async function updateCommandInExcel(command: import('./types').OracleComm
                         // Row i+3: Inbound XO
                         const inboundRow = worksheet.getRow(rowNumber + 3);
                         inboundRow.getCell(2).value = command.inboundXO?.name || "";
-                        inboundRow.getCell(9).value = jsDateToExcelSerial(command.inboundXO?.reportDate || "");
+                        // Use timelineData.i as the source of truth; reportDate is a derived cache
+                        const inboundDate = command.inboundXO?.reportDate || command.inboundXO?.timelineData?.i || "";
+                        inboundRow.getCell(9).value = jsDateToExcelSerial(inboundDate);
 
                         // Row i+4: Slate parameters
                         const slateRow = worksheet.getRow(rowNumber + 4);

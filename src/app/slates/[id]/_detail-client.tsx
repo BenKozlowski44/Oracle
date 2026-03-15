@@ -49,6 +49,7 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
     // Dialog States
     const [isAddReqDialogOpen, setIsAddReqDialogOpen] = useState(false);
     const [isAddDirectCoDialogOpen, setIsAddDirectCoDialogOpen] = useState(false);
+    const [isAddCoSMDialogOpen, setIsAddCoSMDialogOpen] = useState(false);
     const [isAddCandidateDialogOpen, setIsAddCandidateDialogOpen] = useState(false);
     const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
 
@@ -64,6 +65,7 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
     // Selection States
     const [searchQuery, setSearchQuery] = useState("");
     const [directCoSearchQuery, setDirectCoSearchQuery] = useState("");
+    const [cosmSearchQuery, setCosmSearchQuery] = useState("");
     const [candidateSearchQuery, setCandidateSearchQuery] = useState("");
     const [candidateTab, setCandidateTab] = useState<"firefighters" | "bank">("firefighters");
     const [selectedReqId, setSelectedReqId] = useState<string | null>(null);
@@ -121,6 +123,27 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
         updateSlateData(updatedReqs, candidates, candidateProfiles);
         setIsAddDirectCoDialogOpen(false);
         setDirectCoSearchQuery("");
+    }
+
+    const handleAddCoSMCommand = async (commandId: string) => {
+        const cmd = oracleData.find(c => c.id === commandId);
+        if (!cmd) return;
+
+        const newReq: SlateRequirement = {
+            id: `req-${cmd.id}-cosm-${Date.now()}`,
+            commandName: cmd.name,
+            commandId: cmd.id,
+            role: "CO-SM",
+            incumbent: cmd.currentCO?.name || "Unknown",
+            incumbentPrd: cmd.currentCO?.prd || cmd.currentCO?.timelineData?.q || "",
+            status: "Draft"
+        };
+
+        const updatedReqs = [...requirements, newReq];
+        setRequirements(updatedReqs);
+        updateSlateData(updatedReqs, candidates, candidateProfiles);
+        setIsAddCoSMDialogOpen(false);
+        setCosmSearchQuery("");
     }
 
     const handleAddCandidate = async (officerId: string) => {
@@ -428,7 +451,7 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
                                             {reqs.length === 0 ? (
                                                 <TableRow>
                                                     <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
-                                                        No {title.toLowerCase()} in this slate.
+                                                        No {title === 'CO-SM' ? 'CO-SM' : title.toLowerCase()} in this slate
                                                     </TableCell>
                                                 </TableRow>
                                             ) : (
@@ -645,6 +668,77 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
 
                                     {/* ── CO-SM ─────────────────────────────── */}
                                     <div className="pt-2 border-t">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <div>
+                                                <h3 className="text-lg font-semibold">CO-SM</h3>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Badge variant="secondary" className="text-xs">{cosmReqs.length} Commands</Badge>
+                                                <Dialog open={isAddCoSMDialogOpen} onOpenChange={setIsAddCoSMDialogOpen}>
+                                                    <DialogTrigger asChild>
+                                                        <Button size="sm" variant="outline">
+                                                            <Plus className="mr-2 h-4 w-4" />
+                                                            Add CO-SM
+                                                        </Button>
+                                                    </DialogTrigger>
+                                                    <DialogContent className="sm:max-w-[600px]" aria-describedby={undefined}>
+                                                        <DialogHeader>
+                                                            <DialogTitle>Add CO-SM Command</DialogTitle>
+                                                        </DialogHeader>
+                                                        <div className="grid gap-4 py-4">
+                                                            <div className="relative">
+                                                                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                                                                <Input
+                                                                    placeholder="Search CO-SM commands..."
+                                                                    value={cosmSearchQuery}
+                                                                    onChange={(e) => setCosmSearchQuery(e.target.value)}
+                                                                    className="pl-8"
+                                                                />
+                                                            </div>
+                                                            <div className="max-h-[300px] overflow-y-auto border rounded-md">
+                                                                <Table>
+                                                                    <TableHeader>
+                                                                        <TableRow>
+                                                                            <TableHead>Command</TableHead>
+                                                                            <TableHead>Current CO</TableHead>
+                                                                            <TableHead></TableHead>
+                                                                        </TableRow>
+                                                                    </TableHeader>
+                                                                    <TableBody>
+                                                                        {oracleData
+                                                                            .filter(c => c.tags?.includes('CO-SM'))
+                                                                            .filter(c => !requirements.some(r => r.commandId === c.id))
+                                                                            .filter(c => c.name?.toLowerCase().includes(cosmSearchQuery.toLowerCase()) || (c.uic || "").includes(cosmSearchQuery))
+                                                                            .slice(0, 50)
+                                                                            .map((cmd) => (
+                                                                                <TableRow key={cmd.id}>
+                                                                                    <TableCell className="font-medium">
+                                                                                        <div>{cmd.name}</div>
+                                                                                        <div className="text-xs text-muted-foreground">{cmd.uic}</div>
+                                                                                    </TableCell>
+                                                                                    <TableCell>
+                                                                                        <div className="text-sm">{cmd.currentCO?.name || '—'}</div>
+                                                                                    </TableCell>
+                                                                                    <TableCell className="text-right">
+                                                                                        <Button size="sm" variant="ghost" onClick={() => handleAddCoSMCommand(cmd.id)}>
+                                                                                            Add
+                                                                                        </Button>
+                                                                                    </TableCell>
+                                                                                </TableRow>
+                                                                            ))}
+                                                                        {oracleData.filter(c => c.tags?.includes('CO-SM')).filter(c => !requirements.some(r => r.commandId === c.id)).length === 0 && (
+                                                                            <TableRow>
+                                                                                <TableCell colSpan={3} className="text-center h-24 text-muted-foreground">No CO-SM commands found</TableCell>
+                                                                            </TableRow>
+                                                                        )}
+                                                                    </TableBody>
+                                                                </Table>
+                                                            </div>
+                                                        </div>
+                                                    </DialogContent>
+                                                </Dialog>
+                                            </div>
+                                        </div>
                                         {renderReqTable(cosmReqs, "CO-SM")}
                                     </div>
                                 </>
