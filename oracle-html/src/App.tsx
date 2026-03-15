@@ -62,7 +62,6 @@ export default function App() {
     <HashRouter>
       <div className="min-h-screen bg-background text-foreground">
         <nav className="border-b px-4 py-2 flex items-center gap-4 text-sm font-medium">
-          <span className="font-bold text-base mr-2">Oracle</span>
           {[
             ['/', 'Dashboard'],
             ['/oracle', 'CDR CMD'],
