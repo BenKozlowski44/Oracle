@@ -66,7 +66,7 @@ export default function DashboardPage() {
             <ActiveIssuesCard oracleData={oracleData} officers={currentOfficers} />
             <ResolvedIssuesCard metrics={metrics} />
           </div>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 h-full items-stretch">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
             <CommandAlerts commands={oracleData} />
             <PersonnelAlerts officers={currentOfficers} />
           </div>
