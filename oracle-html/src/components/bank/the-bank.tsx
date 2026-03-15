@@ -82,13 +82,13 @@ export function TheBank({ data }: BankProps) {
         <div className="space-y-4">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <div className="flex items-center justify-between">
-                    <TabsList>
-                        <TabsTrigger value="bank">Officer Bank ({bankOfficers.length})</TabsTrigger>
-                        <TabsTrigger value="firefighters">Firefighters ({firefighters.length})</TabsTrigger>
-                        <TabsTrigger value="slated">Slated ({slatedOfficers.length})</TabsTrigger>
-                        <TabsTrigger value="xo-screened">XO Screened ({xoScreenedOfficers.length})</TabsTrigger>
-                        <TabsTrigger value="cosm">CO-SM ({cosmOfficers.length})</TabsTrigger>
-                        <TabsTrigger value="declined">Declined/Descreened ({declinedOfficers.length})</TabsTrigger>
+                    <TabsList className="bg-[#07111f] border-b border-[#c9a227]/30 rounded-none w-full justify-start h-auto p-0 gap-0 flex-wrap">
+                        <TabsTrigger value="bank" className="text-xs font-semibold tracking-widest uppercase text-[#8a9bb0] hover:text-[#c9a227] data-[state=active]:text-[#c9a227] data-[state=active]:border-b-2 data-[state=active]:border-[#c9a227] data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none px-4 py-4 border-b-2 border-transparent transition-colors duration-150">Officer Bank ({bankOfficers.length})</TabsTrigger>
+                        <TabsTrigger value="firefighters" className="text-xs font-semibold tracking-widest uppercase text-[#8a9bb0] hover:text-[#c9a227] data-[state=active]:text-[#c9a227] data-[state=active]:border-b-2 data-[state=active]:border-[#c9a227] data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none px-4 py-4 border-b-2 border-transparent transition-colors duration-150">Firefighters ({firefighters.length})</TabsTrigger>
+                        <TabsTrigger value="slated" className="text-xs font-semibold tracking-widest uppercase text-[#8a9bb0] hover:text-[#c9a227] data-[state=active]:text-[#c9a227] data-[state=active]:border-b-2 data-[state=active]:border-[#c9a227] data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none px-4 py-4 border-b-2 border-transparent transition-colors duration-150">Slated ({slatedOfficers.length})</TabsTrigger>
+                        <TabsTrigger value="xo-screened" className="text-xs font-semibold tracking-widest uppercase text-[#8a9bb0] hover:text-[#c9a227] data-[state=active]:text-[#c9a227] data-[state=active]:border-b-2 data-[state=active]:border-[#c9a227] data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none px-4 py-4 border-b-2 border-transparent transition-colors duration-150">XO Screened ({xoScreenedOfficers.length})</TabsTrigger>
+                        <TabsTrigger value="cosm" className="text-xs font-semibold tracking-widest uppercase text-[#8a9bb0] hover:text-[#c9a227] data-[state=active]:text-[#c9a227] data-[state=active]:border-b-2 data-[state=active]:border-[#c9a227] data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none px-4 py-4 border-b-2 border-transparent transition-colors duration-150">CO-SM ({cosmOfficers.length})</TabsTrigger>
+                        <TabsTrigger value="declined" className="text-xs font-semibold tracking-widest uppercase text-[#8a9bb0] hover:text-[#c9a227] data-[state=active]:text-[#c9a227] data-[state=active]:border-b-2 data-[state=active]:border-[#c9a227] data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none px-4 py-4 border-b-2 border-transparent transition-colors duration-150">Declined/Descreened ({declinedOfficers.length})</TabsTrigger>
                     </TabsList>
                 </div>
 
