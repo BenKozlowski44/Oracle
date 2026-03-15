@@ -12,7 +12,7 @@ export function CommandAlerts({ commands }: CommandAlertsProps) {
     const allAlerts = getAllAlerts(commands)
 
     return (
-        <div className="rounded-xl border bg-card border-l-4 border-l-[#c9a227] text-card-foreground shadow h-full min-h-0 flex flex-col">
+        <div className="rounded-xl border bg-card border-l-4 border-l-[#c9a227] text-card-foreground shadow h-full min-h-0 flex flex-col transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_4px_20px_rgba(201,162,39,0.18)] hover:border-l-[#f0c040]">
             <div className="p-6 flex flex-col space-y-1.5 border-b">
                 <div className="flex items-center gap-2">
                     <AlertCircle className="h-5 w-5 text-destructive" />
