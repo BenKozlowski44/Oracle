@@ -6,7 +6,7 @@ import { Link } from "react-router-dom"
 
 export function CommandInventoryCard({ oracleData }: { oracleData: OracleCommand[] }) {
     return (
-        <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
+        <div className="rounded-xl border border-[#c9a227]/25 bg-[#07111f]/80 text-card-foreground shadow-[0_4px_20px_rgba(0,0,0,0.5)] p-6">
             <div className="flex flex-col space-y-1.5">
                 <h3 className="tracking-tight text-sm font-medium text-muted-foreground text-center">Command Inventory</h3>
                 <div className="flex justify-between items-baseline px-4">
@@ -58,7 +58,7 @@ export function PipelineHealthCard({ oracleData }: { oracleData: OracleCommand[]
     )
 
     return (
-        <Link to="/oracle" className="block rounded-xl border bg-card text-card-foreground shadow p-6 hover:bg-muted/30 transition-colors">
+        <Link to="/oracle" className="block rounded-xl border border-[#c9a227]/25 bg-[#07111f]/80 text-card-foreground shadow-[0_4px_20px_rgba(0,0,0,0.5)] p-6 hover:bg-muted/30 transition-colors">
             <h3 className="tracking-tight text-sm font-medium text-muted-foreground text-center mb-4">Command Relief Health</h3>
             <div className="space-y-4">
                 <div>
@@ -137,7 +137,7 @@ export function BankOfficersCard({ officers }: { officers: Officer[] }) {
     })
 
     return (
-        <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
+        <div className="rounded-xl border border-[#c9a227]/25 bg-[#07111f]/80 text-card-foreground shadow-[0_4px_20px_rgba(0,0,0,0.5)] p-6">
             <div className="flex flex-col space-y-1.5">
                 <h3 className="tracking-tight text-sm font-medium text-muted-foreground">Total CDR CMD Bank Officers</h3>
                 <div className="flex items-baseline space-x-2">
@@ -176,7 +176,7 @@ export function CosmBankOfficersCard({ officers }: { officers: Officer[] }) {
     const other = totalCount - available - hold
 
     return (
-        <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
+        <div className="rounded-xl border border-[#c9a227]/25 bg-[#07111f]/80 text-card-foreground shadow-[0_4px_20px_rgba(0,0,0,0.5)] p-6">
             <div className="flex flex-col space-y-1.5">
                 <h3 className="tracking-tight text-sm font-medium text-muted-foreground">Total CO-SM Bank Officers</h3>
                 <div className="flex items-baseline space-x-2">
@@ -207,7 +207,7 @@ export function ActiveIssuesCard({ oracleData, officers }: { oracleData: OracleC
     const personnelAlertsCount = getAllPersonnelAlerts(officers).length
     const count = commandAlertsCount + personnelAlertsCount
     return (
-        <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
+        <div className="rounded-xl border border-[#c9a227]/25 bg-[#07111f]/80 text-card-foreground shadow-[0_4px_20px_rgba(0,0,0,0.5)] p-6">
             <div className="flex flex-col space-y-1.5">
                 <h3 className="tracking-tight text-sm font-medium text-muted-foreground">Active Issues</h3>
                 <div className="text-2xl font-bold text-red-600">{count}</div>
@@ -219,7 +219,7 @@ export function ActiveIssuesCard({ oracleData, officers }: { oracleData: OracleC
 
 export function ResolvedIssuesCard({ metrics }: { metrics: Metrics }) {
     return (
-        <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
+        <div className="rounded-xl border border-[#c9a227]/25 bg-[#07111f]/80 text-card-foreground shadow-[0_4px_20px_rgba(0,0,0,0.5)] p-6">
             <div className="flex flex-col space-y-1.5">
                 <h3 className="tracking-tight text-sm font-medium text-muted-foreground">Resolved Issues</h3>
                 <div className="text-2xl font-bold text-green-600">{metrics.resolvedConflicts}</div>
@@ -275,7 +275,7 @@ export function FirefighterStatsCard({ officers }: { officers: Officer[] }) {
     })
 
     return (
-        <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
+        <div className="rounded-xl border border-[#c9a227]/25 bg-[#07111f]/80 text-card-foreground shadow-[0_4px_20px_rgba(0,0,0,0.5)] p-6">
             <div className="flex flex-col space-y-1.5">
                 <h3 className="tracking-tight text-sm font-medium text-muted-foreground">Firefighters</h3>
                 <div className="flex items-baseline space-x-2">

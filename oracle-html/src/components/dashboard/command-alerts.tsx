@@ -12,7 +12,7 @@ export function CommandAlerts({ commands }: CommandAlertsProps) {
     const allAlerts = getAllAlerts(commands)
 
     return (
-        <div className="rounded-xl border bg-card text-card-foreground shadow h-full">
+        <div className="rounded-xl border border-[#c9a227]/25 bg-[#07111f]/80 text-card-foreground shadow h-full">
             <div className="p-6 flex flex-col space-y-1.5 border-b">
                 <div className="flex items-center gap-2">
                     <AlertCircle className="h-5 w-5 text-destructive" />

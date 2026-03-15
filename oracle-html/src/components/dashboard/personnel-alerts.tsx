@@ -23,7 +23,7 @@ export function PersonnelAlerts({ officers }: PersonnelAlertsProps) {
     }
 
     return (
-        <div className="rounded-xl border bg-card text-card-foreground shadow h-full flex flex-col">
+        <div className="rounded-xl border border-[#c9a227]/25 bg-[#07111f]/80 text-card-foreground shadow h-full flex flex-col">
             <div className="p-6 flex flex-col space-y-1.5 border-b shrink-0">
                 <div className="flex items-center gap-2">
                     <UserX className="h-5 w-5 text-destructive" />
