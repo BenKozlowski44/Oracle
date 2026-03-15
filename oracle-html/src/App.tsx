@@ -1,6 +1,7 @@
 import { HashRouter, Routes, Route, NavLink } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { Toaster } from '@/components/ui/sonner'
+import { AppHeader } from '@/components/AppHeader'
 import { registerToastHandlers } from '@/lib/notify'
 import { toast } from 'sonner'
 import { chooseBackupFile, restoreFromFile } from '@/services/storage'
@@ -61,6 +62,7 @@ export default function App() {
   return (
     <HashRouter>
       <div className="min-h-screen bg-background text-foreground">
+        <AppHeader />
         <nav className="border-b px-4 py-2 flex items-center gap-4 text-sm font-medium">
           {[
             ['/', 'Dashboard'],
