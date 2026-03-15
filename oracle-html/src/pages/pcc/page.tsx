@@ -1,4 +1,5 @@
 import { OfficerTable } from "@/components/officers/officer-table"
+import { PageHeader } from '@/components/PageHeader'
 import { getOfficers } from '@/services/storage'
 
 
@@ -7,12 +8,11 @@ export default function PCCPage() {
 
     return (
         <div className="space-y-6">
-            <div>
-                <h1 className="text-3xl font-bold tracking-tight">Post-Command Commanders (PCC)</h1>
-                <p className="text-muted-foreground">
-                    Officers who have completed their command tours.
-                </p>
-            </div>
+            <PageHeader
+                label="PERS-41 · Post-Command"
+                title="Post-Command Commanders"
+                description="Officers who have completed their command tours."
+            />
             <div className="space-y-4">
                 <p className="text-sm text-muted-foreground">
                     Tracking {pccOfficers.length} officers.

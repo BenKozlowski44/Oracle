@@ -1,3 +1,4 @@
+import { PageHeader } from '@/components/PageHeader'
 import { useState } from "react"
 import { useNavigate, Link } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -64,7 +65,7 @@ export function SlatesPageClient({ allSlates }: SlatesPageClientProps) {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Active Slates</h1>
+                    <PageHeader label="PERS-41 · Slating" title="Active Slates" />
                     <p className="text-muted-foreground">Manage and assign officers to quarterly slates.</p>
                 </div>
                 <Link to="/slate-generator">

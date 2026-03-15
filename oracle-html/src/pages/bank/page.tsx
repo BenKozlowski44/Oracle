@@ -1,4 +1,5 @@
 import { Suspense } from "react"
+import { PageHeader } from '@/components/PageHeader'
 import { TheBank } from "@/components/bank/the-bank"
 import { getOfficers } from '@/services/storage'
 

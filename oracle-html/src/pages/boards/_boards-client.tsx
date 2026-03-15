@@ -1,3 +1,4 @@
+import { PageHeader } from '@/components/PageHeader'
 import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -95,7 +96,7 @@ export function BoardsClient({ initialBoards }: { initialBoards: CdrCmdBoard[] }
         <div className="flex-1 space-y-4 p-8 pt-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight">CDR CMD Board Prep</h2>
+                    <PageHeader label="PERS-41 · Board Preparation" title="CDR CMD Board Prep" />
                     <p className="text-muted-foreground text-sm mt-1">
                         Manage annual selection board preparation and candidate record review.
                     </p>
