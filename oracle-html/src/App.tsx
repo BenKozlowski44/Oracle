@@ -74,6 +74,7 @@ export default function App() {
             ['/bank', 'Bank'],
             ['/slate-generator', 'Slate Generator'],
             ['/slates', 'Active Slates'],
+            ['/slates/archived', 'Archived Slates'],
             ['/boards', 'Board'],
             ['/pcc', 'PCC'],
             ['/reports', 'Reports'],
