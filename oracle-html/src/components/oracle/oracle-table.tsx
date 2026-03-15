@@ -378,17 +378,17 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
         <div className="space-y-4">
             <div className="flex items-center gap-4">
                 <div className="relative flex-1">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-[#c9a227]/50" />
                     <Input
                         placeholder="Search The Oracle (Ship, CO)..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="pl-9"
+                        className="pl-9 bg-[#0a1628]/60 border-[#c9a227]/30 text-foreground placeholder:text-[#8a9bb0] focus-visible:ring-[#c9a227]/30 focus-visible:border-[#c9a227]/60"
                     />
                 </div>
                 <div className="flex items-center gap-2">
                     <Select value={selectedLocation} onValueChange={onLocationChange}>
-                        <SelectTrigger className="w-[180px]">
+                        <SelectTrigger className="w-[180px] bg-[#0a1628]/60 border-[#c9a227]/30 text-[#8a9bb0]">
                             <SelectValue placeholder="Filter by Location" />
                         </SelectTrigger>
                         <SelectContent>
@@ -399,16 +399,19 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                         </SelectContent>
                     </Select>
                     <Button
-                        variant={showSpecialMission ? "default" : "outline"}
+                        variant="outline"
                         onClick={() => setShowSpecialMission(!showSpecialMission)}
+                        className={showSpecialMission
+                            ? 'bg-[#c9a227] text-[#0a1628] font-semibold hover:bg-[#f0c040] border-transparent transition-all duration-150'
+                            : 'bg-[#0a1628]/60 border-[#c9a227]/30 text-[#c9a227] hover:bg-[#c9a227]/10 hover:text-[#f0c040] transition-all duration-150'}
                     >
                         {showSpecialMission ? "Show CDR CMDs" : "Show CO-SM"}
                     </Button>
-                    <Button onClick={() => handleAddClick('CDR')} className="gap-2">
+                    <Button onClick={() => handleAddClick('CDR')} className="gap-2 bg-[#c9a227] text-[#0a1628] font-semibold hover:bg-[#f0c040] border-transparent transition-all duration-150">
                         <Plus className="h-4 w-4" />
                         Add CDR CMD
                     </Button>
-                    <Button onClick={() => handleAddClick('COSM')} variant="outline" className="gap-2">
+                    <Button onClick={() => handleAddClick('COSM')} variant="outline" className="gap-2 bg-[#0a1628]/60 border border-[#c9a227]/30 text-[#c9a227] hover:bg-[#c9a227]/10 hover:text-[#f0c040] transition-all duration-150">
                         <Plus className="h-4 w-4" />
                         Add CO-SM
                     </Button>

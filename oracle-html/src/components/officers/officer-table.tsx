@@ -245,16 +245,16 @@ export function OfficerTable({ data, variant = "default" }: OfficerTableProps) {
         <div className="space-y-4">
             <div className="flex items-center gap-4">
                 <div className="relative flex-1">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-[#c9a227]/50" />
                     <Input
                         placeholder="Search officers..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="pl-9"
+                        className="pl-9 bg-[#0a1628]/60 border-[#c9a227]/30 text-foreground placeholder:text-[#8a9bb0] focus-visible:ring-[#c9a227]/30 focus-visible:border-[#c9a227]/60"
                     />
                 </div>
                 <Select value={rankFilter} onValueChange={setRankFilter}>
-                    <SelectTrigger className="w-[180px]">
+                    <SelectTrigger className="w-[180px] bg-[#0a1628]/60 border-[#c9a227]/30 text-[#8a9bb0]">
                         <SelectValue placeholder="Rank" />
                     </SelectTrigger>
                     <SelectContent>
@@ -264,7 +264,7 @@ export function OfficerTable({ data, variant = "default" }: OfficerTableProps) {
                         <SelectItem value="CAPT">CAPT</SelectItem>
                     </SelectContent>
                 </Select>
-                <Button onClick={() => {
+                <Button className="bg-[#c9a227] text-[#0a1628] font-semibold hover:bg-[#f0c040] border-transparent transition-all duration-150" onClick={() => {
                     setEditingOfficer({
                         id: "",
                         name: "",
@@ -287,7 +287,7 @@ export function OfficerTable({ data, variant = "default" }: OfficerTableProps) {
                     ref={fileInputRef}
                     onChange={handleFileUpload}
                 />
-                <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
+                <Button variant="outline" className="bg-[#0a1628]/60 border-[#c9a227]/30 text-[#c9a227] hover:bg-[#c9a227]/10 hover:text-[#f0c040] transition-all duration-150" onClick={() => fileInputRef.current?.click()}>
                     Import Excel
                 </Button>
             </div>
