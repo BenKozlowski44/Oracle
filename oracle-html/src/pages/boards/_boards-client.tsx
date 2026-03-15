@@ -93,17 +93,16 @@ export function BoardsClient({ initialBoards }: { initialBoards: CdrCmdBoard[] }
     const closedBoards = filteredBoards.filter(b => b.status === "Closed")
 
     return (
-        <div className="flex-1 space-y-4 p-8 pt-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <PageHeader label="PERS-41 · Board Preparation" title="CDR CMD Board Prep" />
-                    <p className="text-muted-foreground text-sm mt-1">
-                        Manage annual selection board preparation and candidate record review.
-                    </p>
-                </div>
+        <div className="space-y-6">
+            <div className="flex items-end justify-between gap-4">
+                <PageHeader
+                    label="PERS-41 · Board Preparation"
+                    title="CDR CMD Board Prep"
+                    description="Manage annual selection board preparation and candidate record review."
+                />
                 <Dialog open={isCreateDialogOpen} onOpenChange={(open) => { setIsCreateDialogOpen(open); setCreateError("") }}>
                     <DialogTrigger asChild>
-                        <Button>
+                        <Button className="shrink-0">
                             <Plus className="mr-2 h-4 w-4" /> Create New Board
                         </Button>
                     </DialogTrigger>
