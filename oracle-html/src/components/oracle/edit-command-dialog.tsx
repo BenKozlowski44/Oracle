@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react"
 import { addMonths, parse, isValid, format, parseISO } from "date-fns"
 import { calculateTargetBoard, predictNextVacancyDate } from "@/lib/utils"
-import { OracleCommand } from "@/lib/types"
+import { OracleCommand, Officer } from "@/lib/types"
+import { OfficerNameInput } from "./officer-name-input"
 import { CommandTimeline } from "./command-timeline"
 import { Button } from "@/components/ui/button"
 import {
@@ -24,6 +25,7 @@ interface EditCommandDialogProps {
     onCOTurnover: (commandId: string) => void
     onXOFleetUp: (commandId: string) => void
     onDelete: (commandId: string) => void
+    officers?: Officer[]
 }
 
 export function EditCommandDialog({
@@ -34,6 +36,7 @@ export function EditCommandDialog({
     onCOTurnover,
     onXOFleetUp,
     onDelete,
+    officers = [],
 }: EditCommandDialogProps) {
     const [formData, setFormData] = useState<OracleCommand | null>(null)
     const [confirmAction, setConfirmAction] = useState<"delete" | "relieveCO" | "fleetUp" | null>(null)
@@ -64,7 +67,9 @@ export function EditCommandDialog({
             }
         }
     }, [
+        formData?.slatedXO?.name,
         formData?.slatedXO?.reportDate,
+        formData?.slatedXO?.timelineData?.k,
         formData?.inboundXO?.reportDate,
         formData?.currentXO?.prd,
         formData?.currentCO?.prd
@@ -102,6 +107,111 @@ export function EditCommandDialog({
         })
     }
 
+    // Auto-populate Slated XO timeline dates when a real person name is selected
+    const autoPopulateSlatedXODates = (prev: OracleCommand, name: string) => {
+        const isRealPerson = /[a-zA-Z]{2,}/.test(name) && !name.match(/^\d{2}-\d/)
+        if (!isRealPerson) {
+            return {
+                name,
+                reportDate: prev.slatedXO?.reportDate || "",
+                timelineData: prev.slatedXO?.timelineData
+            }
+        }
+        // Anchor: inbound XO's fleet-up date = when the slated XO reports
+        const anchorStr = prev.inboundXO?.timelineData?.k
+        let anchorDate: Date | null = null
+        if (anchorStr) {
+            let d = parseISO(anchorStr)
+            if (isValid(d)) anchorDate = d
+            else {
+                d = parse(anchorStr, 'MMMyy', new Date())
+                if (isValid(d)) anchorDate = d
+            }
+        }
+        if (!anchorDate) {
+            // No anchor available — just update the name, keep existing dates
+            return {
+                name,
+                reportDate: prev.slatedXO?.reportDate || "",
+                timelineData: prev.slatedXO?.timelineData
+            }
+        }
+        const tourLen = prev.tourLength || 18
+        const kDate = addMonths(anchorDate, tourLen)
+        const mDate = addMonths(kDate, 2)
+        const qDate = addMonths(mDate, tourLen)
+        const fmt = (d: Date) => format(d, 'MMMyy').toUpperCase()
+        const iStr = fmt(anchorDate)
+        return {
+            name,
+            reportDate: iStr,   // kept for Excel export compatibility — derived from timelineData.i
+            timelineData: { i: iStr, k: fmt(kDate), m: fmt(mDate), q: fmt(qDate) }
+        }
+    }
+
+    // Auto-populate Inbound XO timeline dates when a real person name is selected
+    const autoPopulateInboundXODates = (prev: OracleCommand, name: string) => {
+        const isRealPerson = /[a-zA-Z]{2,}/.test(name) && !name.match(/^\d{2}-\d/)
+        if (!isRealPerson) {
+            // Preserve existing timeline; sync reportDate from i for Excel compat
+            const existingI = prev.inboundXO?.timelineData?.i
+            return { name, reportDate: existingI || prev.inboundXO?.reportDate || "", timelineData: prev.inboundXO?.timelineData }
+        }
+        // Anchor: current XO's fleet-up date (k) = when the inbound XO arrives
+        const anchorStr = prev.currentXO?.timelineData?.k
+        let anchorDate: Date | null = null
+        if (anchorStr) {
+            let d = parseISO(anchorStr)
+            if (isValid(d)) anchorDate = d
+            else {
+                d = parse(anchorStr, 'MMMyy', new Date())
+                if (isValid(d)) anchorDate = d
+            }
+        }
+        if (!anchorDate) {
+            const existingI = prev.inboundXO?.timelineData?.i
+            return { name, reportDate: existingI || prev.inboundXO?.reportDate || "", timelineData: prev.inboundXO?.timelineData }
+        }
+        const tourLen = prev.tourLength || 18
+        const kDate = addMonths(anchorDate, tourLen)
+        const mDate = addMonths(kDate, 2)
+        const qDate = addMonths(mDate, tourLen)
+        const fmt = (d: Date) => format(d, 'MMMyy').toUpperCase()
+        const iStr = fmt(anchorDate)
+        return {
+            name,
+            reportDate: iStr,   // kept for Excel export compatibility
+            timelineData: { i: iStr, k: fmt(kDate), m: fmt(mDate), q: fmt(qDate) }
+        }
+    }
+
+
+    const COMMUNITY_OPTIONS = [
+        { value: "1110", label: "1110 (SWO)" },
+        { value: "1200", label: "1200 (HR)" },
+        { value: "1310", label: "1310 (Navy Aviation)" },
+        { value: "1320", label: "1320 (NFO)" },
+        { value: "1830", label: "1830 (LDO)" },
+        { value: "Other", label: "Other Community" },
+    ]
+
+    const isCoSM = formData.tags?.includes("CO-SM")
+
+    const CommunitySelect = ({ value, onChange }: { value?: string, onChange: (v: string) => void }) => (
+        <div className="grid gap-2">
+            <Label>Community Fill</Label>
+            <select
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                value={value || "1110"}
+                onChange={(e) => onChange(e.target.value)}
+            >
+                {COMMUNITY_OPTIONS.map(o => (
+                    <option key={o.value} value={o.value}>{o.label}</option>
+                ))}
+            </select>
+        </div>
+    )
+
     // Helper needed because nextSlateParams has nested object but strict types
     const handleNextSlateChange = (field: "targetBoardDate" | "requirement", value: string) => {
         setFormData((prev) => {
@@ -117,9 +227,33 @@ export function EditCommandDialog({
     }
 
 
-    const handleTimelineChange = (role: 'currentCO' | 'currentXO' | 'inboundXO' | 'slatedXO', field: 'i' | 'k' | 'm' | 'q', value: string) => {
+    const handleTimelineChange = (role: 'currentCO' | 'currentXO' | 'inboundXO' | 'slatedXO' | 'prospectiveCO' | 'slatedCO', field: 'i' | 'k' | 'm' | 'q', value: string) => {
         setFormData((prev) => {
             if (!prev) return null
+
+            // Handle prospectiveCO if it doesn't exist yet
+            if (role === 'prospectiveCO' && !prev.prospectiveCO) {
+                return {
+                    ...prev,
+                    prospectiveCO: {
+                        name: '',
+                        prd: '',
+                        timelineData: { [field]: value }
+                    }
+                }
+            }
+
+            // Handle slatedCO if it doesn't exist yet
+            if (role === 'slatedCO' && !prev.slatedCO) {
+                return {
+                    ...prev,
+                    slatedCO: {
+                        name: 'Forecast',
+                        prd: '',
+                        timelineData: { [field]: value }
+                    }
+                }
+            }
 
             // Handle inboundXO if it doesn't exist yet
             if (role === 'inboundXO' && !prev.inboundXO) {
@@ -167,6 +301,120 @@ export function EditCommandDialog({
             let newState = {
                 ...prev,
                 [role]: updatedRole
+            }
+
+            // AUTO-POPULATE: CO Departure → P-CO Arrival + CoC + Departure (Direct CO only)
+            if (role === 'currentCO' && field === 'q' && prev.rotationStyle === 'DirectCO') {
+                const formatMMMYY = (d: Date) => format(d, 'MMMyy').toUpperCase()
+                const parseFlexDate = (str: string): Date | null => {
+                    if (!str) return null
+                    let d = parseISO(str); if (isValid(d)) return d
+                    d = parse(str.trim().toUpperCase(), 'MMMyy', new Date()); return isValid(d) ? d : null
+                }
+                const arrivalDate = parseFlexDate(value)
+                if (arrivalDate) {
+                    const tourLen = prev.tourLength || 24
+                    const departDate = addMonths(arrivalDate, tourLen)
+                    newState = {
+                        ...newState,
+                        prospectiveCO: {
+                            name: prev.prospectiveCO?.name || '',
+                            prd: formatMMMYY(departDate),
+                            timelineData: {
+                                i: formatMMMYY(arrivalDate),
+                                m: formatMMMYY(arrivalDate),
+                                q: formatMMMYY(departDate)
+                            }
+                        }
+                    }
+                }
+            }
+
+            // AUTO-POPULATE: P-CO Arrival manually set → recalculate CoC + Departure
+            if (role === 'prospectiveCO' && field === 'i') {
+                const formatMMMYY = (d: Date) => format(d, 'MMMyy').toUpperCase()
+                const parseFlexDate = (str: string): Date | null => {
+                    if (!str) return null
+                    let d = parseISO(str); if (isValid(d)) return d
+                    d = parse(str.trim().toUpperCase(), 'MMMyy', new Date()); return isValid(d) ? d : null
+                }
+                const arrivalDate = parseFlexDate(value)
+                if (arrivalDate) {
+                    const tourLen = prev.tourLength || 24
+                    const departDate = addMonths(arrivalDate, tourLen)
+                    newState = {
+                        ...newState,
+                        prospectiveCO: {
+                            ...newState.prospectiveCO!,
+                            prd: formatMMMYY(departDate),
+                            timelineData: {
+                                ...newState.prospectiveCO?.timelineData,
+                                i: value,
+                                m: value,
+                                q: formatMMMYY(departDate)
+                            }
+                        }
+                    }
+                }
+            }
+
+            // AUTO-POPULATE: P-CO Departure → Slated CO (same logic as P-CO auto-populate)
+            if ((role === 'prospectiveCO' && field === 'q') || (role === 'prospectiveCO' && field === 'i')) {
+                // Get the effective P-CO departure from newState after above updates
+                const pCODeparture = newState.prospectiveCO?.timelineData?.q
+                if (pCODeparture) {
+                    const formatMMMYY2 = (d: Date) => format(d, 'MMMyy').toUpperCase()
+                    const parseFlexDate2 = (str: string): Date | null => {
+                        if (!str) return null
+                        let d = parseISO(str); if (isValid(d)) return d
+                        d = parse(str.trim().toUpperCase(), 'MMMyy', new Date()); return isValid(d) ? d : null
+                    }
+                    const slatedArrival = parseFlexDate2(pCODeparture)
+                    if (slatedArrival) {
+                        const tourLen = prev.tourLength || 24
+                        const slatedDepart = addMonths(slatedArrival, tourLen)
+                        newState = {
+                            ...newState,
+                            slatedCO: {
+                                name: newState.slatedCO?.name || 'Forecast',
+                                prd: formatMMMYY2(slatedDepart),
+                                timelineData: {
+                                    i: formatMMMYY2(slatedArrival),
+                                    m: formatMMMYY2(slatedArrival),
+                                    q: formatMMMYY2(slatedDepart)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // AUTO-POPULATE: Slated CO Arrival manually set → recalculate CoC + Departure
+            if (role === 'slatedCO' && field === 'i') {
+                const formatMMMYY = (d: Date) => format(d, 'MMMyy').toUpperCase()
+                const parseFlexDate = (str: string): Date | null => {
+                    if (!str) return null
+                    let d = parseISO(str); if (isValid(d)) return d
+                    d = parse(str.trim().toUpperCase(), 'MMMyy', new Date()); return isValid(d) ? d : null
+                }
+                const arrivalDate = parseFlexDate(value)
+                if (arrivalDate) {
+                    const tourLen = prev.tourLength || 24
+                    const departDate = addMonths(arrivalDate, tourLen)
+                    newState = {
+                        ...newState,
+                        slatedCO: {
+                            ...newState.slatedCO!,
+                            prd: formatMMMYY(departDate),
+                            timelineData: {
+                                ...newState.slatedCO?.timelineData,
+                                i: value,
+                                m: value,
+                                q: formatMMMYY(departDate)
+                            }
+                        }
+                    }
+                }
             }
 
             // AUTO-UPDATE LOGIC: If Inbound XO Turnover ('k') changes, Start Slated XO Forecast
@@ -247,7 +495,7 @@ export function EditCommandDialog({
                         Make changes to the command details, incumbents, and succession plan.
                     </DialogDescription>
                 </DialogHeader>
-                <form onSubmit={handleSubmit} className="grid gap-6 py-4">
+                <form onSubmit={handleSubmit} className="grid gap-6 py-4" autoComplete="off">
 
                     {/* Timeline Visualization */}
                     {formData && (
@@ -318,6 +566,18 @@ export function EditCommandDialog({
                                     placeholder="e.g. 18, 24"
                                 />
                             </div>
+                            {isCoSM && (
+                                <div className="grid gap-2">
+                                    <Label htmlFor="nextSWOFillDate">Next SWO Fill Date</Label>
+                                    <Input
+                                        id="nextSWOFillDate"
+                                        placeholder="e.g. SEP26 or 2026-09-01"
+                                        value={formData.nextSWOFillDate || ""}
+                                        onChange={(e) => handleChange("nextSWOFillDate", e.target.value)}
+                                    />
+                                    <div className="text-[10px] text-muted-foreground">Set when current fill is non-SWO — drives next slate target.</div>
+                                </div>
+                            )}
                             <div className="grid gap-2 col-span-full">
                                 <Label htmlFor="notes">Notes</Label>
                                 <textarea
@@ -339,12 +599,19 @@ export function EditCommandDialog({
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="grid gap-2 col-span-full">
                                 <Label htmlFor="coName">Name</Label>
-                                <Input
+                                <OfficerNameInput
                                     id="coName"
+                                    officers={officers}
                                     value={formData.currentCO.name}
-                                    onChange={(e) => handleNestedChange("currentCO", "name", e.target.value)}
+                                    onChange={(v) => handleNestedChange("currentCO", "name", v)}
                                 />
                             </div>
+                            {isCoSM && (
+                                <CommunitySelect
+                                    value={formData.currentCO.fillCommunity}
+                                    onChange={(v) => setFormData(prev => prev ? ({ ...prev, currentCO: { ...prev.currentCO, fillCommunity: v } }) : null)}
+                                />
+                            )}
                         </div>
                     </div>
 
@@ -358,18 +625,53 @@ export function EditCommandDialog({
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="grid gap-2 col-span-full">
                                 <Label htmlFor="pcoName">Name</Label>
-                                <Input
+                                <OfficerNameInput
                                     id="pcoName"
+                                    officers={officers}
                                     placeholder={formData.rotationStyle === "DirectCO" ? "Leave empty if none" : "Waiting for CO Turnover..."}
                                     value={formData.prospectiveCO?.name || ""}
-                                    onChange={(e) => setFormData(prev => prev ? ({
+                                    onChange={(v) => setFormData(prev => prev ? ({
                                         ...prev,
-                                        prospectiveCO: { ...prev.prospectiveCO, name: e.target.value, prd: prev.prospectiveCO?.prd || "" }
+                                        prospectiveCO: { ...prev.prospectiveCO, name: v, prd: prev.prospectiveCO?.prd || "" }
                                     }) : null)}
                                 />
                             </div>
+                            {isCoSM && (
+                                <CommunitySelect
+                                    value={formData.prospectiveCO?.fillCommunity}
+                                    onChange={(v) => setFormData(prev => prev ? ({
+                                        ...prev,
+                                        prospectiveCO: { ...(prev.prospectiveCO || { name: "", prd: "" }), fillCommunity: v }
+                                    }) : null)}
+                                />
+                            )}
                         </div>
                     </div>
+
+                    {/* Slated CO name — Direct CO only */}
+                    {formData.rotationStyle === "DirectCO" && (
+                        <>
+                            <Separator />
+                            <div className="grid gap-4">
+                                <h3 className="font-semibold leading-none tracking-tight">Slated CO (Forecast)</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="grid gap-2 col-span-full">
+                                        <Label htmlFor="slatedCOName">Name</Label>
+                                        <OfficerNameInput
+                                            id="slatedCOName"
+                                            officers={officers}
+                                            placeholder="Leave empty if none"
+                                            value={formData.slatedCO?.name && formData.slatedCO.name !== 'Forecast' ? formData.slatedCO.name : ""}
+                                            onChange={(v) => setFormData(prev => prev ? ({
+                                                ...prev,
+                                                slatedCO: { name: v || 'Forecast', prd: prev.slatedCO?.prd || "", timelineData: prev.slatedCO?.timelineData }
+                                            }) : null)}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+                    )}
 
                     {/* XO Sections - Only Show if FleetUp */}
                     {(formData.rotationStyle !== "DirectCO") && (
@@ -382,12 +684,19 @@ export function EditCommandDialog({
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <div className="grid gap-2 col-span-full">
                                         <Label htmlFor="xoName">Name</Label>
-                                        <Input
+                                        <OfficerNameInput
                                             id="xoName"
+                                            officers={officers}
                                             value={formData.currentXO.name}
-                                            onChange={(e) => handleNestedChange("currentXO", "name", e.target.value)}
+                                            onChange={(v) => handleNestedChange("currentXO", "name", v)}
                                         />
                                     </div>
+                                    {isCoSM && (
+                                        <CommunitySelect
+                                            value={formData.currentXO.fillCommunity}
+                                            onChange={(v) => setFormData(prev => prev ? ({ ...prev, currentXO: { ...prev.currentXO, fillCommunity: v } }) : null)}
+                                        />
+                                    )}
                                 </div>
                             </div>
 
@@ -399,21 +708,29 @@ export function EditCommandDialog({
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <div className="grid gap-2 md:col-span-2 col-span-1">
                                         <Label htmlFor="inboundName">Name</Label>
-                                        <Input
+                                        <OfficerNameInput
                                             id="inboundName"
+                                            officers={officers}
                                             placeholder="Leave empty if none"
                                             value={formData.inboundXO?.name || ""}
-                                            onChange={(e) => handleNestedChange("inboundXO", "name", e.target.value)}
+                                            onChange={(v) => setFormData(prev =>
+                                                prev ? { ...prev, inboundXO: autoPopulateInboundXODates(prev, v) } : null
+                                            )}
                                         />
+                                        <div className="text-[10px] text-muted-foreground pt-1">
+                                            * Dates auto-fill from Current XO fleet-up when a name is selected.
+                                        </div>
                                     </div>
-                                    <div className="grid gap-2">
-                                        <Label htmlFor="inboundReport">Report Date</Label>
-                                        <Input
-                                            id="inboundReport"
-                                            value={formData.inboundXO?.reportDate || ""}
-                                            onChange={(e) => handleNestedChange("inboundXO", "reportDate", e.target.value)}
+
+                                    {isCoSM && (
+                                        <CommunitySelect
+                                            value={formData.inboundXO?.fillCommunity}
+                                            onChange={(v) => setFormData(prev => prev ? ({
+                                                ...prev,
+                                                inboundXO: { ...(prev.inboundXO || { name: "", reportDate: "", timelineData: undefined }), fillCommunity: v }
+                                            }) : null)}
                                         />
-                                    </div>
+                                    )}
                                 </div>
                             </div>
 
@@ -425,21 +742,17 @@ export function EditCommandDialog({
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <div className="grid gap-2 md:col-span-2 col-span-1">
                                         <Label htmlFor="slatedName">Name / Slate</Label>
-                                        <Input
+                                        <OfficerNameInput
                                             id="slatedName"
+                                            officers={officers}
                                             placeholder="e.g. 26-2 or Officer Name"
                                             value={formData.slatedXO?.name || ""}
-                                            onChange={(e) => setFormData(prev => prev ? ({
-                                                ...prev,
-                                                slatedXO: {
-                                                    name: e.target.value,
-                                                    reportDate: prev.slatedXO?.reportDate || "",
-                                                    timelineData: prev.slatedXO?.timelineData
-                                                }
-                                            }) : null)}
+                                            onChange={(v) => setFormData(prev =>
+                                                prev ? { ...prev, slatedXO: autoPopulateSlatedXODates(prev, v) } : null
+                                            )}
                                         />
                                         <div className="text-[10px] text-muted-foreground pt-1">
-                                            * XO Report Date (RPT) is auto-synced from Timeline (Col I).
+                                            * Dates (Col I/K/M/Q) auto-fill from Inbound XO fleet-up when a name is selected.
                                         </div>
                                     </div>
                                 </div>
@@ -535,3 +848,4 @@ export function EditCommandDialog({
         </Dialog >
     )
 }
+

@@ -47,25 +47,37 @@ export interface OracleCommand {
         name: string
         prd: string
         timelineData?: TimelineData
+        fillCommunity?: string // e.g. "1110", "1200", "1300"
     }
     currentXO: {
         name: string
         prd: string
         timelineData?: TimelineData
+        fillCommunity?: string
     }
     inboundXO?: { // The "P-XO"
         name: string
         reportDate: string
         timelineData?: TimelineData
+        fillCommunity?: string
     }
     prospectiveCO?: { // The P-CO (Post-XO, Pre-CO)
         name: string
         prd: string
+        timelineData?: TimelineData
+        fillCommunity?: string // e.g. "1110", "1320" — community of this specific fill
     }
     slatedXO?: { // The "Slated XO" (Row 5 - Forecast)
         name: string
         reportDate: string
         timelineData?: TimelineData
+        fillCommunity?: string
+    }
+    slatedCO?: { // The "Slated CO" (Direct CO forecast — equivalent to Slated XO for Fleet-Up)
+        name: string
+        prd: string
+        timelineData?: TimelineData
+        fillCommunity?: string
     }
     nextSlateParams: {
         targetBoardDate: string
@@ -89,6 +101,7 @@ export interface OracleCommand {
     rotationStyle?: "FleetUp" | "DirectCO"
     tourLength?: number
     notes?: string
+    nextSWOFillDate?: string // CO-SM: when the next SWO fill is needed (ISO or MMMyy)
 }
 
 export interface Officer {

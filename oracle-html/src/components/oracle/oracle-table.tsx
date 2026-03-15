@@ -49,7 +49,7 @@ interface OracleTableProps {
 export function OracleTable({ data: initialData, selectedLocation, onLocationChange, officers, setOfficers, initialMetrics }: OracleTableProps) {
     const [data, setData] = useState<OracleCommand[]>(initialData)
     const [metrics, setMetrics] = useState<Metrics>(initialMetrics || { resolvedConflicts: 0 })
-    const searchParams = useSearchParams()
+    const [searchParams] = useSearchParams()
     const [search, setSearch] = useState(searchParams.get("search") || "")
 
     // Sorting State
