@@ -50,3 +50,4 @@ next-env.d.ts
 # --- Ghost Output & Test Coverage ---
 template_debug/
 oracle-html/node_modules/
+oracle-html/dist/

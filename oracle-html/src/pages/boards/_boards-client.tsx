@@ -21,8 +21,7 @@ import {
 } from "@/components/ui/dialog"
 import type { CdrCmdBoard } from "@/lib/types"
 import { Badge } from "@/components/ui/badge"
-import Link from 'react-router-dom'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 // Safely format a date that may be ISO or a display string (e.g. "Dec 3-5")
 function formatBoardDate(dateStr: string): string {

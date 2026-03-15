@@ -16,7 +16,7 @@ export function parseBody<T>(
     if (!result.success) {
         return {
             ok: false,
-            response: NextResponse.json(
+            response: Response.json(
                 {
                     error: 'Invalid request body',
                     issues: result.error.issues.map(i => ({

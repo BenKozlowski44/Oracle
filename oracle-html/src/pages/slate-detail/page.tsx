@@ -8,7 +8,8 @@ interface SlateDetailPageProps {
 
 
 export default function SlateDetailPage({ params }: SlateDetailPageProps) {
-    const { id } = await params
+    const { id } = useParams<{ id: string }>()
+    if (!id) return null
     const allSlates = getSlates()
     const officers = getOfficers()
     const oracleData = getOracleData()

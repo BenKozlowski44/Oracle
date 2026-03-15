@@ -8,7 +8,8 @@ interface BoardDetailPageProps {
 
 
 export default function BoardDetailPage({ params }: BoardDetailPageProps) {
-    const { id } = await params
+    const { id } = useParams<{ id: string }>()
+    if (!id) return null
     const allBoards = getBoards()
     return (
         <BoardDetailClient

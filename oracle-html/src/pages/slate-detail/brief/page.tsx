@@ -1,6 +1,5 @@
 // Server Component — reads fresh data on every navigation
 import { use } from "react"
-import Link from 'react-router-dom'
 import { getSlates, getOfficers, getOracleData } from '@/services/storage'
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -26,7 +25,8 @@ function hasPipelineConflict(availDate: string | undefined, fillDate: string | u
 
 
 export default function SlateBriefPage({ params }: BriefPageProps) {
-    const { id } = await params
+    const { id } = useParams<{ id: string }>()
+    if (!id) return null
     const slate = getSlates().find(s => s.id === id)
     const officers = getOfficers()
     const oracleData = getOracleData()

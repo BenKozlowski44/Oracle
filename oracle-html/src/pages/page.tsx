@@ -9,16 +9,14 @@ import {
 
 import { CommandAlerts } from "@/components/dashboard/command-alerts"
 import { PersonnelAlerts } from "@/components/dashboard/personnel-alerts"
-import { getOracleData } from '@/services/storage'
+import { getOracleData, getOfficers } from '@/services/storage'
 import { getMetrics } from "@/lib/metrics-service"
-import { readJson } from '@/services/storage'
-import { Officer } from "@/lib/types"
 
 // Force dynamic rendering so  actually fetches fresh data
 
 export default function DashboardPage() {
   const metrics = getMetrics()
-  const currentOfficers = readJson<Officer[]>('officers.json')
+  const currentOfficers = getOfficers()
   const oracleData = getOracleData()
 
   return (

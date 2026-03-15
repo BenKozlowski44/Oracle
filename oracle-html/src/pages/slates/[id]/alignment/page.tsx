@@ -1,5 +1,4 @@
 // Server Component — reads fresh data on every navigation
-import Link from 'react-router-dom'
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
 import { getSlates, getOfficers, getOracleData } from '@/services/storage'
@@ -11,7 +10,8 @@ interface AlignmentPageProps {
 
 
 export default function AlignmentPage({ params }: AlignmentPageProps) {
-    const { id } = await params
+    const { id } = useParams<{ id: string }>()
+    if (!id) return null
     const slates = getSlates()
     const slate = slates.find(s => s.id === id)
 

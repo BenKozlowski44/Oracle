@@ -5,7 +5,6 @@ import type { Slate, Officer, OracleCommand } from "@/lib/types"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Trash2, Plus, Search, UserPlus, Edit, Upload } from "lucide-react"
-import Link from 'react-router-dom'
 import {
     Table,
     TableBody,

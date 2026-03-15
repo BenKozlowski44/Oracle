@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { RotateCcw, Trash2 } from "lucide-react"
-import Link from 'react-router-dom'
 import type { Slate } from "@/lib/types"
 import { formatToMMMyy } from "@/lib/utils"
 
