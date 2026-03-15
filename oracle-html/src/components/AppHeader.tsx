@@ -27,7 +27,7 @@ export function AppHeader() {
                     <img
                         src={pers41Logo}
                         alt="PERS-41 Surface Warfare Officer Assignments"
-                        className="h-24 object-contain drop-shadow-[0_0_8px_rgba(201,162,39,0.3)]"
+                        className="h-36 object-contain drop-shadow-[0_0_8px_rgba(201,162,39,0.3)]"
                     />
                     <div className="text-center">
                         <p className="text-white/90 text-xs tracking-[0.2em] uppercase font-light">
