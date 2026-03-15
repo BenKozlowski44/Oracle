@@ -9,19 +9,35 @@ import {
 } from "@/components/dashboard/stats-cards"
 
 import heroBanner from "@/assets/hero-banner.png"
-
-
 import { CommandAlerts } from "@/components/dashboard/command-alerts"
 import { PersonnelAlerts } from "@/components/dashboard/personnel-alerts"
 import { getOracleData, getOfficers } from '@/services/storage'
 import { getMetrics } from "@/lib/metrics-service"
-
-// Force dynamic rendering so  actually fetches fresh data
+import { useRef, useLayoutEffect, useState } from "react"
 
 export default function DashboardPage() {
   const metrics = getMetrics()
   const currentOfficers = getOfficers()
   const oracleData = getOracleData()
+
+  // Measure left column height and apply to right column's alerts section
+  const leftColRef = useRef<HTMLDivElement>(null)
+  const rightTopRef = useRef<HTMLDivElement>(null)
+  const [alertsMaxH, setAlertsMaxH] = useState(400)
+
+  useLayoutEffect(() => {
+    const measure = () => {
+      if (!leftColRef.current || !rightTopRef.current) return
+      const leftH = leftColRef.current.offsetHeight
+      const topH = rightTopRef.current.offsetHeight
+      const gap = 16 // gap-4
+      setAlertsMaxH(Math.max(leftH - topH - gap, 150))
+    }
+    measure()
+    const observer = new ResizeObserver(measure)
+    if (leftColRef.current) observer.observe(leftColRef.current)
+    return () => observer.disconnect()
+  }, [])
 
   return (
     <div className="space-y-6">
@@ -33,9 +49,7 @@ export default function DashboardPage() {
           alt="DDG-124 USS Harvey C. Barnum Jr."
           className="w-full h-full object-cover object-center"
         />
-        {/* Dark gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
-        {/* Text overlay */}
         <div className="absolute inset-0 flex flex-col justify-center px-8">
           <p className="text-[#c9a227] text-xs font-semibold tracking-[0.3em] uppercase mb-1">
             PERS-41 · Surface Warfare Officer Assignments
@@ -49,10 +63,9 @@ export default function DashboardPage() {
         </div>
       </div>
 
-
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Left Column: Personnel & Billets */}
-        <div className="space-y-4">
+      <div className="grid gap-6 md:grid-cols-2 items-start">
+        {/* Left Column */}
+        <div className="space-y-4" ref={leftColRef}>
           <CommandInventoryCard oracleData={oracleData} />
           <PipelineHealthCard oracleData={oracleData} />
           <BankOfficersCard officers={currentOfficers} />
@@ -60,13 +73,18 @@ export default function DashboardPage() {
           <CosmBankOfficersCard officers={currentOfficers} />
         </div>
 
-        {/* Right Column: Issues & Alerts */}
-        <div className="flex flex-col gap-4 overflow-hidden">
-          <div className="grid gap-4 sm:grid-cols-2">
+        {/* Right Column */}
+        <div className="flex flex-col gap-4">
+          {/* Top cards row — measured to subtract from available alerts height */}
+          <div className="grid gap-4 sm:grid-cols-2" ref={rightTopRef}>
             <ActiveIssuesCard oracleData={oracleData} officers={currentOfficers} />
             <ResolvedIssuesCard metrics={metrics} />
           </div>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 flex-1 min-h-0 items-stretch">
+          {/* Alert cards — capped at left column bottom */}
+          <div
+            className="grid gap-4 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2"
+            style={{ maxHeight: alertsMaxH, overflow: 'hidden' }}
+          >
             <CommandAlerts commands={oracleData} />
             <PersonnelAlerts officers={currentOfficers} />
           </div>
