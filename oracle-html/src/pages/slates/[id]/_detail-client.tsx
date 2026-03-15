@@ -1,3 +1,4 @@
+import * as XLSX from 'xlsx'
 import { useState, useRef } from "react"
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from "sonner"
@@ -256,63 +257,77 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
             '2nd Department Head Tour', 'Post-Department Head Tour',
         ]
         const prefOptions = Array.from(new Set(
-            slate.requirements
+            (slate.requirements || [])
                 .map(req => oracleData.find(c => c.id === req.commandId))
                 .filter((c): c is OracleCommand => !!c && !!c.platform && !!c.location)
                 .map(cmd => `${cmd.platform} - ${cmd.location}`)
         )).sort()
 
-        const rows: string[][] = []
-        const add = (label: string, value = '') => rows.push([label, value])
-        const section = (title: string) => rows.push([`=== ${title} ===`, ''])
-        const blank = () => rows.push(['', ''])
+        const rows: (string | number)[][] = []
+        const section = (title: string) => rows.push([title])
+        const blank = () => rows.push([])
 
-        rows.push([`PERS-41 Candidate Preference Template — ${slate.name}`, ''])
-        rows.push([`Slate Window: ${slate.windowStart} — ${slate.windowEnd}`, ''])
+        rows.push([`PERS-41 Candidate Preference Template — ${slate.name}`])
+        rows.push([`Slate Window: ${slate.windowStart} — ${slate.windowEnd}`])
         blank()
 
         section('OFFICER INFORMATION')
-        add('Full Name'); add('Rank'); add('Designator'); add('Availability Date (XO Pipeline Start)'); blank()
+        rows.push(['Full Name', 'Rank', 'Designator', 'Availability Date (XO Pipeline Start)'])
+        rows.push(['', '', '', ''])
+        blank()
 
         section('CONTACT INFORMATION')
-        add('Work Email'); add('Home / Personal Email'); add('Work Phone')
-        add('Personal Cell'); add('Mailing Address (Street, City, State ZIP)'); blank()
+        rows.push(['Work Email', 'Home / Personal Email', 'Work Phone', 'Personal Cell'])
+        rows.push(['', '', '', ''])
+        rows.push(['Mailing Address (Street, City, State ZIP)'])
+        rows.push([''])
+        blank()
 
         section('FLAG NOTIFIER')
-        add('Flag Officer Name'); add('Relationship / Context'); blank()
+        rows.push(['Flag Officer Name', 'Relationship / Context'])
+        rows.push(['', ''])
+        blank()
 
-        section(`COMMAND PREFERENCES — select one per row (${prefOptions.length} available)`)
+        section(`COMMAND PREFERENCES (${prefOptions.length} commands in this slate)`)
         rows.push(['Rank', 'Platform — Location', 'Narrative / Reasoning'])
-        prefOptions.forEach((opt, i) => rows.push([`Preference ${i + 1}`, '', '']))
-        if (prefOptions.length === 0) rows.push(['(No commands available in this slate)', '', ''])
+        prefOptions.forEach((_opt, i) => rows.push([`Preference ${i + 1}`, '', '']))
+        if (prefOptions.length === 0) rows.push(['(No commands available)', '', ''])
         blank()
 
         section('CONSIDERATIONS & NOTES')
-        add('Amplifying info for Detailer (timing, family, career goals, etc.)')
+        rows.push(['Amplifying info for Detailer (timing, family, career goals, etc.)'])
+        rows.push([''])
         blank()
 
         section('TOUR HISTORY')
         for (const tour of TOURS) {
-            rows.push([`--- ${tour} ---`, ''])
-            add('Ship / Command'); add('Platform (DDG/CG/etc.)'); add('OFRP Phase (majority)')
-            add('Months U/W'); add('Months Deployed'); add('Months stood as OOD')
-            add('# OOD Evolutions'); add('# CONN Evolutions'); add('# JOOD Evolutions'); blank()
+            rows.push([tour])
+            rows.push(['Ship / Command', 'Platform (DDG/CG/etc.)', 'OFRP Phase'])
+            rows.push(['', '', ''])
+            rows.push(['Months U/W', 'Months Deployed', 'Months as OOD'])
+            rows.push(['', '', ''])
+            rows.push(['# OOD Evolutions', '# CONN Evolutions', '# JOOD Evolutions'])
+            rows.push(['', '', ''])
+            blank()
         }
 
         section('PROFESSIONAL QUALIFICATIONS')
-        add('JPME Completion / Plan'); add('WTI Qualification (Type if applicable)'); blank()
+        rows.push(['Field', 'Value'])
+        rows.push(['JPME Completion / Plan', ''])
+        rows.push(['WTI Qualification (Type if applicable)', ''])
+        blank()
 
         section('PERSONAL CONSIDERATIONS')
-        add('Co-Location Request'); add('EFM Considerations'); add('Education / Pipeline')
+        rows.push(['Consideration', 'Notes'])
+        rows.push(['Co-Location Request', ''])
+        rows.push(['EFM Considerations', ''])
+        rows.push(['Education / Pipeline', ''])
 
-        const csv = rows.map(r => r.map(c => `"${c.replace(/"/g, '""')}"`).join(',')).join('\n')
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
-        const url = URL.createObjectURL(blob)
-        const link = document.createElement('a')
-        link.href = url
-        link.download = `${slate.name.replace(/\s+/g, '_')}_candidate_template.csv`
-        document.body.appendChild(link); link.click()
-        document.body.removeChild(link); URL.revokeObjectURL(url)
+        const ws = XLSX.utils.aoa_to_sheet(rows)
+        ws['!cols'] = [{ wch: 40 }, { wch: 30 }, { wch: 30 }, { wch: 30 }]
+        const wb = XLSX.utils.book_new()
+        XLSX.utils.book_append_sheet(wb, ws, 'Candidate Input')
+        XLSX.writeFile(wb, `${slate.name.replace(/\s+/g, '_')}_candidate_template.xlsx`)
     }
 
     const handleFileUpload = async (_e: React.ChangeEvent<HTMLInputElement>) => {
