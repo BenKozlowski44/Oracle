@@ -32,18 +32,21 @@ export default function App() {
       (msg) => toast.error(msg)
     )
 
-    // If localStorage is empty (cache cleared), offer restore
-    const seeded = localStorage.getItem('__seeded_v1')
-    if (!seeded) {
+    // If actual data is missing from localStorage (cache cleared), offer restore
+    // NOTE: __seeded_v1 is intentionally never written by seed.ts, so we check
+    // for the presence of actual oracle data instead
+    const hasData = localStorage.getItem('oracle-data') !== null
+    if (!hasData) {
       if (window.confirm('No local data found. Would you like to restore from a backup file?')) {
         restoreFromFile().then(ok => {
           if (ok) window.location.reload()
         })
+        return // only block backup modal if user chose to restore
       }
-      return
     }
 
     // Show backup modal after a short delay so app renders first
+    // Runs regardless of whether the restore prompt was shown
     setTimeout(() => {
       const { everGranted, handleActive } = getBackupStatus()
       if (handleActive) return // already connected — nothing to do
