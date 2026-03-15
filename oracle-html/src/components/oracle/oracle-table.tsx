@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react"
-import { useSearchParams } from 'react-router-dom'
+import React, { useState, useEffect } from "react"
+import { useSearchParams } from "react-router-dom"
 import { OracleCommand, Officer, Metrics } from "@/lib/types"
 import {
     Table,
@@ -13,9 +13,11 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { EditCommandDialog } from "./edit-command-dialog"
 import { FleetUpChecklist } from "./fleet-up-checklist"
-import { Pencil, Search, Plus } from "lucide-react"
+import { Search, Plus, ChevronDown, ChevronRight } from "lucide-react"
+import { saveError, notifySuccess } from "@/lib/notify"
+import { CommandPipelineTimeline } from "./command-pipeline-timeline"
 import { Button } from "@/components/ui/button"
-import { formatToMMMyy } from "@/lib/utils"
+import { formatToMMMyy, getPipelineHealth, predictNextVacancyDate, getCoSmRptDisplay, getCdrCmdXoRptDate } from "@/lib/utils"
 import { format, parseISO, isValid } from "date-fns"
 import { getCommandAlerts } from "@/lib/alerts"
 import {
@@ -47,7 +49,7 @@ interface OracleTableProps {
 export function OracleTable({ data: initialData, selectedLocation, onLocationChange, officers, setOfficers, initialMetrics }: OracleTableProps) {
     const [data, setData] = useState<OracleCommand[]>(initialData)
     const [metrics, setMetrics] = useState<Metrics>(initialMetrics || { resolvedConflicts: 0 })
-    const [searchParams] = useSearchParams()
+    const searchParams = useSearchParams()
     const [search, setSearch] = useState(searchParams.get("search") || "")
 
     // Sorting State
@@ -62,14 +64,25 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
     const [cocDateInput, setCocDateInput] = useState(new Date().toISOString().split('T')[0])
     const [isCocDialogOpen, setIsCocDialogOpen] = useState(false)
 
-    // Hydrate metrics from localStorage on mount
+    // Timeline expansion
+    const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
+    const toggleExpand = (id: string) => setExpandedRows(prev => {
+        const next = new Set(prev)
+        next.has(id) ? next.delete(id) : next.add(id)
+        return next
+    })
+
+    // Hydrate metrics from API on mount
     useEffect(() => {
-        const fetchMetrics = () => {
+        const fetchMetrics = async () => {
             try {
-                const data = getMetrics();
-                if (data) setMetrics(data);
+                const res = await fetch('/api/metrics');
+                if (res.ok) {
+                    const data = await res.json();
+                    setMetrics(data);
+                }
             } catch (err) {
-                console.error("Failed to load metrics", err);
+                console.error("Failed to fetch metrics", err);
             }
         };
         fetchMetrics();
@@ -78,6 +91,14 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
     // Extract unique locations for filter
     const locations = Array.from(new Set(data.map(d => d.location))).sort()
     const [showSpecialMission, setShowSpecialMission] = useState(false)
+    const [directCOCollapsed, setDirectCOCollapsed] = useState(() => {
+        try { return localStorage.getItem('cosm-directco-collapsed') === 'true' } catch { return false }
+    })
+    const [fleetUpCollapsed, setFleetUpCollapsed] = useState(() => {
+        try { return localStorage.getItem('cosm-fleetup-collapsed') === 'true' } catch { return false }
+    })
+    const toggleDirectCO = () => setDirectCOCollapsed(v => { const n = !v; try { localStorage.setItem('cosm-directco-collapsed', String(n)) } catch {} return n })
+    const toggleFleetUp  = () => setFleetUpCollapsed(v  => { const n = !v; try { localStorage.setItem('cosm-fleetup-collapsed',  String(n)) } catch {} return n })
 
     // Filter Logic
     const filteredData = data.filter(item => {
@@ -144,18 +165,31 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
         setSortConfig({ key, direction });
     };
 
+    // CO-SM section splits
+    const healthOrder = (cmd: OracleCommand) => {
+        const h = getPipelineHealth(cmd)
+        return h.status === 'red' ? 0 : h.status === 'yellow' ? 1 : 2
+    }
+    const coSMSort = (a: OracleCommand, b: OracleCommand) =>
+        healthOrder(a) - healthOrder(b) || a.name.localeCompare(b.name)
+    const directCOCommands = filteredData.filter(c => c.rotationStyle === 'DirectCO').sort(coSMSort)
+    const fleetUpCommands  = filteredData.filter(c => c.rotationStyle !== 'DirectCO').sort(coSMSort)
+
     const handleEditClick = (cmd: OracleCommand) => {
         setEditingCommand(cmd)
         setIsEditOpen(true)
     }
 
-    const handleAddClick = () => {
+
+    const handleAddClick = (type: 'CDR' | 'COSM') => {
+        const isCoSM = type === 'COSM'
         const newCommand: OracleCommand = {
             id: `cmd_new_${Date.now()}`,
-            name: "New Command",
+            name: isCoSM ? "New CO-SM Command" : "New Command",
             uic: "N/A",
-            platform: "DDG",
+            platform: isCoSM ? "CO-SM" : "DDG",
             location: "Norfolk, VA",
+            tags: isCoSM ? ["CO-SM"] : [],
             currentCO: { name: "", prd: "" },
             currentXO: { name: "", prd: "" },
             nextSlateParams: { requirement: "CO", targetBoardDate: "TBD" },
@@ -201,11 +235,16 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
         setData(newData)
 
         try {
-            saveOracleCommand(updatedCommand as OracleCommand);
-            if (newMetrics) saveMetrics(newMetrics as Metrics);
+            const res = await fetch(`/api/oracle/${updatedCommand.id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ updatedCommand, metrics: newMetrics }),
+            });
+            if (!res.ok) throw new Error()
+            notifySuccess('Command saved')
         } catch (error) {
             console.error("Error saving data:", error);
-            alert("Failed to save changes to disk. check console.");
+            saveError('Failed to save command — changes may not have persisted');
         }
     }
 
@@ -216,10 +255,12 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
         setIsEditOpen(false)
 
         try {
-            deleteOracleCommand(commandId);
+            const res = await fetch(`/api/oracle/${commandId}`, { method: 'DELETE' });
+            if (!res.ok) throw new Error()
+            notifySuccess('Command deleted')
         } catch (error) {
             console.error(error);
-            alert("Failed to delete command");
+            saveError('Failed to delete command');
         }
     }
 
@@ -229,11 +270,16 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
         setIsEditOpen(false);
 
         try {
-            saveOracleCommand(updatedCommand as OracleCommand);
-            saveOfficers(currentOfficers as Officer[]);
+            const res = await fetch(`/api/oracle/${updatedCommand.id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ updatedCommand, officers: currentOfficers }),
+            });
+            if (!res.ok) throw new Error()
+            notifySuccess(message)
         } catch (error) {
             console.error(error);
-            alert("Failed to save changes: " + message);
+            saveError('Failed to save: ' + message);
         }
     }
 
@@ -356,58 +402,77 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                         variant={showSpecialMission ? "default" : "outline"}
                         onClick={() => setShowSpecialMission(!showSpecialMission)}
                     >
-                        {showSpecialMission ? "Show Standard Commands" : "Show CO-SM"}
+                        {showSpecialMission ? "Show CDR CMDs" : "Show CO-SM"}
                     </Button>
-                    <Button onClick={handleAddClick} className="gap-2">
+                    <Button onClick={() => handleAddClick('CDR')} className="gap-2">
                         <Plus className="h-4 w-4" />
-                        Add Command
+                        Add CDR CMD
+                    </Button>
+                    <Button onClick={() => handleAddClick('COSM')} variant="outline" className="gap-2">
+                        <Plus className="h-4 w-4" />
+                        Add CO-SM
                     </Button>
                 </div>
             </div>
 
-            <div className="rounded-md border bg-card">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead className="cursor-pointer hover:bg-muted/50" onClick={() => requestSort('name')}>
-                                Command {sortConfig?.key === 'name' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
-                            </TableHead>
-                            <TableHead>CO</TableHead>
-                            <TableHead>XO</TableHead>
-                            <TableHead>P-XO</TableHead>
-                            <TableHead className="cursor-pointer hover:bg-muted/50" onClick={() => requestSort('slate')}>
-                                Slate {sortConfig?.key === 'slate' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
-                            </TableHead>
-                            <TableHead className="w-[50px]"></TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {filteredData.length === 0 ? (
-                            <TableRow>
-                                <TableCell colSpan={6} className="h-24 text-center">
-                                    No commands found in The Oracle.
-                                </TableCell>
-                            </TableRow>
-                        ) : (
-                            filteredData.map((cmd) => (
-                                <TableRow key={cmd.id}>
-                                    <TableCell className="max-w-[200px] whitespace-normal">
-                                        <div className="font-semibold leading-tight">{cmd.name}</div>
-                                        <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-muted-foreground mt-0.5">
-                                            <span>{cmd.uic !== "N/A" ? cmd.uic : ""}</span>
-                                            {cmd.uic !== "N/A" && <span>•</span>}
-                                            <span className="whitespace-nowrap">
-                                                {cmd.tags?.includes("CO-SM")
-                                                    ? `${cmd.rotationStyle === "DirectCO" ? "Direct Input" : "Fleet Up"} ${cmd.tourLength ? `• ${cmd.tourLength} mos` : ""}`
-                                                    : (cmd.platform || "N/A")
-                                                }
-                                            </span>
-                                            <span>•</span>
-                                            <span className="whitespace-nowrap">{cmd.location}</span>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell className="max-w-[140px]">
-                                        <div className="text-sm font-medium truncate text-blue-600" title={cmd.currentCO.name}>{cmd.currentCO.name}</div>
+            {/* ── Shared row renderer ─────────────────────────────────────── */}
+            {(() => {
+                const renderCmdRow = (cmd: OracleCommand) => {
+                    // Always compute the live target board — overrides any stale stored value
+                    const liveBoard = predictNextVacancyDate(cmd)
+                    const cmdLive: OracleCommand = liveBoard !== 'TBD'
+                        ? { ...cmd, nextSlateParams: { ...cmd.nextSlateParams, targetBoardDate: liveBoard } }
+                        : cmd
+                    const health = getPipelineHealth(cmdLive)
+                    const isDirectCO = cmd.rotationStyle === 'DirectCO'
+                    const dotColor = health.status === 'green' ? 'bg-green-500' : health.status === 'yellow' ? 'bg-amber-400' : 'bg-red-500'
+                    const badgeClass = health.status === 'green'
+                        ? 'border-green-500 text-green-600 bg-green-500/10'
+                        : health.status === 'yellow'
+                            ? 'border-amber-400 text-amber-600 bg-amber-400/10'
+                            : 'border-red-500 text-red-600 bg-red-500/10'
+
+                    // Slate cell (shared between Direct CO + Fleet-Up)
+                    const slateCell = (
+                        <TableCell className="max-w-[140px]">
+                            {(() => {
+                                return (
+                                    <>
+                                        <Badge
+                                            variant="outline"
+                                            className={`w-full justify-center truncate ${badgeClass} ${health.approaching ? 'animate-pulse ring-2 ring-amber-400/60 ring-offset-1 bg-amber-400/20 font-bold' : ''} ${health.status === 'red' && !health.approaching ? 'animate-pulse ring-2 ring-red-500/60 ring-offset-1 font-bold' : ''}`}
+                                            title={health.detail}
+                                        >
+                                            {health.approaching && '⚠ '}{isDirectCO ? 'CO' : 'XO'} via {cmdLive.nextSlateParams.targetBoardDate}
+                                        </Badge>
+                                        {(() => {
+                                            const rpt = getCoSmRptDisplay(cmd)
+                                            return rpt ? (
+                                                <div className="text-xs text-muted-foreground mt-1 text-center">
+                                                    {rpt.label}: {formatToMMMyy(rpt.date)}
+                                                </div>
+                                            ) : null
+                                        })()}
+                                        {cmd.nextSWOFillDate && (
+                                            <div className="text-xs text-amber-600 mt-0.5 text-center font-medium">
+                                                SWO: {formatToMMMyy(cmd.nextSWOFillDate)}
+                                            </div>
+                                        )}
+                                    </>
+                                )
+                            })()}
+                        </TableCell>
+                    )
+
+                    // CO cell
+                    const coCell = (
+                        <TableCell className="max-w-[140px]">
+                            {(() => {
+                                const isNonSWO = cmd.currentCO.fillCommunity && cmd.currentCO.fillCommunity !== '1110'
+                                const displayName = isNonSWO ? `${cmd.currentCO.fillCommunity} Fill` : cmd.currentCO.name
+                                return (
+                                    <>
+                                        <div className={`text-sm font-medium truncate ${isNonSWO ? 'text-muted-foreground italic' : 'text-blue-600'}`} title={cmd.currentCO.name}>{displayName}</div>
                                         <div className="text-xs text-muted-foreground">
                                             {(() => {
                                                 const dateStr = cmd.currentCO.timelineData?.q || cmd.currentCO.prd;
@@ -417,61 +482,391 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                                                 return `CoC: ${formatted}`;
                                             })()}
                                         </div>
-                                    </TableCell>
-                                    <TableCell className="max-w-[160px]">
-                                        <div className="flex items-start justify-between gap-1">
-                                            <div className="overflow-hidden">
-                                                <div className="text-sm font-medium truncate text-green-600" title={cmd.currentXO.name}>{cmd.currentXO.name}</div>
-                                                <div className="text-xs text-muted-foreground">
+                                    </>
+                                )
+                            })()}
+                        </TableCell>
+                    )
+
+                    // Name+health cell
+                    const nameCell = (
+                        <TableCell className="max-w-[200px] whitespace-normal">
+                            <div className="flex items-start gap-2">
+                                <span
+                                    className={`mt-1.5 flex-shrink-0 w-2 h-2 rounded-full ${dotColor} ${health.approaching ? 'animate-pulse ring-2 ring-amber-400/50 ring-offset-1' : ''} ${health.status === 'red' && !health.approaching ? 'animate-pulse ring-2 ring-red-500/50 ring-offset-1' : ''}`}
+                                    title={`${health.label}: ${health.detail}`}
+                                />
+                                <div>
+                                    <button className="font-semibold leading-tight text-left hover:underline cursor-pointer" onClick={() => handleEditClick(cmd)}>
+                                        {cmd.name}
+                                    </button>
+                                    <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-muted-foreground mt-0.5">
+                                        <span>{cmd.uic !== "N/A" ? cmd.uic : ""}</span>
+                                        {cmd.uic !== "N/A" && <span>•</span>}
+                                        <span className="whitespace-nowrap">
+                                            {cmd.tags?.includes("CO-SM")
+                                                ? `${cmd.tourLength ? `${cmd.tourLength} mos` : ""}`
+                                                : (cmd.platform || "N/A")
+                                            }
+                                        </span>
+                                        <span>•</span>
+                                        <span className="whitespace-nowrap">{cmd.location}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </TableCell>
+                    )
+
+                    // Expand button cell
+                    const expandCell = (
+                        <TableCell className="w-8 p-1.5">
+                            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => toggleExpand(cmd.id)}>
+                                {expandedRows.has(cmd.id)
+                                    ? <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                                    : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
+                            </Button>
+                        </TableCell>
+                    )
+
+                    return (
+                        <React.Fragment key={cmd.id}>
+                            <TableRow key={cmd.id}>
+                                {expandCell}
+                                {nameCell}
+                                {coCell}
+                                {isDirectCO ? (
+                                    // Direct CO: P-CO and Slated CO columns
+                                    <>
+                                        <TableCell className="max-w-[150px]">
+                                            {cmd.prospectiveCO?.name ? (
+                                                <>
+                                                    <div className="text-sm font-medium truncate text-yellow-600" title={cmd.prospectiveCO.name}>{cmd.prospectiveCO.name}</div>
+                                                    {cmd.prospectiveCO.timelineData?.i && <div className="text-xs text-muted-foreground">RPT: {formatToMMMyy(cmd.prospectiveCO.timelineData.i)}</div>}
+                                                </>
+                                            ) : <span className="text-muted-foreground italic text-sm">-- Open --</span>}
+                                        </TableCell>
+                                        <TableCell className="max-w-[150px]">
+                                            {(() => {
+                                                const name = cmd.slatedCO?.name
+                                                const hasRealName = name && name !== 'Forecast'
+                                                if (hasRealName) {
+                                                    return (
+                                                        <>
+                                                            <div className="text-sm font-medium truncate text-muted-foreground italic" title={name}>{name}</div>
+                                                            {cmd.slatedCO?.timelineData?.i
+                                                                ? <div className="text-xs text-muted-foreground">RPT: {formatToMMMyy(cmd.slatedCO.timelineData.i)}</div>
+                                                                : <div className="text-xs text-muted-foreground">Dates TBD</div>
+                                                            }
+                                                        </>
+                                                    )
+                                                }
+                                                return <span className="text-muted-foreground italic text-sm">-- Forecast --</span>
+                                            })()}
+                                        </TableCell>
+                                    </>
+                                ) : (
+                                    // Fleet-Up: XO and P-XO columns
+                                    <>
+                                        <TableCell className="max-w-[160px]">
+                                            <div className="flex items-start justify-between gap-1">
+                                                <div className="overflow-hidden">
                                                     {(() => {
-                                                        const dateStr = cmd.currentXO.timelineData?.m || cmd.currentXO.prd;
-                                                        if (!dateStr) return "CoC: N/A";
-                                                        const date = parseISO(dateStr);
-                                                        const formatted = isValid(date) ? format(date, "MMMyy").toUpperCase() : dateStr;
-                                                        return `CoC: ${formatted}`;
+                                                        const isNonSWO = cmd.currentXO.fillCommunity && cmd.currentXO.fillCommunity !== '1110'
+                                                        const displayName = isNonSWO ? `${cmd.currentXO.fillCommunity} Fill` : cmd.currentXO.name
+                                                        return (
+                                                            <>
+                                                                <div className={`text-sm font-medium truncate ${isNonSWO ? 'text-muted-foreground italic' : 'text-green-600'}`} title={cmd.currentXO.name}>{displayName}</div>
+                                                                <div className="text-xs text-muted-foreground">
+                                                                    {(() => {
+                                                                        const dateStr = cmd.currentXO.timelineData?.m || cmd.currentXO.prd;
+                                                                        if (!dateStr) return "CoC: N/A";
+                                                                        const date = parseISO(dateStr);
+                                                                        const formatted = isValid(date) ? format(date, "MMMyy").toUpperCase() : dateStr;
+                                                                        return `CoC: ${formatted}`;
+                                                                    })()}
+                                                                </div>
+                                                            </>
+                                                        )
                                                     })()}
                                                 </div>
+                                                <FleetUpChecklist command={cmd} onUpdate={(c) => persistUpdate(c, officers, "Checklist Updated")} />
                                             </div>
-                                            <FleetUpChecklist command={cmd} onUpdate={(c) => persistUpdate(c, officers, "Checklist Updated")} />
-                                        </div>
-                                    </TableCell>
-                                    <TableCell className="max-w-[140px]">
-                                        {cmd.inboundXO ? (
-                                            <>
-                                                <div className={`text-sm font-medium truncate ${cmd.inboundXO.name.toLowerCase().includes("no fill") ? "text-red-600" : "text-yellow-600"}`} title={cmd.inboundXO.name}>{cmd.inboundXO.name}</div>
-                                                <div className="text-xs text-muted-foreground">RPT: {formatToMMMyy(cmd.inboundXO.reportDate)}</div>
-                                            </>
-                                        ) : (
-                                            <span className="text-muted-foreground italic text-sm">-- Open --</span>
-                                        )}
-                                    </TableCell>
-                                    <TableCell className="max-w-[140px]">
-                                        <Badge variant="outline" className="border-primary text-primary w-full justify-center truncate">
-                                            {cmd.nextSlateParams.requirement} via {cmd.nextSlateParams.targetBoardDate}
-                                        </Badge>
-                                        {cmd.slatedXO && cmd.slatedXO.reportDate && (
-                                            <div className="text-xs text-muted-foreground mt-1 text-center">
-                                                XO RPT: {formatToMMMyy(cmd.slatedXO.reportDate)}
-                                            </div>
-                                        )}
-                                    </TableCell>
-                                    <TableCell>
-                                        <Button variant="ghost" size="icon" onClick={() => handleEditClick(cmd)}>
-                                            <Pencil className="h-4 w-4" />
-                                        </Button>
+                                        </TableCell>
+                                        <TableCell className="max-w-[140px]">
+                                            {cmd.inboundXO ? (
+                                                <>
+                                                    {(() => {
+                                                        const isNonSWO = cmd.inboundXO.fillCommunity && cmd.inboundXO.fillCommunity !== '1110'
+                                                        const hasName = !!cmd.inboundXO.name
+                                                        // Show community fill label even if no name is entered yet
+                                                        if (isNonSWO) {
+                                                            const displayName = hasName ? cmd.inboundXO.name : `${cmd.inboundXO.fillCommunity} Fill`
+                                                            return <div className="text-sm font-medium truncate text-muted-foreground italic" title={displayName}>{displayName}</div>
+                                                        }
+                                                        if (!hasName) return null
+                                                        return (
+                                                            <div className={`text-sm font-medium truncate ${cmd.inboundXO.name.toLowerCase().includes('no fill') ? 'text-red-600' : 'text-yellow-600'}`} title={cmd.inboundXO.name}>{cmd.inboundXO.name}</div>
+                                                        )
+                                                    })()}
+                                                    {cmd.inboundXO.timelineData?.i && <div className="text-xs text-muted-foreground">RPT: {formatToMMMyy(cmd.inboundXO.timelineData.i)}</div>}
+                                                </>
+                                            ) : <span className="text-muted-foreground italic text-sm">-- Open --</span>}
+                                        </TableCell>
+                                    </>
+                                )}
+                                {slateCell}
+                            </TableRow>
+                            {expandedRows.has(cmd.id) && (
+                                <TableRow key={cmd.id + "-timeline"} className="bg-muted/20 hover:bg-muted/20">
+                                    <TableCell colSpan={6} className="p-0 border-t-0">
+                                        <CommandPipelineTimeline command={cmd} />
                                     </TableCell>
                                 </TableRow>
-                            ))
-                        )}
-                    </TableBody>
-                </Table>
-            </div>
+                            )}
+                        </React.Fragment>
+                    )
+                }
+
+                if (showSpecialMission) {
+                    return (
+                        <div className="space-y-4">
+                            {/* ── Direct Input CO section ─────────────────────────── */}
+                            {directCOCommands.length > 0 && (
+                                <div className="rounded-md border bg-card">
+                                    {/* Section header */}
+                                    <button
+                                        className="w-full flex items-center justify-between px-4 py-3 hover:bg-muted/30 transition-colors"
+                                        onClick={toggleDirectCO}
+                                    >
+                                        <div className="flex items-center gap-2">
+                                            <span className="w-2.5 h-2.5 rounded-full bg-blue-500 flex-shrink-0" />
+                                            <span className="font-semibold text-sm">Direct Input CO</span>
+                                            <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">{directCOCommands.length} command{directCOCommands.length !== 1 ? 's' : ''}</span>
+                                        </div>
+                                        {directCOCollapsed ? <ChevronRight className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
+                                    </button>
+                                    {!directCOCollapsed && (
+                                        <Table>
+                                            <TableHeader>
+                                                <TableRow>
+                                                    <TableHead className="w-8" />
+                                                    <TableHead>Command</TableHead>
+                                                    <TableHead>CO</TableHead>
+                                                    <TableHead>P-CO</TableHead>
+                                                    <TableHead>Slated CO</TableHead>
+                                                    <TableHead className="text-center">Slate</TableHead>
+                                                </TableRow>
+                                            </TableHeader>
+                                            <TableBody>
+                                                {directCOCommands.map(renderCmdRow)}
+                                            </TableBody>
+                                        </Table>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* ── Fleet-Up section ────────────────────────────────── */}
+                            {fleetUpCommands.length > 0 && (
+                                <div className="rounded-md border bg-card">
+                                    {/* Section header */}
+                                    <button
+                                        className="w-full flex items-center justify-between px-4 py-3 hover:bg-muted/30 transition-colors"
+                                        onClick={toggleFleetUp}
+                                    >
+                                        <div className="flex items-center gap-2">
+                                            <span className="w-2.5 h-2.5 rounded-full bg-green-500 flex-shrink-0" />
+                                            <span className="font-semibold text-sm">Fleet-Up</span>
+                                            <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">{fleetUpCommands.length} command{fleetUpCommands.length !== 1 ? 's' : ''}</span>
+                                        </div>
+                                        {fleetUpCollapsed ? <ChevronRight className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
+                                    </button>
+                                    {!fleetUpCollapsed && (
+                                        <Table>
+                                            <TableHeader>
+                                                <TableRow>
+                                                    <TableHead className="w-8" />
+                                                    <TableHead>Command</TableHead>
+                                                    <TableHead>CO</TableHead>
+                                                    <TableHead>XO</TableHead>
+                                                    <TableHead>P-XO</TableHead>
+                                                    <TableHead className="text-center">Slate</TableHead>
+                                                </TableRow>
+                                            </TableHeader>
+                                            <TableBody>
+                                                {fleetUpCommands.map(renderCmdRow)}
+                                            </TableBody>
+                                        </Table>
+                                    )}
+                                </div>
+                            )}
+
+                            {directCOCommands.length === 0 && fleetUpCommands.length === 0 && (
+                                <div className="rounded-md border bg-card p-8 text-center text-sm text-muted-foreground">
+                                    No CO-SM commands found.
+                                </div>
+                            )}
+                        </div>
+                    )
+                }
+
+                // ── Standard commands — original single-table layout ──────────
+                return (
+                    <div className="rounded-md border bg-card">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead className="w-8" />
+                                    <TableHead className="cursor-pointer hover:bg-muted/50" onClick={() => requestSort('name')}>
+                                        Command {sortConfig?.key === 'name' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                                    </TableHead>
+                                    <TableHead>CO</TableHead>
+                                    <TableHead>XO</TableHead>
+                                    <TableHead>P-XO</TableHead>
+                                    <TableHead className="cursor-pointer hover:bg-muted/50 text-center" onClick={() => requestSort('slate')}>
+                                        Slate {sortConfig?.key === 'slate' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                                    </TableHead>
+                                    <TableHead className="w-[80px]" />
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {filteredData.length === 0 ? (
+                                    <TableRow>
+                                        <TableCell colSpan={7} className="h-24 text-center">
+                                            No commands found in The Oracle.
+                                        </TableCell>
+                                    </TableRow>
+                                ) : (
+                                    filteredData.map((cmd) => (
+                                        <React.Fragment key={cmd.id}>
+                                            <TableRow key={cmd.id}>
+                                                <TableCell className="w-8 p-1.5">
+                                                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => toggleExpand(cmd.id)}>
+                                                        {expandedRows.has(cmd.id) ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
+                                                    </Button>
+                                                </TableCell>
+                                                <TableCell className="max-w-[200px] whitespace-normal">
+                                                    {(() => {
+                                                        const health = getPipelineHealth(cmd)
+                                                        const dotColor = health.status === 'green' ? 'bg-green-500' : health.status === 'yellow' ? 'bg-amber-400' : 'bg-red-500'
+                                                        return (
+                                                            <div className="flex items-start gap-2">
+                                                                <span className={`mt-1.5 flex-shrink-0 w-2 h-2 rounded-full ${dotColor} ${health.approaching ? 'animate-pulse ring-2 ring-amber-400/50 ring-offset-1' : ''} ${health.status === 'red' && !health.approaching ? 'animate-pulse ring-2 ring-red-500/50 ring-offset-1' : ''}`} title={`${health.label}: ${health.detail}`} />
+                                                                <div>
+                                                                    <button className="font-semibold leading-tight text-left hover:underline cursor-pointer" onClick={() => handleEditClick(cmd)}>{cmd.name}</button>
+                                                                    <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-muted-foreground mt-0.5">
+                                                                        <span>{cmd.uic !== "N/A" ? cmd.uic : ""}</span>
+                                                                        {cmd.uic !== "N/A" && <span>•</span>}
+                                                                        <span className="whitespace-nowrap">{cmd.platform || "N/A"}</span>
+                                                                        <span>•</span>
+                                                                        <span className="whitespace-nowrap">{cmd.location}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        )
+                                                    })()}
+                                                </TableCell>
+                                                <TableCell className="max-w-[140px]">
+                                                    {(() => {
+                                                        const isNonSWO = cmd.currentCO.fillCommunity && cmd.currentCO.fillCommunity !== '1110'
+                                                        const displayName = isNonSWO ? `${cmd.currentCO.fillCommunity} Fill` : cmd.currentCO.name
+                                                        return (
+                                                            <>
+                                                                <div className={`text-sm font-medium truncate ${isNonSWO ? 'text-muted-foreground italic' : 'text-blue-600'}`} title={cmd.currentCO.name}>{displayName}</div>
+                                                                <div className="text-xs text-muted-foreground">
+                                                                    {(() => {
+                                                                        const dateStr = cmd.currentCO.timelineData?.q || cmd.currentCO.prd;
+                                                                        if (!dateStr) return "CoC: N/A";
+                                                                        const date = parseISO(dateStr);
+                                                                        const formatted = isValid(date) ? format(date, "MMMyy").toUpperCase() : dateStr;
+                                                                        return `CoC: ${formatted}`;
+                                                                    })()}
+                                                                </div>
+                                                            </>
+                                                        )
+                                                    })()}
+                                                </TableCell>
+                                                <TableCell className="max-w-[160px]">
+                                                    <div className="flex items-start justify-between gap-1">
+                                                        <div className="overflow-hidden">
+                                                            {(() => {
+                                                                const isNonSWO = cmd.currentXO.fillCommunity && cmd.currentXO.fillCommunity !== '1110'
+                                                                const displayName = isNonSWO ? `${cmd.currentXO.fillCommunity} Fill` : cmd.currentXO.name
+                                                                return (
+                                                                    <>
+                                                                        <div className={`text-sm font-medium truncate ${isNonSWO ? 'text-muted-foreground italic' : 'text-green-600'}`} title={cmd.currentXO.name}>{displayName}</div>
+                                                                        <div className="text-xs text-muted-foreground">
+                                                                            {(() => {
+                                                                                const dateStr = cmd.currentXO.timelineData?.m || cmd.currentXO.prd;
+                                                                                if (!dateStr) return "CoC: N/A";
+                                                                                const date = parseISO(dateStr);
+                                                                                const formatted = isValid(date) ? format(date, "MMMyy").toUpperCase() : dateStr;
+                                                                                return `CoC: ${formatted}`;
+                                                                            })()}
+                                                                        </div>
+                                                                    </>
+                                                                )
+                                                            })()}
+                                                        </div>
+                                                        <FleetUpChecklist command={cmd} onUpdate={(c) => persistUpdate(c, officers, "Checklist Updated")} />
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell className="max-w-[140px]">
+                                                    {cmd.inboundXO ? (
+                                                        <>
+                                                            {(() => {
+                                                                const isNonSWO = cmd.inboundXO.fillCommunity && cmd.inboundXO.fillCommunity !== '1110'
+                                                                const displayName = isNonSWO ? `${cmd.inboundXO.fillCommunity} Fill` : cmd.inboundXO.name
+                                                                const noName = !cmd.inboundXO.name
+                                                                return noName ? null : (
+                                                                    <div className={`text-sm font-medium truncate ${isNonSWO ? 'text-muted-foreground italic' : cmd.inboundXO.name.toLowerCase().includes('no fill') ? 'text-red-600' : 'text-yellow-600'}`} title={cmd.inboundXO.name}>{displayName}</div>
+                                                                )
+                                                            })()}
+                                                            {cmd.inboundXO.timelineData?.i && <div className="text-xs text-muted-foreground">RPT: {formatToMMMyy(cmd.inboundXO.timelineData.i)}</div>}
+                                                        </>
+                                                    ) : <span className="text-muted-foreground italic text-sm">-- Open --</span>}
+                                                </TableCell>
+                                                <TableCell className="max-w-[140px]">
+                                                    {(() => {
+                                                        const health = getPipelineHealth(cmd)
+                                                        const badgeClass = health.status === 'green' ? 'border-green-500 text-green-600 bg-green-500/10' : health.status === 'yellow' ? 'border-amber-400 text-amber-600 bg-amber-400/10' : 'border-red-500 text-red-600 bg-red-500/10'
+                                                        const nextDate = cmd.inboundXO?.timelineData?.i || cmd.slatedXO?.reportDate || null
+                                                        return (
+                                                            <>
+                                                                <Badge variant="outline" className={`w-full justify-center truncate ${badgeClass} ${health.approaching ? 'animate-pulse ring-2 ring-amber-400/60 ring-offset-1 bg-amber-400/20 font-bold' : ''} ${health.status === 'red' && !health.approaching ? 'animate-pulse ring-2 ring-red-500/60 ring-offset-1 font-bold' : ''}`} title={health.detail}>
+                                                                    {health.approaching && '⚠ '}{cmd.nextSlateParams.requirement} via {cmd.nextSlateParams.targetBoardDate}
+                                                                </Badge>
+                                                                {getCdrCmdXoRptDate(cmd) && <div className="text-xs text-muted-foreground mt-1 text-center">XO RPT: {formatToMMMyy(getCdrCmdXoRptDate(cmd)!)}</div>}
+                                                            </>
+                                                        )
+                                                    })()}
+                                                </TableCell>
+                                                <TableCell className="w-[80px]" />
+                                            </TableRow>
+                                            {expandedRows.has(cmd.id) && (
+                                                <TableRow key={cmd.id + "-timeline"} className="bg-muted/20 hover:bg-muted/20">
+                                                    <TableCell colSpan={7} className="p-0 border-t-0">
+                                                        <CommandPipelineTimeline command={cmd} />
+                                                    </TableCell>
+                                                </TableRow>
+                                            )}
+                                        </React.Fragment>
+                                    ))
+                                )}
+                            </TableBody>
+                        </Table>
+                    </div>
+                )
+            })()}
+
+
+
 
             <EditCommandDialog
                 open={isEditOpen}
                 onOpenChange={setIsEditOpen}
                 command={editingCommand}
                 onSave={handleSaveCommand}
+                officers={officers}
                 onCOTurnover={(commandId) => {
                     setPendingTurnoverCommandId(commandId)
                     setCocDateInput(new Date().toISOString().split('T')[0])
