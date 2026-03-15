@@ -1,3 +1,4 @@
+import { PageHeader } from '@/components/PageHeader'
 import { useState } from "react"
 import { formatToMMMyy } from "@/lib/utils"
 import { Officer, OracleCommand, Slate } from "@/lib/types"
@@ -36,7 +37,7 @@ export function ReportsClient({ officers, slates, oracleData }: ReportsClientPro
         <div className="space-y-6">
             <div className="flex items-center justify-between print:hidden">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Reports</h1>
+                    <PageHeader label="PERS-41 · Oracle" title="Reports" />
                     <p className="text-muted-foreground">
                         Generate global reports across your slates and officers.
                     </p>

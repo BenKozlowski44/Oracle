@@ -1,3 +1,4 @@
+import { PageHeader } from '@/components/PageHeader'
 import { useState, useEffect } from "react"
 import { parseBankExcel, parseCosmExcel } from "@/lib/excel-parser"
 import { Button } from "@/components/ui/button"
@@ -209,10 +210,11 @@ export default function DataSettingsPage() {
 
     return (
         <div className="space-y-6">
-            <div>
-                <h1 className="text-3xl font-bold tracking-tight">Data Management</h1>
-                <p className="text-muted-foreground">Import updates, manage backups, and configure auto-save.</p>
-            </div>
+            <PageHeader
+                label="PERS-41 · Oracle"
+                title="Data Management"
+                description="Import updates, manage backups, and configure auto-save."
+            />
 
             <BackupStatusCard />
 
