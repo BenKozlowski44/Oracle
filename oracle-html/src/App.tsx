@@ -65,7 +65,7 @@ export default function App() {
         <AppHeader />
         <nav className="border-b px-4 py-2 flex items-center gap-4 text-sm font-medium">
           {[
-            ['/', 'Dashboard'],
+            ['/', 'Command Center'],
             ['/oracle', 'Oracle'],
             ['/bank', 'Bank'],
             ['/slates', 'Slates'],
