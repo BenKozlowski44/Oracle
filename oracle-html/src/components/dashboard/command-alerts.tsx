@@ -12,7 +12,7 @@ export function CommandAlerts({ commands }: CommandAlertsProps) {
     const allAlerts = getAllAlerts(commands)
 
     return (
-        <div className="rounded-xl border bg-card border-l-4 border-l-[#c9a227] text-card-foreground shadow">
+        <div className="rounded-xl border bg-card border-l-4 border-l-[#c9a227] text-card-foreground shadow h-full flex flex-col">
             <div className="p-6 flex flex-col space-y-1.5 border-b">
                 <div className="flex items-center gap-2">
                     <AlertCircle className="h-5 w-5 text-destructive" />
@@ -22,7 +22,7 @@ export function CommandAlerts({ commands }: CommandAlertsProps) {
                     {allAlerts.length} commands require attention
                 </p>
             </div>
-            <div className="p-6 space-y-4 max-h-[220px] overflow-y-auto">
+            <div className="p-6 space-y-4 flex-1 overflow-y-auto">
                 {allAlerts.length === 0 ? (
                     <div className="flex items-center justify-center h-20 text-sm text-muted-foreground">
                         No critical issues identified. Good to go!

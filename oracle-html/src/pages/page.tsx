@@ -61,12 +61,12 @@ export default function DashboardPage() {
         </div>
 
         {/* Right Column: Issues & Alerts */}
-        <div className="space-y-4">
+        <div className="flex flex-col gap-4 h-full">
           <div className="grid gap-4 sm:grid-cols-2">
             <ActiveIssuesCard oracleData={oracleData} officers={currentOfficers} />
             <ResolvedIssuesCard metrics={metrics} />
           </div>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 flex-1 items-stretch">
             <CommandAlerts commands={oracleData} />
             <PersonnelAlerts officers={currentOfficers} />
           </div>
