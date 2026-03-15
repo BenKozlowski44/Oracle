@@ -438,7 +438,7 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
 
                     // Slate cell (shared between Direct CO + Fleet-Up)
                     const slateCell = (
-                        <TableCell className="max-w-[140px]">
+                        <TableCell className="w-[150px] min-w-[150px]">
                             {(() => {
                                 return (
                                     <>
@@ -658,7 +658,7 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                                                     <TableHead>CO</TableHead>
                                                     <TableHead>P-CO</TableHead>
                                                     <TableHead>Slated CO</TableHead>
-                                                    <TableHead className="text-center">Slate</TableHead>
+                                                    <TableHead className="text-center w-[150px]">Slate</TableHead>
                                                 </TableRow>
                                             </TableHeader>
                                             <TableBody>
@@ -693,7 +693,7 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                                                     <TableHead>CO</TableHead>
                                                     <TableHead>XO</TableHead>
                                                     <TableHead>P-XO</TableHead>
-                                                    <TableHead className="text-center">Slate</TableHead>
+                                                    <TableHead className="text-center w-[150px]">Slate</TableHead>
                                                 </TableRow>
                                             </TableHeader>
                                             <TableBody>
@@ -726,7 +726,7 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                                     <TableHead>CO</TableHead>
                                     <TableHead>XO</TableHead>
                                     <TableHead>P-XO</TableHead>
-                                    <TableHead className="cursor-pointer hover:bg-muted/50 text-center" onClick={() => requestSort('slate')}>
+                                    <TableHead className="cursor-pointer hover:bg-muted/50 text-center w-[150px]" onClick={() => requestSort('slate')}>
                                         Slate {sortConfig?.key === 'slate' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
                                     </TableHead>
                                     <TableHead className="w-[80px]" />
@@ -832,7 +832,7 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                                                         </>
                                                     ) : <span className="text-muted-foreground italic text-sm">-- Open --</span>}
                                                 </TableCell>
-                                                <TableCell className="max-w-[140px]">
+                                                <TableCell className="w-[150px] min-w-[150px]">
                                                     {(() => {
                                                         const health = getPipelineHealth(cmd)
                                                         const badgeClass = health.status === 'green' ? 'border-green-500 text-green-600 bg-green-500/10' : health.status === 'yellow' ? 'border-amber-400 text-amber-600 bg-amber-400/10' : 'border-red-500 text-red-600 bg-red-500/10'
