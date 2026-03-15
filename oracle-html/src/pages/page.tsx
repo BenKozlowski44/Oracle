@@ -83,7 +83,7 @@ export default function DashboardPage() {
           {/* Alert cards — capped at left column bottom */}
           <div
             className="grid gap-4 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2"
-            style={{ maxHeight: alertsMaxH, overflow: 'hidden' }}
+            style={{ height: alertsMaxH, overflow: 'hidden' }}
           >
             <CommandAlerts commands={oracleData} />
             <PersonnelAlerts officers={currentOfficers} />
