@@ -68,6 +68,7 @@ export default function App() {
             ['/oracle', 'CDR CMD'],
             ['/bank', 'Bank'],
             ['/slates', 'Slates'],
+            ['/slate-generator', 'Slate Generator'],
             ['/boards', 'Board'],
             ['/pcc', 'PCC'],
             ['/reports', 'Reports'],
