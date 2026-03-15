@@ -180,6 +180,7 @@ async function writeBackupNow(): Promise<void> {
     const writable = await backupFileHandle.createWritable()
     await writable.write(exportAllData())
     await writable.close()
+    localStorage.setItem('__lastBackupAt', new Date().toISOString())
   } catch {
     // Silently fail — localStorage is still the primary store
   }
@@ -189,4 +190,42 @@ function autoBackup(): void {
   if (backupFileHandle) {
     writeBackupNow()
   }
+}
+
+// ─── Backup status (for Settings UI) ──────────────────────────────────────
+
+export interface BackupStatus {
+  /** True if a file handle is active in this browser session */
+  handleActive: boolean
+  /** True if the user has ever granted backup permission (localStorage flag) */
+  everGranted: boolean
+  /** ISO timestamp of last successful backup write, or null */
+  lastBackupAt: string | null
+  /** Human-readable summary */
+  summary: string
+}
+
+export function getBackupStatus(): BackupStatus {
+  const handleActive = backupFileHandle !== null
+  const everGranted = localStorage.getItem('__backupGranted') === 'true'
+  const lastBackupAt = localStorage.getItem('__lastBackupAt')
+
+  let summary: string
+  if (handleActive) {
+    summary = lastBackupAt
+      ? `Active — last saved ${new Date(lastBackupAt).toLocaleString()}`
+      : 'Active — file connected, no write yet this session'
+  } else if (everGranted) {
+    summary = 'Not connected — re-open oracle.html and set the backup file again to resume'
+  } else {
+    summary = 'No backup configured — use "Set Auto-Save Location" to enable'
+  }
+
+  return { handleActive, everGranted, lastBackupAt, summary }
+}
+
+export async function manualBackup(): Promise<boolean> {
+  if (!backupFileHandle) return false
+  await writeBackupNow()
+  return true
 }

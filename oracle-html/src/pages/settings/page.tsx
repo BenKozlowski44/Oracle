@@ -1,12 +1,119 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { parseBankExcel, parseCosmExcel } from "@/lib/excel-parser"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Loader2, FileSpreadsheet, Download, Upload, RefreshCw } from "lucide-react"
-import { getOfficers, saveOfficers, exportAllData, restoreFromFile, chooseBackupFile, forceReseed } from "@/services/storage"
+import { Loader2, FileSpreadsheet, Download, Upload, RefreshCw, ShieldCheck, ShieldAlert, ShieldOff, Save } from "lucide-react"
+import { getOfficers, saveOfficers, exportAllData, restoreFromFile, chooseBackupFile, forceReseed, getBackupStatus, manualBackup } from "@/services/storage"
 import type { Officer } from "@/lib/types"
+import type { BackupStatus } from "@/services/storage"
+
+function BackupStatusCard() {
+    const [status, setStatus] = useState<BackupStatus>(getBackupStatus())
+    const [saving, setSaving] = useState(false)
+    const [saveMsg, setSaveMsg] = useState("")
+
+    // Poll every 5 seconds so timestamp updates after auto-saves
+    useEffect(() => {
+        const id = setInterval(() => setStatus(getBackupStatus()), 5000)
+        return () => clearInterval(id)
+    }, [])
+
+    const handleManualBackup = async () => {
+        setSaving(true)
+        const ok = await manualBackup()
+        setSaving(false)
+        setSaveMsg(ok ? "Saved successfully!" : "No backup file connected — set a location first.")
+        setTimeout(() => setSaveMsg(""), 4000)
+        setStatus(getBackupStatus())
+    }
+
+    const handleSetLocation = async () => {
+        await chooseBackupFile()
+        setStatus(getBackupStatus())
+    }
+
+    const { handleActive, everGranted, lastBackupAt } = status
+
+    const StatusIcon = handleActive
+        ? ShieldCheck
+        : everGranted
+            ? ShieldAlert
+            : ShieldOff
+
+    const statusColor = handleActive
+        ? "text-green-500"
+        : everGranted
+            ? "text-amber-500"
+            : "text-red-500"
+
+    const statusLabel = handleActive
+        ? "Backup Active"
+        : everGranted
+            ? "Not Connected This Session"
+            : "No Backup Configured"
+
+    return (
+        <Card className="border-2">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                    <StatusIcon className={`h-5 w-5 ${statusColor}`} />
+                    Auto-Save Status
+                </CardTitle>
+                <CardDescription>
+                    Live status of your backup file connection for this session.
+                </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div className="space-y-1">
+                        <p className="text-muted-foreground font-medium uppercase text-xs tracking-wide">Status</p>
+                        <p className={`font-semibold ${statusColor}`}>{statusLabel}</p>
+                    </div>
+                    <div className="space-y-1">
+                        <p className="text-muted-foreground font-medium uppercase text-xs tracking-wide">Previously Configured</p>
+                        <p className="font-semibold">{everGranted ? "Yes" : "No"}</p>
+                    </div>
+                    <div className="space-y-1 col-span-2">
+                        <p className="text-muted-foreground font-medium uppercase text-xs tracking-wide">Last Successful Backup</p>
+                        <p className="font-semibold">
+                            {lastBackupAt
+                                ? new Date(lastBackupAt).toLocaleString()
+                                : "Never recorded"}
+                        </p>
+                    </div>
+                </div>
+
+                {saveMsg && (
+                    <p className={`text-sm font-medium ${saveMsg.includes("successfully") ? "text-green-600" : "text-amber-600"}`}>
+                        {saveMsg}
+                    </p>
+                )}
+
+                <div className="flex gap-2 flex-wrap">
+                    {handleActive ? (
+                        <Button onClick={handleManualBackup} disabled={saving} size="sm">
+                            {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+                            {saving ? "Saving..." : "Save Now"}
+                        </Button>
+                    ) : (
+                        <Button onClick={handleSetLocation} size="sm">
+                            {everGranted ? "Reconnect Backup File" : "Set Backup Location"}
+                        </Button>
+                    )}
+                </div>
+
+                {!handleActive && everGranted && (
+                    <p className="text-xs text-muted-foreground">
+                        ⚠️ The backup file handle is reset every time oracle.html is opened. Click "Reconnect Backup File" to re-link your backup for this session.
+                    </p>
+                )}
+            </CardContent>
+        </Card>
+    )
+}
+
 
 interface DataImportCardProps {
     title: string
@@ -106,6 +213,8 @@ export default function DataSettingsPage() {
                 <h1 className="text-3xl font-bold tracking-tight">Data Management</h1>
                 <p className="text-muted-foreground">Import updates, manage backups, and configure auto-save.</p>
             </div>
+
+            <BackupStatusCard />
 
             {/* Backup / Restore */}
             <Card>
