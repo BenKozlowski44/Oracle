@@ -2,6 +2,7 @@
  * storage.ts — replaces all Next.js API routes with localStorage operations.
  * Keys match the original JSON filenames for clarity.
  */
+export { forceReseed } from '@/services/seed'
 import type { OracleCommand, Officer, Slate, Metrics } from '@/lib/types'
 
 const KEYS = {

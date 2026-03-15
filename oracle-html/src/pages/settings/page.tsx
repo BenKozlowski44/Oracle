@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Loader2, FileSpreadsheet, Download, Upload } from "lucide-react"
-import { getOfficers, saveOfficers, exportAllData, restoreFromFile, chooseBackupFile } from "@/services/storage"
+import { Loader2, FileSpreadsheet, Download, Upload, RefreshCw } from "lucide-react"
+import { getOfficers, saveOfficers, exportAllData, restoreFromFile, chooseBackupFile, forceReseed } from "@/services/storage"
 import type { Officer } from "@/lib/types"
 
 interface DataImportCardProps {
@@ -86,10 +86,18 @@ export default function DataSettingsPage() {
         URL.revokeObjectURL(url)
     }
 
-    const handleRestore = async () => {
-        if (!confirm("This will overwrite all current data with the backup file. Continue?")) return
-        const ok = await restoreFromFile()
-        if (ok) window.location.reload()
+    const handleReloadFromBuild = () => {
+        if (!confirm(
+            'RELOAD FROM BUILD DATA\n\n' +
+            'This will replace your current data with the data that was embedded\n' +
+            'when oracle.html was last built on your Mac.\n\n' +
+            'Use this to:\n' +
+            '• Load the latest Mac data on a new computer (e.g. NMCI)\n' +
+            '• Reset to the last known-good snapshot after an accidental change\n\n' +
+            'Your current unsaved changes will be lost. Continue?'
+        )) return
+        forceReseed()
+        window.location.reload()
     }
 
     return (
@@ -103,14 +111,24 @@ export default function DataSettingsPage() {
             <Card>
                 <CardHeader>
                     <CardTitle>Backup &amp; Restore</CardTitle>
-                    <CardDescription>Export all data to a JSON file or restore from a previous backup.</CardDescription>
+                    <CardDescription>
+                        Export your data as a JSON file, restore from a backup, or reload the data
+                        that was embedded into oracle.html at build time.
+                    </CardDescription>
                 </CardHeader>
                 <CardContent className="flex gap-3 flex-wrap">
                     <Button onClick={handleExport} variant="outline">
                         <Download className="mr-2 h-4 w-4" /> Export Backup
                     </Button>
-                    <Button onClick={handleRestore} variant="outline">
+                    <Button onClick={async () => {
+                        if (!confirm("This will overwrite all current data with the backup file. Continue?")) return
+                        const ok = await restoreFromFile()
+                        if (ok) window.location.reload()
+                    }} variant="outline">
                         <Upload className="mr-2 h-4 w-4" /> Restore from File
+                    </Button>
+                    <Button onClick={handleReloadFromBuild} variant="outline">
+                        <RefreshCw className="mr-2 h-4 w-4" /> Reload from Build Data
                     </Button>
                     <Button onClick={() => chooseBackupFile()} variant="outline">
                         Set Auto-Save Location
