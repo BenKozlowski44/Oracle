@@ -1,4 +1,4 @@
-import pers41Logo from "@/assets/pers41-logo.jpg"
+import pers41Logo from "@/assets/pers41-logo.png"
 import commandAtSea from "@/assets/command-at-sea.png"
 import commandAshore from "@/assets/command-ashore.png"
 
