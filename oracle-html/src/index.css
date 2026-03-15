@@ -132,11 +132,3 @@
     margin: 0.5in;
   }
 }
-/* ── Technical grid background — subtle engineering schematic aesthetic ── */
-body {
-  background-image:
-    linear-gradient(rgba(201, 162, 39, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(201, 162, 39, 0.08) 1px, transparent 1px);
-  background-size: 48px 48px;
-  background-attachment: fixed;
-}

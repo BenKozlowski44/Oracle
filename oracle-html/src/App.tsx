@@ -6,6 +6,7 @@ import { BackupReconnectModal } from '@/components/BackupReconnectModal'
 import { registerToastHandlers } from '@/lib/notify'
 import { toast } from 'sonner'
 import { chooseBackupFile, restoreFromFile, getBackupStatus } from '@/services/storage'
+import navalBg from '@/assets/naval-bg.png'
 
 // ─── Lazy page imports ─────────────────────────────────────────────────────
 import DashboardPage from '@/pages/page'
@@ -65,7 +66,18 @@ export default function App() {
 
   return (
     <HashRouter>
-      <div className="min-h-screen bg-background text-foreground">
+        <div
+          className="min-h-screen text-foreground relative"
+          style={{
+            backgroundImage: `url(${navalBg})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundAttachment: 'fixed',
+          }}
+        >
+          {/* Dark overlay for readability */}
+          <div className="absolute inset-0 bg-background/85 pointer-events-none" />
+          <div className="relative z-10">
         <AppHeader />
         <nav className="bg-[#07111f] border-b border-[#c9a227]/30 px-6 py-0 flex items-center gap-1 text-xs font-semibold tracking-widest uppercase shadow-lg">
           {/* Gold top accent line */}
@@ -125,7 +137,8 @@ export default function App() {
         )}
 
         <Toaster richColors position="bottom-right" />
-      </div>
+      </div>{/* /relative z-10 */}
+      </div>{/* /background image div */}
     </HashRouter>
   )
 }
