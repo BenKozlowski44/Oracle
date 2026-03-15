@@ -73,7 +73,7 @@ export default function App() {
             ['/oracle', 'Oracle'],
             ['/bank', 'Bank'],
             ['/slate-generator', 'Slate Generator'],
-            ['/slates', 'Slates'],
+            ['/slates', 'Active Slates'],
             ['/boards', 'Board'],
             ['/pcc', 'PCC'],
             ['/reports', 'Reports'],
