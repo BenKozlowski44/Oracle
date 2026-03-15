@@ -66,7 +66,7 @@ export default function App() {
         <nav className="border-b px-4 py-2 flex items-center gap-4 text-sm font-medium">
           {[
             ['/', 'Dashboard'],
-            ['/oracle', 'CDR CMD'],
+            ['/oracle', 'Oracle'],
             ['/bank', 'Bank'],
             ['/slates', 'Slates'],
             ['/slate-generator', 'Slate Generator'],
