@@ -2,9 +2,10 @@ import { HashRouter, Routes, Route, NavLink } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { Toaster } from '@/components/ui/sonner'
 import { AppHeader } from '@/components/AppHeader'
+import { BackupReconnectModal } from '@/components/BackupReconnectModal'
 import { registerToastHandlers } from '@/lib/notify'
 import { toast } from 'sonner'
-import { chooseBackupFile, restoreFromFile } from '@/services/storage'
+import { chooseBackupFile, restoreFromFile, getBackupStatus } from '@/services/storage'
 
 // ─── Lazy page imports ─────────────────────────────────────────────────────
 import DashboardPage from '@/pages/page'
@@ -22,7 +23,7 @@ import SettingsPage from '@/pages/settings/page'
 import ToolsPage from '@/pages/tools/page'
 
 export default function App() {
-  const [backupReady, setBackupReady] = useState(false)
+  const [backupModal, setBackupModal] = useState<'first-time' | 'reconnect' | null>(null)
 
   useEffect(() => {
     // wire notify handlers to sonner toast
@@ -30,23 +31,6 @@ export default function App() {
       (msg) => toast.success(msg),
       (msg) => toast.error(msg)
     )
-
-    // Prompt for backup file on first launch
-    const granted = localStorage.getItem('__backupGranted')
-    if (!granted) {
-      setTimeout(() => {
-        if (window.confirm(
-          'Welcome to Oracle!\n\nWould you like to choose a backup file location? ' +
-          'Your data will be automatically saved there after every change.'
-        )) {
-          chooseBackupFile().then(ok => {
-            if (ok) setBackupReady(true)
-          })
-        }
-      }, 500)
-    } else {
-      setBackupReady(true)
-    }
 
     // If localStorage is empty (cache cleared), offer restore
     const seeded = localStorage.getItem('__seeded_v1')
@@ -56,8 +40,25 @@ export default function App() {
           if (ok) window.location.reload()
         })
       }
+      return
     }
+
+    // Show backup modal after a short delay so app renders first
+    setTimeout(() => {
+      const { everGranted, handleActive } = getBackupStatus()
+      if (handleActive) return // already connected — nothing to do
+      if (everGranted) {
+        setBackupModal('reconnect')  // had it before — prompt to reconnect
+      } else {
+        setBackupModal('first-time') // never set up — offer to configure
+      }
+    }, 600)
   }, [])
+
+  const handleConnect = async () => {
+    await chooseBackupFile()
+    setBackupModal(null)
+  }
 
   return (
     <HashRouter>
@@ -87,14 +88,6 @@ export default function App() {
               {label}
             </NavLink>
           ))}
-          {!backupReady && (
-            <button
-              onClick={() => chooseBackupFile().then(ok => ok && setBackupReady(true))}
-              className="ml-auto text-xs text-amber-600 hover:underline"
-            >
-              ⚠ Set backup location
-            </button>
-          )}
         </nav>
 
         <main className="p-4">
@@ -114,6 +107,14 @@ export default function App() {
             <Route path="/tools" element={<ToolsPage />} />
           </Routes>
         </main>
+
+        {backupModal && (
+          <BackupReconnectModal
+            mode={backupModal}
+            onConnect={handleConnect}
+            onSkip={() => setBackupModal(null)}
+          />
+        )}
 
         <Toaster richColors position="bottom-right" />
       </div>
