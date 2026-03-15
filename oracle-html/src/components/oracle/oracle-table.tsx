@@ -426,6 +426,7 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                     const health = getPipelineHealth(cmdLive)
                     const isDirectCO = cmd.rotationStyle === 'DirectCO'
                     const dotColor = health.status === 'green' ? 'bg-green-500' : health.status === 'yellow' ? 'bg-amber-400' : 'bg-red-500'
+                    const healthBorderClass = health.status === 'green' ? 'border-l-green-500' : health.status === 'yellow' ? 'border-l-amber-400' : 'border-l-red-500'
                     const badgeClass = health.status === 'green'
                         ? 'border-green-500 text-green-600 bg-green-500/10'
                         : health.status === 'yellow'
