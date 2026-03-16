@@ -76,8 +76,6 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
     }
 
     const handleRemoveRequirement = async (reqId: string) => {
-        if (!confirm("Are you sure you want to remove this requirement from the slate?")) return;
-
         const updatedReqs = requirements.filter(r => r.id !== reqId);
         setRequirements(updatedReqs);
         updateSlateData(updatedReqs, candidates, candidateProfiles);
