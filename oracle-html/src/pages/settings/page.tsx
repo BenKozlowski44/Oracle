@@ -144,13 +144,13 @@ function DataImportCard({ title, description, onParse, mode }: DataImportCardPro
             let merged: Officer[]
             if (mode === "bank") {
                 // Merge: keep CO-SM officers, replace/add standard bank officers
-                const cosmOnly = existing.filter((o: Officer) => o.listType === "cosm")
-                const bankParsed = parsed.filter(o => o.listType !== "cosm")
+                const cosmOnly = existing.filter((o: Officer) => o.listShift === "cosm")
+                const bankParsed = parsed.filter(o => o.listShift !== "cosm")
                 merged = [...cosmOnly, ...bankParsed]
             } else {
                 // CO-SM merge: keep standard bank officers, replace/add CO-SM
-                const bankOnly = existing.filter((o: Officer) => o.listType !== "cosm")
-                const cosmParsed = parsed.filter(o => o.listType === "cosm")
+                const bankOnly = existing.filter((o: Officer) => o.listShift !== "cosm")
+                const cosmParsed = parsed.filter(o => o.listShift === "cosm")
                 merged = [...bankOnly, ...cosmParsed]
             }
             saveOfficers(merged)
@@ -195,15 +195,6 @@ export default function DataSettingsPage() {
     }
 
     const handleReloadFromBuild = () => {
-        if (!confirm(
-            'RELOAD FROM BUILD DATA\n\n' +
-            'This will replace your current data with the data that was embedded\n' +
-            'when oracle.html was last built on your Mac.\n\n' +
-            'Use this to:\n' +
-            '• Load the latest Mac data on a new computer (e.g. NMCI)\n' +
-            '• Reset to the last known-good snapshot after an accidental change\n\n' +
-            'Your current unsaved changes will be lost. Continue?'
-        )) return
         forceReseed()
         window.location.reload()
     }
@@ -232,7 +223,6 @@ export default function DataSettingsPage() {
                         <Download className="mr-2 h-4 w-4" /> Export Backup
                     </Button>
                     <Button onClick={async () => {
-                        if (!confirm("This will overwrite all current data with the backup file. Continue?")) return
                         const ok = await restoreFromFile()
                         if (ok) window.location.reload()
                     }} variant="outline">

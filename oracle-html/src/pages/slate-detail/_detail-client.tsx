@@ -1,7 +1,7 @@
 import * as XLSXStyle from 'xlsx-js-style'
 import * as fflate from 'fflate'
 import { useState, useRef } from "react"
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { toast } from "sonner"
 import type { Slate, Officer, OracleCommand } from "@/lib/types"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -28,6 +28,7 @@ import { Badge } from "@/components/ui/badge"
 import { SlateRequirement, SlateCandidateProfile } from "@/lib/types"
 import { CandidateInputForm } from "@/components/slating/candidate-input-form"
 import { CandidateProfileView } from "@/components/slating/candidate-profile-view"
+import { saveSlate } from "@/services/storage"
 
 interface SlateDetailClientProps {
     id: string
@@ -73,8 +74,6 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
     }
 
     const handleRemoveRequirement = async (reqId: string) => {
-        if (!confirm("Are you sure you want to remove this requirement from the slate?")) return;
-
         const updatedReqs = requirements.filter(r => r.id !== reqId);
         setRequirements(updatedReqs);
         updateSlateData(updatedReqs, candidates, candidateProfiles);
@@ -179,8 +178,8 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
 
     const persistSlates = async (reqs: SlateRequirement[], cands: string[], profiles: SlateCandidateProfile[]) => {
         try {
+            const slateWithReqs = { ...slate!, requirements: reqs, candidates: cands, candidateProfiles: profiles }
             saveSlate(slateWithReqs)
-            
         } catch (error) {
             console.error("Failed to update slate:", error);
         }
@@ -410,61 +409,15 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files || e.target.files.length === 0) return;
-        const file = e.target.files[0];
-
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('slateId', slate.id);
-
-        try {
-            const ok = true
-            if (ok) {
-                const data = await res.json();
-                if (data.success && data.profile) {
-                    handleSaveProfile(data.profile);
-                    toast.success(`Profile imported successfully`);
-                }
-            } else {
-                const err = await res.json();
-                toast.error(`Import failed: ${err.error}`);
-            }
-        } catch (error) {
-            console.error(error);
-            toast.error("Error uploading file — check console for details.");
-        }
+        toast.info('Bulk profile import via Excel requires the web app. Use the candidate input form to enter preferences manually.');
+        if (e.target) (e.target as HTMLInputElement).value = '';
     }
 
     const handlePerCandidateUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files || e.target.files.length === 0 || !uploadTargetOfficerId) return;
-        const file = e.target.files[0];
-        setUploadingOfficerId(uploadTargetOfficerId);
-
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('slateId', slate.id);
-        formData.append('officerId', uploadTargetOfficerId);
-
-        try {
-            const ok = true
-            if (ok) {
-                const data = await res.json();
-                if (data.success && data.profile) {
-                    handleSaveProfile(data.profile);
-                    const officerName = officers.find(o => o.id === uploadTargetOfficerId)?.name ?? 'Officer';
-                    toast.success(`Profile imported for ${officerName}`);
-                }
-            } else {
-                const err = await res.json();
-                toast.error(`Import failed: ${err.error}`);
-            }
-        } catch (err) {
-            console.error(err);
-            toast.error('Error uploading file — check console for details.');
-        } finally {
-            setUploadingOfficerId(null);
-            setUploadTargetOfficerId(null);
-            if (perCandidateFileInputRef.current) perCandidateFileInputRef.current.value = '';
-        }
+        toast.info('Per-candidate profile import via Excel requires the web app. Use the candidate input form to enter preferences manually.');
+        setUploadTargetOfficerId(null);
+        if (perCandidateFileInputRef.current) perCandidateFileInputRef.current.value = '';
     }
 
 

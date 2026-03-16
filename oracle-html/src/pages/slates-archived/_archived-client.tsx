@@ -15,18 +15,14 @@ export function ArchivedSlatesClient({ allSlates }: { allSlates: Slate[] }) {
 
     const handleRestore = async (e: React.MouseEvent, id: string) => {
         e.preventDefault(); e.stopPropagation()
-        if (!confirm("Are you sure you want to restore this slate to Active?")) return
         setLocalSlates(prev => prev.map(s => s.id === id ? { ...s, status: "Active" as const } : s))
-        saveSlate({ ...localSlates.find(s => s.id === id)!, status: "Archived" }),
-        
+        saveSlate({ ...localSlates.find(s => s.id === id)!, status: "Active" as const })
     }
 
     const handleDelete = async (e: React.MouseEvent, id: string) => {
         e.preventDefault(); e.stopPropagation()
-        if (!confirm("Are you sure you want to PERMANENTLY delete this archived slate?")) return
         setLocalSlates(prev => prev.filter(s => s.id !== id))
         deleteSlate(id)
-        
     }
 
     return (

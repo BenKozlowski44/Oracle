@@ -11,6 +11,8 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { boardCandidateToOfficer, getMigrationConfig } from "@/lib/board-migration"
+import { saveBoards } from "@/services/storage"
+import { notifySuccess, saveError } from "@/lib/notify"
 interface BoardDetailClientProps {
     id: string
     allBoards: CdrCmdBoard[]
@@ -50,17 +52,13 @@ export function BoardDetailClient({ id, allBoards }: BoardDetailClientProps) {
     const performSave = useCallback(async (candidatesToSave: BoardCandidate[], currentBoard: CdrCmdBoard) => {
         setSaveStatus('saving');
         try {
+            const updatedBoards = allBoards.map(b => b.id === currentBoard.id ? { ...currentBoard, candidates: candidatesToSave } : b)
             saveBoards(updatedBoards)
-            const ok = true
-            if (ok) {
-                setSaveStatus('saved');
-            } else {
-                setSaveStatus('error');
-            }
+            setSaveStatus('saved');
         } catch {
             setSaveStatus('error');
         }
-    }, [])
+    }, [allBoards])
 
     // Debounced auto-save: fires 2s after candidates last changed
     useEffect(() => {
@@ -246,21 +244,15 @@ export function BoardDetailClient({ id, allBoards }: BoardDetailClientProps) {
     );
 
     const clearCandidates = async () => {
-        if (!confirm("Are you sure you want to clear all candidates from this board? This cannot be undone if saved.")) return;
         setCandidates([]);
         setBoard(prev => prev ? { ...prev, candidates: [] } : prev);
         try {
+            const updatedBoards = allBoards.map(b => b.id === board!.id ? { ...board!, candidates: [] } : b)
             saveBoards(updatedBoards)
-            const ok = true
-            if (ok) {
-                alert("Board cleared successfully!");
-                
-            } else {
-                alert("Failed to clear board data");
-            }
+            notifySuccess('Board cleared successfully!')
         } catch (e) {
             console.error("Save error", e);
-            alert("Failed to clear board data");
+            saveError("Failed to clear board data");
         }
     }
     // Helper: resolve YG and YCS from stored fields or rawData fallback
@@ -311,30 +303,21 @@ export function BoardDetailClient({ id, allBoards }: BoardDetailClientProps) {
     const closeOutBoard = async () => {
         const pendingCount = candidates.filter(c => c.result === 'Pending').length;
         if (pendingCount > 0) {
-            alert(`Cannot close out board: ${pendingCount} candidate(s) are still marked Pending. Please assign a result to every candidate first.`);
+            saveError(`Cannot close out: ${pendingCount} candidate(s) still Pending — assign a result to every candidate first.`);
             return;
         }
-        if (!confirm(`This will close out the ${board?.fy} board and migrate all selected officers to the officer database. This action cannot be undone. Proceed?`)) return;
-
-        // Build new officers from candidates with migration-eligible results
         const newOfficers = candidates
             .filter(c => getMigrationConfig(c.result) !== null)
             .map(c => boardCandidateToOfficer(c));
-
-
         try {
+            const updatedBoard = { ...board!, status: 'Closed' as const }
+            const updatedBoards = allBoards.map(b => b.id === board!.id ? { ...updatedBoard, candidates } : b)
             saveBoards(updatedBoards)
-            const ok = true
-            if (ok) {
-                setBoard(prev => prev ? { ...prev, status: 'Closed' } : prev);
-                setSaveStatus('saved');
-                alert(`Board closed out! ${newOfficers.length} officer(s) migrated to the database.`);
-                
-            } else {
-                alert('Failed to close out board. Please try again.');
-            }
+            setBoard(updatedBoard);
+            setSaveStatus('saved');
+            notifySuccess(`Board closed! ${newOfficers.length} officer(s) migrated to database.`);
         } catch {
-            alert('Network error during close-out.');
+            saveError('Error during close-out. Please try again.');
         }
     };
 
@@ -344,13 +327,7 @@ export function BoardDetailClient({ id, allBoards }: BoardDetailClientProps) {
                 <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => {
-                        if (saveStatus === 'idle' || saveStatus === 'saving') {
-                            const confirmed = confirm("Changes are still being saved. Are you sure you want to leave?");
-                            if (!confirmed) return;
-                        }
-                        navigate("/boards");
-                    }}
+                    onClick={() => navigate("/boards")}
                 >
                     <ArrowLeft className="h-5 w-5" />
                 </Button>

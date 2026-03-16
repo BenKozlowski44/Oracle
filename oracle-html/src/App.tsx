@@ -40,12 +40,11 @@ export default function App() {
     // for the presence of actual oracle data instead
     const hasData = localStorage.getItem('oracle-data') !== null
     if (!hasData) {
-      if (window.confirm('No local data found. Would you like to restore from a backup file?')) {
+        // No local data — automatically offer file restore via the file picker
         restoreFromFile().then(ok => {
-          if (ok) window.location.reload()
+            if (ok) window.location.reload()
         })
-        return // only block backup modal if user chose to restore
-      }
+        return
     }
 
     // Show backup modal after a short delay so app renders first

@@ -15,7 +15,7 @@ import { EditCommandDialog } from "./edit-command-dialog"
 import { FleetUpChecklist } from "./fleet-up-checklist"
 import { Search, Plus, ChevronDown, ChevronRight } from "lucide-react"
 import { saveError, notifySuccess } from "@/lib/notify"
-import { saveOracleCommand, saveOfficers, saveMetrics, deleteOracleCommand } from "@/services/storage"
+import { saveOracleCommand, saveOfficers, saveMetrics, deleteOracleCommand, getMetrics } from "@/services/storage"
 import { CommandPipelineTimeline } from "./command-pipeline-timeline"
 import { Button } from "@/components/ui/button"
 import { formatToMMMyy, getPipelineHealth, predictNextVacancyDate, getCoSmRptDisplay, getCdrCmdXoRptDate } from "@/lib/utils"
@@ -73,20 +73,13 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
         return next
     })
 
-    // Hydrate metrics from API on mount
     useEffect(() => {
-        const fetchMetrics = async () => {
-            try {
-                const res = await fetch('/api/metrics');
-                if (res.ok) {
-                    const data = await res.json();
-                    setMetrics(data);
-                }
-            } catch (err) {
-                console.error("Failed to fetch metrics", err);
-            }
-        };
-        fetchMetrics();
+        try {
+            const stored = getMetrics()
+            if (stored) setMetrics(stored)
+        } catch (err) {
+            console.error("Failed to load metrics", err)
+        }
     }, []);
 
     // Extract unique locations for filter
