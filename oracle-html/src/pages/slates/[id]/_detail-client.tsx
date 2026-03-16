@@ -1,4 +1,5 @@
 import * as XLSXStyle from 'xlsx-js-style'
+import * as fflate from 'fflate'
 import { useState, useRef } from "react"
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from "sonner"
@@ -398,7 +399,42 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
         ;(ws as any)['!protect'] = { sheet: true, password: '', selectLockedCells: true, selectUnlockedCells: true }
 
         XLSXStyle.utils.book_append_sheet(wb, ws, 'Candidate Input')
-        XLSXStyle.writeFile(wb, `${slate.name.replace(/\s+/g, '_')}_candidate_template.xlsx`)
+
+        // ── Post-process: inject cell protection into styles.xml ─────────────
+        // xlsx-js-style ignores the 'protection' style property at XML level,
+        // so we manually patch the generated zip to unlock only blue input cells.
+        const arr = XLSXStyle.write(wb, { type: 'array', bookType: 'xlsx' })
+        const uint8 = new Uint8Array(arr as number[])
+        const files = fflate.unzipSync(uint8) as Record<string, Uint8Array>
+
+        if (files['xl/styles.xml']) {
+            let stylesXml = fflate.strFromU8(files['xl/styles.xml'])
+            // Find fillId for the blue input color (E6F0FF)
+            const fillsSection = (stylesXml.match(/<fills[^>]*>([\s\S]*?)<\/fills>/) || ['', ''])[1]
+            const fillParts = fillsSection.split('<fill>').slice(1)
+            let blueFillId = -1
+            for (let i = 0; i < fillParts.length; i++) {
+                if (fillParts[i].includes('FFE6F0FF')) { blueFillId = i; break }
+            }
+            if (blueFillId >= 0) {
+                // Convert self-closing xf with that fillId to include <protection locked="0"/>
+                stylesXml = stylesXml.replace(
+                    new RegExp(`(<xf [^>]*fillId="${blueFillId}"[^>]*?)\\/>`, 'g'),
+                    (_: string, prefix: string) => `${prefix} applyProtection="1"><protection locked="0"/></xf>`
+                )
+            }
+            files['xl/styles.xml'] = fflate.strToU8(stylesXml)
+        }
+
+        // Re-zip and trigger download
+        const patched = fflate.zipSync(files as fflate.Zippable, { level: 6 })
+        const blob = new Blob([patched], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = `${slate.name.replace(/\s+/g, '_')}_candidate_template.xlsx`
+        document.body.appendChild(link); link.click()
+        document.body.removeChild(link); URL.revokeObjectURL(url)
     }
 
     const handleFileUpload = async (_e: React.ChangeEvent<HTMLInputElement>) => {
