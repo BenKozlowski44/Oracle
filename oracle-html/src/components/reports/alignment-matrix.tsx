@@ -244,14 +244,14 @@ export function AlignmentMatrixReport({ slateId, slate, officers, oracleData }: 
                 )}
             </div>
 
-            <div className="border rounded-md overflow-x-auto print:overflow-visible print:border-none print:m-0 print:p-0">
+            <div className="border rounded-md overflow-x-auto bg-white print:overflow-visible print:border-none print:m-0 print:p-0">
                 <Table className="print:table-fixed print:w-full print:text-[8px] print:leading-[1.1]">
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="w-[250px] sticky left-0 bg-background z-10 font-bold border-r print:w-[120px] print:static print:p-1 print:break-words">
+                            <TableHead className="w-[250px] sticky left-0 bg-white z-10 font-bold border-r print:w-[120px] print:static print:p-1 print:break-words">
                                 Candidate
                             </TableHead>
-                            <TableHead className="w-[100px] bg-background z-10 border-r text-xs print:w-[40px] print:static print:text-[8px] print:p-1 print:break-all">
+                            <TableHead className="w-[100px] bg-white z-10 border-r text-xs print:w-[40px] print:static print:text-[8px] print:p-1 print:break-all">
                                 Avail
                             </TableHead>
                             {groupedPrefs.map(group => {
@@ -262,7 +262,7 @@ export function AlignmentMatrixReport({ slateId, slate, officers, oracleData }: 
                                 return (
                                     <TableHead
                                         key={group.prefFormat}
-                                        className="min-w-[160px] text-center border-l bg-muted/20 print:min-w-0 print:w-auto print:p-0.5 print:-tracking-tighter"
+                                        className="min-w-[160px] text-center border-l bg-gray-50 print:min-w-0 print:w-auto print:p-0.5 print:-tracking-tighter"
                                     >
                                         <div className="flex flex-col items-center gap-1">
                                             <button
@@ -318,10 +318,10 @@ export function AlignmentMatrixReport({ slateId, slate, officers, oracleData }: 
                                 return (
                                     <TableRow
                                         key={candidate.id}
-                                        className={`print:break-inside-avoid ${isAssigned ? 'bg-muted/30' : ''}`}
+                                        className={`print:break-inside-avoid ${isAssigned ? 'bg-green-50' : 'bg-white'}`}
                                     >
                                         {/* ── Candidate column ── */}
-                                        <TableCell className="font-medium sticky left-0 bg-background z-10 border-r print:static print:p-1 print:align-top">
+                                        <TableCell className="font-medium sticky left-0 bg-white z-10 border-r print:static print:p-1 print:align-top">
                                             <div className="flex flex-col">
                                                 <div className="flex items-center gap-1.5">
                                                     <span className="print:text-[9px] print:leading-tight">{candidate.name}</span>
@@ -378,7 +378,7 @@ export function AlignmentMatrixReport({ slateId, slate, officers, oracleData }: 
                                             return (
                                                 <TableCell
                                                     key={group.prefFormat}
-                                                    className={`text-center border-l p-2 print:p-0 print:align-middle ${isAssignedHere ? 'bg-green-50' : ''}`}
+                                                    className={`text-center border-l p-2 print:p-0 print:align-middle bg-white ${isAssignedHere ? '!bg-green-50' : ''}`}
                                                 >
                                                     {cell ? (
                                                         canAssign ? (
@@ -471,7 +471,7 @@ export function AlignmentMatrixReport({ slateId, slate, officers, oracleData }: 
             </div>
 
             {/* Legend */}
-            <div className="p-4 bg-muted/50 rounded-lg space-y-2 print:p-2 print:mt-4 print:bg-transparent">
+            <div className="p-4 bg-gray-50 rounded-lg space-y-2 print:p-2 print:mt-4 print:bg-transparent">
                 <div className="flex flex-wrap gap-6 text-sm print:text-xs">
                     <div className="flex items-center gap-2">
                         <div className="px-2 h-6 min-w-[1.5rem] rounded-full bg-green-100 text-green-700 border border-green-200 flex items-center justify-center text-xs font-bold">1–3</div>
