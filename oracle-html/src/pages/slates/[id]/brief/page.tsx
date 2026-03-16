@@ -7,10 +7,6 @@ import { ArrowLeft, CheckCircle2, AlertTriangle, Circle } from "lucide-react"
 import { formatToMMMyy } from "@/lib/utils"
 import { BriefButtons } from "./_brief-buttons"
 
-interface BriefPageProps {
-    params: Promise<{ id: string }>
-}
-
 const MIN_PIPELINE_MONTHS = 6
 
 function hasPipelineConflict(availDate: string | undefined, fillDate: string | undefined): boolean {
@@ -23,7 +19,7 @@ function hasPipelineConflict(availDate: string | undefined, fillDate: string | u
 }
 
 
-export default function SlateBriefPage({ params }: BriefPageProps) {
+export default function SlateBriefPage() {
     const { id } = useParams<{ id: string }>()
     if (!id) return null
     const slate = getSlates().find(s => s.id === id)

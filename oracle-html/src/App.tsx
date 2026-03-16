@@ -16,6 +16,8 @@ import SlatesPage from '@/pages/slates/page'
 import SlateDetailPage from '@/pages/slates/[id]/page'
 import SlateGeneratorPage from '@/pages/slate-generator/page'
 import ArchivedSlatesPage from '@/pages/slates/archived/page'
+import SlateBriefPage from '@/pages/slates/[id]/brief/page'
+import SlateAlignmentPage from '@/pages/slates/[id]/alignment/page'
 import BoardsPage from '@/pages/boards/page'
 import BoardDetailPage from '@/pages/boards/[id]/page'
 import PccPage from '@/pages/pcc/page'
@@ -118,6 +120,8 @@ export default function App() {
             <Route path="/slates" element={<SlatesPage />} />
             <Route path="/slates/archived" element={<ArchivedSlatesPage />} />
             <Route path="/slates/:id" element={<SlateDetailPage />} />
+            <Route path="/slates/:id/brief" element={<SlateBriefPage />} />
+            <Route path="/slates/:id/alignment" element={<SlateAlignmentPage />} />
             <Route path="/slate-generator" element={<SlateGeneratorPage />} />
             <Route path="/boards" element={<BoardsPage />} />
             <Route path="/boards/:id" element={<BoardDetailPage />} />

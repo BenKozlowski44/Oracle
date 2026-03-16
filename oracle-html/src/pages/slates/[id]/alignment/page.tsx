@@ -4,12 +4,8 @@ import { ArrowLeft } from "lucide-react"
 import { getSlates, getOfficers, getOracleData } from '@/services/storage'
 import { AlignmentMatrixReport } from "@/components/reports/alignment-matrix"
 
-interface AlignmentPageProps {
-    params: Promise<{ id: string }>
-}
 
-
-export default function AlignmentPage({ params }: AlignmentPageProps) {
+export default function AlignmentPage() {
     const { id } = useParams<{ id: string }>()
     if (!id) return null
     const slates = getSlates()
