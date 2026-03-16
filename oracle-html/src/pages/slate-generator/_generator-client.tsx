@@ -17,6 +17,8 @@ import { OracleCommand, SlateRequirement, Slate } from "@/lib/types"
 import { formatToMMMyy } from "@/lib/utils"
 import { addMonths, parseISO, isValid, parse } from "date-fns"
 import { useNavigate } from 'react-router-dom'
+import { saveSlate } from '@/services/storage'
+import { notifySuccess, saveError } from '@/lib/notify'
 
 interface SlateGeneratorClientProps {
     oracleData: OracleCommand[]
@@ -48,21 +50,14 @@ export function SlateGeneratorClient({ oracleData }: SlateGeneratorClientProps) 
             }
         }
 
-        // Persist via targeted endpoint
+        // Save directly to localStorage storage
         try {
-            const response = await fetch('/api/slates', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ slate: newSlate }),
-            });
-
-            if (response.ok) {
-                navigate('/slates');
-            } else {
-                console.error("Failed to save slate");
-            }
+            saveSlate(newSlate)
+            notifySuccess(`Slate "${slateName}" saved successfully`)
+            navigate('/slates')
         } catch (error) {
-            console.error("Error saving slate:", error);
+            console.error('Error saving slate:', error)
+            saveError('Failed to save slate — please try again')
         }
     }
 

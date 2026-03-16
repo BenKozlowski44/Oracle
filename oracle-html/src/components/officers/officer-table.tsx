@@ -1,4 +1,5 @@
-import { saveOfficers } from '@/services/storage'
+import * as XLSX from 'xlsx'
+import { saveOfficers, getOfficers } from '@/services/storage'
 import { useState, useRef } from "react"
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Officer, Rank, Designator } from "@/lib/types"
@@ -21,6 +22,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ArrowUpDown, Search, Edit2 } from "lucide-react"
+import { notifySuccess, saveError } from "@/lib/notify"
 import {
     Tooltip,
     TooltipContent,
@@ -49,30 +51,131 @@ export function OfficerTable({ data, variant = "default" }: OfficerTableProps) {
         const file = event.target.files?.[0]
         if (!file) return
 
-        const formData = new FormData()
-        formData.append('file', file)
-
         try {
-            const res = await fetch('/api/import-officers', {
-                method: 'POST',
-                body: formData,
+            const arrayBuffer = await file.arrayBuffer()
+            const workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array', cellDates: true })
+            const worksheet = workbook.Sheets[workbook.SheetNames[0]]
+            if (!worksheet) throw new Error('No worksheet found in file')
+
+            const rawRows: any[][] = XLSX.utils.sheet_to_json(worksheet, { header: 1 })
+            const headerRow = (rawRows[0] || []) as string[]
+
+            // Build header index map (case-insensitive)
+            const headers: Record<string, number> = {}
+            headerRow.forEach((h, i) => { if (h) headers[String(h).trim().toLowerCase()] = i })
+
+            const getVal = (row: any[], ...keys: string[]) => {
+                for (const k of keys) {
+                    const idx = headers[k.toLowerCase()]
+                    if (idx !== undefined && row[idx] !== undefined && row[idx] !== null && row[idx] !== '') {
+                        return row[idx]
+                    }
+                }
+                return null
+            }
+
+            const parseDate = (val: any): string => {
+                if (!val) return 'Unknown'
+                if (val instanceof Date) {
+                    return `${val.getFullYear()}-${String(val.getMonth() + 1).padStart(2, '0')}-${String(val.getDate()).padStart(2, '0')}`
+                }
+                if (typeof val === 'number' && val > 200000 && val < 210000) {
+                    const s = String(val)
+                    return `${s.substring(0, 4)}-${s.substring(4, 6)}-01`
+                }
+                if (typeof val === 'string' && /^\d{6}$/.test(val)) {
+                    return `${val.substring(0, 4)}-${val.substring(4, 6)}-01`
+                }
+                return String(val)
+            }
+
+            const STATUS_MAP: Record<string, string> = {
+                'FF': 'Ready FF', 'Ready FF': 'Ready FF', 'Available': 'Available',
+                'Verify PD2': 'Verify PD2', 'Defer': 'Defer', 'Family Planning': 'Family Planning',
+                'War College': 'War College', 'Joint Lock': 'Joint Lock', 'Hold': 'Hold',
+                'Retire': 'Retire', 'Policy': 'Policy', 'List Shift': 'List Shift',
+            }
+
+            const newOfficers: Officer[] = []
+            for (let i = 1; i < rawRows.length; i++) {
+                const row = rawRows[i]
+                const rawName = getVal(row, 'name')
+                const name = String(rawName || '').trim()
+                if (!name) continue
+
+                const rank = String(getVal(row, 'rank') || 'LT')
+                const designator = String(getVal(row, 'designator', 'desig') || '1110')
+                const currentCommand = String(getVal(row, 'command', 'currentcommand', 'current command') || 'Unassigned')
+                const yearGroup = parseInt(String(getVal(row, 'yg', 'year group') || '0')) || 0
+                const billet = String(getVal(row, 'btitle', 'billet') || '')
+                const csr = String(getVal(row, 'csr') || '')
+                const assignedSlate = String(getVal(row, 'slate', 'assigned slate', 'look') || '')
+                const listShift = String(getVal(row, 'list shift') || '')
+                const prdRaw = getVal(row, 'prd')
+                const prd = prdRaw ? parseDate(prdRaw) : 'Unknown'
+                const statusRaw = String(getVal(row, 'status', 'co-a milestone') || 'Available')
+                const status = (STATUS_MAP[statusRaw] || statusRaw || 'Available') as any
+
+                const priorityVal = getVal(row, 'h/p', 'priority')
+                let preferencePriority: 'Homeport' | 'Platform' | null = null
+                if (priorityVal) {
+                    const v = String(priorityVal).toUpperCase()
+                    if (v.startsWith('H') || v === 'LOCATION' || v === 'HOMEPORT') preferencePriority = 'Homeport'
+                    else if (v === 'P' || v === 'PLATFORM') preferencePriority = 'Platform'
+                }
+
+                newOfficers.push({
+                    id: name.toLowerCase().replace(/[^a-z0-9]/g, '') + '_' + name.length,
+                    rank: rank as any, designator: designator as any,
+                    name, currentCommand, prd, preferences: [], status, notes: '',
+                    yearGroup, billet, csr, assignedSlate,
+                    listShift: listShift || undefined, preferencePriority,
+                    preferredLocations: ['hp1','hp2','hp3','hp4','hp5']
+                        .map(k => getVal(row, k, `location ${k.slice(-1)}`, `loc${k.slice(-1)}`))
+                        .map(v => v ? String(v) : '').filter(Boolean),
+                    preferredPlatforms: ['p1','p2','p3']
+                        .map(k => getVal(row, k, `platform ${k.slice(-1)}`, `plat${k.slice(-1)}`))
+                        .map(v => v ? String(v) : '').filter(Boolean),
+                })
+            }
+
+            if (newOfficers.length === 0) {
+                saveError('No officers found — verify the file has a "Name" header row')
+                return
+            }
+
+            // Merge: update existing officers (preserve status/notes/preferences), add new ones
+            const existing = getOfficers()
+            const merged = [...existing]
+            let added = 0, updated = 0
+
+            newOfficers.forEach(o => {
+                const idx = merged.findIndex(e => e.name === o.name)
+                if (idx !== -1) {
+                    const e = merged[idx]
+                    merged[idx] = {
+                        ...o, id: e.id, status: e.status, listShift: e.listShift,
+                        notes: e.notes || '', preferences: e.preferences || [],
+                        preferredLocations: e.preferredLocations?.length ? e.preferredLocations : o.preferredLocations,
+                        preferredPlatforms: e.preferredPlatforms?.length ? e.preferredPlatforms : o.preferredPlatforms,
+                        preferencePriority: (e.preferencePriority === 'Homeport' || e.preferencePriority === 'Platform') ? e.preferencePriority : o.preferencePriority,
+                    }
+                    updated++
+                } else {
+                    merged.push({ ...o, status: 'Available', listShift: '' })
+                    added++
+                }
             })
 
-            const result = await res.json()
+            saveOfficers(merged)
+            setLocalData(merged)
+            notifySuccess(`Import complete — ${added} added, ${updated} updated`)
 
-            if (!res.ok) {
-                throw new Error(result.error || "Failed to import officers")
-            }
-
-            alert(`Successfully imported officers!\nAdded: ${result.added}\nUpdated: ${result.updated}`)
-            
         } catch (error: any) {
             console.error(error)
-            alert(`Import failed: ${error.message}`)
+            saveError(`Import failed: ${error.message}`)
         } finally {
-            if (fileInputRef.current) {
-                fileInputRef.current.value = ""
-            }
+            if (fileInputRef.current) fileInputRef.current.value = ''
         }
     }
 
