@@ -131,11 +131,15 @@ export function exportAllData(): string {
 
 export function importAllData(json: string): void {
   const data = JSON.parse(json)
-  if (data[KEYS.oracle]) writeData(KEYS.oracle, data[KEYS.oracle])
-  if (data[KEYS.officers]) writeData(KEYS.officers, data[KEYS.officers])
-  if (data[KEYS.slates]) writeData(KEYS.slates, data[KEYS.slates])
-  if (data[KEYS.boards]) writeData(KEYS.boards, data[KEYS.boards])
-  if (data[KEYS.metrics]) writeData(KEYS.metrics, data[KEYS.metrics])
+  // Write all keys directly to localStorage WITHOUT triggering autoBackup on each write.
+  // A single autoBackup call at the end ensures the backup file reflects the full restored state.
+  if (data[KEYS.oracle])   localStorage.setItem(KEYS.oracle,   JSON.stringify(data[KEYS.oracle]))
+  if (data[KEYS.officers]) localStorage.setItem(KEYS.officers,  JSON.stringify(data[KEYS.officers]))
+  if (data[KEYS.slates])   localStorage.setItem(KEYS.slates,   JSON.stringify(data[KEYS.slates]))
+  if (data[KEYS.boards])   localStorage.setItem(KEYS.boards,   JSON.stringify(data[KEYS.boards]))
+  if (data[KEYS.metrics])  localStorage.setItem(KEYS.metrics,  JSON.stringify(data[KEYS.metrics]))
+  // One backup write after all keys are set
+  autoBackup()
 }
 
 // ─── Auto-backup (File System Access API) ─────────────────────────────────

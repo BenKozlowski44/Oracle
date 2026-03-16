@@ -5,6 +5,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import {
+    AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+    AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { Loader2, FileSpreadsheet, Download, Upload, RefreshCw, ShieldCheck, ShieldAlert, ShieldOff, Save } from "lucide-react"
 import { getOfficers, saveOfficers, exportAllData, restoreFromFile, chooseBackupFile, forceReseed, getBackupStatus, manualBackup } from "@/services/storage"
 import type { Officer } from "@/lib/types"
@@ -222,15 +226,75 @@ export default function DataSettingsPage() {
                     <Button onClick={handleExport} variant="outline">
                         <Download className="mr-2 h-4 w-4" /> Export Backup
                     </Button>
-                    <Button onClick={async () => {
-                        const ok = await restoreFromFile()
-                        if (ok) window.location.reload()
-                    }} variant="outline">
-                        <Upload className="mr-2 h-4 w-4" /> Restore from File
-                    </Button>
-                    <Button onClick={handleReloadFromBuild} variant="outline">
-                        <RefreshCw className="mr-2 h-4 w-4" /> Reload from Build Data
-                    </Button>
+
+                    {/* DESTRUCTIVE: overwrites all localStorage data — requires confirmation */}
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button variant="outline">
+                                <Upload className="mr-2 h-4 w-4" /> Restore from File
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle className="text-rose-600">⚠ Overwrite All Current Data?</AlertDialogTitle>
+                                <AlertDialogDescription className="space-y-2">
+                                    <span className="block font-semibold text-foreground">
+                                        This will replace ALL data in the app with the contents of the selected backup file.
+                                    </span>
+                                    <span className="block text-muted-foreground">
+                                        Any changes you made since the last backup will be permanently lost.
+                                        This cannot be undone. Make sure you are selecting the correct file.
+                                    </span>
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel — Keep Current Data</AlertDialogCancel>
+                                <AlertDialogAction
+                                    className="bg-rose-600 hover:bg-rose-700 text-white"
+                                    onClick={async () => {
+                                        const ok = await restoreFromFile()
+                                        if (ok) window.location.reload()
+                                    }}
+                                >
+                                    Yes, Restore from File
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+
+                    {/* DESTRUCTIVE: reloads from build-time seed data */}
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button variant="outline">
+                                <RefreshCw className="mr-2 h-4 w-4" /> Reload from Build Data
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle className="text-rose-600">⚠ Reset to Build-Time Data?</AlertDialogTitle>
+                                <AlertDialogDescription className="space-y-2">
+                                    <span className="block font-semibold text-foreground">
+                                        This will wipe all current app data and replace it with the data
+                                        embedded in oracle.html when it was last built.
+                                    </span>
+                                    <span className="block text-muted-foreground">
+                                        All edits, slate assignments, and candidates added since the build will be lost.
+                                        This cannot be undone.
+                                    </span>
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel — Keep Current Data</AlertDialogCancel>
+                                <AlertDialogAction
+                                    className="bg-rose-600 hover:bg-rose-700 text-white"
+                                    onClick={handleReloadFromBuild}
+                                >
+                                    Yes, Reload from Build Data
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+
                     <Button onClick={() => chooseBackupFile()} variant="outline">
                         Set Auto-Save Location
                     </Button>
