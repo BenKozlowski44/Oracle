@@ -15,6 +15,7 @@ import { EditCommandDialog } from "./edit-command-dialog"
 import { FleetUpChecklist } from "./fleet-up-checklist"
 import { Search, Plus, ChevronDown, ChevronRight } from "lucide-react"
 import { saveError, notifySuccess } from "@/lib/notify"
+import { saveOracleCommand, saveOfficers, saveMetrics, deleteOracleCommand } from "@/services/storage"
 import { CommandPipelineTimeline } from "./command-pipeline-timeline"
 import { Button } from "@/components/ui/button"
 import { formatToMMMyy, getPipelineHealth, predictNextVacancyDate, getCoSmRptDisplay, getCdrCmdXoRptDate } from "@/lib/utils"
@@ -235,12 +236,8 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
         setData(newData)
 
         try {
-            const res = await fetch(`/api/oracle/${updatedCommand.id}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ updatedCommand, metrics: newMetrics }),
-            });
-            if (!res.ok) throw new Error()
+            saveOracleCommand(updatedCommand)
+            saveMetrics(newMetrics)
             notifySuccess('Command saved')
         } catch (error) {
             console.error("Error saving data:", error);
@@ -255,8 +252,7 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
         setIsEditOpen(false)
 
         try {
-            const res = await fetch(`/api/oracle/${commandId}`, { method: 'DELETE' });
-            if (!res.ok) throw new Error()
+            deleteOracleCommand(commandId)
             notifySuccess('Command deleted')
         } catch (error) {
             console.error(error);
@@ -264,18 +260,14 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
         }
     }
 
-    const persistUpdate = async (updatedCommand: OracleCommand, currentOfficers: Officer[], message: string) => {
+    const persistUpdate = (updatedCommand: OracleCommand, currentOfficers: Officer[], message: string) => {
         const newData = data.map((c) => (c.id === updatedCommand.id ? updatedCommand : c));
         setData(newData);
         setIsEditOpen(false);
 
         try {
-            const res = await fetch(`/api/oracle/${updatedCommand.id}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ updatedCommand, officers: currentOfficers }),
-            });
-            if (!res.ok) throw new Error()
+            saveOracleCommand(updatedCommand)
+            saveOfficers(currentOfficers)
             notifySuccess(message)
         } catch (error) {
             console.error(error);
