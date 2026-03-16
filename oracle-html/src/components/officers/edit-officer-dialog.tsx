@@ -1,7 +1,6 @@
 import { saveOfficer } from '@/services/storage'
 import type { Officer } from '@/lib/types'
 import { useState, useEffect } from "react"
-import { Officer, Rank, Designator } from "@/lib/types"
 import {
     Dialog,
     DialogContent,
@@ -27,9 +26,10 @@ interface EditOfficerDialogProps {
     officer: Officer | null
     open: boolean
     onOpenChange: (open: boolean) => void
+    onSave?: (updated: Officer) => void
 }
 
-export function EditOfficerDialog({ officer, open, onOpenChange }: EditOfficerDialogProps) {
+export function EditOfficerDialog({ officer, open, onOpenChange, onSave }: EditOfficerDialogProps) {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
     const [formData, setFormData] = useState<Partial<Officer>>({})
@@ -45,29 +45,15 @@ export function EditOfficerDialog({ officer, open, onOpenChange }: EditOfficerDi
         setFormData(prev => ({ ...prev, [field]: value }))
     }
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         if (!officer) return
 
         setLoading(true)
         try {
-            // Determine if create or update
-            const isNew = !officer.id;
-            const endpoint = isNew ? '/api/create-officer' : '/api/update-officer';
-
-
-            const res = await fetch(endpoint, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData),
-            })
-
-            if (!res.ok) throw new Error(isNew ? "Failed to create officer" : "Failed to update officer")
-
-            
+            const updated = { ...officer, ...formData } as Officer
+            saveOfficer(updated)
+            onSave?.(updated)
             onOpenChange(false)
         } catch (error) {
             console.error(error)

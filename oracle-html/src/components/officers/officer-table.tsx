@@ -41,6 +41,7 @@ export function OfficerTable({ data, variant = "default" }: OfficerTableProps) {
     const [sortConfig, setSortConfig] = useState<{ key: keyof Officer; direction: "asc" | "desc" } | null>(null)
     const [editingOfficer, setEditingOfficer] = useState<Officer | null>(null)
     const [isDialogOpen, setIsDialogOpen] = useState(false)
+    const [localData, setLocalData] = useState<Officer[]>(data)
     const fileInputRef = useRef<HTMLInputElement>(null)
     const navigate = useNavigate()
 
@@ -80,7 +81,7 @@ export function OfficerTable({ data, variant = "default" }: OfficerTableProps) {
         setIsDialogOpen(true)
     }
 
-    const filteredData = data.filter((officer) => {
+    const filteredData = localData.filter((officer) => {
         const matchesSearch = officer.name.toLowerCase().includes(search.toLowerCase()) ||
             (officer.currentCommand && officer.currentCommand.toLowerCase().includes(search.toLowerCase())) ||
             (officer.notes && officer.notes.toLowerCase().includes(search.toLowerCase()))
@@ -451,13 +452,14 @@ export function OfficerTable({ data, variant = "default" }: OfficerTableProps) {
                 </Table>
             </div>
             <div className="text-sm text-muted-foreground">
-                Showing {sortedData.length} of {data.length} officers
+                Showing {sortedData.length} of {localData.length} officers
             </div>
 
             <EditOfficerDialog
                 officer={editingOfficer}
                 open={isDialogOpen}
                 onOpenChange={setIsDialogOpen}
+                onSave={(updated) => setLocalData(prev => prev.map(o => o.id === updated.id ? updated : o))}
             />
         </div>
     )
