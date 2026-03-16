@@ -407,6 +407,108 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
         document.body.removeChild(link); URL.revokeObjectURL(url)
     }
 
+    const handleDownloadCoSmTemplate = () => {
+        const TOURS = [
+            '1st Division Officer Tour', '2nd Division Officer Tour',
+            'Post-Division Officer Tour', '1st Department Head Tour',
+            '2nd Department Head Tour', 'Post-Department Head Tour',
+        ]
+        const OFRP_PHASES = [
+            'Maintenance', 'Basic', 'Integrated', 'Sustainment',
+            'Deployment Prep', 'Deployed', 'Post-Deployment', 'N/A (Shore/Staff)',
+        ]
+        const prefOptions = Array.from(new Set(
+            (slate.requirements || [])
+                .filter(req => req.role === 'CO-SM')
+                .map(req => req.commandName || oracleData.find(c => c.id === req.commandId)?.name || '')
+                .filter(Boolean)
+        )).sort()
+        const wb = XLSXStyle.utils.book_new()
+        const maxLen = Math.max(prefOptions.length, OFRP_PHASES.length)
+        const dataAoa: string[][] = Array.from({ length: maxLen }, (_, i) => [prefOptions[i] || '', OFRP_PHASES[i] || ''])
+        XLSXStyle.utils.book_append_sheet(wb, XLSXStyle.utils.aoa_to_sheet(dataAoa), 'Data')
+        const rows: ({ v: string | number; s?: object } | null)[][] = []
+        let r = 1
+        const SECTION_STYLE = { fill: { fgColor: { rgb: '1F3864' } }, font: { bold: true, color: { rgb: 'FFFFFF' }, sz: 11 }, alignment: { horizontal: 'left' } }
+        const HEADER_STYLE  = { fill: { fgColor: { rgb: 'D9E1F2' } }, font: { bold: true, italic: true, sz: 9 }, alignment: { horizontal: 'left' } }
+        const INPUT_STYLE   = { fill: { fgColor: { rgb: 'E6F0FF' } }, border: { top: { style: 'thin' }, bottom: { style: 'thin' }, left: { style: 'thin' }, right: { style: 'thin' } }, alignment: { horizontal: 'left' } }
+        const LABEL_STYLE   = { font: { sz: 10 }, alignment: { horizontal: 'left' } }
+        const cell = (v: string | number, s?: object) => ({ v, s } as any)
+        const sectionRow = (title: string) => { rows.push([cell(title, SECTION_STYLE)]); r++ }
+        const headerRow = (...labels: string[]) => { rows.push(labels.map(l => cell(l, HEADER_STYLE))); r++ }
+        const inputRow  = (cols: number) => { rows.push(Array.from({ length: cols }, () => cell('', INPUT_STYLE))); return r++ }
+        const blankRow  = () => { rows.push([null]); r++ }
+        const labelRow  = (label: string) => { rows.push([cell(label, LABEL_STYLE)]); r++ }
+        const validations: object[] = []
+        let prefStartRow = 0, prefEndRow = 0
+        const ofrpCells: string[] = []
+        rows.push([cell('PERS-41 CO-SM Candidate Preference Template — ' + slate.name, { font: { bold: true, sz: 14 } })]); r++
+        rows.push([cell('Slate Window: ' + slate.windowStart + ' — ' + slate.windowEnd, { font: { italic: true, sz: 10, color: { rgb: '555555' } } })]); r++
+        blankRow()
+        sectionRow('OFFICER INFORMATION')
+        headerRow('Full Name', 'Rank', 'Designator', 'Availability Date (CO-SM Pipeline Start)', '')
+        inputRow(4); blankRow()
+        sectionRow('CONTACT INFORMATION')
+        headerRow('Work Email', 'Home / Personal Email', 'Work Phone', 'Personal Cell', '')
+        inputRow(4)
+        headerRow('Mailing Address (Street, City, State ZIP)', '', '', '', '')
+        inputRow(1); blankRow()
+        sectionRow('FLAG NOTIFIER')
+        headerRow('Flag Officer Name', 'Relationship / Context', '', '', '')
+        inputRow(2); blankRow()
+        sectionRow('CO-SM COMMAND PREFERENCES — Ranked 1–' + (prefOptions.length || 'N'))
+        headerRow('Rank', 'CO-SM Command (select from dropdown)', '', '', '')
+        prefStartRow = r
+        for (let i = 0; i < (prefOptions.length || 1); i++) {
+            rows.push([cell('Preference ' + (i + 1), LABEL_STYLE), cell('', INPUT_STYLE)]); r++
+        }
+        prefEndRow = r - 1; blankRow()
+        sectionRow('CONSIDERATIONS & NOTES')
+        labelRow('Amplifying info for Detailer — timing, family, career goals, etc.')
+        rows.push([cell('', INPUT_STYLE)]); r++; blankRow()
+        sectionRow('TOUR HISTORY')
+        for (const tour of TOURS) {
+            rows.push([cell(tour, { font: { bold: true, sz: 10 }, fill: { fgColor: { rgb: 'E8F5E9' } } })]); r++
+            headerRow('Ship / Command', 'Platform (DDG/CG/etc.)', 'OFRP Phase (majority)', '', '')
+            const ofrpRow = inputRow(3); ofrpCells.push('C' + ofrpRow)
+            headerRow('Months U/W', 'Months Deployed', 'Months stood as OOD', '', '')
+            inputRow(3)
+            headerRow('# OOD Evolutions', '# CONN Evolutions', '# JOOD Evolutions', '', '')
+            inputRow(3); blankRow()
+        }
+        sectionRow('PROFESSIONAL QUALIFICATIONS')
+        headerRow('Field', 'Value', '', '', '')
+        for (const f of ['JPME Completion / Plan', 'WTI Qualification (Type if applicable)']) {
+            rows.push([cell(f, LABEL_STYLE), cell('', INPUT_STYLE)]); r++
+        }
+        blankRow()
+        sectionRow('PERSONAL CONSIDERATIONS')
+        headerRow('Consideration', 'Notes', '', '', '')
+        for (const f of ['Co-Location Request', 'EFM Considerations', 'Education / Pipeline']) {
+            rows.push([cell(f, LABEL_STYLE), cell('', INPUT_STYLE)]); r++
+        }
+        const ws = XLSXStyle.utils.aoa_to_sheet(rows)
+        ws['!cols'] = [{ wch: 36 }, { wch: 32 }, { wch: 22 }, { wch: 22 }, { wch: 20 }]
+        if (prefOptions.length > 0) {
+            validations.push({ type: 'list', sqref: 'B' + prefStartRow + ':B' + prefEndRow,
+                formulae: ['Data!$A$1:$A$' + prefOptions.length], allowBlank: true, showDropDown: false })
+        }
+        for (const sqref of ofrpCells) {
+            validations.push({ type: 'list', sqref,
+                formulae: ['Data!$B$1:$B$' + OFRP_PHASES.length], allowBlank: true, showDropDown: false })
+        }
+        if (validations.length > 0) (ws as any)['!dataValidations'] = validations
+        XLSXStyle.utils.book_append_sheet(wb, ws, 'Candidate Input')
+        const arr = XLSXStyle.write(wb, { type: 'array', bookType: 'xlsx' })
+        const blob = new Blob([arr as BlobPart], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = slate.name.split(' ').join('_') + '_cosm_template.xlsx'
+        document.body.appendChild(link); link.click()
+        document.body.removeChild(link); URL.revokeObjectURL(url)
+    }
+
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files || e.target.files.length === 0) return;
         toast.info('Bulk profile import via Excel requires the web app. Use the candidate input form to enter preferences manually.');
@@ -438,8 +540,14 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
                 <div className="ml-auto flex items-center gap-2">
                     <div className="flex gap-2 mr-4 border-r pr-4">
                         <Button variant="outline" size="sm" onClick={handleDownloadTemplate}>
-                            Preference Template
+                            CDR CMD Template
                         </Button>
+                        {cosmReqs.length > 0 && (
+                            <Button variant="outline" size="sm" onClick={handleDownloadCoSmTemplate}
+                                className="border-[#c9a227]/40 text-[#c9a227] hover:bg-[#c9a227]/10">
+                                CO-SM Template
+                            </Button>
+                        )}
                     </div>
                     <Link to={`/slates/${id}/alignment`}>
                         <Button variant="outline">Alignment Matrix</Button>
