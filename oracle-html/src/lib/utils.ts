@@ -327,6 +327,24 @@ export function getCoSmRptDisplay(
  * Logic is an exact lift of the inline expression from oracle-table.tsx — no change in behavior.
  */
 export function getCdrCmdXoRptDate(command: OracleCommand): string | null {
-  return command.inboundXO?.timelineData?.i || command.slatedXO?.reportDate || null
+    // Non-SWO community fill in P-XO: the relevant date is when they fleet up (k),
+    // not when they arrive — that's when a SWO is actually needed.
+    const isNonSWOInbound = command.inboundXO?.fillCommunity && command.inboundXO.fillCommunity !== '1110'
+    if (isNonSWOInbound) {
+        return command.inboundXO?.timelineData?.k || null
+    }
+
+    // If P-XO is already named, the current hole is filled.
+    // Show the Slated XO's report date — that's when the NEXT vacancy opens.
+    const inboundHasName = !!command.inboundXO?.name &&
+        command.inboundXO.name !== '' &&
+        command.inboundXO.name !== 'VACANT'
+
+    if (inboundHasName) {
+        return command.slatedXO?.reportDate || command.inboundXO?.timelineData?.k || null
+    }
+
+    // No P-XO named: immediate hole — show when someone needs to arrive.
+    return command.inboundXO?.timelineData?.i || command.slatedXO?.reportDate || null
 }
 
