@@ -87,13 +87,31 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
         const cmd = oracleData.find(c => c.id === commandId);
         if (!cmd) return;
 
+        // If the P-XO (inboundXO) is already named, the CDR CMD hole is at the
+        // Slated XO level — use slatedXO.reportDate as the fill date.
+        // Otherwise the hole is at the current XO level — use currentXO.prd.
+        const inboundHasName = !!cmd.inboundXO?.name &&
+            cmd.inboundXO.name !== '' &&
+            cmd.inboundXO.name !== 'VACANT'
+
+        const fillDate = inboundHasName
+            ? (cmd.slatedXO?.reportDate || cmd.inboundXO?.timelineData?.k || cmd.currentXO?.prd || "")
+            : (cmd.currentXO?.prd || "")
+
+        // The "incumbent" is who the slated officer will relieve:
+        //   - If P-XO named: they will be XO when the slated officer reports → use inboundXO name
+        //   - Otherwise: the current XO is the one being relieved
+        const incumbentName = inboundHasName
+            ? (cmd.inboundXO?.name || cmd.currentXO?.name || "Unknown")
+            : (cmd.currentXO?.name || "Unknown")
+
         const newReq: SlateRequirement = {
             id: `req-${cmd.id}-xo-${Date.now()}`,
             commandName: cmd.name,
             commandId: cmd.id,
             role: "XO",
-            incumbent: cmd.currentXO?.name || "Unknown",
-            incumbentPrd: cmd.currentXO?.prd || "",
+            incumbent: incumbentName,
+            incumbentPrd: fillDate,
             status: "Draft"
         };
 
