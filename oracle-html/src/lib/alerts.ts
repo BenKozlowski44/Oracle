@@ -13,8 +13,9 @@ export interface CommandAlert {
 export function getCommandAlerts(command: OracleCommand): CommandAlert[] {
     const alerts: CommandAlert[] = []
 
-    // CO-SM commands only fill the CO — no XO pipeline exists, skip all XO-related checks
-    if (command.tags?.includes('CO-SM') || command.platform === 'CO-SM') return alerts
+    // Direct-input commands have no XO pipeline — skip all XO-related checks.
+    // Fleet-up CO-SM commands (rotationStyle === 'FleetUp') still get alerts.
+    if (command.rotationStyle === 'DirectCO') return alerts
 
     // 1. Missing P-XO (Inbound XO)
     if (!command.inboundXO || !command.inboundXO.name) {
