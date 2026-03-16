@@ -398,7 +398,9 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
 
         // Re-zip and trigger download
         const patched = fflate.zipSync(files as fflate.Zippable, { level: 6 })
-        const blob = new Blob([patched], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+        // fflate returns Uint8Array<ArrayBufferLike>; slice() to get plain ArrayBuffer for Blob
+        const patchedBuf = patched.buffer.slice(patched.byteOffset, patched.byteOffset + patched.byteLength) as ArrayBuffer
+        const blob = new Blob([patchedBuf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
         const url = URL.createObjectURL(blob)
         const link = document.createElement('a')
         link.href = url
