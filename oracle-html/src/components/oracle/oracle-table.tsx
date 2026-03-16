@@ -383,7 +383,7 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                         placeholder="Search The Oracle (Ship, CO)..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="pl-9 bg-[#07111f] border-[#c9a227]/30 text-foreground placeholder:text-[#8a9bb0] text-xs font-semibold tracking-widest uppercase focus-visible:ring-[#c9a227]/30 focus-visible:border-[#c9a227]/60"
+                        className="pl-9 bg-[#07111f] border-[#c9a227]/30 text-[#c9a227] placeholder:text-[#8a9bb0] text-xs font-semibold tracking-widest uppercase focus-visible:ring-[#c9a227]/30 focus-visible:border-[#c9a227]/60"
                     />
                 </div>
                 <div className="flex items-center gap-2">
