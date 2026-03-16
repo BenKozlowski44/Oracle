@@ -701,14 +701,16 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
                     <CardContent className="space-y-8">
                         {/* ── Shared renderReqTable ────────────────────────────────── */}
                         {(() => {
-                            const renderReqTable = (reqs: SlateRequirement[], title: string) => (
+                            const renderReqTable = (reqs: SlateRequirement[], title: string, hideTitle?: boolean) => (
                                 <div className="space-y-4">
-                                    <div className="flex items-center justify-between">
-                                        <h3 className="text-lg font-semibold">{title}</h3>
-                                        <Badge variant="secondary" className="text-xs">
-                                            {reqs.length} Commands
-                                        </Badge>
-                                    </div>
+                                    {!hideTitle && (
+                                        <div className="flex items-center justify-between">
+                                            <h3 className="text-lg font-semibold">{title}</h3>
+                                            <Badge variant="secondary" className="text-xs">
+                                                {reqs.length} Commands
+                                            </Badge>
+                                        </div>
+                                    )}
                                     <Table>
                                         <TableHeader>
                                             <TableRow>
@@ -1010,7 +1012,8 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
                                                 </Dialog>
                                             </div>
                                         </div>
-                                        {renderReqTable(cosmReqs, "CO-SM")}
+                                        {renderReqTable(cosmReqs, "CO-SM", true)}
+
                                     </div>
                                 </>
                             );
