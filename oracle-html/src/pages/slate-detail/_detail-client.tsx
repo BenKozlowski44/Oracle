@@ -1,3 +1,4 @@
+import * as XLSXStyle from 'xlsx-js-style'
 import { useState, useRef } from "react"
 import { useNavigate } from 'react-router-dom'
 import { toast } from "sonner"
@@ -221,10 +222,6 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
         .filter((o): o is Officer => !!o);
 
     const handleDownloadTemplate = () => {
-        // xlsx-js-style: drop-in for xlsx with cell style support
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
-        const XLSXStyle = require('xlsx-js-style')
-
         const TOURS = [
             '1st Division Officer Tour', '2nd Division Officer Tour',
             'Post-Division Officer Tour', '1st Department Head Tour',
