@@ -1,5 +1,4 @@
-// Server Component — reads fresh data on every navigation
-import { use } from "react"
+import { useParams, Link } from 'react-router-dom'
 import { getSlates, getOfficers, getOracleData } from '@/services/storage'
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
