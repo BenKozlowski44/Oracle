@@ -1,4 +1,3 @@
-import * as XLSX from 'xlsx'
 import { useState, useRef } from "react"
 import { useNavigate } from 'react-router-dom'
 import { toast } from "sonner"
@@ -222,10 +221,18 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
         .filter((o): o is Officer => !!o);
 
     const handleDownloadTemplate = () => {
+        // xlsx-js-style: drop-in for xlsx with cell style support
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const XLSXStyle = require('xlsx-js-style')
+
         const TOURS = [
             '1st Division Officer Tour', '2nd Division Officer Tour',
             'Post-Division Officer Tour', '1st Department Head Tour',
             '2nd Department Head Tour', 'Post-Department Head Tour',
+        ]
+        const OFRP_PHASES = [
+            'Maintenance', 'Basic', 'Integrated', 'Sustainment',
+            'Deployment Prep', 'Deployed', 'Post-Deployment', 'N/A (Shore/Staff)',
         ]
         const prefOptions = Array.from(new Set(
             (slate.requirements || [])
@@ -234,71 +241,138 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
                 .map(cmd => `${cmd.platform} - ${cmd.location}`)
         )).sort()
 
-        const rows: (string | number)[][] = []
-        const section = (title: string) => rows.push([title])
-        const blank = () => rows.push([])
+        const wb = XLSXStyle.utils.book_new()
 
-        rows.push([`PERS-41 Candidate Preference Template — ${slate.name}`])
-        rows.push([`Slate Window: ${slate.windowStart} — ${slate.windowEnd}`])
-        blank()
+        // ── Hidden Data sheet (dropdown sources) ────────────────────────────
+        const maxLen = Math.max(prefOptions.length, OFRP_PHASES.length)
+        const dataAoa: string[][] = Array.from({ length: maxLen }, (_, i) => [prefOptions[i] || '', OFRP_PHASES[i] || ''])
+        const wsData = XLSXStyle.utils.aoa_to_sheet(dataAoa)
+        XLSXStyle.utils.book_append_sheet(wb, wsData, 'Data')
 
-        section('OFFICER INFORMATION')
-        rows.push(['Full Name', 'Rank', 'Designator', 'Availability Date (XO Pipeline Start)'])
-        rows.push(['', '', '', ''])
-        blank()
+        // ── Input sheet ──────────────────────────────────────────────────────
+        const rows: ({ v: string | number; s?: object } | null)[][] = []
+        let r = 1  // 1-indexed row counter to match Excel
 
-        section('CONTACT INFORMATION')
-        rows.push(['Work Email', 'Home / Personal Email', 'Work Phone', 'Personal Cell'])
-        rows.push(['', '', '', ''])
-        rows.push(['Mailing Address (Street, City, State ZIP)'])
-        rows.push([''])
-        blank()
+        // Style helpers
+        const SECTION_STYLE = { fill: { fgColor: { rgb: '1F3864' } }, font: { bold: true, color: { rgb: 'FFFFFF' }, sz: 11 }, alignment: { horizontal: 'left' } }
+        const HEADER_STYLE  = { fill: { fgColor: { rgb: 'D9E1F2' } }, font: { bold: true, italic: true, sz: 9 }, alignment: { horizontal: 'left' } }
+        const INPUT_STYLE   = { fill: { fgColor: { rgb: 'E6F0FF' } }, border: { top: { style: 'thin' }, bottom: { style: 'thin' }, left: { style: 'thin' }, right: { style: 'thin' } }, alignment: { horizontal: 'left' } }
+        const LABEL_STYLE   = { font: { sz: 10 }, alignment: { horizontal: 'left' } }
 
-        section('FLAG NOTIFIER')
-        rows.push(['Flag Officer Name', 'Relationship / Context'])
-        rows.push(['', ''])
-        blank()
+        const cell = (v: string | number, s?: object) => ({ v, s } as any)
+        const sectionRow = (title: string) => { rows.push([cell(title, SECTION_STYLE)]); r++ }
+        const headerRow = (...labels: string[]) => { rows.push(labels.map(l => cell(l, HEADER_STYLE))); r++ }
+        const inputRow  = (cols: number) => { rows.push(Array.from({ length: cols }, () => cell('', INPUT_STYLE))); return r++ }
+        const blankRow  = () => { rows.push([null]); r++ }
+        const labelRow  = (label: string) => { rows.push([cell(label, LABEL_STYLE)]); r++ }
 
-        section(`COMMAND PREFERENCES (${prefOptions.length} commands in this slate)`)
-        rows.push(['Rank', 'Platform — Location', 'Narrative / Reasoning'])
-        prefOptions.forEach((_opt, i) => rows.push([`Preference ${i + 1}`, '', '']))
-        if (prefOptions.length === 0) rows.push(['(No commands available)', '', ''])
-        blank()
+        // Track validation targets
+        const validations: object[] = []
+        let prefStartRow = 0, prefEndRow = 0
+        const ofrpCells: string[] = []
 
-        section('CONSIDERATIONS & NOTES')
-        rows.push(['Amplifying info for Detailer (timing, family, career goals, etc.)'])
-        rows.push([''])
-        blank()
+        // Title
+        rows.push([cell(`PERS-41 Candidate Preference Template — ${slate.name}`, { font: { bold: true, sz: 14 } })]); r++
+        rows.push([cell(`Slate Window: ${slate.windowStart} — ${slate.windowEnd}`, { font: { italic: true, sz: 10, color: { rgb: '555555' } } })]); r++
+        blankRow()
 
-        section('TOUR HISTORY')
+        // ── OFFICER INFORMATION ──────────────────────────────────────────────
+        sectionRow('OFFICER INFORMATION')
+        headerRow('Full Name', 'Rank', 'Designator', 'Availability Date (XO Pipeline Start)', '')
+        inputRow(4)
+        blankRow()
+
+        // ── CONTACT INFORMATION ──────────────────────────────────────────────
+        sectionRow('CONTACT INFORMATION')
+        headerRow('Work Email', 'Home / Personal Email', 'Work Phone', 'Personal Cell', '')
+        inputRow(4)
+        headerRow('Mailing Address (Street, City, State ZIP)', '', '', '', '')
+        inputRow(1) // will be merged later via !merges
+        blankRow()
+
+        // ── FLAG NOTIFIER ────────────────────────────────────────────────────
+        sectionRow('FLAG NOTIFIER')
+        headerRow('Flag Officer Name', 'Relationship / Context', '', '', '')
+        inputRow(2)
+        blankRow()
+
+        // ── COMMAND PREFERENCES ──────────────────────────────────────────────
+        sectionRow(`COMMAND PREFERENCES — Ranked 1–${prefOptions.length || 'N'}`)
+        headerRow('Rank', 'Platform — Location (select from dropdown)', '', '', '')
+        prefStartRow = r
+        for (let i = 0; i < (prefOptions.length || 1); i++) {
+            rows.push([cell(`Preference ${i + 1}`, LABEL_STYLE), cell('', INPUT_STYLE)])
+            r++
+        }
+        prefEndRow = r - 1
+        blankRow()
+
+        // ── CONSIDERATIONS & NOTES ───────────────────────────────────────────
+        sectionRow('CONSIDERATIONS & NOTES')
+        labelRow('Amplifying info for Detailer — timing, family, career goals, etc.')
+        rows.push([cell('', INPUT_STYLE)]); r++  // large merged input area
+        blankRow()
+
+        // ── TOUR HISTORY ─────────────────────────────────────────────────────
+        sectionRow('TOUR HISTORY')
         for (const tour of TOURS) {
-            rows.push([tour])
-            rows.push(['Ship / Command', 'Platform (DDG/CG/etc.)', 'OFRP Phase'])
-            rows.push(['', '', ''])
-            rows.push(['Months U/W', 'Months Deployed', 'Months as OOD'])
-            rows.push(['', '', ''])
-            rows.push(['# OOD Evolutions', '# CONN Evolutions', '# JOOD Evolutions'])
-            rows.push(['', '', ''])
-            blank()
+            rows.push([cell(tour, { font: { bold: true, sz: 10 }, fill: { fgColor: { rgb: 'E8F5E9' } } })]); r++
+            headerRow('Ship / Command', 'Platform (DDG/CG/etc.)', 'OFRP Phase (majority)', '', '')
+            const ofrpRow = inputRow(3)
+            ofrpCells.push(`C${ofrpRow}`)
+            headerRow('Months U/W', 'Months Deployed', 'Months stood as OOD', '', '')
+            inputRow(3)
+            headerRow('# OOD Evolutions', '# CONN Evolutions', '# JOOD Evolutions', '', '')
+            inputRow(3)
+            blankRow()
         }
 
-        section('PROFESSIONAL QUALIFICATIONS')
-        rows.push(['Field', 'Value'])
-        rows.push(['JPME Completion / Plan', ''])
-        rows.push(['WTI Qualification (Type if applicable)', ''])
-        blank()
+        // ── PROFESSIONAL QUALIFICATIONS ──────────────────────────────────────
+        sectionRow('PROFESSIONAL QUALIFICATIONS')
+        headerRow('Field', 'Value', '', '', '')
+        for (const field of ['JPME Completion / Plan', 'WTI Qualification (Type if applicable)']) {
+            rows.push([cell(field, LABEL_STYLE), cell('', INPUT_STYLE)]); r++
+        }
+        blankRow()
 
-        section('PERSONAL CONSIDERATIONS')
-        rows.push(['Consideration', 'Notes'])
-        rows.push(['Co-Location Request', ''])
-        rows.push(['EFM Considerations', ''])
-        rows.push(['Education / Pipeline', ''])
+        // ── PERSONAL CONSIDERATIONS ──────────────────────────────────────────
+        sectionRow('PERSONAL CONSIDERATIONS')
+        headerRow('Consideration', 'Notes', '', '', '')
+        for (const field of ['Co-Location Request', 'EFM Considerations', 'Education / Pipeline']) {
+            rows.push([cell(field, LABEL_STYLE), cell('', INPUT_STYLE)]); r++
+        }
 
-        const ws = XLSX.utils.aoa_to_sheet(rows)
-        ws['!cols'] = [{ wch: 40 }, { wch: 30 }, { wch: 30 }, { wch: 30 }]
-        const wb = XLSX.utils.book_new()
-        XLSX.utils.book_append_sheet(wb, ws, 'Candidate Input')
-        XLSX.writeFile(wb, `${slate.name.replace(/\s+/g, '_')}_candidate_template.xlsx`)
+        // Build worksheet
+        const ws = XLSXStyle.utils.aoa_to_sheet(rows)
+        ws['!cols'] = [{ wch: 36 }, { wch: 32 }, { wch: 22 }, { wch: 22 }, { wch: 20 }]
+
+        // Data validation: preference platform dropdown
+        if (prefOptions.length > 0) {
+            validations.push({
+                type: 'list',
+                sqref: `B${prefStartRow}:B${prefEndRow}`,
+                formulae: [`Data!$A$1:$A$${prefOptions.length}`],
+                allowBlank: true,
+                showDropDown: false,
+            })
+        }
+        // Data validation: OFRP phase dropdown on each tour row
+        for (const sqref of ofrpCells) {
+            validations.push({
+                type: 'list',
+                sqref,
+                formulae: [`Data!$B$1:$B$${OFRP_PHASES.length}`],
+                allowBlank: true,
+                showDropDown: false,
+            })
+        }
+        if (validations.length > 0) (ws as any)['!dataValidations'] = validations
+
+        // Sheet protection — allow selecting locked + unlocked cells
+        ;(ws as any)['!protect'] = { sheet: true, password: '', selectLockedCells: true, selectUnlockedCells: true }
+
+        XLSXStyle.utils.book_append_sheet(wb, ws, 'Candidate Input')
+        XLSXStyle.writeFile(wb, `${slate.name.replace(/\s+/g, '_')}_candidate_template.xlsx`)
     }
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
