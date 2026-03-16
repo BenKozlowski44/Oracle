@@ -253,7 +253,7 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
         // Style helpers
         const SECTION_STYLE = { fill: { fgColor: { rgb: '1F3864' } }, font: { bold: true, color: { rgb: 'FFFFFF' }, sz: 11 }, alignment: { horizontal: 'left' } }
         const HEADER_STYLE  = { fill: { fgColor: { rgb: 'D9E1F2' } }, font: { bold: true, italic: true, sz: 9 }, alignment: { horizontal: 'left' } }
-        const INPUT_STYLE   = { fill: { fgColor: { rgb: 'E6F0FF' } }, border: { top: { style: 'thin' }, bottom: { style: 'thin' }, left: { style: 'thin' }, right: { style: 'thin' } }, alignment: { horizontal: 'left' } }
+        const INPUT_STYLE   = { fill: { fgColor: { rgb: 'E6F0FF' } }, border: { top: { style: 'thin' }, bottom: { style: 'thin' }, left: { style: 'thin' }, right: { style: 'thin' } }, alignment: { horizontal: 'left' }, protection: { locked: false } }
         const LABEL_STYLE   = { font: { sz: 10 }, alignment: { horizontal: 'left' } }
 
         const cell = (v: string | number, s?: object) => ({ v, s } as any)
