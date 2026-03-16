@@ -7,6 +7,7 @@ import { registerToastHandlers } from '@/lib/notify'
 import { toast } from 'sonner'
 import { chooseBackupFile, restoreFromFile, getBackupStatus } from '@/services/storage'
 import navalBg from '@/assets/naval-bg.png'
+import { HudBar } from '@/components/HudBar'
 
 // ─── Lazy page imports ─────────────────────────────────────────────────────
 import DashboardPage from '@/pages/page'
@@ -111,7 +112,7 @@ export default function App() {
           ))}
         </nav>
 
-        <main className="p-4">
+        <main className="p-4 pb-10">
           <Routes>
             <Route path="/" element={<DashboardPage />} />
             <Route path="/oracle" element={<OraclePage />} />
@@ -139,6 +140,7 @@ export default function App() {
           />
         )}
 
+        <HudBar />
         <Toaster richColors position="bottom-right" />
       </div>{/* /relative z-10 */}
       </div>{/* /background image div */}

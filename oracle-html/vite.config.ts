@@ -10,6 +10,11 @@ export default defineConfig({
     react(),
     viteSingleFile()
   ],
+  define: {
+    __BUILD_DATE__: JSON.stringify(
+      new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    )
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src')
