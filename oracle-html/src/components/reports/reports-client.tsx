@@ -50,7 +50,7 @@ export function ReportsClient({ officers, slates, oracleData }: ReportsClientPro
                 )}
             </div>
 
-            <div className="flex gap-4 p-4 border rounded-md bg-muted/20 items-end print:hidden">
+            <div className="flex gap-4 p-4 border border-[#c9a227]/20 rounded-md bg-[#07111f]/60 backdrop-blur-sm items-end print:hidden">
                 <div className="space-y-2 flex-1 max-w-[300px]">
                     <label className="text-sm font-medium">Report Type</label>
                     <Select value={selectedReport} onValueChange={setSelectedReport}>
@@ -87,8 +87,8 @@ export function ReportsClient({ officers, slates, oracleData }: ReportsClientPro
                 )}
             </div>
 
-            {/* White content area — scoped to reports only */}
-            <div className="bg-background rounded-lg p-4 -mx-1">
+            {/* Report content — navy theme */}
+            <div>
 
                 {["alignment", "commands", "summary", "pref-alignment"].includes(selectedReport) && !slate && (
                     <div className="p-8 text-center text-muted-foreground border border-dashed rounded-md print:hidden">

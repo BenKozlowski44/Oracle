@@ -167,20 +167,20 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
     return (
         <div className="space-y-8">
             <div className="print:hidden">
-                <h1 className="text-3xl font-bold tracking-tight">Preferences Summary</h1>
-                <p className="text-muted-foreground">
+                <h1 className="text-3xl font-bold tracking-tight text-white">Preferences Summary</h1>
+                <p className="text-white/60">
                     Aggregated analysis of locations, platforms, and CO-SM command rankings.
                 </p>
             </div>
 
             {/* Standard Bank Top Row */}
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
-                <div className="col-span-full border-b pb-2">
-                    <h2 className="text-2xl font-bold tracking-tight">Standard Bank & Firefighters</h2>
+                <div className="col-span-full border-b border-[#c9a227]/30 pb-2">
+                    <h2 className="text-2xl font-bold tracking-tight text-[#c9a227]">Standard Bank &amp; Firefighters</h2>
                 </div>
 
-                <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
-                    <h3 className="font-semibold mb-4 text-center">Priority Breakdown</h3>
+                <div className="rounded-xl border border-[#c9a227]/20 bg-[#07111f]/80 backdrop-blur-sm shadow-lg p-6 text-white">
+                    <h3 className="font-semibold mb-4 text-center text-white/90">Priority Breakdown</h3>
                     <div className="h-[250px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
@@ -205,14 +205,14 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                     </div>
                 </div>
 
-                <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
-                    <h3 className="font-semibold mb-4 text-center">Constituent's #1 Preferred Location</h3>
+                <div className="rounded-xl border border-[#c9a227]/20 bg-[#07111f]/80 backdrop-blur-sm shadow-lg p-6 text-white">
+                    <h3 className="font-semibold mb-4 text-center text-white/90">Constituent's #1 Preferred Location</h3>
                     <div className="h-[250px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={data.topLocations} layout="vertical" margin={{ left: 50, right: 30, top: 0, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                                <XAxis type="number" allowDecimals={false} />
-                                <YAxis type="category" dataKey="name" width={100} tick={{ fontSize: 12 }} />
+                                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#1e3a5f" />
+                                <XAxis type="number" allowDecimals={false} tick={{ fill: '#94a3b8', fontSize: 11 }} />
+                                <YAxis type="category" dataKey="name" width={100} tick={{ fontSize: 12, fill: '#cbd5e1' }} />
                                 <Tooltip />
                                 <Bar dataKey="count" fill="#3b82f6" radius={[0, 4, 4, 0]}>
                                     <LabelList
@@ -239,14 +239,14 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                     </div>
                 </div>
 
-                <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
-                    <h3 className="font-semibold mb-4 text-center">Top 3 Preferred Locations</h3>
+                <div className="rounded-xl border border-[#c9a227]/20 bg-[#07111f]/80 backdrop-blur-sm shadow-lg p-6 text-white">
+                    <h3 className="font-semibold mb-4 text-center text-white/90">Top 3 Preferred Locations</h3>
                     <div className="h-[250px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={data.top3Locations} layout="vertical" margin={{ left: 50, right: 30, top: 0, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                                <XAxis type="number" allowDecimals={false} />
-                                <YAxis type="category" dataKey="name" width={100} tick={{ fontSize: 11 }} />
+                                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#1e3a5f" />
+                                <XAxis type="number" allowDecimals={false} tick={{ fill: '#94a3b8', fontSize: 11 }} />
+                                <YAxis type="category" dataKey="name" width={100} tick={{ fontSize: 11, fill: '#cbd5e1' }} />
                                 <Tooltip cursor={{ fill: 'transparent' }} />
                                 <Legend />
                                 <Bar dataKey="rank1" name="#1 Choice" stackId="a" fill="#22c55e" />
@@ -261,7 +261,7 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                                                     x={x + width + 5}
                                                     y={y + height / 2}
                                                     dy={4}
-                                                    fill="#6b7280"
+                                                    fill="#cbd5e1"
                                                     fontSize={11}
                                                     textAnchor="start"
                                                 >
@@ -276,14 +276,14 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                     </div>
                 </div>
 
-                <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
-                    <h3 className="font-semibold mb-4 text-center">Constituent's #1 Preferred Platform</h3>
+                <div className="rounded-xl border border-[#c9a227]/20 bg-[#07111f]/80 backdrop-blur-sm shadow-lg p-6 text-white">
+                    <h3 className="font-semibold mb-4 text-center text-white/90">Constituent's #1 Preferred Platform</h3>
                     <div className="h-[250px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={data.topPlatforms}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                <XAxis dataKey="name" tick={{ fontSize: 12 }} angle={-45} textAnchor="end" height={60} />
-                                <YAxis allowDecimals={false} />
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1e3a5f" />
+                                <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#cbd5e1' }} angle={-45} textAnchor="end" height={60} />
+                                <YAxis allowDecimals={false} tick={{ fill: '#94a3b8', fontSize: 11 }} />
                                 <Tooltip />
                                 <Bar dataKey="count" fill="#ef4444" radius={[4, 4, 0, 0]} maxBarSize={60}>
                                     <LabelList
@@ -294,7 +294,7 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                                                 <text
                                                     x={x + width / 2}
                                                     y={y - 5}
-                                                    fill="#6b7280"
+                                                    fill="#cbd5e1"
                                                     fontSize={11}
                                                     textAnchor="middle"
                                                 >
@@ -312,18 +312,18 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
 
             {/* CO-SM Row */}
             <div className="grid gap-6">
-                <div className="col-span-full border-b pb-2 pt-6">
-                    <h2 className="text-2xl font-bold tracking-tight">CO-SM Priorities</h2>
+                <div className="col-span-full border-b border-[#c9a227]/30 pb-2 pt-6">
+                    <h2 className="text-2xl font-bold tracking-tight text-[#c9a227]">CO-SM Priorities</h2>
                 </div>
 
-                <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
-                    <h3 className="font-semibold mb-4 text-center">Top 3 Command Preferences</h3>
+                <div className="rounded-xl border border-[#c9a227]/20 bg-[#07111f]/80 backdrop-blur-sm shadow-lg p-6 text-white">
+                    <h3 className="font-semibold mb-4 text-center text-white/90">Top 3 Command Preferences</h3>
                     <div className="h-[300px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={data.top3Choices} layout="vertical" margin={{ left: 80, right: 30, top: 0, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                                <XAxis type="number" allowDecimals={false} />
-                                <YAxis type="category" dataKey="name" width={140} tick={{ fontSize: 11 }} />
+                                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#1e3a5f" />
+                                <XAxis type="number" allowDecimals={false} tick={{ fill: '#94a3b8', fontSize: 11 }} />
+                                <YAxis type="category" dataKey="name" width={140} tick={{ fontSize: 11, fill: '#cbd5e1' }} />
                                 <Tooltip cursor={{ fill: 'transparent' }} />
                                 <Legend />
                                 <Bar dataKey="rank1" name="#1 Choice" stackId="a" fill="#22c55e" />
@@ -338,7 +338,7 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                                                     x={x + width + 5}
                                                     y={y + height / 2}
                                                     dy={4}
-                                                    fill="#6b7280"
+                                                    fill="#cbd5e1"
                                                     fontSize={11}
                                                     textAnchor="start"
                                                 >
