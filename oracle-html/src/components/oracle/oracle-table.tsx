@@ -20,6 +20,7 @@ import { saveOracleCommand, saveOfficers, saveMetrics, deleteOracleCommand, getM
 import { CommandPipelineTimeline } from "./command-pipeline-timeline"
 import { Button } from "@/components/ui/button"
 import { formatToMMMyy, getPipelineHealth, predictNextVacancyDate, getCoSmRptDisplay, getCdrCmdXoRptDate } from "@/lib/utils"
+import { validateCommand } from "@/lib/validators"
 import { format, parseISO, isValid } from "date-fns"
 import { getCommandAlerts } from "@/lib/alerts"
 import {
@@ -195,6 +196,13 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
     }
 
     const handleSaveCommand = async (updatedCommand: OracleCommand) => {
+        // Validate before touching state or storage
+        const validationErrors = validateCommand(updatedCommand)
+        if (validationErrors.length > 0) {
+            saveError(`Cannot save — fix the following:\n• ${validationErrors.join('\n• ')}`)
+            return
+        }
+
         // 1. Check for Conflict Resolution
         const originalCommand = data.find(c => c.id === updatedCommand.id)
         let newMetrics = { ...metrics }
@@ -262,6 +270,13 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
         const commandToSave: OracleCommand = freshSlate !== 'TBD'
             ? { ...updatedCommand, nextSlateParams: { ...updatedCommand.nextSlateParams, targetBoardDate: freshSlate } }
             : updatedCommand
+
+        // Validate before writing to storage
+        const validationErrors = validateCommand(commandToSave)
+        if (validationErrors.length > 0) {
+            saveError(`Cannot save — fix the following:\n• ${validationErrors.join('\n• ')}`)
+            return
+        }
 
         const newData = data.map((c) => (c.id === commandToSave.id ? commandToSave : c));
         setData(newData);
