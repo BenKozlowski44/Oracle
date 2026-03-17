@@ -255,12 +255,20 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
     }
 
     const persistUpdate = (updatedCommand: OracleCommand, currentOfficers: Officer[], message: string) => {
-        const newData = data.map((c) => (c.id === updatedCommand.id ? updatedCommand : c));
+        // Always recompute targetBoardDate before persisting so the stored JSON
+        // never drifts from the live calculation (fleet-up, checklist, etc.
+        // all go through here and would otherwise write whatever was last set).
+        const freshSlate = predictNextVacancyDate(updatedCommand)
+        const commandToSave: OracleCommand = freshSlate !== 'TBD'
+            ? { ...updatedCommand, nextSlateParams: { ...updatedCommand.nextSlateParams, targetBoardDate: freshSlate } }
+            : updatedCommand
+
+        const newData = data.map((c) => (c.id === commandToSave.id ? commandToSave : c));
         setData(newData);
         setIsEditOpen(false);
 
         try {
-            saveOracleCommand(updatedCommand)
+            saveOracleCommand(commandToSave)
             saveOfficers(currentOfficers)
             notifySuccess(message)
         } catch (error) {
@@ -871,13 +879,18 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                                                 </TableCell>
                                                 <TableCell className="w-[150px] min-w-[150px]">
                                                     {(() => {
-                                                        const health = getPipelineHealth(cmd)
+                                                        // Mirror renderCmdRow: always use live predictNextVacancyDate so
+                                                        // this badge stays in sync with the main table's cmdLive pattern.
+                                                        const liveBoard = predictNextVacancyDate(cmd)
+                                                        const cmdLive: OracleCommand = liveBoard !== 'TBD'
+                                                            ? { ...cmd, nextSlateParams: { ...cmd.nextSlateParams, targetBoardDate: liveBoard } }
+                                                            : cmd
+                                                        const health = getPipelineHealth(cmdLive)
                                                         const badgeClass = health.status === 'green' ? 'border-green-500 text-green-600 bg-green-500/10' : health.status === 'yellow' ? 'border-amber-400 text-amber-600 bg-amber-400/10' : 'border-red-500 text-red-600 bg-red-500/10'
-                                                        const nextDate = cmd.inboundXO?.timelineData?.i || cmd.slatedXO?.reportDate || null
                                                         return (
                                                             <>
                                                                 <Badge variant="outline" className={`w-full justify-center truncate ${badgeClass} ${health.approaching ? 'animate-pulse ring-2 ring-amber-400/60 ring-offset-1 bg-amber-400/20 font-bold' : ''} ${health.status === 'red' && !health.approaching ? 'animate-pulse ring-2 ring-red-500/60 ring-offset-1 font-bold' : ''}`} title={health.detail}>
-                                                                    {health.approaching && '⚠ '}{cmd.nextSlateParams.requirement} via {cmd.nextSlateParams.targetBoardDate}
+                                                                    {health.approaching && '⚠ '}{cmdLive.nextSlateParams.requirement} via {cmdLive.nextSlateParams.targetBoardDate}
                                                                 </Badge>
                                                                 {getCdrCmdXoRptDate(cmd) && <div className="text-xs text-muted-foreground mt-1 text-center">XO RPT: {formatToMMMyy(getCdrCmdXoRptDate(cmd)!)}</div>}
                                                             </>
