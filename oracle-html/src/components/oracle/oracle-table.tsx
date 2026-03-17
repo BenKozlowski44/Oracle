@@ -13,14 +13,14 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { EditCommandDialog } from "./edit-command-dialog"
 import { CommandRow } from "./command-row"
+import { CdrCmdRow } from "./cdr-cmd-row"
 import { Search, Plus, ChevronDown, ChevronRight } from "lucide-react"
 import { saveError } from "@/lib/notify"
 import { getMetrics } from "@/services/storage"
 import { CommandPipelineTimeline } from "./command-pipeline-timeline"
 import { Button } from "@/components/ui/button"
 import { formatToMMMyy } from "@/lib/utils"
-import { getPipelineHealth, predictNextVacancyDate, getCdrCmdXoRptDate } from "@/lib/slate-logic"
-import { format, parseISO, isValid } from "date-fns"
+import { getPipelineHealth } from "@/lib/slate-logic"
 import {
     Dialog,
     DialogContent,
@@ -347,127 +347,17 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                                     </TableCell>
                                 </TableRow>
                             ) : (
-                                filteredData.map((cmd) => {
-                                    const rowHealth = getPipelineHealth(cmd)
-                                    const rowBorder = rowHealth.status === 'green' ? 'border-l-green-500' : rowHealth.status === 'yellow' ? 'border-l-amber-400' : 'border-l-red-500'
-                                    return (
-                                    <React.Fragment key={cmd.id}>
-                                        <TableRow key={cmd.id}>
-                                            <TableCell className={`w-8 p-1.5 border-l-4 ${rowBorder}`}>
-                                                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => toggleExpand(cmd.id)}>
-                                                    {expandedRows.has(cmd.id) ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
-                                                </Button>
-                                            </TableCell>
-                                            <TableCell className="max-w-[200px] whitespace-normal">
-                                                {(() => {
-                                                    const health = getPipelineHealth(cmd)
-                                                    const dotColor = health.status === 'green' ? 'bg-green-500' : health.status === 'yellow' ? 'bg-amber-400' : 'bg-red-500'
-                                                    return (
-                                                        <div className="flex items-start gap-2">
-                                                            <span className={`mt-1.5 flex-shrink-0 w-2 h-2 rounded-full ${dotColor} ${health.approaching ? 'animate-pulse ring-2 ring-amber-400/50 ring-offset-1' : ''} ${health.status === 'red' && !health.approaching ? 'animate-pulse ring-2 ring-red-500/50 ring-offset-1' : ''}`} title={`${health.label}: ${health.detail}`} />
-                                                            <div>
-                                                                <button className="font-semibold leading-tight text-left hover:underline cursor-pointer" onClick={() => handleEditClick(cmd)}>{cmd.name}</button>
-                                                                <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-muted-foreground mt-0.5">
-                                                                    <span>{cmd.uic !== "N/A" ? cmd.uic : ""}</span>
-                                                                    {cmd.uic !== "N/A" && <span>•</span>}
-                                                                    <span className="whitespace-nowrap">{cmd.platform || "N/A"}</span>
-                                                                    <span>•</span>
-                                                                    <span className="whitespace-nowrap">{cmd.location}</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    )
-                                                })()}
-                                            </TableCell>
-                                            <TableCell className="max-w-[140px]">
-                                                {(() => {
-                                                    const isNonSWO = cmd.currentCO.fillCommunity && cmd.currentCO.fillCommunity !== '1110'
-                                                    const displayName = isNonSWO ? `${cmd.currentCO.fillCommunity} Fill` : cmd.currentCO.name
-                                                    return (
-                                                        <>
-                                                            <div className={`text-sm font-medium truncate ${isNonSWO ? 'text-muted-foreground italic' : 'text-blue-600'}`} title={cmd.currentCO.name}>{displayName}</div>
-                                                            <div className="text-xs text-muted-foreground">
-                                                                {(() => {
-                                                                    const dateStr = cmd.currentCO.timelineData?.q || cmd.currentCO.prd;
-                                                                    if (!dateStr) return "CoC: N/A";
-                                                                    const date = parseISO(dateStr);
-                                                                    const formatted = isValid(date) ? format(date, "MMMyy").toUpperCase() : dateStr;
-                                                                    return `CoC: ${formatted}`;
-                                                                })()}
-                                                            </div>
-                                                        </>
-                                                    )
-                                                })()}
-                                            </TableCell>
-                                            <TableCell className="max-w-[160px]">
-                                                <div className="flex items-start justify-between gap-1">
-                                                    <div className="overflow-hidden">
-                                                        {(() => {
-                                                            const isNonSWO = cmd.currentXO.fillCommunity && cmd.currentXO.fillCommunity !== '1110'
-                                                            const displayName = isNonSWO ? `${cmd.currentXO.fillCommunity} Fill` : cmd.currentXO.name
-                                                            return (
-                                                                <>
-                                                                    <div className={`text-sm font-medium truncate ${isNonSWO ? 'text-muted-foreground italic' : 'text-green-600'}`} title={cmd.currentXO.name}>{displayName}</div>
-                                                                    <div className="text-xs text-muted-foreground">
-                                                                        {(() => {
-                                                                            const dateStr = cmd.currentXO.timelineData?.m || cmd.currentXO.prd;
-                                                                            if (!dateStr) return "CoC: N/A";
-                                                                            const date = parseISO(dateStr);
-                                                                            const formatted = isValid(date) ? format(date, "MMMyy").toUpperCase() : dateStr;
-                                                                            return `CoC: ${formatted}`;
-                                                                        })()}
-                                                                    </div>
-                                                                </>
-                                                            )
-                                                        })()}
-                                                    </div>
-                                                    <FleetUpChecklist command={cmd} onUpdate={(c) => persistUpdate(c, officers, "Checklist Updated")} />
-                                                </div>
-                                            </TableCell>
-                                            <TableCell className="max-w-[140px]">
-                                                {cmd.inboundXO ? (
-                                                    <>
-                                                        {(() => {
-                                                            const isNonSWO = cmd.inboundXO.fillCommunity && cmd.inboundXO.fillCommunity !== '1110'
-                                                            const displayName = isNonSWO ? `${cmd.inboundXO.fillCommunity} Fill` : cmd.inboundXO.name
-                                                            const noName = !cmd.inboundXO.name
-                                                            return noName ? null : (
-                                                                <div className={`text-sm font-medium truncate ${isNonSWO ? 'text-muted-foreground italic' : cmd.inboundXO.name.toLowerCase().includes('no fill') ? 'text-red-600' : 'text-yellow-600'}`} title={cmd.inboundXO.name}>{displayName}</div>
-                                                            )
-                                                        })()}
-                                                        {cmd.inboundXO.timelineData?.i && <div className="text-xs text-muted-foreground">RPT: {formatToMMMyy(cmd.inboundXO.timelineData.i)}</div>}
-                                                    </>
-                                                ) : <span className="text-muted-foreground italic text-sm">-- Open --</span>}
-                                            </TableCell>
-                                            <TableCell className="w-[150px] min-w-[150px]">
-                                                {(() => {
-                                                    const liveBoard = predictNextVacancyDate(cmd)
-                                                    const cmdLive: OracleCommand = liveBoard !== 'TBD'
-                                                        ? { ...cmd, nextSlateParams: { ...cmd.nextSlateParams, targetBoardDate: liveBoard } }
-                                                        : cmd
-                                                    const health = getPipelineHealth(cmdLive)
-                                                    const badgeClass = health.status === 'green' ? 'border-green-500 text-green-600 bg-green-500/10' : health.status === 'yellow' ? 'border-amber-400 text-amber-600 bg-amber-400/10' : 'border-red-500 text-red-600 bg-red-500/10'
-                                                    return (
-                                                        <>
-                                                            <Badge variant="outline" className={`w-full justify-center truncate ${badgeClass} ${health.approaching ? 'animate-pulse ring-2 ring-amber-400/60 ring-offset-1 bg-amber-400/20 font-bold' : ''} ${health.status === 'red' && !health.approaching ? 'animate-pulse ring-2 ring-red-500/60 ring-offset-1 font-bold' : ''}`} title={health.detail}>
-                                                                {health.approaching && '⚠ '}{cmdLive.nextSlateParams.requirement} via {cmdLive.nextSlateParams.targetBoardDate}
-                                                            </Badge>
-                                                            {getCdrCmdXoRptDate(cmd) && <div className="text-xs text-muted-foreground mt-1 text-center">XO RPT: {formatToMMMyy(getCdrCmdXoRptDate(cmd)!)}</div>}
-                                                        </>
-                                                    )
-                                                })()}
-                                            </TableCell>
-                                            <TableCell className="w-[80px]" />
-                                        </TableRow>
-                                        {expandedRows.has(cmd.id) && (
-                                            <TableRow key={cmd.id + "-timeline"} className="bg-muted/20 hover:bg-muted/20">
-                                                <TableCell colSpan={7} className="p-0 border-t-0">
-                                                    <CommandPipelineTimeline command={cmd} />
-                                                </TableCell>
-                                            </TableRow>
-                                        )}
-                                    </React.Fragment>
-                                    )})
+                                filteredData.map((cmd) => (
+                                    <CdrCmdRow
+                                        key={cmd.id}
+                                        cmd={cmd}
+                                        expandedRows={expandedRows}
+                                        onToggleExpand={toggleExpand}
+                                        onEditClick={handleEditClick}
+                                        onPersistUpdate={persistUpdate}
+                                        officers={officers}
+                                    />
+                                ))
                             )}
                         </TableBody>
                     </Table>
