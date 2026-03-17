@@ -60,14 +60,16 @@ export function getCommandAlerts(command: OracleCommand): CommandAlert[] {
     }
 
     // 3. XO fleet-up date is after CO departure
-    // Data quality warning — doesn't block saves; user may be entering partial data.
+    // Use the CO's scheduled CoC date (timelineData.q) as the departure reference.
+    // Falling back to prd only when no timeline CoC date is set, since prd (orders PRD)
+    // often predates the planned change of command and creates false positives.
     const xoFleetUp = command.currentXO?.timelineData?.k
-    const coPrd = command.currentCO?.prd
-    if (xoFleetUp && coPrd && xoFleetUp > coPrd) {
+    const coDeparture = command.currentCO?.timelineData?.q || command.currentCO?.prd
+    if (xoFleetUp && coDeparture && xoFleetUp > coDeparture) {
         alerts.push({
             id: command.id + "_timeline",
             name: command.name,
-            issue: `Timeline conflict: XO fleet-up (${formatToMMMyy(xoFleetUp)}) is after CO departure (${formatToMMMyy(coPrd)})`,
+            issue: `Timeline conflict: XO fleet-up (${formatToMMMyy(xoFleetUp)}) is after CO departure (${formatToMMMyy(coDeparture)})`,
             type: "timeline_conflict"
         })
     }
