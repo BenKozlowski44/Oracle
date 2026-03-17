@@ -238,7 +238,15 @@ export function predictNextVacancyDate(command: OracleCommand): string {
       // If the slated XO is a real named officer (not just a slate label like "26-3"),
       // look PAST them to their fleet-up date — that's when the next hole opens.
       const slatedName = command.slatedXO?.name || "";
-      const slatedIsRealPerson = /[a-zA-Z]{2,}/.test(slatedName) && !slatedName.match(/^\d{2}-\d/);
+      // Placeholder labels like "Forecast", "26-3", "VACANT" are not real people.
+      // Without this guard, "Forecast" passes the letter-check and tricks the code
+      // into using the fleet-up date (k) instead of the report date, producing a
+      // slate prediction that is several boards too late (e.g. Stockdale showing 26-4
+      // instead of 26-3 when compared against a correctly-labelled command like Mobile).
+      const PLACEHOLDER_NAMES = new Set(["Forecast", "VACANT", "Vacant", "TBD", ""]);
+      const slatedIsRealPerson = /[a-zA-Z]{2,}/.test(slatedName)
+        && !slatedName.match(/^\d{2}-\d/)
+        && !PLACEHOLDER_NAMES.has(slatedName);
       const slatedFleetUp = command.slatedXO?.timelineData?.k;
 
       if (slatedIsRealPerson && isFilled(slatedFleetUp ?? undefined)) {
