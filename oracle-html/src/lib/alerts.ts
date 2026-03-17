@@ -1,6 +1,20 @@
 import { OracleCommand, Officer } from "@/lib/types"
-import { format, parseISO, isValid } from "date-fns"
+import { format, parseISO, parse, isValid, isAfter } from "date-fns"
 import { formatToMMMyy } from "@/lib/utils"
+
+/**
+ * Parse a date string that may be ISO ("2027-05-01") or MMMyy ("MAY27").
+ * Returns null if unparseable.
+ */
+function parseFlexDate(dateStr: string): Date | null {
+    // Try ISO first (most timeline values are stored as ISO)
+    const iso = parseISO(dateStr)
+    if (isValid(iso)) return iso
+    // Try MMMyy abbreviated format (e.g. "MAY27", "JUL27")
+    const mmmyy = parse(dateStr, "MMMyy", new Date())
+    if (isValid(mmmyy)) return mmmyy
+    return null
+}
 
 export type AlertType = "missing_xo" | "date_mismatch" | "timeline_conflict"
 
@@ -60,18 +74,23 @@ export function getCommandAlerts(command: OracleCommand): CommandAlert[] {
     }
 
     // 3. XO fleet-up date is after CO departure
-    // Use the CO's scheduled CoC date (timelineData.q) as the departure reference.
-    // Falling back to prd only when no timeline CoC date is set, since prd (orders PRD)
-    // often predates the planned change of command and creates false positives.
-    const xoFleetUp = command.currentXO?.timelineData?.k
-    const coDeparture = command.currentCO?.timelineData?.q || command.currentCO?.prd
-    if (xoFleetUp && coDeparture && xoFleetUp > coDeparture) {
-        alerts.push({
-            id: command.id + "_timeline",
-            name: command.name,
-            issue: `Timeline conflict: XO fleet-up (${formatToMMMyy(xoFleetUp)}) is after CO departure (${formatToMMMyy(coDeparture)})`,
-            type: "timeline_conflict"
-        })
+    // Use proper date parsing so MMMyy-formatted strings (e.g. "MAY27") compare
+    // correctly instead of falling back to alphabetic string comparison
+    // ('M' > 'J' = true, causing MAY27 to wrongly appear after JUL27).
+    // Use CO's timelineData.q (scheduled CoC) with prd as fallback.
+    const xoFleetUpRaw = command.currentXO?.timelineData?.k
+    const coDepartureRaw = command.currentCO?.timelineData?.q || command.currentCO?.prd
+    if (xoFleetUpRaw && coDepartureRaw) {
+        const xoDate = parseFlexDate(xoFleetUpRaw)
+        const coDate = parseFlexDate(coDepartureRaw)
+        if (xoDate && coDate && isAfter(xoDate, coDate)) {
+            alerts.push({
+                id: command.id + "_timeline",
+                name: command.name,
+                issue: `Timeline conflict: XO fleet-up (${formatToMMMyy(xoFleetUpRaw)}) is after CO departure (${formatToMMMyy(coDepartureRaw)})`,
+                type: "timeline_conflict"
+            })
+        }
     }
 
     return alerts
