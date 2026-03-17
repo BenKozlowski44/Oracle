@@ -76,22 +76,20 @@ export function ReportsClient({ officers, slates, oracleData }: ReportsClientPro
                 ))}
             </nav>
 
-            {/* Slate picker — shown only for slate-specific reports */}
+            {/* Slate picker — same navy bar style as the report-type nav */}
             {["alignment", "commands", "summary", "pref-alignment"].includes(selectedReport) && (
-                <div className="flex items-end gap-3 print:hidden">
-                    <div className="space-y-1 max-w-[320px]">
-                        <label className="text-xs font-semibold tracking-widest uppercase text-[#8a9bb0]">Target Slate</label>
-                        <Select value={selectedSlateId} onValueChange={setSelectedSlateId}>
-                            <SelectTrigger className="bg-[#07111f] border-[#c9a227]/30 text-white">
-                                <SelectValue placeholder="Select an Active Slate" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {activeSlates.map(s => (
-                                    <SelectItem key={s.id} value={s.id}>{s.name} ({formatToMMMyy(s.windowStart)})</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
+                <div className="bg-[#07111f] border border-[#c9a227]/30 rounded-md px-4 py-2.5 flex items-center gap-4 shadow-lg print:hidden">
+                    <span className="text-xs font-semibold tracking-widest uppercase text-[#8a9bb0] whitespace-nowrap">Target Slate</span>
+                    <Select value={selectedSlateId} onValueChange={setSelectedSlateId}>
+                        <SelectTrigger className="bg-[#07111f] border-[#c9a227]/30 text-white max-w-[320px] h-8">
+                            <SelectValue placeholder="Select an Active Slate" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {activeSlates.map(s => (
+                                <SelectItem key={s.id} value={s.id}>{s.name} ({formatToMMMyy(s.windowStart)})</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                 </div>
             )}
 
