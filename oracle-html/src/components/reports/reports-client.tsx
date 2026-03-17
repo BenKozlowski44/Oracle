@@ -50,31 +50,39 @@ export function ReportsClient({ officers, slates, oracleData }: ReportsClientPro
                 )}
             </div>
 
-            <div className="flex gap-4 p-4 border border-[#c9a227]/20 rounded-md bg-[#07111f]/60 backdrop-blur-sm items-end print:hidden">
-                <div className="space-y-2 flex-1 max-w-[300px]">
-                    <label className="text-sm font-medium">Report Type</label>
-                    <Select value={selectedReport} onValueChange={setSelectedReport}>
-                        <SelectTrigger>
-                            <SelectValue placeholder="Select Report Type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="preferences">Preference Summary</SelectItem>
-                            <SelectItem value="alignment">Alignment Matrix</SelectItem>
-                            <SelectItem value="pref-alignment">Preference Alignment</SelectItem>
-                            <SelectItem value="commands">Commands on Slate</SelectItem>
-                            <SelectItem value="summary">Slate Summary</SelectItem>
-                            <SelectItem value="missing">Missing Inputs</SelectItem>
-                            <SelectItem value="pipeline">Candidate Pipeline</SelectItem>
-                            <SelectItem value="gaps">Pipeline Gaps</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
+            {/* Report-type nav bar — matches main app nav styling */}
+            <nav className="bg-[#07111f] border border-[#c9a227]/30 rounded-md px-2 flex items-center gap-0 text-xs font-semibold tracking-widest uppercase shadow-lg overflow-x-auto print:hidden">
+                {([
+                    ['preferences',    'Preference Summary'],
+                    ['alignment',      'Alignment Matrix'],
+                    ['pref-alignment', 'Pref Alignment'],
+                    ['commands',       'Commands on Slate'],
+                    ['summary',        'Slate Summary'],
+                    ['missing',        'Missing Inputs'],
+                    ['pipeline',       'Candidate Pipeline'],
+                    ['gaps',           'Pipeline Gaps'],
+                ] as [string, string][]).map(([value, label]) => (
+                    <button
+                        key={value}
+                        onClick={() => setSelectedReport(value)}
+                        className={
+                            selectedReport === value
+                                ? 'relative px-3 py-3.5 text-[#c9a227] border-b-2 border-[#c9a227] transition-colors duration-150 whitespace-nowrap'
+                                : 'relative px-3 py-3.5 text-[#8a9bb0] hover:text-[#c9a227] border-b-2 border-transparent transition-colors duration-150 whitespace-nowrap'
+                        }
+                    >
+                        {label}
+                    </button>
+                ))}
+            </nav>
 
-                {["alignment", "commands", "summary", "pref-alignment"].includes(selectedReport) && (
-                    <div className="space-y-2 flex-1 max-w-[300px]">
-                        <label className="text-sm font-medium">Target Slate</label>
+            {/* Slate picker — shown only for slate-specific reports */}
+            {["alignment", "commands", "summary", "pref-alignment"].includes(selectedReport) && (
+                <div className="flex items-end gap-3 print:hidden">
+                    <div className="space-y-1 max-w-[320px]">
+                        <label className="text-xs font-semibold tracking-widest uppercase text-[#8a9bb0]">Target Slate</label>
                         <Select value={selectedSlateId} onValueChange={setSelectedSlateId}>
-                            <SelectTrigger>
+                            <SelectTrigger className="bg-[#07111f] border-[#c9a227]/30 text-white">
                                 <SelectValue placeholder="Select an Active Slate" />
                             </SelectTrigger>
                             <SelectContent>
@@ -84,8 +92,8 @@ export function ReportsClient({ officers, slates, oracleData }: ReportsClientPro
                             </SelectContent>
                         </Select>
                     </div>
-                )}
-            </div>
+                </div>
+            )}
 
             {/* Report content — navy theme */}
             <div>
