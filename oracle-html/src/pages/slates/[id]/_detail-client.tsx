@@ -29,6 +29,7 @@ import { SlateRequirement, SlateCandidateProfile } from "@/lib/types"
 import { CandidateInputForm } from "@/components/slating/candidate-input-form"
 import { CandidateProfileView } from "@/components/slating/candidate-profile-view"
 import { saveSlate } from "@/services/storage"
+import { parsePreferenceTemplate } from "@/lib/preference-template-parser"
 
 interface SlateDetailClientProps {
     id: string
@@ -581,15 +582,115 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
         document.body.removeChild(link); URL.revokeObjectURL(url)
     }
 
-    const handleFileUpload = async (_e: React.ChangeEvent<HTMLInputElement>) => {
-        toast.info("Bulk profile import is not available in the standalone HTML version. Use the manual candidate input form instead.");
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files?.length) return
+        const file = e.target.files[0]
+        try {
+            const buf = await file.arrayBuffer()
+            const parsed = parsePreferenceTemplate(buf)
+
+            if (!parsed.officerName) {
+                toast.error('Officer name not found in template. Make sure the Full Name field is filled in.')
+                return
+            }
+
+            // Fuzzy name match against candidates on this slate
+            const normalize = (n: string) => n.toUpperCase().replace(/[^A-Z\s]/g, '').trim()
+            const parsedNorm = normalize(parsed.officerName)
+            const matchedOfficer = candidates
+                .map(id => officers.find(o => o.id === id))
+                .filter((o): o is Officer => !!o)
+                .find(o => {
+                    const on = normalize(o.name)
+                    return on.includes(parsedNorm) || parsedNorm.includes(on)
+                })
+
+            if (!matchedOfficer) {
+                toast.error(`No slate candidate named "${parsed.officerName}" found. Add them to the bench first.`)
+                return
+            }
+
+            const existingIdx = candidateProfiles.findIndex(p => p.officerId === matchedOfficer.id)
+            const profile: SlateCandidateProfile = {
+                id: existingIdx >= 0 ? candidateProfiles[existingIdx].id : `profile-${matchedOfficer.id}-${Date.now()}`,
+                slateId: slate.id,
+                officerId: matchedOfficer.id,
+                preferences: parsed.preferences,
+                availabilityDate: parsed.availabilityDate,
+                notes: [
+                    parsed.notes       ? `Notes: ${parsed.notes}` : '',
+                    parsed.coLocation  ? `Co-Location: ${parsed.coLocation}` : '',
+                    parsed.efm         ? `EFM: ${parsed.efm}` : '',
+                    parsed.education   ? `Education: ${parsed.education}` : '',
+                ].filter(Boolean).join(' | ') || undefined,
+                flagContact:  parsed.flagContact,
+                tourHistory:  parsed.tourHistory.length > 0 ? parsed.tourHistory : undefined,
+                jpme:         parsed.jpme,
+                wti:          parsed.wti,
+                contactInfo:  parsed.contactInfo,
+            }
+
+            const newProfiles = existingIdx >= 0
+                ? candidateProfiles.map((p, idx) => idx === existingIdx ? profile : p)
+                : [...candidateProfiles, profile]
+
+            setCandidateProfiles(newProfiles)
+            persistSlates(requirements, candidates, newProfiles)
+            toast.success(`Profile imported for ${matchedOfficer.name}`)
+        } catch (err) {
+            toast.error(`Failed to parse template: ${err instanceof Error ? err.message : 'Unknown error'}`)
+        } finally {
+            if (e.target) e.target.value = ''
+        }
     }
 
-    const handlePerCandidateUpload = async (_e: React.ChangeEvent<HTMLInputElement>) => {
-        toast.info("Per-candidate file import is not available in the standalone HTML version. Use the manual candidate input form instead.");
-        setUploadingOfficerId(null);
-        setUploadTargetOfficerId(null);
-        if (perCandidateFileInputRef.current) perCandidateFileInputRef.current.value = '';
+    const handlePerCandidateUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files?.length || !uploadTargetOfficerId) {
+            setUploadingOfficerId(null)
+            setUploadTargetOfficerId(null)
+            return
+        }
+        const file = e.target.files[0]
+        try {
+            const buf = await file.arrayBuffer()
+            const parsed = parsePreferenceTemplate(buf)
+
+            const existingIdx = candidateProfiles.findIndex(p => p.officerId === uploadTargetOfficerId)
+            const profile: SlateCandidateProfile = {
+                id: existingIdx >= 0 ? candidateProfiles[existingIdx].id : `profile-${uploadTargetOfficerId}-${Date.now()}`,
+                slateId: slate.id,
+                officerId: uploadTargetOfficerId,
+                preferences: parsed.preferences,
+                availabilityDate: parsed.availabilityDate,
+                notes: [
+                    parsed.notes       ? `Notes: ${parsed.notes}` : '',
+                    parsed.coLocation  ? `Co-Location: ${parsed.coLocation}` : '',
+                    parsed.efm         ? `EFM: ${parsed.efm}` : '',
+                    parsed.education   ? `Education: ${parsed.education}` : '',
+                ].filter(Boolean).join(' | ') || undefined,
+                flagContact:  parsed.flagContact,
+                tourHistory:  parsed.tourHistory.length > 0 ? parsed.tourHistory : undefined,
+                jpme:         parsed.jpme,
+                wti:          parsed.wti,
+                contactInfo:  parsed.contactInfo,
+            }
+
+            const newProfiles = existingIdx >= 0
+                ? candidateProfiles.map((p, idx) => idx === existingIdx ? profile : p)
+                : [...candidateProfiles, profile]
+
+            setCandidateProfiles(newProfiles)
+            persistSlates(requirements, candidates, newProfiles)
+
+            const officer = officers.find(o => o.id === uploadTargetOfficerId)
+            toast.success(`Profile imported for ${officer?.name ?? 'officer'}`)
+        } catch (err) {
+            toast.error(`Failed to parse template: ${err instanceof Error ? err.message : 'Unknown error'}`)
+        } finally {
+            setUploadingOfficerId(null)
+            setUploadTargetOfficerId(null)
+            if (perCandidateFileInputRef.current) perCandidateFileInputRef.current.value = ''
+        }
     }
 
 
