@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { addMonths, parse, isValid, format, parseISO } from "date-fns"
 import { calculateTargetBoard, predictNextVacancyDate } from "@/lib/utils"
+import { isPlaceholderName } from "@/lib/constants"
 import { OracleCommand, Officer } from "@/lib/types"
 import { OfficerNameInput } from "./officer-name-input"
 import { CommandTimeline } from "./command-timeline"
@@ -111,7 +112,7 @@ export function EditCommandDialog({
 
     // Auto-populate Slated XO timeline dates when a real person name is selected
     const autoPopulateSlatedXODates = (prev: OracleCommand, name: string) => {
-        const isRealPerson = /[a-zA-Z]{2,}/.test(name) && !name.match(/^\d{2}-\d/)
+        const isRealPerson = !isPlaceholderName(name) && /[a-zA-Z]{2,}/.test(name)
         if (!isRealPerson) {
             return {
                 name,
@@ -153,7 +154,7 @@ export function EditCommandDialog({
 
     // Auto-populate Inbound XO timeline dates when a real person name is selected
     const autoPopulateInboundXODates = (prev: OracleCommand, name: string) => {
-        const isRealPerson = /[a-zA-Z]{2,}/.test(name) && !name.match(/^\d{2}-\d/)
+        const isRealPerson = !isPlaceholderName(name) && /[a-zA-Z]{2,}/.test(name)
         if (!isRealPerson) {
             // Preserve existing timeline; sync reportDate from i for Excel compat
             const existingI = prev.inboundXO?.timelineData?.i
@@ -449,7 +450,7 @@ export function EditCommandDialog({
                     newState = {
                         ...newState,
                         slatedXO: {
-                            name: prev.slatedXO?.name === "Forecast" || !prev.slatedXO?.name ? "Forecast" : prev.slatedXO.name,
+                            name: isPlaceholderName(prev.slatedXO?.name) ? "Forecast" : prev.slatedXO!.name,
                             reportDate: newReportDate,
                             timelineData: {
                                 ...prev.slatedXO?.timelineData,
@@ -465,7 +466,7 @@ export function EditCommandDialog({
                     newState = {
                         ...newState,
                         slatedXO: {
-                            name: prev.slatedXO?.name === "Forecast" || !prev.slatedXO?.name ? "Forecast" : prev.slatedXO.name,
+                            name: isPlaceholderName(prev.slatedXO?.name) ? "Forecast" : prev.slatedXO!.name,
                             reportDate: newReportDate,
                             timelineData: {
                                 ...prev.slatedXO?.timelineData,
@@ -663,7 +664,7 @@ export function EditCommandDialog({
                                             id="slatedCOName"
                                             officers={officers}
                                             placeholder="Leave empty if none"
-                                            value={formData.slatedCO?.name && formData.slatedCO.name !== 'Forecast' ? formData.slatedCO.name : ""}
+                                            value={formData.slatedCO?.name && !isPlaceholderName(formData.slatedCO.name) ? formData.slatedCO.name : ""}
                                             onChange={(v) => setFormData(prev => prev ? ({
                                                 ...prev,
                                                 slatedCO: { name: v || 'Forecast', prd: prev.slatedCO?.prd || "", timelineData: prev.slatedCO?.timelineData }

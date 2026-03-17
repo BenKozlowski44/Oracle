@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { format, parseISO, isValid, parse, subMonths, addMonths } from "date-fns"
 import { type OracleCommand } from "./types"
+import { isPlaceholderName } from "./constants"
 
 export function getCurrentActiveSlate(today: Date = new Date()): string {
   const month = today.getMonth() + 1; // 1-12
@@ -173,7 +174,7 @@ export function predictNextVacancyDate(command: OracleCommand): string {
     // DIRECT CO PIPELINE — trace through community fills to find when a SWO is needed.
     const isNonSWOCurrentCO = command.currentCO?.fillCommunity && command.currentCO.fillCommunity !== '1110'
     const pCOName = command.prospectiveCO?.name
-    const pCOHasRealName = !!pCOName && pCOName !== "" && pCOName !== "Forecast"
+    const pCOHasRealName = !!pCOName && !isPlaceholderName(pCOName)
     const isNonSWOProspectiveCO = command.prospectiveCO?.fillCommunity && command.prospectiveCO.fillCommunity !== '1110'
 
     if (pCOHasRealName && isFilled(command.prospectiveCO?.prd)) {
@@ -199,7 +200,7 @@ export function predictNextVacancyDate(command: OracleCommand): string {
     const isNonSWOInbound = command.inboundXO?.fillCommunity && command.inboundXO.fillCommunity !== '1110'
     // A P-XO is considered "filled" if they have a name AND any arrival date (reportDate or timelineData.i)
     const inboundArrival = (command.inboundXO?.reportDate || command.inboundXO?.timelineData?.i) ?? undefined
-    const hasInboundXO = !isNonSWOInbound && isFilled(inboundArrival) && !!command.inboundXO?.name && command.inboundXO?.name !== "VACANT";
+    const hasInboundXO = !isNonSWOInbound && isFilled(inboundArrival) && !!command.inboundXO?.name && !isPlaceholderName(command.inboundXO?.name);
 
     if (isNonSWOInbound) {
       // NON-SWO COMMUNITY FILL in P-XO: The SWO vacancy opens when the non-SWO fleets up (k date)
@@ -241,12 +242,8 @@ export function predictNextVacancyDate(command: OracleCommand): string {
       // Placeholder labels like "Forecast", "26-3", "VACANT" are not real people.
       // Without this guard, "Forecast" passes the letter-check and tricks the code
       // into using the fleet-up date (k) instead of the report date, producing a
-      // slate prediction that is several boards too late (e.g. Stockdale showing 26-4
-      // instead of 26-3 when compared against a correctly-labelled command like Mobile).
-      const PLACEHOLDER_NAMES = new Set(["Forecast", "VACANT", "Vacant", "TBD", ""]);
-      const slatedIsRealPerson = /[a-zA-Z]{2,}/.test(slatedName)
-        && !slatedName.match(/^\d{2}-\d/)
-        && !PLACEHOLDER_NAMES.has(slatedName);
+      // slate prediction that is several boards too late.
+      const slatedIsRealPerson = !isPlaceholderName(slatedName) && /[a-zA-Z]{2,}/.test(slatedName);
       const slatedFleetUp = command.slatedXO?.timelineData?.k;
 
       if (slatedIsRealPerson && isFilled(slatedFleetUp ?? undefined)) {

@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { EditCommandDialog } from "./edit-command-dialog"
 import { FleetUpChecklist } from "./fleet-up-checklist"
+import { isPlaceholderName } from "@/lib/constants"
 import { Search, Plus, ChevronDown, ChevronRight } from "lucide-react"
 import { saveError, notifySuccess } from "@/lib/notify"
 import { saveOracleCommand, saveOfficers, saveMetrics, deleteOracleCommand, getMetrics } from "@/services/storage"
@@ -588,7 +589,7 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                                         <TableCell className="max-w-[150px]">
                                             {(() => {
                                                 const name = cmd.slatedCO?.name
-                                                const hasRealName = name && name !== 'Forecast'
+                                                const hasRealName = name && !isPlaceholderName(name)
                                                 if (hasRealName) {
                                                     return (
                                                         <>
