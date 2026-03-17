@@ -105,22 +105,23 @@ export function useOracleHandlers({
             return
         }
 
+        // Normalize prd from timeline data first, so alert comparison
+        // reflects the actual state being saved (not the pre-normalization form)
+        const normalized = normalizePrd(updatedCommand)
+
         // Track conflict resolution
-        const originalCommand = data.find((c) => c.id === updatedCommand.id)
+        const originalCommand = data.find((c) => c.id === normalized.id)
         let newMetrics = { ...metrics }
 
         if (originalCommand) {
             const originalAlerts = getCommandAlerts(originalCommand)
-            const newAlerts = getCommandAlerts(updatedCommand)
+            const newAlerts = getCommandAlerts(normalized)
             if (originalAlerts.length > newAlerts.length) {
                 newMetrics.resolvedConflicts += originalAlerts.length - newAlerts.length
             }
         }
 
         setMetrics(newMetrics)
-
-        // Normalize prd from timeline data before saving
-        const normalized = normalizePrd(updatedCommand)
 
         const exists = data.some((c) => c.id === normalized.id)
         const newData = exists
