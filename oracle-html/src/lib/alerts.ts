@@ -1,5 +1,5 @@
 import { OracleCommand, Officer } from "@/lib/types"
-import { format, parseISO, parse, isValid, isAfter } from "date-fns"
+import { format, parseISO, parse, isValid } from "date-fns"
 import { formatToMMMyy } from "@/lib/utils"
 
 /**
@@ -83,7 +83,7 @@ export function getCommandAlerts(command: OracleCommand): CommandAlert[] {
     if (xoFleetUpRaw && coDepartureRaw) {
         const xoDate = parseFlexDate(xoFleetUpRaw)
         const coDate = parseFlexDate(coDepartureRaw)
-        if (xoDate && coDate && isAfter(xoDate, coDate)) {
+        if (xoDate && coDate && format(xoDate, 'yyyyMM') > format(coDate, 'yyyyMM')) {
             alerts.push({
                 id: command.id + "_timeline",
                 name: command.name,
