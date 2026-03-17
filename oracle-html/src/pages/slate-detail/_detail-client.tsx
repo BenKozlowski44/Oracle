@@ -6,7 +6,7 @@ import { toast } from "sonner"
 import type { Slate, Officer, OracleCommand } from "@/lib/types"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, Trash2, Plus, Search, UserPlus, Edit, Upload } from "lucide-react"
+import { ArrowLeft, ArrowRight, Trash2, Plus, Search, UserPlus, Edit, Upload } from "lucide-react"
 import {
     Table,
     TableBody,
@@ -29,7 +29,7 @@ import { SlateRequirement, SlateCandidateProfile } from "@/lib/types"
 import { CandidateInputForm } from "@/components/slating/candidate-input-form"
 import { CandidateProfileView } from "@/components/slating/candidate-profile-view"
 import { saveSlate } from "@/services/storage"
-import { parsePreferenceTemplate } from "@/lib/preference-template-parser"
+import { parsePreferenceTemplate, ParsedPreferenceTemplate } from "@/lib/preference-template-parser"
 
 interface SlateDetailClientProps {
     id: string
@@ -61,6 +61,10 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
     const [uploadTargetOfficerId, setUploadTargetOfficerId] = useState<string | null>(null);
     const [uploadingOfficerId, setUploadingOfficerId] = useState<string | null>(null);
     const perCandidateFileInputRef = useRef<HTMLInputElement>(null);
+
+    // Fallback officer picker when bulk upload name doesn't match
+    const [unmatchedTemplate, setUnmatchedTemplate] = useState<ParsedPreferenceTemplate | null>(null);
+    const [isSelectForTemplateOpen, setIsSelectForTemplateOpen] = useState(false);
 
     // Selection States
     const [searchQuery, setSearchQuery] = useState("");
@@ -529,7 +533,8 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
                 .filter((o): o is Officer => !!o)
                 .find(o => { const on = normalize(o.name); return on.includes(parsedNorm) || parsedNorm.includes(on) })
             if (!matchedOfficer) {
-                toast.error(`No slate candidate named "${parsed.officerName}" found. Add them to the bench first.`)
+                setUnmatchedTemplate(parsed)
+                setIsSelectForTemplateOpen(true)
                 return
             }
             const existingIdx = candidateProfiles.findIndex(p => p.officerId === matchedOfficer.id)
@@ -1270,6 +1275,60 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
                     );
                 })()
             }
+            {/* ── Unmatched-template officer picker ─────────────────────────────────── */}
+            <Dialog open={isSelectForTemplateOpen} onOpenChange={open => { setIsSelectForTemplateOpen(open); if (!open) setUnmatchedTemplate(null) }}>
+                <DialogContent className="sm:max-w-[500px]" aria-describedby={undefined}>
+                    <DialogHeader>
+                        <DialogTitle>Assign Template to Candidate</DialogTitle>
+                        {unmatchedTemplate?.officerName && (
+                            <p className="text-sm text-muted-foreground pt-1">
+                                Could not automatically match <strong>{unmatchedTemplate.officerName}</strong>.
+                                Select the correct candidate from this slate's bench:
+                            </p>
+                        )}
+                    </DialogHeader>
+                    <div className="max-h-[340px] overflow-y-auto border rounded-md mt-2">
+                        {slateCandidates.length === 0 ? (
+                            <p className="text-center text-sm text-muted-foreground py-8">No candidates on this slate's bench yet.</p>
+                        ) : (
+                            <div className="divide-y">
+                                {slateCandidates.map(officer => (
+                                    <button
+                                        key={officer.id}
+                                        className="w-full flex items-center justify-between px-4 py-3 hover:bg-accent transition-colors text-left"
+                                        onClick={() => {
+                                            if (!unmatchedTemplate) return
+                                            const existingIdx = candidateProfiles.findIndex(p => p.officerId === officer.id)
+                                            const profile: SlateCandidateProfile = {
+                                                id: existingIdx >= 0 ? candidateProfiles[existingIdx].id : `profile-${officer.id}-${Date.now()}`,
+                                                slateId: slate.id, officerId: officer.id,
+                                                preferences: unmatchedTemplate.preferences,
+                                                availabilityDate: unmatchedTemplate.availabilityDate,
+                                                notes: [unmatchedTemplate.notes ? `Notes: ${unmatchedTemplate.notes}` : '', unmatchedTemplate.coLocation ? `Co-Location: ${unmatchedTemplate.coLocation}` : '', unmatchedTemplate.efm ? `EFM: ${unmatchedTemplate.efm}` : '', unmatchedTemplate.education ? `Education: ${unmatchedTemplate.education}` : ''].filter(Boolean).join(' | ') || undefined,
+                                                flagContact: unmatchedTemplate.flagContact, tourHistory: unmatchedTemplate.tourHistory.length > 0 ? unmatchedTemplate.tourHistory : undefined,
+                                                jpme: unmatchedTemplate.jpme, wti: unmatchedTemplate.wti, contactInfo: unmatchedTemplate.contactInfo,
+                                            }
+                                            const newProfiles = existingIdx >= 0 ? candidateProfiles.map((p, i) => i === existingIdx ? profile : p) : [...candidateProfiles, profile]
+                                            setCandidateProfiles(newProfiles)
+                                            persistSlates(requirements, candidates, newProfiles)
+                                            toast.success(`Profile imported for ${officer.name}`)
+                                            setIsSelectForTemplateOpen(false)
+                                            setUnmatchedTemplate(null)
+                                        }}
+                                    >
+                                        <div>
+                                            <p className="text-sm font-medium">{officer.name}</p>
+                                            <p className="text-xs text-muted-foreground">{officer.rank} · {officer.designator}</p>
+                                        </div>
+                                        <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </DialogContent>
+            </Dialog>
+
         </div >
     )
 }
