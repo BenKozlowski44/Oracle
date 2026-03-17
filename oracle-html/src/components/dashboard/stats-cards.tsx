@@ -1,7 +1,7 @@
 import { Officer, Billet, OracleCommand, Metrics } from "@/lib/types"
 import { getAllAlerts, getAllPersonnelAlerts } from "@/lib/alerts"
 import { isFirefighter } from "@/lib/officer-utils"
-import { getPipelineHealth } from "@/lib/utils"
+import { getPipelineHealth } from "@/lib/slate-logic"
 import { Link } from "react-router-dom"
 
 export function CommandInventoryCard({ oracleData }: { oracleData: OracleCommand[] }) {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { addMonths, parse, isValid, format, parseISO } from "date-fns"
-import { calculateTargetBoard, predictNextVacancyDate } from "@/lib/utils"
+import { calculateTargetBoard, predictNextVacancyDate } from "@/lib/slate-logic"
 import { isPlaceholderName } from "@/lib/constants"
 import { OracleCommand, Officer } from "@/lib/types"
 import { OfficerNameInput } from "./officer-name-input"

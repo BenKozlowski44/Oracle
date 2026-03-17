@@ -1,5 +1,5 @@
 import { OracleCommand } from "@/lib/types"
-import { getPipelineHealth, getCurrentActiveSlate } from "@/lib/utils"
+import { getPipelineHealth, getCurrentActiveSlate } from "@/lib/slate-logic"
 import { Badge } from "@/components/ui/badge"
 import { useState } from "react"
 

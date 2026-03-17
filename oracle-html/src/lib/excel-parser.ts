@@ -1,6 +1,6 @@
 import ExcelJS from 'exceljs';
 import type { OracleCommand, Officer } from './types';
-import { calculateTargetBoard, predictNextVacancyDate } from './utils';
+import { calculateTargetBoard, predictNextVacancyDate } from './slate-logic';
 
 // Helper: Generate ID from name
 function generateId(name: string): string {
