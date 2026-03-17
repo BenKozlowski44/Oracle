@@ -14,6 +14,55 @@ import { getOfficers, saveOfficers, exportAllData, restoreFromFile, chooseBackup
 import type { Officer } from "@/lib/types"
 import type { BackupStatus } from "@/services/storage"
 
+const OPERATOR_NAME_KEY = '__operatorName'
+
+export function getOperatorName(): string {
+    return localStorage.getItem(OPERATOR_NAME_KEY) || 'LCDR Kozlowski'
+}
+
+function OperatorNameCard() {
+    const [name, setName] = useState(getOperatorName())
+    const [saved, setSaved] = useState(false)
+
+    const handleSave = () => {
+        localStorage.setItem(OPERATOR_NAME_KEY, name.trim() || 'LCDR Kozlowski')
+        setSaved(true)
+        setTimeout(() => setSaved(false), 2500)
+    }
+
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>Application Settings</CardTitle>
+                <CardDescription>
+                    Configure operator-specific preferences shown throughout Oracle.
+                </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <div className="space-y-2">
+                    <label className="text-sm font-medium" htmlFor="operator-name">Operator Name</label>
+                    <p className="text-xs text-muted-foreground">
+                        Displayed on the Command Center dashboard greeting.
+                    </p>
+                    <div className="flex gap-2">
+                        <Input
+                            id="operator-name"
+                            value={name}
+                            onChange={e => setName(e.target.value)}
+                            placeholder="e.g. LCDR Kozlowski"
+                            className="max-w-sm"
+                        />
+                        <Button onClick={handleSave} size="sm">
+                            {saved ? '✓ Saved' : 'Save'}
+                        </Button>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+    )
+}
+
+
 function BackupStatusCard() {
     const [status, setStatus] = useState<BackupStatus>(getBackupStatus())
     const [saving, setSaving] = useState(false)
@@ -210,6 +259,8 @@ export default function DataSettingsPage() {
                 title="Data Management"
                 description="Import updates, manage backups, and configure auto-save."
             />
+
+            <OperatorNameCard />
 
             <BackupStatusCard />
 

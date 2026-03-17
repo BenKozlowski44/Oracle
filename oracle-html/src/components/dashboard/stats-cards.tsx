@@ -4,6 +4,42 @@ import { isFirefighter } from "@/lib/officer-utils"
 import { getPipelineHealth } from "@/lib/slate-logic"
 import { Link } from "react-router-dom"
 
+// ── Shared status display helpers ─────────────────────────────────────────────
+const STATUS_ORDER: Record<string, number> = {
+    "Ready FF":        1,
+    "Available":       2,
+    "Defer":           3,
+    "Family Planning": 4,
+    "War College":     5,
+    "Joint Lock":      6,
+    "Hold":            7,
+    "List Shift":      8,
+    "De-screened":     97,
+    "Policy":          98,
+    "Retire":          99,
+}
+
+function getStatusColor(status: string): string {
+    switch (status) {
+        case "Available":       return "bg-green-500"
+        case "Joint Lock":      return "bg-purple-500"
+        case "War College":     return "bg-orange-500"
+        case "Family Planning": return "bg-yellow-500"
+        case "List Shift":      return "bg-red-500"
+        case "Retire":          return "bg-red-500"
+        case "Policy":          return "bg-red-500"
+        case "De-screened":     return "bg-red-500"
+        case "Slated":          return "bg-blue-500"
+        case "Defer":           return "bg-yellow-500"
+        case "Hold":            return "bg-red-500"
+        case "Ready FF":        return "bg-blue-500"
+        default:                return "bg-gray-500"
+    }
+}
+
+function sortByStatusOrder(entries: [string, number][]): [string, number][] {
+    return entries.sort(([a], [b]) => (STATUS_ORDER[a] ?? 99) - (STATUS_ORDER[b] ?? 99))
+}
 export function CommandInventoryCard({ oracleData }: { oracleData: OracleCommand[] }) {
     return (
         <div className="rounded-xl border bg-card text-card-foreground shadow p-6 border-l-4 border-l-[#c9a227] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_4px_20px_rgba(201,162,39,0.18)] hover:border-l-[#f0c040]">
@@ -115,26 +151,7 @@ export function BankOfficersCard({ officers }: { officers: Officer[] }) {
         }
     }
 
-    const statusOrder: Record<string, number> = {
-        "Ready FF": 1,
-        "Available": 2,
-        "Defer": 3,
-        "Family Planning": 4,
-        "War College": 5,
-        "Joint Lock": 6,
-        "Hold": 7,
-        "De-screened": 97,
-        "Policy": 98,
-        "Retire": 99,
-        "List Shift": 8
-    }
-
-    // Sort statuses by custom order first, then count
-    const sortedStatuses = Object.entries(statusCounts).sort(([statusA], [statusB]) => {
-        const orderA = statusOrder[statusA] || 99
-        const orderB = statusOrder[statusB] || 99
-        return orderA - orderB
-    })
+    const sortedStatuses = sortByStatusOrder(Object.entries(statusCounts))
 
     return (
         <div className="rounded-xl border bg-card text-card-foreground shadow p-6 border-l-4 border-l-[#c9a227] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_4px_20px_rgba(201,162,39,0.18)] hover:border-l-[#f0c040]">
@@ -255,24 +272,7 @@ export function FirefighterStatsCard({ officers }: { officers: Officer[] }) {
         }
     }
 
-    const statusOrder: Record<string, number> = {
-        "Ready FF": 1,
-        "Available": 2,
-        "Defer": 3,
-        "Family Planning": 4,
-        "War College": 5,
-        "Joint Lock": 6,
-        "Hold": 7,
-        "De-screened": 97,
-        "List Shift": 8
-    }
-
-    // Sort statuses by custom order first, then count
-    const sortedStatuses = Object.entries(statusCounts).sort(([statusA], [statusB]) => {
-        const orderA = statusOrder[statusA] || 99
-        const orderB = statusOrder[statusB] || 99
-        return orderA - orderB
-    })
+    const sortedStatuses = sortByStatusOrder(Object.entries(statusCounts))
 
     return (
         <div className="rounded-xl border bg-card text-card-foreground shadow p-6 border-l-4 border-l-[#c9a227] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_4px_20px_rgba(201,162,39,0.18)] hover:border-l-[#f0c040]">

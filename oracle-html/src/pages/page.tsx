@@ -11,12 +11,12 @@ import {
 import heroBanner from "@/assets/hero-banner.png"
 import { CommandAlerts } from "@/components/dashboard/command-alerts"
 import { PersonnelAlerts } from "@/components/dashboard/personnel-alerts"
-import { getOracleData, getOfficers } from '@/services/storage'
-import { getMetrics } from "@/lib/metrics-service"
+import { getOracleData, getOfficers, getMetrics } from '@/services/storage'
+import { getOperatorName } from '@/pages/settings/page'
 import { useRef, useLayoutEffect, useState } from "react"
 
 export default function DashboardPage() {
-  const metrics = getMetrics()
+  const metrics = getMetrics() ?? { resolvedConflicts: 0 }
   const currentOfficers = getOfficers()
   const oracleData = getOracleData()
 
@@ -58,7 +58,7 @@ export default function DashboardPage() {
             Command Center
           </h1>
           <p className="text-white/70 text-sm mt-1">
-            Welcome back, LCDR Kozlowski. Here is your current Oracle &amp; Bank status.
+            Welcome back, {getOperatorName()}. Here is your current Oracle &amp; Bank status.
           </p>
         </div>
       </div>

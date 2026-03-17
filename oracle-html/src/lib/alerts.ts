@@ -1,5 +1,6 @@
 import { OracleCommand, Officer } from "@/lib/types"
 import { format, parseISO, isValid } from "date-fns"
+import { formatToMMMyy } from "@/lib/utils"
 
 export type AlertType = "missing_xo" | "date_mismatch" | "timeline_conflict"
 
@@ -66,7 +67,7 @@ export function getCommandAlerts(command: OracleCommand): CommandAlert[] {
         alerts.push({
             id: command.id + "_timeline",
             name: command.name,
-            issue: `Timeline conflict: XO fleet-up (${xoFleetUp}) is after CO departure (${coPrd})`,
+            issue: `Timeline conflict: XO fleet-up (${formatToMMMyy(xoFleetUp)}) is after CO departure (${formatToMMMyy(coPrd)})`,
             type: "timeline_conflict"
         })
     }
