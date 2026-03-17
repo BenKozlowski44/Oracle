@@ -24,6 +24,7 @@ interface EditCommandDialogProps {
     onSave: (updatedCommand: OracleCommand) => void
     onCOTurnover: (commandId: string) => void
     onXOFleetUp: (commandId: string) => void
+    onPCOFleetUp: (commandId: string) => void
     onDelete: (commandId: string) => void
     officers?: Officer[]
 }
@@ -35,11 +36,12 @@ export function EditCommandDialog({
     onSave,
     onCOTurnover,
     onXOFleetUp,
+    onPCOFleetUp,
     onDelete,
     officers = [],
 }: EditCommandDialogProps) {
     const [formData, setFormData] = useState<OracleCommand | null>(null)
-    const [confirmAction, setConfirmAction] = useState<"delete" | "relieveCO" | "fleetUp" | null>(null)
+    const [confirmAction, setConfirmAction] = useState<"delete" | "relieveCO" | "fleetUp" | "pcoFleetUp" | null>(null)
 
     // ... (rest of component state/logic stays same until render)
 
@@ -802,6 +804,7 @@ export function EditCommandDialog({
                                             : "Execute CO Turnover? (Current CO -> Bank, Current XO -> CO)"
                                     )}
                                     {confirmAction === "fleetUp" && "Execute XO Fleet Up? (Inbound XO -> Current XO, Inbound Slot -> Empty)"}
+                                    {confirmAction === "pcoFleetUp" && `Fleet Up PCO? (Current CO -> Bank as PCC, ${formData?.prospectiveCO?.name} -> Current CO)`}
                                 </p>
                                 <div className="flex gap-2 mt-2">
                                     <Button type="button" variant="outline" onClick={() => setConfirmAction(null)}>
@@ -811,6 +814,7 @@ export function EditCommandDialog({
                                         if (confirmAction === "delete" && formData?.id) onDelete(formData.id);
                                         if (confirmAction === "relieveCO" && formData?.id) onCOTurnover(formData.id);
                                         if (confirmAction === "fleetUp" && formData?.id) onXOFleetUp(formData.id);
+                                        if (confirmAction === "pcoFleetUp" && formData?.id) onPCOFleetUp(formData.id);
                                         setConfirmAction(null);
                                     }}>
                                         Yes, Confirm
@@ -831,9 +835,16 @@ export function EditCommandDialog({
                                         <Button type="button" variant="default" style={{ backgroundColor: '#2563eb', color: 'white' }} className="hover:bg-blue-700" onClick={() => setConfirmAction("relieveCO")}>
                                             Relieve CO
                                         </Button>
-                                        <Button type="button" variant="default" style={{ backgroundColor: '#16a34a', color: 'white' }} className="hover:bg-green-700" onClick={() => setConfirmAction("fleetUp")}>
-                                            Fleet Up P-XO
-                                        </Button>
+                                        {formData?.rotationStyle !== 'DirectCO' && (
+                                            <Button type="button" variant="default" style={{ backgroundColor: '#16a34a', color: 'white' }} className="hover:bg-green-700" onClick={() => setConfirmAction("fleetUp")}>
+                                                Fleet Up P-XO
+                                            </Button>
+                                        )}
+                                        {formData?.rotationStyle !== 'DirectCO' && formData?.prospectiveCO?.name && (
+                                            <Button type="button" variant="default" style={{ backgroundColor: '#7c3aed', color: 'white' }} className="hover:opacity-90" onClick={() => setConfirmAction("pcoFleetUp")}>
+                                                Fleet Up PCO
+                                            </Button>
+                                        )}
                                     </div>
                                     <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                                         Cancel

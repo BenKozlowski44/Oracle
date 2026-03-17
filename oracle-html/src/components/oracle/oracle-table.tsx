@@ -359,6 +359,57 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
         await persistUpdate(updatedCommand, officers, "XO Fleet Up / P-CO Stashed");
     };
 
+    /**
+     * Fleet Up PCO (Prospective CO → Current CO)
+     * Used when a PCO is in the prospectiveCO slot and needs to formally take command
+     * independent of the standard CO Turnover flow.
+     *
+     * Effect:
+     *  1. Current CO → Bank (status PCC)
+     *  2. prospectiveCO → currentCO (name, prd, timelineData carried over)
+     *  3. prospectiveCO cleared
+     *  4. currentXO unchanged
+     */
+    const handlePCOFleetUp = async (commandId: string) => {
+        const cmd = data.find(c => c.id === commandId);
+        if (!cmd) return;
+
+        if (!cmd.prospectiveCO?.name) {
+            alert("No Prospective CO (PCO) in this slot.");
+            return;
+        }
+
+        // 1. Archive current CO to bank as PCC
+        const newPCC = {
+            id: `pcc_${Date.now()}`,
+            rank: "CDR" as const,
+            name: cmd.currentCO.name,
+            designator: "1110" as const,
+            currentCommand: "PCC (Post-Command)",
+            prd: "N/A",
+            preferences: [],
+            status: "PCC" as const,
+            notes: `CMD Tour: ${cmd.name}`,
+            yearGroup: 0,
+        };
+        const newOfficers = [...(officers || []), newPCC];
+        setOfficers(newOfficers);
+
+        // 2. PCO becomes new CO
+        const newCO = {
+            name: cmd.prospectiveCO.name,
+            prd: cmd.prospectiveCO.prd,
+            timelineData: (cmd.prospectiveCO as any).timelineData,
+        };
+
+        const updatedCommand: OracleCommand = {
+            ...cmd,
+            currentCO: newCO,
+            prospectiveCO: undefined,   // clear PCO slot
+        };
+
+        await persistUpdate(updatedCommand, newOfficers, `PCO Fleet-Up: ${cmd.prospectiveCO.name} now CO`);
+    };
     return (
         <div className="space-y-4">
             <div className="flex items-center gap-4">
@@ -865,6 +916,7 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                     setIsCocDialogOpen(true)
                 }}
                 onXOFleetUp={handleXOFleetUp}
+                onPCOFleetUp={handlePCOFleetUp}
                 onDelete={handleDeleteCommand}
             />
 
