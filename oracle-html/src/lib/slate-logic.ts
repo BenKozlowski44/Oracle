@@ -175,8 +175,9 @@ export function predictNextVacancyDate(command: OracleCommand): string {
     const pCOHasRealName = !!pCOName && !isPlaceholderName(pCOName)
     const isNonSWOProspectiveCO = command.prospectiveCO?.fillCommunity && command.prospectiveCO.fillCommunity !== "1110"
 
-    if (pCOHasRealName && isFilled(command.prospectiveCO?.prd)) {
-      baseDate = parseAnyDate(command.prospectiveCO!.prd)
+    if (pCOHasRealName && (isFilled(command.prospectiveCO?.timelineData?.q ?? undefined) || isFilled(command.prospectiveCO?.prd))) {
+      baseDate = parseAnyDate(command.prospectiveCO?.timelineData?.q ?? undefined)
+        ?? parseAnyDate(command.prospectiveCO!.prd)
     } else if (isNonSWOCurrentCO && !pCOHasRealName) {
       baseDate = parseAnyDate(command.currentCO!.prd)
         ?? parseAnyDate(command.currentCO?.timelineData?.q ?? undefined)
@@ -202,11 +203,15 @@ export function predictNextVacancyDate(command: OracleCommand): string {
         if (isFilled(deptDate)) baseDate = parseAnyDate(deptDate)
       }
     } else if (!hasInboundXO) {
-      if (isFilled(command.currentXO?.prd)) {
+      // Prefer timeline fleet-up date over legacy prd field
+      if (isFilled(command.currentXO?.timelineData?.k ?? undefined)) {
+        baseDate = parseAnyDate(command.currentXO?.timelineData?.k ?? undefined)
+      }
+      if (!baseDate && isFilled(command.currentXO?.prd)) {
         baseDate = parseAnyDate(command.currentXO!.prd)
       }
-      if (!baseDate && isFilled(command.currentXO?.timelineData?.k ?? undefined)) {
-        baseDate = parseAnyDate(command.currentXO?.timelineData?.k ?? undefined)
+      if (!baseDate && isFilled(command.currentCO?.timelineData?.q ?? undefined)) {
+        baseDate = parseAnyDate(command.currentCO?.timelineData?.q ?? undefined)
       }
       if (!baseDate && isFilled(command.currentCO?.prd)) {
         baseDate = parseAnyDate(command.currentCO!.prd)

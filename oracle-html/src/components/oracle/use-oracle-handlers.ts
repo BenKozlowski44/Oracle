@@ -44,6 +44,33 @@ export function useOracleHandlers({
     setEditingCommand,
 }: OracleHandlerContext) {
 
+    /**
+     * normalizePrd — keeps the legacy `prd` field in sync with timeline data.
+     * Timeline dates (entered by the user in the dialog) are the source of truth;
+     * `prd` is synced from them so that any code still reading `prd` stays accurate.
+     *
+     *   currentCO.prd  ← timelineData.q  (CO's scheduled CoC / departure)
+     *   currentXO.prd  ← timelineData.k  (XO's fleet-up / vacancy date)
+     *   prospectiveCO.prd ← timelineData.q  (PCO's scheduled CoC)
+     */
+    const normalizePrd = (cmd: OracleCommand): OracleCommand => ({
+        ...cmd,
+        currentCO: {
+            ...cmd.currentCO,
+            prd: cmd.currentCO.timelineData?.q || cmd.currentCO.prd,
+        },
+        currentXO: {
+            ...cmd.currentXO,
+            prd: cmd.currentXO.timelineData?.k || cmd.currentXO.prd,
+        },
+        ...(cmd.prospectiveCO ? {
+            prospectiveCO: {
+                ...cmd.prospectiveCO,
+                prd: cmd.prospectiveCO.timelineData?.q || cmd.prospectiveCO.prd,
+            },
+        } : {}),
+    })
+
     // ── Open edit dialog ──────────────────────────────────────────────────
     const handleEditClick = (cmd: OracleCommand) => {
         setEditingCommand(cmd)
@@ -92,15 +119,18 @@ export function useOracleHandlers({
 
         setMetrics(newMetrics)
 
-        const exists = data.some((c) => c.id === updatedCommand.id)
+        // Normalize prd from timeline data before saving
+        const normalized = normalizePrd(updatedCommand)
+
+        const exists = data.some((c) => c.id === normalized.id)
         const newData = exists
-            ? data.map((cmd) => (cmd.id === updatedCommand.id ? updatedCommand : cmd))
-            : [...data, updatedCommand]
+            ? data.map((cmd) => (cmd.id === normalized.id ? normalized : cmd))
+            : [...data, normalized]
 
         setData(newData)
 
         try {
-            saveOracleCommand(updatedCommand)
+            saveOracleCommand(normalized)
             saveMetrics(newMetrics)
             notifySuccess("Command saved")
         } catch (error) {
@@ -130,19 +160,19 @@ export function useOracleHandlers({
         currentOfficers: Officer[],
         message: string
     ) => {
-        // Always recompute targetBoardDate before persisting so the stored JSON
-        // never drifts from the live calculation.
-        const freshSlate = predictNextVacancyDate(updatedCommand)
+        // Normalize prd from timeline data, then recompute targetBoardDate
+        const normalizedCommand = normalizePrd(updatedCommand)
+        const freshSlate = predictNextVacancyDate(normalizedCommand)
         const commandToSave: OracleCommand =
             freshSlate !== "TBD"
                 ? {
-                      ...updatedCommand,
+                      ...normalizedCommand,
                       nextSlateParams: {
-                          ...updatedCommand.nextSlateParams,
+                          ...normalizedCommand.nextSlateParams,
                           targetBoardDate: freshSlate,
                       },
                   }
-                : updatedCommand
+                : normalizedCommand
 
         const validationErrors = validateCommand(commandToSave)
         if (validationErrors.length > 0) {
