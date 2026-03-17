@@ -6,6 +6,7 @@ import { BackupReconnectModal } from '@/components/BackupReconnectModal'
 import { registerToastHandlers } from '@/lib/notify'
 import { toast } from 'sonner'
 import { chooseBackupFile, restoreFromFile, getBackupStatus } from '@/services/storage'
+import { getOracleData, writeData } from '@/services/storage'
 import navalBg from '@/assets/naval-bg.png'
 import { HudBar } from '@/components/HudBar'
 
@@ -46,6 +47,31 @@ export default function App() {
             if (ok) window.location.reload()
         })
         return
+    }
+
+    // One-time migration: sync prd fields from timelineData for all oracle commands.
+    // Gated by a localStorage flag so it only ever runs once.
+    if (!localStorage.getItem('__migrated_prd_v1')) {
+      const commands = getOracleData()
+      const migrated = commands.map(cmd => ({
+        ...cmd,
+        currentCO: {
+          ...cmd.currentCO,
+          prd: cmd.currentCO.timelineData?.q || cmd.currentCO.prd,
+        },
+        currentXO: {
+          ...cmd.currentXO,
+          prd: cmd.currentXO.timelineData?.k || cmd.currentXO.prd,
+        },
+        ...(cmd.prospectiveCO ? {
+          prospectiveCO: {
+            ...cmd.prospectiveCO,
+            prd: cmd.prospectiveCO.timelineData?.q || cmd.prospectiveCO.prd,
+          },
+        } : {}),
+      }))
+      writeData('oracle-data', migrated)
+      localStorage.setItem('__migrated_prd_v1', 'true')
     }
 
     // Show backup modal after a short delay so app renders first
