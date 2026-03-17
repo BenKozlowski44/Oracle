@@ -93,7 +93,7 @@ function SortableHead({ label, col, sortCol, dir, onSort }: {
     const Icon = active ? (dir === "asc" ? ArrowUp : ArrowDown) : ArrowUpDown
     return (
         <th
-            className="px-4 py-2.5 font-medium cursor-pointer select-none hover:bg-muted/80 transition-colors"
+            className="px-4 py-2.5 font-medium cursor-pointer select-none hover:bg-white/10 transition-colors"
             onClick={() => onSort(col)}
         >
             <span className="inline-flex items-center gap-1">
@@ -174,8 +174,8 @@ export function CandidatePipelineReport({ officers }: CandidatePipelineReportPro
         <div className="space-y-6 print:space-y-4">
             {/* Header */}
             <div className="print:mb-2">
-                <h2 className="text-xl font-semibold">Candidate Pipeline Report</h2>
-                <p className="text-sm text-muted-foreground mt-0.5">
+                <h2 className="text-xl font-semibold text-white">Candidate Pipeline Report</h2>
+                <p className="text-sm text-white/60 mt-0.5">
                     Pool-wide profile readiness across all Bank officers ·{" "}
                     Generated: {new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
                 </p>
@@ -189,19 +189,19 @@ export function CandidatePipelineReport({ officers }: CandidatePipelineReportPro
                 <SummaryCard icon={ShieldCheck} label="Fully Ready" value={fullyReady} sub="All 3 fields ✓" color="bg-violet-500" />
             </div>
 
-            {/* Filters */}
-            <div className="flex flex-wrap gap-3 print:hidden">
+            {/* Filters — navy bar style */}
+            <div className="bg-[#07111f] border border-[#c9a227]/30 rounded-md px-4 py-3 flex flex-wrap gap-3 items-center print:hidden">
                 <div className="relative flex-1 min-w-[180px] max-w-xs">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-[#8a9bb0]" />
                     <Input
                         placeholder="Search name or command…"
                         value={search}
                         onChange={e => setSearch(e.target.value)}
-                        className="pl-8"
+                        className="pl-8 bg-[#07111f] border-[#c9a227]/30 text-white placeholder:text-[#8a9bb0]"
                     />
                 </div>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-44">
+                    <SelectTrigger className="w-44 bg-[#07111f] border-[#c9a227]/30 text-white">
                         <SelectValue placeholder="All Statuses" />
                     </SelectTrigger>
                     <SelectContent>
@@ -212,7 +212,7 @@ export function CandidatePipelineReport({ officers }: CandidatePipelineReportPro
                     </SelectContent>
                 </Select>
                 <Select value={completenessFilter} onValueChange={setCompletenessFilter}>
-                    <SelectTrigger className="w-44">
+                    <SelectTrigger className="w-44 bg-[#07111f] border-[#c9a227]/30 text-white">
                         <SelectValue placeholder="All Profiles" />
                     </SelectTrigger>
                     <SelectContent>
@@ -221,20 +221,20 @@ export function CandidatePipelineReport({ officers }: CandidatePipelineReportPro
                         <SelectItem value="incomplete">Incomplete Only</SelectItem>
                     </SelectContent>
                 </Select>
-                <div className="flex items-center text-sm text-muted-foreground ml-auto">
+                <div className="flex items-center text-xs font-semibold tracking-widest uppercase text-[#8a9bb0] ml-auto">
                     Showing {rows.length} of {total}
                 </div>
             </div>
 
-            {/* Table */}
+            {/* Table — white card surface on grey overlay */}
             {rows.length === 0 ? (
-                <div className="p-10 text-center text-muted-foreground border border-dashed rounded-lg">
+                <div className="p-10 text-center text-white/50 border border-[#c9a227]/20 border-dashed rounded-lg">
                     No officers match the selected filters.
                 </div>
             ) : (
-                <div className="border rounded-lg overflow-hidden">
+                <div className="border border-[#c9a227]/20 rounded-xl overflow-hidden shadow-lg bg-white">
                     <table className="w-full text-sm print:text-xs">
-                        <thead className="bg-muted/50">
+                        <thead className="bg-[#07111f] text-white">
                             <tr>
                                 <SortableHead label="Officer" col="name" sortCol={sortCol} dir={sortDir} onSort={handleSort} />
                                 <SortableHead label="Command" col="command" sortCol={sortCol} dir={sortDir} onSort={handleSort} />
@@ -245,7 +245,7 @@ export function CandidatePipelineReport({ officers }: CandidatePipelineReportPro
                                 <SortableHead label="Score" col="score" sortCol={sortCol} dir={sortDir} onSort={handleSort} />
                             </tr>
                         </thead>
-                        <tbody className="divide-y">
+                        <tbody className="divide-y divide-slate-100">
                             {rows.map(o => {
                                 const c = completeness(o)
                                 const statusColor = STATUS_COLORS[o.status] ?? "bg-muted text-muted-foreground"
