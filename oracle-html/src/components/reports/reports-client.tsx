@@ -87,59 +87,64 @@ export function ReportsClient({ officers, slates, oracleData }: ReportsClientPro
                 )}
             </div>
 
-            {["alignment", "commands", "summary", "pref-alignment"].includes(selectedReport) && !slate && (
-                <div className="p-8 text-center text-muted-foreground border border-dashed rounded-md print:hidden">
-                    Please select a Slate to generate the report.
-                </div>
-            )}
+            {/* White content area — scoped to reports only */}
+            <div className="bg-background rounded-lg p-4 -mx-1">
 
-            {selectedReport === "summary" && slate && (
-                <div className="animate-in fade-in duration-300">
-                    <SlateSummaryReport slate={slate} officers={officers} oracleData={oracleData} />
-                </div>
-            )}
+                {["alignment", "commands", "summary", "pref-alignment"].includes(selectedReport) && !slate && (
+                    <div className="p-8 text-center text-muted-foreground border border-dashed rounded-md print:hidden">
+                        Please select a Slate to generate the report.
+                    </div>
+                )}
 
-            {selectedReport === "alignment" && slate && (
-                <div className="animate-in fade-in duration-300">
-                    <AlignmentMatrixReport slateId={slate.id} slate={slate} officers={officers} oracleData={oracleData} />
-                </div>
-            )}
+                {selectedReport === "summary" && slate && (
+                    <div className="animate-in fade-in duration-300">
+                        <SlateSummaryReport slate={slate} officers={officers} oracleData={oracleData} />
+                    </div>
+                )}
 
-            {selectedReport === "commands" && slate && (
-                <div className="animate-in fade-in duration-300">
-                    <CommandsReport slate={slate} oracleData={oracleData} />
-                </div>
-            )}
+                {selectedReport === "alignment" && slate && (
+                    <div className="animate-in fade-in duration-300">
+                        <AlignmentMatrixReport slateId={slate.id} slate={slate} officers={officers} oracleData={oracleData} />
+                    </div>
+                )}
 
-            {selectedReport === "missing" && (
-                <div className="animate-in fade-in duration-300 pt-6">
-                    <MissingInputsReport officers={officers} />
-                </div>
-            )}
+                {selectedReport === "commands" && slate && (
+                    <div className="animate-in fade-in duration-300">
+                        <CommandsReport slate={slate} oracleData={oracleData} />
+                    </div>
+                )}
 
-            {selectedReport === "preferences" && (
-                <div className="animate-in fade-in duration-300 pt-6">
-                    <PreferenceSummaryReport officers={officers} />
-                </div>
-            )}
+                {selectedReport === "missing" && (
+                    <div className="animate-in fade-in duration-300 pt-6">
+                        <MissingInputsReport officers={officers} />
+                    </div>
+                )}
 
-            {selectedReport === "pref-alignment" && slate && (
-                <div className="animate-in fade-in duration-300 pt-6">
-                    <PreferenceAlignmentReport slate={slate} officers={officers} oracleData={oracleData} />
-                </div>
-            )}
+                {selectedReport === "preferences" && (
+                    <div className="animate-in fade-in duration-300 pt-6">
+                        <PreferenceSummaryReport officers={officers} />
+                    </div>
+                )}
 
-            {selectedReport === "pipeline" && (
-                <div className="animate-in fade-in duration-300 pt-6">
-                    <CandidatePipelineReport officers={officers} />
-                </div>
-            )}
+                {selectedReport === "pref-alignment" && slate && (
+                    <div className="animate-in fade-in duration-300 pt-6">
+                        <PreferenceAlignmentReport slate={slate} officers={officers} oracleData={oracleData} />
+                    </div>
+                )}
 
-            {selectedReport === "gaps" && (
-                <div className="animate-in fade-in duration-300 pt-6">
-                    <PipelineGapsReport oracleData={oracleData} />
-                </div>
-            )}
+                {selectedReport === "pipeline" && (
+                    <div className="animate-in fade-in duration-300 pt-6">
+                        <CandidatePipelineReport officers={officers} />
+                    </div>
+                )}
+
+                {selectedReport === "gaps" && (
+                    <div className="animate-in fade-in duration-300 pt-6">
+                        <PipelineGapsReport oracleData={oracleData} />
+                    </div>
+                )}
+
+            </div>
         </div>
     )
 }

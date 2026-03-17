@@ -112,7 +112,7 @@ export default function App() {
           ))}
         </nav>
 
-        <main className="p-4 pb-10 bg-background">
+        <main className="p-4 pb-10">
           <Routes>
             <Route path="/" element={<DashboardPage />} />
             <Route path="/oracle" element={<OraclePage />} />
