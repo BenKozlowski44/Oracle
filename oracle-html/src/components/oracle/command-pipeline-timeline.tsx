@@ -23,6 +23,14 @@ function fmtDate(d: Date): string {
 }
 
 // ── Types ──────────────────────────────────────────────────────────────────────
+/** Minimal shape shared by every officer slot (currentCO, currentXO, inboundXO, prospectiveCO, slatedXO, slatedCO). */
+interface PipelineSlot {
+    name: string
+    prd?: string
+    reportDate?: string
+    timelineData?: { i?: string | null; k?: string | null; m?: string | null; q?: string | null }
+}
+
 interface OfficerRow {
     name: string
     isForecast: boolean
@@ -44,11 +52,11 @@ export function CommandPipelineTimeline({ command: cmd }: Props) {
 
     // Build one row per officer in the pipeline
     const rows = useMemo<OfficerRow[]>(() => {
-        const slots = isDirectCO
+        const slots: { slot: PipelineSlot | undefined; isForecast: boolean }[] = isDirectCO
             ? [
-                { slot: cmd.currentCO as any,    isForecast: false },
-                { slot: cmd.prospectiveCO as any, isForecast: true },
-                { slot: cmd.slatedCO as any,      isForecast: true },
+                { slot: cmd.currentCO,    isForecast: false },
+                { slot: cmd.prospectiveCO, isForecast: true },
+                { slot: cmd.slatedCO,      isForecast: true },
               ]
             : [
                 { slot: cmd.currentCO,  isForecast: false },
@@ -59,13 +67,14 @@ export function CommandPipelineTimeline({ command: cmd }: Props) {
 
         const now = new Date()
         return slots
-            .filter(({ slot }) => !!slot?.name?.trim() && isPersonName(slot.name))
+            .filter((item): item is { slot: PipelineSlot; isForecast: boolean } =>
+                item.slot != null && !!item.slot.name?.trim() && isPersonName(item.slot.name))
             .map(({ slot, isForecast }) => {
-                const reportDate = 'reportDate' in slot! ? (slot as { reportDate: string }).reportDate : undefined
-                const rawXoStart = parseDate(slot!.timelineData?.i) ?? parseDate(reportDate)
-                const fleetUp    = isDirectCO ? null : parseDate(slot!.timelineData?.k)
-                const coc        = parseDate(slot!.timelineData?.m)
-                const coPrd      = parseDate(slot!.timelineData?.q)
+                const reportDate = slot.reportDate
+                const rawXoStart = parseDate(slot.timelineData?.i) ?? parseDate(reportDate)
+                const fleetUp    = isDirectCO ? null : parseDate(slot.timelineData?.k)
+                const coc        = parseDate(slot.timelineData?.m)
+                const coPrd      = parseDate(slot.timelineData?.q)
                 const tourLen    = cmd.tourLength || 18
                 const xoStart    = rawXoStart ?? (coc && !isDirectCO ? subMonths(coc, tourLen + 2) : null)
                 const isOnboard  = !isForecast && (

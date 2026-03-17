@@ -283,7 +283,7 @@ export function EditCommandDialog({
             }
 
             // Standard update for existing roles
-            let updatedRole = {
+            let updatedRole: Record<string, any> = {
                 ...prev[role]!,
                 timelineData: {
                     ...prev[role]!.timelineData,
@@ -293,12 +293,12 @@ export function EditCommandDialog({
 
             // Sync reportDate if editing Slated XO 'i' column
             if (role === 'slatedXO' && field === 'i') {
-                (updatedRole as any).reportDate = value
+                updatedRole.reportDate = value
             }
 
             // Sync reportDate if editing Inbound XO 'i' column
             if (role === 'inboundXO' && field === 'i') {
-                (updatedRole as any).reportDate = value
+                updatedRole.reportDate = value
             }
 
             let newState = {

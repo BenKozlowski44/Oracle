@@ -301,7 +301,7 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
             newCO = {
                 name: cmd.prospectiveCO.name,
                 prd: cmd.prospectiveCO.prd,
-                timelineData: (cmd.prospectiveCO as any).timelineData // Preserve timeline data if it exists (might need type update)
+                timelineData: cmd.prospectiveCO.timelineData
             };
             newProspectiveCO = undefined; // Clear P-CO slot
         } else {
@@ -400,7 +400,7 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
         const newCO = {
             name: cmd.prospectiveCO.name,
             prd: cmd.prospectiveCO.prd,
-            timelineData: (cmd.prospectiveCO as any).timelineData,
+            timelineData: cmd.prospectiveCO.timelineData,
         };
 
         const updatedCommand: OracleCommand = {
