@@ -1,7 +1,7 @@
 import { OracleCommand, Officer } from "@/lib/types"
 import { format, parseISO, isValid } from "date-fns"
 
-export type AlertType = "missing_xo" | "date_mismatch"
+export type AlertType = "missing_xo" | "date_mismatch" | "timeline_conflict"
 
 export interface CommandAlert {
     id: string
@@ -56,6 +56,19 @@ export function getCommandAlerts(command: OracleCommand): CommandAlert[] {
                 type: "date_mismatch"
             })
         }
+    }
+
+    // 3. XO fleet-up date is after CO departure
+    // Data quality warning — doesn't block saves; user may be entering partial data.
+    const xoFleetUp = command.currentXO?.timelineData?.k
+    const coPrd = command.currentCO?.prd
+    if (xoFleetUp && coPrd && xoFleetUp > coPrd) {
+        alerts.push({
+            id: command.id + "_timeline",
+            name: command.name,
+            issue: `Timeline conflict: XO fleet-up (${xoFleetUp}) is after CO departure (${coPrd})`,
+            type: "timeline_conflict"
+        })
     }
 
     return alerts

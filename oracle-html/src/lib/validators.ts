@@ -38,19 +38,6 @@ export function validateCommand(cmd: OracleCommand): string[] {
             errors.push("Current XO PRD date is required for Fleet-Up commands")
     }
 
-    // ── Timeline consistency ──────────────────────────────────────────────
-    // XO fleet-up date should not be after CO departure — common data entry error.
-    if (isFleetUp) {
-        const xoFleetUp = cmd.currentXO?.timelineData?.k
-        const coPrd     = cmd.currentCO?.prd
-
-        if (xoFleetUp && coPrd && xoFleetUp.toUpperCase() > coPrd.toUpperCase()) {
-            errors.push(
-                `XO fleet-up (${xoFleetUp}) is after CO departure (${coPrd}) — check timeline dates`
-            )
-        }
-    }
-
     // ── Prospective CO consistency ────────────────────────────────────────
     // If a PCO is named, they must have a PRD so pipeline health works.
     if (cmd.prospectiveCO?.name && !isPlaceholderName(cmd.prospectiveCO.name)) {
