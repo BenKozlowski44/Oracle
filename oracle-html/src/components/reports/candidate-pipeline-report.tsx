@@ -61,7 +61,7 @@ function SummaryCard({
     color: string
 }) {
     return (
-        <div className="flex items-center gap-3 p-4 rounded-xl border border-[#c9a227]/20 bg-[#001f3f] backdrop-blur-sm shadow-lg text-white">
+        <div className="flex items-center gap-3 p-4 rounded-xl border border-[#c9a227]/20 bg-[#07111f] backdrop-blur-sm shadow-lg text-white">
             <div className={`p-2 rounded-md ${color}`}>
                 <Icon className="h-4 w-4 text-white" />
             </div>
