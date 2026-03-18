@@ -77,15 +77,15 @@ export function MissingInputsReport({ officers }: MissingInputsReportProps) {
                 </div>
             </div>
 
-            <div className="rounded-md border bg-card">
+            <div className="rounded-md border overflow-hidden">
                 <Table>
                     <TableHeader>
-                        <TableRow>
-                            <TableHead>Officer Name</TableHead>
-                            <TableHead>Rank</TableHead>
-                            <TableHead>Designator</TableHead>
-                            <TableHead>Bank Type</TableHead>
-                            <TableHead>Missing Fields</TableHead>
+                        <TableRow className="bg-[#07111f] hover:bg-[#07111f]">
+                            <TableHead className="text-white font-semibold">Officer Name</TableHead>
+                            <TableHead className="text-white font-semibold">Rank</TableHead>
+                            <TableHead className="text-white font-semibold">Designator</TableHead>
+                            <TableHead className="text-white font-semibold">Bank Type</TableHead>
+                            <TableHead className="text-white font-semibold">Missing Fields</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>

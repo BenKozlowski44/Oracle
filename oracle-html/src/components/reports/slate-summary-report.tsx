@@ -173,13 +173,13 @@ export function SlateSummaryReport({ slate, officers, oracleData }: SlateSummary
                 ) : (
                     <div className="border rounded-lg overflow-hidden bg-white">
                         <table className="w-full text-sm print:text-xs text-gray-900">
-                            <thead className="bg-gray-100">
+                            <thead className="bg-[#07111f] text-white">
                                 <tr>
-                                    <th className="text-left px-4 py-2.5 font-semibold text-gray-700">Officer</th>
-                                    <th className="text-left px-4 py-2.5 font-semibold text-gray-700">Role</th>
-                                    <th className="text-left px-4 py-2.5 font-semibold text-gray-700">Command</th>
-                                    <th className="text-left px-4 py-2.5 font-semibold text-gray-700">Profile Fields</th>
-                                    <th className="text-left px-4 py-2.5 font-semibold text-gray-700">Ready?</th>
+                                    <th className="text-left px-4 py-2.5 font-semibold text-white">Officer</th>
+                                    <th className="text-left px-4 py-2.5 font-semibold text-white">Role</th>
+                                    <th className="text-left px-4 py-2.5 font-semibold text-white">Command</th>
+                                    <th className="text-left px-4 py-2.5 font-semibold text-white">Profile Fields</th>
+                                    <th className="text-left px-4 py-2.5 font-semibold text-white">Ready?</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y">

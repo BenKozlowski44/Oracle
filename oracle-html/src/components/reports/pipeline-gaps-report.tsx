@@ -135,12 +135,12 @@ export function PipelineGapsReport({ oracleData }: Props) {
             <div className="overflow-x-auto rounded-md border">
                 <table className="w-full text-xs border-collapse">
                     <thead>
-                        <tr className="bg-muted/50 border-b">
-                            <th className="text-left px-3 py-2 font-semibold sticky left-0 bg-muted/50 min-w-[180px] z-10">Command</th>
+                        <tr className="bg-[#07111f] text-white border-b">
+                            <th className="text-left px-3 py-2 font-semibold sticky left-0 bg-[#07111f] text-white min-w-[180px] z-10">Command</th>
                             {slates.map(s => (
-                                <th key={s} className={`px-2 py-2 font-semibold text-center whitespace-nowrap min-w-[90px] ${s === currentSlate ? 'bg-primary/10 text-primary' : ''}`}>
+                                <th key={s} className={`px-2 py-2 font-semibold text-center whitespace-nowrap min-w-[90px] ${s === currentSlate ? 'bg-primary/30 text-white' : ''}`}>
                                     {s}
-                                    {s === currentSlate && <div className="text-[9px] font-normal text-primary/70">← current</div>}
+                                    {s === currentSlate && <div className="text-[9px] font-normal text-white/70">← current</div>}
                                 </th>
                             ))}
                         </tr>

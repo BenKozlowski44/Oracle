@@ -288,11 +288,11 @@ export function AlignmentMatrixReport({ slateId, slate, officers, oracleData }: 
             <div className="border rounded-md overflow-x-auto bg-white print:overflow-visible print:border-none">
                 <Table className="print:table-fixed print:w-full print:text-[8px] print:leading-[1.1]">
                     <TableHeader>
-                        <TableRow>
-                            <TableHead className="w-[250px] sticky left-0 bg-white z-10 font-bold border-r print:w-[120px] print:static print:p-1">
+                        <TableRow className="bg-[#07111f] hover:bg-[#07111f]">
+                            <TableHead className="w-[250px] sticky left-0 bg-[#07111f] z-10 font-bold border-r text-white print:w-[120px] print:static print:p-1">
                                 Candidate
                             </TableHead>
-                            <TableHead className="w-[100px] bg-white z-10 border-r text-xs print:w-[40px] print:static print:text-[8px] print:p-1">
+                            <TableHead className="w-[100px] bg-[#07111f] z-10 border-r text-xs text-white print:w-[40px] print:static print:text-[8px] print:p-1">
                                 Avail
                             </TableHead>
                             {groupedPrefs.map(group => {
@@ -301,7 +301,7 @@ export function AlignmentMatrixReport({ slateId, slate, officers, oracleData }: 
                                 const demand = getDemand(group.prefFormat)
                                 const isSorted = sortCol === group.prefFormat
                                 return (
-                                    <TableHead key={group.prefFormat} className="min-w-[160px] text-center border-l bg-gray-50 print:min-w-0 print:p-0.5">
+                                    <TableHead key={group.prefFormat} className="min-w-[160px] text-center border-l bg-[#07111f]/90 text-white print:min-w-0 print:p-0.5">
                                         <div className="flex flex-col items-center gap-1">
                                             <button
                                                 className="flex flex-col items-center gap-0.5 hover:text-primary transition-colors w-full"
@@ -474,13 +474,13 @@ export function AlignmentMatrixReport({ slateId, slate, officers, oracleData }: 
                 <div className="border rounded-md bg-white">
                     <Table>
                         <TableHeader>
-                            <TableRow>
-                                <TableHead>Command</TableHead>
-                                <TableHead>Location</TableHead>
-                                <TableHead>Incumbent</TableHead>
-                                <TableHead>Fill Date</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>Assigned</TableHead>
+                            <TableRow className="bg-[#07111f] hover:bg-[#07111f]">
+                                <TableHead className="text-white font-semibold">Command</TableHead>
+                                <TableHead className="text-white font-semibold">Location</TableHead>
+                                <TableHead className="text-white font-semibold">Incumbent</TableHead>
+                                <TableHead className="text-white font-semibold">Fill Date</TableHead>
+                                <TableHead className="text-white font-semibold">Status</TableHead>
+                                <TableHead className="text-white font-semibold">Assigned</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>

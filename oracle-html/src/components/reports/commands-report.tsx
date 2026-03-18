@@ -47,14 +47,14 @@ export function CommandsReport({ slate, oracleData }: { slate: Slate; oracleData
             <div className="border rounded-md overflow-x-auto bg-white print:border-none print:m-0 print:p-0">
                 <Table className="print:table-fixed print:w-full print:text-xs text-gray-900">
                     <TableHeader>
-                        <TableRow className="bg-gray-100 hover:bg-gray-100">
-                            <TableHead className="w-[100px] print:w-[60px] print:p-2 print:text-xs text-gray-700 font-semibold">UIC</TableHead>
-                            <TableHead className="w-[250px] print:w-auto print:p-2 print:text-xs text-gray-700 font-semibold">Command Name</TableHead>
-                            <TableHead className="w-[200px] print:w-auto print:p-2 print:text-xs text-gray-700 font-semibold">Billet Title</TableHead>
-                            <TableHead className="w-[150px] print:w-[100px] print:p-2 print:text-xs text-gray-700 font-semibold">Role</TableHead>
-                            <TableHead className="w-[120px] print:w-[80px] print:p-2 print:text-xs text-gray-700 font-semibold">Report Date</TableHead>
-                            <TableHead className="w-[150px] print:w-[120px] print:p-2 print:text-xs text-gray-700 font-semibold">Platform</TableHead>
-                            <TableHead className="w-[150px] print:w-[120px] print:p-2 print:text-xs text-gray-700 font-semibold">Location</TableHead>
+                        <TableRow className="bg-[#07111f] hover:bg-[#07111f]">
+                            <TableHead className="w-[100px] print:w-[60px] print:p-2 print:text-xs text-white font-semibold">UIC</TableHead>
+                            <TableHead className="w-[250px] print:w-auto print:p-2 print:text-xs text-white font-semibold">Command Name</TableHead>
+                            <TableHead className="w-[200px] print:w-auto print:p-2 print:text-xs text-white font-semibold">Billet Title</TableHead>
+                            <TableHead className="w-[150px] print:w-[100px] print:p-2 print:text-xs text-white font-semibold">Role</TableHead>
+                            <TableHead className="w-[120px] print:w-[80px] print:p-2 print:text-xs text-white font-semibold">Report Date</TableHead>
+                            <TableHead className="w-[150px] print:w-[120px] print:p-2 print:text-xs text-white font-semibold">Platform</TableHead>
+                            <TableHead className="w-[150px] print:w-[120px] print:p-2 print:text-xs text-white font-semibold">Location</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>

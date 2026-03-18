@@ -170,15 +170,15 @@ export function PreferenceAlignmentReport({ slate, officers, oracleData }: Prefe
             {rows.length > 0 && (
                 <div className="border rounded-lg overflow-hidden">
                     <table className="w-full text-sm print:text-xs">
-                        <thead className="bg-muted/50">
+                        <thead className="bg-[#07111f] text-white">
                             <tr>
-                                <th className="text-left px-4 py-2.5 font-medium">Officer</th>
-                                <th className="text-left px-4 py-2.5 font-medium">Role</th>
-                                <th className="text-left px-4 py-2.5 font-medium">Command</th>
-                                <th className="text-left px-4 py-2.5 font-medium">Platform</th>
-                                <th className="text-left px-4 py-2.5 font-medium">Homeport</th>
-                                <th className="text-center px-4 py-2.5 font-medium">Priority</th>
-                                <th className="text-center px-4 py-2.5 font-medium">Alignment</th>
+                                <th className="text-left px-4 py-2.5 font-semibold text-white">Officer</th>
+                                <th className="text-left px-4 py-2.5 font-semibold text-white">Role</th>
+                                <th className="text-left px-4 py-2.5 font-semibold text-white">Command</th>
+                                <th className="text-left px-4 py-2.5 font-semibold text-white">Platform</th>
+                                <th className="text-left px-4 py-2.5 font-semibold text-white">Homeport</th>
+                                <th className="text-center px-4 py-2.5 font-semibold text-white">Priority</th>
+                                <th className="text-center px-4 py-2.5 font-semibold text-white">Alignment</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y">
