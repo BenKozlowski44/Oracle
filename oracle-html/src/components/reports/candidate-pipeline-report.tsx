@@ -61,14 +61,14 @@ function SummaryCard({
     color: string
 }) {
     return (
-        <div className="flex items-center gap-3 p-4 rounded-lg border bg-card">
+        <div className="flex items-center gap-3 p-4 rounded-xl border border-[#c9a227]/20 bg-[#07111f]/80 backdrop-blur-sm shadow-lg text-white">
             <div className={`p-2 rounded-md ${color}`}>
                 <Icon className="h-4 w-4 text-white" />
             </div>
             <div>
-                <div className="text-2xl font-bold leading-none">{value}</div>
-                <div className="text-xs text-muted-foreground mt-0.5">{label}</div>
-                {sub && <div className="text-xs text-muted-foreground/70">{sub}</div>}
+                <div className="text-2xl font-bold leading-none text-white">{value}</div>
+                <div className="text-xs text-white/60 mt-0.5">{label}</div>
+                {sub && <div className="text-xs text-white/40">{sub}</div>}
             </div>
         </div>
     )
