@@ -42,19 +42,19 @@ export function CommandsReport({ slate, oracleData }: { slate: Slate; oracleData
     const renderTable = (cmds: typeof commandsOnSlate, title: string) => (
         <div className="space-y-4 print:space-y-2 print:mb-6">
             <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold print:text-base">{title}</h3>
+                <h3 className="text-lg font-semibold text-[#c9a227] print:text-base">{title}</h3>
             </div>
-            <div className="border rounded-md overflow-x-auto print:border-none print:m-0 print:p-0">
-                <Table className="print:table-fixed print:w-full print:text-xs">
+            <div className="border rounded-md overflow-x-auto bg-white print:border-none print:m-0 print:p-0">
+                <Table className="print:table-fixed print:w-full print:text-xs text-gray-900">
                     <TableHeader>
-                        <TableRow>
-                            <TableHead className="w-[100px] print:w-[60px] print:p-2 print:text-xs">UIC</TableHead>
-                            <TableHead className="w-[250px] print:w-auto print:p-2 print:text-xs">Command Name</TableHead>
-                            <TableHead className="w-[200px] print:w-auto print:p-2 print:text-xs">Billet Title</TableHead>
-                            <TableHead className="w-[150px] print:w-[100px] print:p-2 print:text-xs">Role</TableHead>
-                            <TableHead className="w-[120px] print:w-[80px] print:p-2 print:text-xs">Report Date</TableHead>
-                            <TableHead className="w-[150px] print:w-[120px] print:p-2 print:text-xs">Platform</TableHead>
-                            <TableHead className="w-[150px] print:w-[120px] print:p-2 print:text-xs">Location</TableHead>
+                        <TableRow className="bg-gray-100 hover:bg-gray-100">
+                            <TableHead className="w-[100px] print:w-[60px] print:p-2 print:text-xs text-gray-700 font-semibold">UIC</TableHead>
+                            <TableHead className="w-[250px] print:w-auto print:p-2 print:text-xs text-gray-700 font-semibold">Command Name</TableHead>
+                            <TableHead className="w-[200px] print:w-auto print:p-2 print:text-xs text-gray-700 font-semibold">Billet Title</TableHead>
+                            <TableHead className="w-[150px] print:w-[100px] print:p-2 print:text-xs text-gray-700 font-semibold">Role</TableHead>
+                            <TableHead className="w-[120px] print:w-[80px] print:p-2 print:text-xs text-gray-700 font-semibold">Report Date</TableHead>
+                            <TableHead className="w-[150px] print:w-[120px] print:p-2 print:text-xs text-gray-700 font-semibold">Platform</TableHead>
+                            <TableHead className="w-[150px] print:w-[120px] print:p-2 print:text-xs text-gray-700 font-semibold">Location</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -66,11 +66,11 @@ export function CommandsReport({ slate, oracleData }: { slate: Slate; oracleData
                             </TableRow>
                         ) : (
                             cmds.map(cmd => (
-                                <TableRow key={cmd.id} className="print:break-inside-avoid">
-                                    <TableCell className="font-medium print:p-2 print:align-top">{cmd.uic}</TableCell>
+                                <TableRow key={cmd.id} className="print:break-inside-avoid hover:bg-gray-50 border-b border-gray-100">
+                                    <TableCell className="font-medium print:p-2 print:align-top text-gray-800">{cmd.uic}</TableCell>
                                     <TableCell className="print:p-2 print:align-top">
                                         <div className="flex flex-col">
-                                            <span className="font-medium">{cmd.commandName}</span>
+                                            <span className="font-medium text-gray-900">{cmd.commandName}</span>
                                             {cmd.tags.includes("CO-SM") && (
                                                 <span className="text-[10px] text-muted-foreground">CO-SM</span>
                                             )}
