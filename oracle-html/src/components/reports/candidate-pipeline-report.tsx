@@ -175,7 +175,7 @@ export function CandidatePipelineReport({ officers }: CandidatePipelineReportPro
             {/* Header */}
             <div className="print:mb-2">
                 <h2 className="text-xl font-semibold text-[#c9a227]">Candidate Pipeline Report</h2>
-                <p className="text-sm text-white/60 mt-0.5">
+                <p className="text-sm text-muted-foreground mt-0.5">
                     Pool-wide profile readiness across all Bank officers ·{" "}
                     Generated: {new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
                 </p>
