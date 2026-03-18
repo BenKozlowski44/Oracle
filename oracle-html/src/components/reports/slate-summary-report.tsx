@@ -34,15 +34,15 @@ function ApprovalConnector({ done }: { done: boolean }) {
 function StatChip({ label, value, total, color }: { label: string; value: number; total: number; color: string }) {
     const pct = total > 0 ? Math.round((value / total) * 100) : 0
     return (
-        <div className="flex flex-col gap-1 p-3 rounded-lg border bg-white min-w-[120px]">
+        <div className="flex flex-col gap-1 p-3 rounded-lg border border-[#c9a227]/20 bg-[#07111f] min-w-[120px]">
             <div className="flex items-end gap-1">
-                <span className="text-2xl font-bold text-gray-900">{value}</span>
-                <span className="text-sm text-gray-500 mb-0.5">/ {total}</span>
+                <span className="text-2xl font-bold text-white">{value}</span>
+                <span className="text-sm text-white/50 mb-0.5">/ {total}</span>
             </div>
-            <div className="w-full h-1.5 rounded-full bg-gray-200 overflow-hidden">
+            <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
                 <div className={`h-full rounded-full ${color}`} style={{ width: `${pct}%` }} />
             </div>
-            <span className="text-xs text-gray-500">{label}</span>
+            <span className="text-xs text-white/60">{label}</span>
         </div>
     )
 }
@@ -133,7 +133,7 @@ export function SlateSummaryReport({ slate, officers, oracleData }: SlateSummary
             {/* ── Approval Chain ── */}
             <section className="space-y-3">
                 <h3 className="text-sm font-semibold uppercase tracking-wide text-[#c9a227]">Approval Chain</h3>
-                <div className="p-5 border rounded-lg bg-white flex items-center">
+                <div className="p-5 border border-[#c9a227]/20 rounded-lg bg-[#07111f] flex items-center">
                     {approvalSteps.map((step, i) => (
                         <div key={step.key} className="contents">
                             <ApprovalStep label={step.label} approved={!!approvals[step.key]} />
