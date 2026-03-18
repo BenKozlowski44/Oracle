@@ -100,7 +100,7 @@ export function CommandsReport({ slate, oracleData }: { slate: Slate; oracleData
         <div className="space-y-6">
             <div className="flex items-center justify-between print:mb-4">
                 <div>
-                    <h2 className="text-xl font-semibold">Commands on Slate: {slate.name}</h2>
+                    <h2 className="text-xl font-semibold text-[#c9a227]">Commands on Slate: {slate.name}</h2>
                     <div className="text-sm text-muted-foreground flex gap-4 mt-1">
                         <span>{commandsOnSlate.length} Total Requirements</span>
                         <span className="print:hidden">•</span>

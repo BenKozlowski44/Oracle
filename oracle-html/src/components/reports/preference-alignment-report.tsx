@@ -136,7 +136,7 @@ export function PreferenceAlignmentReport({ slate, officers, oracleData }: Prefe
         <div className="space-y-6 print:space-y-4">
             {/* Header */}
             <div>
-                <h2 className="text-xl font-semibold">Preference Alignment Report</h2>
+                <h2 className="text-xl font-semibold text-[#c9a227]">Preference Alignment Report</h2>
                 <p className="text-sm text-muted-foreground mt-0.5">
                     {slate.name} · Window: {slate.windowStart ? formatToMMMyy(slate.windowStart) : "—"} ·{" "}
                     Generated: {new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}

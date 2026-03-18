@@ -120,7 +120,7 @@ export function SlateSummaryReport({ slate, officers, oracleData }: SlateSummary
             {/* Header */}
             <div className="flex items-start justify-between print:mb-2">
                 <div>
-                    <h2 className="text-xl font-semibold">Slate Summary: {slate.name}</h2>
+                    <h2 className="text-xl font-semibold text-[#c9a227]">Slate Summary: {slate.name}</h2>
                     <p className="text-sm text-muted-foreground mt-0.5">
                         Window: {windowLabel} &nbsp;·&nbsp; Generated: {new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
                     </p>
