@@ -152,10 +152,10 @@ export function PreferenceAlignmentReport({ slate, officers, oracleData }: Prefe
                     <SummaryChip label="No Prefs Set" count={noPrefs} total={total} colorClass="bg-slate-300" />
                 )}
                 {/* Overall score */}
-                <div className="flex flex-col justify-center gap-1 p-3 rounded-lg border bg-card min-w-[110px]">
-                    <div className="text-2xl font-bold">{overallPct}%</div>
-                    <div className="text-xs text-muted-foreground">Alignment Score</div>
-                    <div className="text-[10px] text-muted-foreground/70">(green=1pt, partial=0.5pt)</div>
+                <div className="flex flex-col justify-center gap-1 p-3 rounded-lg border border-[#c9a227]/20 bg-[#07111f] min-w-[110px]">
+                    <div className="text-2xl font-bold text-white">{overallPct}%</div>
+                    <div className="text-xs text-white/60">Alignment Score</div>
+                    <div className="text-[10px] text-white/40">(green=1pt, partial=0.5pt)</div>
                 </div>
             </div>
 
