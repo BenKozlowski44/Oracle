@@ -34,15 +34,15 @@ function ApprovalConnector({ done }: { done: boolean }) {
 function StatChip({ label, value, total, color }: { label: string; value: number; total: number; color: string }) {
     const pct = total > 0 ? Math.round((value / total) * 100) : 0
     return (
-        <div className="flex flex-col gap-1 p-3 rounded-lg border bg-card min-w-[120px]">
+        <div className="flex flex-col gap-1 p-3 rounded-lg border bg-white min-w-[120px]">
             <div className="flex items-end gap-1">
-                <span className="text-2xl font-bold">{value}</span>
-                <span className="text-sm text-muted-foreground mb-0.5">/ {total}</span>
+                <span className="text-2xl font-bold text-gray-900">{value}</span>
+                <span className="text-sm text-gray-500 mb-0.5">/ {total}</span>
             </div>
-            <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden">
+            <div className="w-full h-1.5 rounded-full bg-gray-200 overflow-hidden">
                 <div className={`h-full rounded-full ${color}`} style={{ width: `${pct}%` }} />
             </div>
-            <span className="text-xs text-muted-foreground">{label}</span>
+            <span className="text-xs text-gray-500">{label}</span>
         </div>
     )
 }
@@ -132,8 +132,8 @@ export function SlateSummaryReport({ slate, officers, oracleData }: SlateSummary
 
             {/* ── Approval Chain ── */}
             <section className="space-y-3">
-                <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Approval Chain</h3>
-                <div className="p-5 border rounded-lg bg-card flex items-center">
+                <h3 className="text-sm font-semibold uppercase tracking-wide text-[#c9a227]">Approval Chain</h3>
+                <div className="p-5 border rounded-lg bg-white flex items-center">
                     {approvalSteps.map((step, i) => (
                         <div key={step.key} className="contents">
                             <ApprovalStep label={step.label} approved={!!approvals[step.key]} />
@@ -151,7 +151,7 @@ export function SlateSummaryReport({ slate, officers, oracleData }: SlateSummary
 
             {/* ── Fill Stats ── */}
             <section className="space-y-3">
-                <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Requirement Fill Status</h3>
+                <h3 className="text-sm font-semibold uppercase tracking-wide text-[#c9a227]">Requirement Fill Status</h3>
                 <div className="flex flex-wrap gap-3">
                     <StatChip label="Total Filled" value={allFilled} total={requirements.length} color="bg-blue-500" />
                     <StatChip label="XO Filled" value={filled(xo)} total={xo.length} color="bg-indigo-400" />
@@ -165,29 +165,29 @@ export function SlateSummaryReport({ slate, officers, oracleData }: SlateSummary
 
             {/* ── Candidate Profile Completeness ── */}
             <section className="space-y-3">
-                <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Candidate Profile Completeness</h3>
+                <h3 className="text-sm font-semibold uppercase tracking-wide text-[#c9a227]">Candidate Profile Completeness</h3>
                 {candidateRows.length === 0 ? (
                     <div className="p-8 text-center text-muted-foreground border border-dashed rounded-lg">
                         No candidates assigned yet.
                     </div>
                 ) : (
-                    <div className="border rounded-lg overflow-hidden">
-                        <table className="w-full text-sm print:text-xs">
-                            <thead className="bg-muted/50">
+                    <div className="border rounded-lg overflow-hidden bg-white">
+                        <table className="w-full text-sm print:text-xs text-gray-900">
+                            <thead className="bg-gray-100">
                                 <tr>
-                                    <th className="text-left px-4 py-2.5 font-medium">Officer</th>
-                                    <th className="text-left px-4 py-2.5 font-medium">Role</th>
-                                    <th className="text-left px-4 py-2.5 font-medium">Command</th>
-                                    <th className="text-left px-4 py-2.5 font-medium">Profile Fields</th>
-                                    <th className="text-left px-4 py-2.5 font-medium">Ready?</th>
+                                    <th className="text-left px-4 py-2.5 font-semibold text-gray-700">Officer</th>
+                                    <th className="text-left px-4 py-2.5 font-semibold text-gray-700">Role</th>
+                                    <th className="text-left px-4 py-2.5 font-semibold text-gray-700">Command</th>
+                                    <th className="text-left px-4 py-2.5 font-semibold text-gray-700">Profile Fields</th>
+                                    <th className="text-left px-4 py-2.5 font-semibold text-gray-700">Ready?</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y">
                                 {candidateRows.map(row => {
                                     const ready = row.hasJpme && row.hasTours && row.hasNotes && row.hasPrefs
                                     return (
-                                        <tr key={row.officerId} className="hover:bg-muted/30 transition-colors">
-                                            <td className="px-4 py-2.5 font-medium">{row.name}</td>
+                                        <tr key={row.officerId} className="hover:bg-gray-50 transition-colors border-b border-gray-100">
+                                            <td className="px-4 py-2.5 font-medium text-gray-900">{row.name}</td>
                                             <td className="px-4 py-2.5">
                                                 <Badge variant="outline" className="text-xs">{row.role}</Badge>
                                             </td>
