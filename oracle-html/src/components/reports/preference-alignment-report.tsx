@@ -90,15 +90,15 @@ function SummaryChip({ label, count, total, colorClass }: {
 }) {
     const pct = total > 0 ? Math.round((count / total) * 100) : 0
     return (
-        <div className="flex flex-col gap-1 p-3 rounded-lg border bg-card min-w-[110px]">
+        <div className="flex flex-col gap-1 p-3 rounded-lg border border-[#c9a227]/20 bg-[#07111f] min-w-[110px]">
             <div className="flex items-end gap-1">
-                <span className="text-2xl font-bold">{count}</span>
-                <span className="text-sm text-muted-foreground mb-0.5">/ {total}</span>
+                <span className="text-2xl font-bold text-white">{count}</span>
+                <span className="text-sm text-white/50 mb-0.5">/ {total}</span>
             </div>
-            <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden">
+            <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
                 <div className={`h-full rounded-full ${colorClass}`} style={{ width: `${pct}%` }} />
             </div>
-            <span className="text-xs text-muted-foreground">{label}</span>
+            <span className="text-xs text-white/60">{label}</span>
         </div>
     )
 }
