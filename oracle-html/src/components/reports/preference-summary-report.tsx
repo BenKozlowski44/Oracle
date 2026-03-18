@@ -167,8 +167,8 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
     return (
         <div className="space-y-8">
             <div className="print:hidden">
-                <h1 className="text-3xl font-bold tracking-tight text-white">Preferences Summary</h1>
-                <p className="text-white/60">
+                <h1 className="text-3xl font-bold tracking-tight text-[#c9a227]">Preferences Summary</h1>
+                <p className="text-muted-foreground">
                     Aggregated analysis of locations, platforms, and CO-SM command rankings.
                 </p>
             </div>
