@@ -34,9 +34,10 @@ import { EditOfficerDialog } from "./edit-officer-dialog"
 interface OfficerTableProps {
     data: Officer[]
     variant?: "default" | "pcc"
+    onSave?: (updated: Officer) => void
 }
 
-export function OfficerTable({ data, variant = "default" }: OfficerTableProps) {
+export function OfficerTable({ data, variant = "default", onSave: onSaveProp }: OfficerTableProps) {
     const [searchParams] = useSearchParams()
     const [search, setSearch] = useState(searchParams.get("search") || "")
     const [rankFilter, setRankFilter] = useState<string>("all")
@@ -562,7 +563,10 @@ export function OfficerTable({ data, variant = "default" }: OfficerTableProps) {
                 officer={editingOfficer}
                 open={isDialogOpen}
                 onOpenChange={setIsDialogOpen}
-                onSave={(updated) => setLocalData(prev => prev.map(o => o.id === updated.id ? updated : o))}
+                onSave={(updated) => {
+                    setLocalData(prev => prev.map(o => o.id === updated.id ? updated : o))
+                    onSaveProp?.(updated)
+                }}
             />
         </div>
     )

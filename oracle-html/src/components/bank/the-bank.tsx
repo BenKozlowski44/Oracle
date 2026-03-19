@@ -9,6 +9,17 @@ interface BankProps {
 }
 
 export function TheBank({ data }: BankProps) {
+    // Maintain mutable local state so tab filters re-run after any edit
+    const [localOfficers, setLocalOfficers] = useState<Officer[]>(data)
+
+    // Keep in sync if parent refreshes the data prop (e.g., page reload)
+    useEffect(() => { setLocalOfficers(data) }, [data])
+
+    // When any officer is saved via the edit dialog, update the local list
+    const onOfficerSave = (updated: Officer) => {
+        setLocalOfficers(prev => prev.map(o => o.id === updated.id ? updated : o))
+    }
+
     const isFirefighter = (o: Officer) => {
         if (o.status === "Slated" || o.listShift === "Slated") return false;
         if (o.listShift === "CO-SM" || o.screened?.includes("CO-SM")) return false;
@@ -22,16 +33,17 @@ export function TheBank({ data }: BankProps) {
 
     const isDeclined = (o: Officer) => o.status === "Declined" || o.status === "No Opportunity" || o.status === "De-screened" || o.listShift === "Declined/Descreened"
 
-    const bankOfficers = data.filter(o => {
+    // All filters now run from localOfficers
+    const bankOfficers = localOfficers.filter(o => {
         if (isDeclined(o)) return false;
         const shift = o.listShift || ""
         return shift !== "CO-SM" && shift !== "Slated" && shift !== "XO Screened" && o.status !== "PCC" && !isFirefighter(o)
     })
-    const slatedOfficers = data.filter(o => o.listShift === "Slated" && !isDeclined(o))
-    const xoScreenedOfficers = data.filter(o => o.listShift === "XO Screened" && !isDeclined(o))
-    const cosmOfficers = data.filter(o => (o.listShift === "CO-SM") && !isDeclined(o))
-    const firefighters = data.filter(o => isFirefighter(o) && !isDeclined(o))
-    const declinedOfficers = data.filter(o => isDeclined(o))
+    const slatedOfficers = localOfficers.filter(o => o.listShift === "Slated" && !isDeclined(o))
+    const xoScreenedOfficers = localOfficers.filter(o => o.listShift === "XO Screened" && !isDeclined(o))
+    const cosmOfficers = localOfficers.filter(o => (o.listShift === "CO-SM") && !isDeclined(o))
+    const firefighters = localOfficers.filter(o => isFirefighter(o) && !isDeclined(o))
+    const declinedOfficers = localOfficers.filter(o => isDeclined(o))
 
     const [searchParams] = useSearchParams()
 
@@ -53,7 +65,6 @@ export function TheBank({ data }: BankProps) {
             const inDeclined = declinedOfficers.some(o => o.name.toLowerCase().includes(query))
             if (inDeclined) return "declined"
 
-            // Default to bank if found there or not found at all
             return "bank"
         }
 
@@ -65,7 +76,6 @@ export function TheBank({ data }: BankProps) {
         return "bank"
     })
 
-    // Listen for URL changes if navigating from within the page
     useEffect(() => {
         const query = searchParams.get("search")?.toLowerCase()
         if (query) {
@@ -99,7 +109,7 @@ export function TheBank({ data }: BankProps) {
                                 Active inventory of officers available for slating.
                             </p>
                         </div>
-                        <OfficerTable data={bankOfficers} />
+                        <OfficerTable data={bankOfficers} onSave={onOfficerSave} />
                     </div>
                 </TabsContent>
 
@@ -110,7 +120,7 @@ export function TheBank({ data }: BankProps) {
                                 Officers designated as Ready Firefighters.
                             </p>
                         </div>
-                        <OfficerTable data={firefighters} />
+                        <OfficerTable data={firefighters} onSave={onOfficerSave} />
                     </div>
                 </TabsContent>
 
@@ -121,7 +131,7 @@ export function TheBank({ data }: BankProps) {
                                 Officers currently assigned to a slate.
                             </p>
                         </div>
-                        <OfficerTable data={slatedOfficers} />
+                        <OfficerTable data={slatedOfficers} onSave={onOfficerSave} />
                     </div>
                 </TabsContent>
 
@@ -132,7 +142,7 @@ export function TheBank({ data }: BankProps) {
                                 Officers who screened an XO milestone (XO or XO-SM selects from the annual board).
                             </p>
                         </div>
-                        <OfficerTable data={xoScreenedOfficers} />
+                        <OfficerTable data={xoScreenedOfficers} onSave={onOfficerSave} />
                     </div>
                 </TabsContent>
 
@@ -143,7 +153,7 @@ export function TheBank({ data }: BankProps) {
                                 Officers screened for CO-SM.
                             </p>
                         </div>
-                        <OfficerTable data={cosmOfficers} />
+                        <OfficerTable data={cosmOfficers} onSave={onOfficerSave} />
                     </div>
                 </TabsContent>
 
@@ -154,7 +164,7 @@ export function TheBank({ data }: BankProps) {
                                 Historical inventory of officers who are ineligible for command.
                             </p>
                         </div>
-                        <OfficerTable data={declinedOfficers} />
+                        <OfficerTable data={declinedOfficers} onSave={onOfficerSave} />
                     </div>
                 </TabsContent>
             </Tabs>
