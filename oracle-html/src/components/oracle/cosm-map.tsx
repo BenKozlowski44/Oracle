@@ -15,24 +15,41 @@ interface CosmMapProps {
     selectedLocation: string;
 }
 
-// Coordinate lookup keyed by the location strings stored in OracleCommand.location
+// Coordinate lookup keyed by the exact location strings stored in OracleCommand.location.
 // Add entries here whenever a new homeport appears in the oracle data.
 const COORD_MAP: Record<string, [number, number]> = {
-    "Norfolk, VA":        [36.8508, -76.2859],
-    "San Diego, CA":      [32.7157, -117.1611],
-    "Mayport, FL":        [30.3960, -81.4286],
-    "Pearl Harbor, HI":   [21.3667, -157.9485],
-    "Everett, WA":        [47.9673, -122.2171],
-    "Yokosuka, JP":       [35.2815,  139.6722],
-    "Sasebo, JP":         [33.1614,  129.7121],
-    "Rota, SP":           [36.6212,   -6.3533],
-    "Manama, BH":         [26.2235,   50.5876],
-    // Common CO-SM homeports (add more as needed)
-    "Groton, CT":         [41.3712,  -72.0929],
-    "Kings Bay, GA":      [30.7993,  -81.5568],
-    "Bangor, WA":         [47.7335, -122.7358],
-    "Bremerton, WA":      [47.5673, -122.6329],
-    "Guam":               [13.4443,  144.7937],
+    // ── CONUS East ──────────────────────────────────────────────────────────
+    "Norfolk, VA":             [36.8508,  -76.2859],
+    "Little Creek, VA":        [36.9188,  -76.1224],
+    "Navy Yard, D.C.":         [38.8762,  -76.9953],
+    "Boston, MA":              [42.3601,  -71.0589],
+    "Charleston, NC":          [32.7765,  -79.9311],  // Naval Station Charleston area
+    "Mayport, FL":             [30.3960,  -81.4286],
+    "Kings Bay, GA":           [30.7993,  -81.5568],
+    "Detroit, MI":             [42.3314,  -83.0458],
+    "Minneapolis St. Paul, MN":[44.9778,  -93.2650],
+    "Crane, IN":               [38.8750,  -86.8069],
+    // ── CONUS West ──────────────────────────────────────────────────────────
+    "San Diego, CA":           [32.7157, -117.1611],
+    "San Diego, CA DET C7F":   [32.7157, -117.1611],
+    "Point Loma, CA":          [32.6811, -117.2422],
+    "Miramar, CA":             [32.8681, -117.1425],
+    "Port Hueneme, CA":        [34.1489, -119.2204],
+    "Everett, WA":             [47.9673, -122.2171],
+    "Bremerton, WA":           [47.5673, -122.6329],
+    "Bangor, WA":              [47.7335, -122.7358],
+    // ── Pacific ─────────────────────────────────────────────────────────────
+    "Pearl Harbor, HI":        [21.3667, -157.9485],
+    "Guam":                    [13.4443,  144.7937],
+    "Yokosuka, JP":            [35.2815,  139.6722],
+    "Sasebo, JP":              [33.1614,  129.7121],
+    "Sasebo, Japan":           [33.1614,  129.7121],  // alternate string
+    "CHINHAE, S KOREA":        [35.1494,  128.6970],
+    // ── Europe / Middle East ─────────────────────────────────────────────────
+    "Rota, SP":                [36.6212,   -6.3533],
+    "Manama, BH":              [26.2235,   50.5876],
+    "Poland":                  [52.0693,   19.4803],
+    "Romania":                 [45.9432,   24.9668],
 };
 
 const CosmMap = ({ locations, onLocationSelect, selectedLocation }: CosmMapProps) => {
