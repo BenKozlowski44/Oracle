@@ -47,9 +47,11 @@ interface OracleTableProps {
     officers: Officer[]
     setOfficers: (officers: Officer[]) => void
     initialMetrics?: Metrics
+    showCoSM?: boolean
+    onToggleView?: (showCoSM: boolean) => void
 }
 
-export function OracleTable({ data: initialData, selectedLocation, onLocationChange, officers, setOfficers, initialMetrics }: OracleTableProps) {
+export function OracleTable({ data: initialData, selectedLocation, onLocationChange, officers, setOfficers, initialMetrics, showCoSM, onToggleView }: OracleTableProps) {
     const [data, setData] = useState<OracleCommand[]>(initialData)
     const [metrics, setMetrics] = useState<Metrics>(initialMetrics || { resolvedConflicts: 0 })
     const [searchParams] = useSearchParams()
@@ -86,7 +88,13 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
 
     // Extract unique locations for filter
     const locations = Array.from(new Set(data.map(d => d.location))).sort()
-    const [showSpecialMission, setShowSpecialMission] = useState(false)
+    // showSpecialMission — controlled by parent if props provided, otherwise local fallback
+    const [localShowCoSM, setLocalShowCoSM] = useState(false)
+    const showSpecialMission = showCoSM ?? localShowCoSM
+    const setShowSpecialMission = (val: boolean) => {
+        setLocalShowCoSM(val)
+        onToggleView?.(val)
+    }
     const [directCOCollapsed, setDirectCOCollapsed] = useState(() => {
         try { return localStorage.getItem('cosm-directco-collapsed') === 'true' } catch { return false }
     })

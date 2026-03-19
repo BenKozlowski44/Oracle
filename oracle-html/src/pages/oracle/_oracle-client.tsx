@@ -13,6 +13,11 @@ const OracleMap = dynamic(() => import("@/components/oracle/oracle-map"), {
     loading: () => <Skeleton className="w-full h-[400px] rounded-md" />
 })
 
+const CosmMap = dynamic(() => import("@/components/oracle/cosm-map"), {
+    ssr: false,
+    loading: () => <Skeleton className="w-full h-[400px] rounded-md" />
+})
+
 interface OraclePageClientProps {
     initialOracleData: OracleCommand[]
     initialOfficers: Officer[]
@@ -21,6 +26,17 @@ interface OraclePageClientProps {
 export function OraclePageClient({ initialOracleData, initialOfficers }: OraclePageClientProps) {
     const [selectedLocation, setSelectedLocation] = useState<string>("All")
     const [officers, setOfficers] = useState(initialOfficers)
+    const [showCoSM, setShowCoSM] = useState(false)
+
+    // Unique locations from CO-SM commands only (for the CO-SM map)
+    const coSMLocations = Array.from(
+        new Set(
+            initialOracleData
+                .filter(cmd => cmd.tags?.includes("CO-SM"))
+                .map(cmd => cmd.location)
+                .filter(Boolean)
+        )
+    )
 
     return (
         <div className="space-y-6">
@@ -33,12 +49,24 @@ export function OraclePageClient({ initialOracleData, initialOfficers }: OracleP
             </div>
 
             <Card>
-                <CardHeader><CardTitle>Global Fleet Laydown</CardTitle></CardHeader>
+                <CardHeader>
+                    <CardTitle>
+                        {showCoSM ? "CO-SM Global Laydown" : "Global Fleet Laydown"}
+                    </CardTitle>
+                </CardHeader>
                 <CardContent>
                     <ErrorBoundary fallback={
                         <Alert><AlertDescription>Map visualization temporarily unavailable. Using table view below.</AlertDescription></Alert>
                     }>
-                        <OracleMap onLocationSelect={setSelectedLocation} selectedLocation={selectedLocation} />
+                        {showCoSM ? (
+                            <CosmMap
+                                locations={coSMLocations}
+                                onLocationSelect={setSelectedLocation}
+                                selectedLocation={selectedLocation}
+                            />
+                        ) : (
+                            <OracleMap onLocationSelect={setSelectedLocation} selectedLocation={selectedLocation} />
+                        )}
                     </ErrorBoundary>
                 </CardContent>
             </Card>
@@ -50,6 +78,8 @@ export function OraclePageClient({ initialOracleData, initialOfficers }: OracleP
                     onLocationChange={setSelectedLocation}
                     officers={officers}
                     setOfficers={setOfficers}
+                    showCoSM={showCoSM}
+                    onToggleView={setShowCoSM}
                 />
             </Suspense>
         </div>
