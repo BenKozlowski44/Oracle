@@ -10,16 +10,23 @@ interface PersonnelAlertsProps {
 }
 
 export function PersonnelAlerts({ officers }: PersonnelAlertsProps) {
-    const allAlerts = getAllPersonnelAlerts(officers)
+    // Local state so allAlerts re-evaluates immediately after a save
+    const [localOfficers, setLocalOfficers] = useState<Officer[]>(officers)
+    const allAlerts = getAllPersonnelAlerts(localOfficers)
+
     const [selectedOfficer, setSelectedOfficer] = useState<Officer | null>(null)
     const [isDialogOpen, setIsDialogOpen] = useState(false)
 
     const handleEditClick = (alertName: string) => {
-        const fullOfficer = officers.find(o => o.name === alertName)
+        const fullOfficer = localOfficers.find(o => o.name === alertName)
         if (fullOfficer) {
             setSelectedOfficer(fullOfficer)
             setIsDialogOpen(true)
         }
+    }
+
+    const handleSave = (updated: Officer) => {
+        setLocalOfficers(prev => prev.map(o => o.id === updated.id ? updated : o))
     }
 
     return (
@@ -72,6 +79,7 @@ export function PersonnelAlerts({ officers }: PersonnelAlertsProps) {
                     setIsDialogOpen(open)
                     if (!open) setSelectedOfficer(null)
                 }}
+                onSave={handleSave}
             />
         </div>
     )
