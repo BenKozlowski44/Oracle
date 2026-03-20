@@ -22,9 +22,11 @@ interface MissingInputsReportProps {
 export function MissingInputsReport({ officers }: MissingInputsReportProps) {
     const [search, setSearch] = useState("")
     const [editingOfficer, setEditingOfficer] = useState<Officer | null>(null)
+    // Local state so the report re-evaluates immediately after a fix is saved
+    const [localOfficers, setLocalOfficers] = useState<Officer[]>(officers)
 
     // Calculate alerts to find missing data
-    const alerts = getAllPersonnelAlerts(officers)
+    const alerts = getAllPersonnelAlerts(localOfficers)
 
     // Get unique officers who have at least one alert
     // Officer IDs may contain underscores, so we carefully remove the "_screened" suffix
@@ -34,7 +36,7 @@ export function MissingInputsReport({ officers }: MissingInputsReportProps) {
 
     // Map IDs to full officer objects and filter by search
     const filteredOfficers = missingDataOfficerIds
-        .map(id => officers.find(o => o.id === id))
+        .map(id => localOfficers.find(o => o.id === id))
         .filter((o): o is Officer => {
             if (!o) return false
             const matchesSearch = o.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -137,6 +139,10 @@ export function MissingInputsReport({ officers }: MissingInputsReportProps) {
                 open={!!editingOfficer}
                 onOpenChange={(open) => {
                     if (!open) setEditingOfficer(null)
+                }}
+                onSave={(updated) => {
+                    setLocalOfficers(prev => prev.map(o => o.id === updated.id ? updated : o))
+                    setEditingOfficer(null)
                 }}
             />
         </div>
