@@ -123,9 +123,11 @@ export function AlignmentMatrixReport({ slateId, slate, officers, oracleData }: 
     }
 
     // ── Build fill date map for a given requirement set ───────────────────────
+    // Only OPEN (unfilled) slots drive the fill date — a filled slot is no longer
+    // an open vacancy, so its incumbentPrd should not trigger pipeline warnings.
     const buildFillDates = (reqs: SlateRequirement[]) => {
         const fdMap = new Map<string, Date>()
-        reqs.forEach(r => {
+        reqs.filter(r => !r.filledBy).forEach(r => {
             const cmd = oracleData.find(c => c.id === r.commandId)
             const pf = prefFmt(cmd)
             if (r.incumbentPrd) {
