@@ -33,6 +33,7 @@ const HOMEPORT_ABBR: Record<string, string> = {
     gum: 'guam',
     gu:  'guam',
     rota:'rota',
+    rs:  'rota',
     ba:  'bahrain',
     pas: 'pascagoula',
     cor: 'corpus christi',
