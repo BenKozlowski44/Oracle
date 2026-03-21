@@ -321,7 +321,7 @@ export function AlignmentMatrixReport({ slateId, slate, officers, oracleData }: 
                                                 </span>
                                             </button>
                                             <div className="flex gap-1 flex-wrap justify-center">
-                                                {group.count > 1 && <span className="text-[10px] text-muted-foreground">({group.count} Open)</span>}
+                                                {openSlotsFor(sectionReqs, groupedPrefs, group.prefFormat) > 1 && <span className="text-[10px] text-muted-foreground">({openSlotsFor(sectionReqs, groupedPrefs, group.prefFormat)} Open)</span>}
                                                 {group.tags?.includes('CO-SM') && <Badge variant="secondary" className="text-[8px] h-4 px-1">CO-SM</Badge>}
                                                 {demand > 0 && (
                                                     <Badge className={`text-[10px] h-5 px-1.5 ${demand > openSlotsFor(sectionReqs, groupedPrefs, group.prefFormat) ? 'bg-amber-100 text-amber-800 border border-amber-200 hover:bg-amber-100' : 'bg-slate-100 text-slate-600 border hover:bg-slate-100'}`}>
