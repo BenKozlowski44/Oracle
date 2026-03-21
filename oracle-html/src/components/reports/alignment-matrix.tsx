@@ -87,8 +87,13 @@ export function AlignmentMatrixReport({ slateId, slate, officers, oracleData }: 
     const cosmReqs = requirements.filter(r => classifyReq(r, oracleData) === 'cosm')
 
     // ── Classify candidates ───────────────────────────────────────────────────
-    const isCosmCandidate = (o: Officer) =>
-        !!(o.screened?.includes('CO-SM') || o.listShift === 'CO-SM')
+    const isCosmCandidate = (o: Officer) => {
+        // Check officer profile flags first
+        if (o.screened?.includes('CO-SM') || o.listShift === 'CO-SM') return true
+        // Also treat as CO-SM if they're assigned to a CO-SM requirement on this slate
+        const assignedReq = requirements.find(r => r.filledBy === o.id)
+        return !!(assignedReq && classifyReq(assignedReq, oracleData) === 'cosm')
+    }
 
     const cosmCandidates = allCandidates.filter(isCosmCandidate)
     const regularCandidates = allCandidates.filter(o => !isCosmCandidate(o))
