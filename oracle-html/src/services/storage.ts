@@ -113,6 +113,9 @@ export function getMetrics(): Metrics | null {
 
 export function saveMetrics(metrics: Metrics): void {
   writeData(KEYS.metrics, metrics)
+  // Dispatch a storage event so same-tab listeners (e.g. dashboard) are notified.
+  // The native 'storage' event only fires for changes from OTHER documents.
+  window.dispatchEvent(new StorageEvent('storage', { key: KEYS.metrics }))
 }
 
 // ─── Full export / import ──────────────────────────────────────────────────

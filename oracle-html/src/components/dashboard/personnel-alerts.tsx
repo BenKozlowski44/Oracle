@@ -4,6 +4,7 @@ import { UserX, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { getAllPersonnelAlerts } from "@/lib/alerts"
 import { EditOfficerDialog } from "@/components/officers/edit-officer-dialog"
+import { getMetrics, saveMetrics } from "@/services/storage"
 
 interface PersonnelAlertsProps {
     officers: Officer[]
@@ -26,7 +27,14 @@ export function PersonnelAlerts({ officers }: PersonnelAlertsProps) {
     }
 
     const handleSave = (updated: Officer) => {
-        setLocalOfficers(prev => prev.map(o => o.id === updated.id ? updated : o))
+        const newOfficers = localOfficers.map(o => o.id === updated.id ? updated : o)
+        // Track how many alerts this fix resolved
+        const resolvedCount = getAllPersonnelAlerts(localOfficers).length - getAllPersonnelAlerts(newOfficers).length
+        if (resolvedCount > 0) {
+            const metrics = getMetrics() ?? { resolvedConflicts: 0 }
+            saveMetrics({ ...metrics, resolvedConflicts: metrics.resolvedConflicts + resolvedCount })
+        }
+        setLocalOfficers(newOfficers)
     }
 
     return (

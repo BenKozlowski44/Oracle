@@ -13,10 +13,16 @@ import { CommandAlerts } from "@/components/dashboard/command-alerts"
 import { PersonnelAlerts } from "@/components/dashboard/personnel-alerts"
 import { getOracleData, getOfficers, getMetrics } from '@/services/storage'
 import { getOperatorName } from '@/pages/settings/page'
-import { useRef, useLayoutEffect, useState } from "react"
+import { useRef, useLayoutEffect, useState, useEffect } from "react"
 
 export default function DashboardPage() {
-  const metrics = getMetrics() ?? { resolvedConflicts: 0 }
+  // Re-read metrics whenever saveMetrics fires a storage event
+  const [metrics, setMetrics] = useState(() => getMetrics() ?? { resolvedConflicts: 0 })
+  useEffect(() => {
+    const refresh = () => setMetrics(getMetrics() ?? { resolvedConflicts: 0 })
+    window.addEventListener('storage', refresh)
+    return () => window.removeEventListener('storage', refresh)
+  }, [])
   const currentOfficers = getOfficers()
   const oracleData = getOracleData()
 
