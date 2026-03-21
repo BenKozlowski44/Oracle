@@ -264,70 +264,6 @@ export function PreferenceAlignmentReport({ slate, officers, oracleData }: Prefe
                 </p>
             </div>
 
-            {/* ══════════ CO-SM SECTION ══════════ */}
-            {cosmTotal > 0 && (
-                <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                        <h3 className="text-base font-semibold text-[#c9a227] uppercase tracking-wider">CO-SM</h3>
-                        <div className="h-px flex-1 bg-[#c9a227]/20" />
-                        <span className="text-xs text-muted-foreground">Ranked by submitted slate preferences</span>
-                    </div>
-
-                    {/* CO-SM summary chips */}
-                    <div className="flex flex-wrap gap-3">
-                        <SummaryChip label="Aligned (Top 3)"   count={cosmGreen}  total={cosmTotal} colorClass="bg-emerald-500" />
-                        <SummaryChip label="Partial (4–6)"     count={cosmYellow} total={cosmTotal} colorClass="bg-amber-400" />
-                        <SummaryChip label="Unaligned (7+)"    count={cosmRed}    total={cosmTotal} colorClass="bg-red-400" />
-                        {cosmNone > 0 && <SummaryChip label="No Profile" count={cosmNone} total={cosmTotal} colorClass="bg-slate-300" />}
-                        <div className="flex flex-col justify-center gap-1 p-3 rounded-lg border border-[#c9a227]/20 bg-[#07111f] min-w-[110px]">
-                            <div className="text-2xl font-bold text-white">{cosmPct}%</div>
-                            <div className="text-xs text-white/60">CO-SM Score</div>
-                            <div className="text-[10px] text-white/40">(top3=1pt, 4-6=0.5pt)</div>
-                        </div>
-                    </div>
-
-                    {/* CO-SM table */}
-                    <div className="border rounded-lg overflow-hidden">
-                        <table className="w-full text-sm print:text-xs">
-                            <thead className="bg-[#07111f] text-white">
-                                <tr>
-                                    <th className="text-left px-4 py-2.5 font-semibold">Officer</th>
-                                    <th className="text-left px-4 py-2.5 font-semibold">Command</th>
-                                    <th className="text-center px-4 py-2.5 font-semibold">Pref Rank</th>
-                                    <th className="text-center px-4 py-2.5 font-semibold">Alignment</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y">
-                                {cosmRows.map(({ requirement: req, officer, cmd, alignment }) => {
-                                    const prefRank = (alignment as ReturnType<typeof computeCosmAlignment>).prefRank
-                                    return (
-                                        <tr key={req.id} className={`transition-colors ${LEVEL_CONFIG[alignment.level].rowClass}`}>
-                                            <td className="px-4 py-3">
-                                                <div className="font-medium">{officer.name}</div>
-                                                <div className="text-xs text-muted-foreground">{officer.rank} · {officer.designator}</div>
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                <div className="font-medium text-xs">{cmd.name}</div>
-                                                <div className="text-xs text-muted-foreground">{[cmd.platform, cmd.location].filter(Boolean).join(" · ")}</div>
-                                            </td>
-                                            <td className="px-4 py-3 text-center">
-                                                {prefRank != null
-                                                    ? <span className="text-sm font-bold">#{prefRank}</span>
-                                                    : <span className="text-muted-foreground text-xs">Not Listed</span>
-                                                }
-                                            </td>
-                                            <td className="px-4 py-3 text-center">
-                                                {renderAlignBadge(alignment.level)}
-                                            </td>
-                                        </tr>
-                                    )
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            )}
-
             {/* ══════════ CDR CMD SECTION ══════════ */}
             <div className="space-y-4">
                 <div className="flex items-center gap-3">
@@ -424,6 +360,71 @@ export function PreferenceAlignmentReport({ slate, officers, oracleData }: Prefe
                     </div>
                 )}
             </div>
+
+            {/* ══════════ CO-SM SECTION ══════════ */}
+            {cosmTotal > 0 && (
+                <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                        <h3 className="text-base font-semibold text-[#c9a227] uppercase tracking-wider">CO-SM</h3>
+                        <div className="h-px flex-1 bg-[#c9a227]/20" />
+                        <span className="text-xs text-muted-foreground">Ranked by submitted slate preferences</span>
+                    </div>
+
+                    {/* CO-SM summary chips */}
+                    <div className="flex flex-wrap gap-3">
+                        <SummaryChip label="Aligned (Top 3)"   count={cosmGreen}  total={cosmTotal} colorClass="bg-emerald-500" />
+                        <SummaryChip label="Partial (4–6)"     count={cosmYellow} total={cosmTotal} colorClass="bg-amber-400" />
+                        <SummaryChip label="Unaligned (7+)"    count={cosmRed}    total={cosmTotal} colorClass="bg-red-400" />
+                        {cosmNone > 0 && <SummaryChip label="No Profile" count={cosmNone} total={cosmTotal} colorClass="bg-slate-300" />}
+                        <div className="flex flex-col justify-center gap-1 p-3 rounded-lg border border-[#c9a227]/20 bg-[#07111f] min-w-[110px]">
+                            <div className="text-2xl font-bold text-white">{cosmPct}%</div>
+                            <div className="text-xs text-white/60">CO-SM Score</div>
+                            <div className="text-[10px] text-white/40">(top3=1pt, 4-6=0.5pt)</div>
+                        </div>
+                    </div>
+
+                    {/* CO-SM table */}
+                    <div className="border rounded-lg overflow-hidden">
+                        <table className="w-full text-sm print:text-xs">
+                            <thead className="bg-[#07111f] text-white">
+                                <tr>
+                                    <th className="text-left px-4 py-2.5 font-semibold">Officer</th>
+                                    <th className="text-left px-4 py-2.5 font-semibold">Command</th>
+                                    <th className="text-center px-4 py-2.5 font-semibold">Pref Rank</th>
+                                    <th className="text-center px-4 py-2.5 font-semibold">Alignment</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y">
+                                {cosmRows.map(({ requirement: req, officer, cmd, alignment }) => {
+                                    const prefRank = (alignment as ReturnType<typeof computeCosmAlignment>).prefRank
+                                    return (
+                                        <tr key={req.id} className={`transition-colors ${LEVEL_CONFIG[alignment.level].rowClass}`}>
+                                            <td className="px-4 py-3">
+                                                <div className="font-medium">{officer.name}</div>
+                                                <div className="text-xs text-muted-foreground">{officer.rank} · {officer.designator}</div>
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                <div className="font-medium text-xs">{cmd.name}</div>
+                                                <div className="text-xs text-muted-foreground">{[cmd.platform, cmd.location].filter(Boolean).join(" · ")}</div>
+                                            </td>
+                                            <td className="px-4 py-3 text-center">
+                                                {prefRank != null
+                                                    ? <span className="text-sm font-bold">#{prefRank}</span>
+                                                    : <span className="text-muted-foreground text-xs">Not Listed</span>
+                                                }
+                                            </td>
+                                            <td className="px-4 py-3 text-center">
+                                                {renderAlignBadge(alignment.level)}
+                                            </td>
+                                        </tr>
+                                    )
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            )}
+
 
             {/* ── Legend ── */}
             <div className="space-y-2 text-xs text-muted-foreground print:hidden border-t pt-4">
