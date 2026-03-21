@@ -122,6 +122,34 @@ function computeAlignment(
 }
 
 
+// ── CO-SM alignment (preference-rank-based) ───────────────────────────────────
+// Uses the officer's ranked slate-specific preferences, not platform/homeport.
+// Rank 1-3 = Aligned (green), 4-6 = Partial (yellow), 7+ / not found = Unaligned (red)
+function computeCosmAlignment(
+    officer: Officer,
+    cmd: OracleCommand,
+    slate: Slate
+): { level: AlignmentLevel; prefRank: number | null } {
+    const profile = (slate.candidateProfiles ?? []).find(p => p.officerId === officer.id)
+    if (!profile || profile.preferences.length === 0) {
+        return { level: "none", prefRank: null }
+    }
+
+    // Preference key is stored as "Platform - Location" — match flexibly,
+    // also try matching by command name as a fallback
+    const cmdKey = `${cmd.platform || 'Unknown'} - ${cmd.location}`
+    const match = profile.preferences
+        .filter(p => !!p.key)
+        .find(p => flexMatch(cmdKey, p.key) || flexMatch(cmd.name, p.key))
+
+    if (!match) return { level: "red", prefRank: null }
+
+    const rank = match.rank
+    if (rank <= 3) return { level: "green", prefRank: rank }
+    if (rank <= 6) return { level: "yellow", prefRank: rank }
+    return { level: "red", prefRank: rank }
+}
+
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 const LEVEL_CONFIG = {
@@ -176,35 +204,58 @@ function SummaryChip({ label, count, total, colorClass }: {
 // ── Main component ─────────────────────────────────────────────────────────────
 
 export function PreferenceAlignmentReport({ slate, officers, oracleData }: PreferenceAlignmentReportProps) {
-    const rows = useMemo(() => {
-        return (slate.requirements ?? [])
-            .filter(r => r.filledBy)
-            .map(r => {
-                const officer = officers.find(o => o.id === r.filledBy)
-                const cmd = oracleData.find(c => c.id === r.commandId)
-                if (!officer || !cmd) return null
-                const alignment = computeAlignment(officer, cmd)
-                return { requirement: r, officer, cmd, alignment }
-            })
-            .filter(Boolean) as Array<{
-                requirement: typeof slate.requirements[0]
-                officer: Officer
-                cmd: OracleCommand
-                alignment: ReturnType<typeof computeAlignment>
-            }>
+
+    const { cosmRows, cdrcmdRows } = useMemo(() => {
+        const filledReqs = (slate.requirements ?? []).filter(r => r.filledBy)
+
+        const cosm: Array<{ requirement: typeof slate.requirements[0]; officer: Officer; cmd: OracleCommand; alignment: ReturnType<typeof computeCosmAlignment> }> = []
+        const cdrcmd: Array<{ requirement: typeof slate.requirements[0]; officer: Officer; cmd: OracleCommand; alignment: ReturnType<typeof computeAlignment> }> = []
+
+        for (const r of filledReqs) {
+            const officer = officers.find(o => o.id === r.filledBy)
+            const cmd = oracleData.find(c => c.id === r.commandId)
+            if (!officer || !cmd) continue
+
+            if (cmd.tags?.includes("CO-SM")) {
+                cosm.push({ requirement: r, officer, cmd, alignment: computeCosmAlignment(officer, cmd, slate) })
+            } else {
+                cdrcmd.push({ requirement: r, officer, cmd, alignment: computeAlignment(officer, cmd) })
+            }
+        }
+
+        return { cosmRows: cosm, cdrcmdRows: cdrcmd }
     }, [slate, officers, oracleData])
 
-    const total = rows.length
-    const green = rows.filter(r => r.alignment.level === "green").length
-    const yellow = rows.filter(r => r.alignment.level === "yellow").length
-    const red = rows.filter(r => r.alignment.level === "red").length
-    const noPrefs = rows.filter(r => r.alignment.level === "none").length
+    // CO-SM totals
+    const cosmTotal = cosmRows.length
+    const cosmGreen  = cosmRows.filter(r => r.alignment.level === "green").length
+    const cosmYellow = cosmRows.filter(r => r.alignment.level === "yellow").length
+    const cosmRed    = cosmRows.filter(r => r.alignment.level === "red").length
+    const cosmNone   = cosmRows.filter(r => r.alignment.level === "none").length
+    const cosmPct    = cosmTotal > 0 ? Math.round(((cosmGreen + cosmYellow * 0.5) / cosmTotal) * 100) : 0
 
-    const overallPct = total > 0 ? Math.round(((green + yellow * 0.5) / total) * 100) : 0
+    // CDR CMD totals
+    const cdrTotal = cdrcmdRows.length
+    const cdrGreen  = cdrcmdRows.filter(r => r.alignment.level === "green").length
+    const cdrYellow = cdrcmdRows.filter(r => r.alignment.level === "yellow").length
+    const cdrRed    = cdrcmdRows.filter(r => r.alignment.level === "red").length
+    const cdrNone   = cdrcmdRows.filter(r => r.alignment.level === "none").length
+    const cdrPct    = cdrTotal > 0 ? Math.round(((cdrGreen + cdrYellow * 0.5) / cdrTotal) * 100) : 0
+
+    const renderAlignBadge = (level: AlignmentLevel) => {
+        const cfg = LEVEL_CONFIG[level]
+        const Icon = cfg.icon
+        return (
+            <span className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded font-medium ${cfg.badgeClass}`}>
+                <Icon className={`h-3.5 w-3.5 ${cfg.iconClass}`} />
+                {cfg.label}
+            </span>
+        )
+    }
 
     return (
-        <div className="space-y-6 print:space-y-4">
-            {/* Header */}
+        <div className="space-y-8 print:space-y-4">
+            {/* ── Header ── */}
             <div>
                 <h2 className="text-xl font-semibold text-[#c9a227]">Preference Alignment Report</h2>
                 <p className="text-sm text-muted-foreground mt-0.5">
@@ -213,116 +264,182 @@ export function PreferenceAlignmentReport({ slate, officers, oracleData }: Prefe
                 </p>
             </div>
 
-            {/* Summary chips */}
-            <div className="flex flex-wrap gap-3">
-                <SummaryChip label="Aligned" count={green} total={total} colorClass="bg-emerald-500" />
-                <SummaryChip label="Partial Match" count={yellow} total={total} colorClass="bg-amber-400" />
-                <SummaryChip label="Unaligned" count={red} total={total} colorClass="bg-red-400" />
-                {noPrefs > 0 && (
-                    <SummaryChip label="No Prefs Set" count={noPrefs} total={total} colorClass="bg-slate-300" />
-                )}
-                {/* Overall score */}
-                <div className="flex flex-col justify-center gap-1 p-3 rounded-lg border border-[#c9a227]/20 bg-[#07111f] min-w-[110px]">
-                    <div className="text-2xl font-bold text-white">{overallPct}%</div>
-                    <div className="text-xs text-white/60">Alignment Score</div>
-                    <div className="text-[10px] text-white/40">(green=1pt, partial=0.5pt)</div>
+            {/* ══════════ CO-SM SECTION ══════════ */}
+            {cosmTotal > 0 && (
+                <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                        <h3 className="text-base font-semibold text-[#c9a227] uppercase tracking-wider">CO-SM</h3>
+                        <div className="h-px flex-1 bg-[#c9a227]/20" />
+                        <span className="text-xs text-muted-foreground">Ranked by submitted slate preferences</span>
+                    </div>
+
+                    {/* CO-SM summary chips */}
+                    <div className="flex flex-wrap gap-3">
+                        <SummaryChip label="Aligned (Top 3)"   count={cosmGreen}  total={cosmTotal} colorClass="bg-emerald-500" />
+                        <SummaryChip label="Partial (4–6)"     count={cosmYellow} total={cosmTotal} colorClass="bg-amber-400" />
+                        <SummaryChip label="Unaligned (7+)"    count={cosmRed}    total={cosmTotal} colorClass="bg-red-400" />
+                        {cosmNone > 0 && <SummaryChip label="No Profile" count={cosmNone} total={cosmTotal} colorClass="bg-slate-300" />}
+                        <div className="flex flex-col justify-center gap-1 p-3 rounded-lg border border-[#c9a227]/20 bg-[#07111f] min-w-[110px]">
+                            <div className="text-2xl font-bold text-white">{cosmPct}%</div>
+                            <div className="text-xs text-white/60">CO-SM Score</div>
+                            <div className="text-[10px] text-white/40">(top3=1pt, 4-6=0.5pt)</div>
+                        </div>
+                    </div>
+
+                    {/* CO-SM table */}
+                    <div className="border rounded-lg overflow-hidden">
+                        <table className="w-full text-sm print:text-xs">
+                            <thead className="bg-[#07111f] text-white">
+                                <tr>
+                                    <th className="text-left px-4 py-2.5 font-semibold">Officer</th>
+                                    <th className="text-left px-4 py-2.5 font-semibold">Command</th>
+                                    <th className="text-center px-4 py-2.5 font-semibold">Pref Rank</th>
+                                    <th className="text-center px-4 py-2.5 font-semibold">Alignment</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y">
+                                {cosmRows.map(({ requirement: req, officer, cmd, alignment }) => {
+                                    const prefRank = (alignment as ReturnType<typeof computeCosmAlignment>).prefRank
+                                    return (
+                                        <tr key={req.id} className={`transition-colors ${LEVEL_CONFIG[alignment.level].rowClass}`}>
+                                            <td className="px-4 py-3">
+                                                <div className="font-medium">{officer.name}</div>
+                                                <div className="text-xs text-muted-foreground">{officer.rank} · {officer.designator}</div>
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                <div className="font-medium text-xs">{cmd.name}</div>
+                                                <div className="text-xs text-muted-foreground">{[cmd.platform, cmd.location].filter(Boolean).join(" · ")}</div>
+                                            </td>
+                                            <td className="px-4 py-3 text-center">
+                                                {prefRank != null
+                                                    ? <span className="text-sm font-bold">#{prefRank}</span>
+                                                    : <span className="text-muted-foreground text-xs">Not Listed</span>
+                                                }
+                                            </td>
+                                            <td className="px-4 py-3 text-center">
+                                                {renderAlignBadge(alignment.level)}
+                                            </td>
+                                        </tr>
+                                    )
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+            )}
+
+            {/* ══════════ CDR CMD SECTION ══════════ */}
+            <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                    <h3 className="text-base font-semibold text-[#c9a227] uppercase tracking-wider">CDR CMD</h3>
+                    <div className="h-px flex-1 bg-[#c9a227]/20" />
+                    <span className="text-xs text-muted-foreground">Ranked by platform &amp; homeport priority</span>
+                </div>
+
+                {/* CDR CMD summary chips */}
+                <div className="flex flex-wrap gap-3">
+                    <SummaryChip label="Aligned"      count={cdrGreen}  total={cdrTotal} colorClass="bg-emerald-500" />
+                    <SummaryChip label="Partial"      count={cdrYellow} total={cdrTotal} colorClass="bg-amber-400" />
+                    <SummaryChip label="Unaligned"    count={cdrRed}    total={cdrTotal} colorClass="bg-red-400" />
+                    {cdrNone > 0 && <SummaryChip label="No Prefs Set" count={cdrNone} total={cdrTotal} colorClass="bg-slate-300" />}
+                    <div className="flex flex-col justify-center gap-1 p-3 rounded-lg border border-[#c9a227]/20 bg-[#07111f] min-w-[110px]">
+                        <div className="text-2xl font-bold text-white">{cdrPct}%</div>
+                        <div className="text-xs text-white/60">CDR CMD Score</div>
+                        <div className="text-[10px] text-white/40">(green=1pt, partial=0.5pt)</div>
+                    </div>
+                </div>
+
+                {cdrTotal === 0 && (
+                    <div className="p-10 text-center text-muted-foreground border border-dashed rounded-lg">
+                        No filled CDR CMD requirements on this slate yet.
+                    </div>
+                )}
+
+                {/* CDR CMD table */}
+                {cdrTotal > 0 && (
+                    <div className="border rounded-lg overflow-hidden">
+                        <table className="w-full text-sm print:text-xs">
+                            <thead className="bg-[#07111f] text-white">
+                                <tr>
+                                    <th className="text-left px-4 py-2.5 font-semibold">Officer</th>
+                                    <th className="text-left px-4 py-2.5 font-semibold">Role</th>
+                                    <th className="text-left px-4 py-2.5 font-semibold">Command</th>
+                                    <th className="text-left px-4 py-2.5 font-semibold">Platform</th>
+                                    <th className="text-left px-4 py-2.5 font-semibold">Homeport</th>
+                                    <th className="text-center px-4 py-2.5 font-semibold">Priority</th>
+                                    <th className="text-center px-4 py-2.5 font-semibold">Alignment</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y">
+                                {cdrcmdRows.map(({ requirement: req, officer, cmd, alignment }) => {
+                                    const cfg = LEVEL_CONFIG[alignment.level]
+                                    return (
+                                        <tr key={req.id} className={`transition-colors ${cfg.rowClass}`}>
+                                            <td className="px-4 py-3">
+                                                <div className="font-medium">{officer.name}</div>
+                                                <div className="text-xs text-muted-foreground">{officer.rank} · {officer.designator}</div>
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                <Badge variant="outline" className="text-xs">{req.role}</Badge>
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                <div className="font-medium text-xs">{cmd.name}</div>
+                                                <div className="text-xs text-muted-foreground">
+                                                    {[cmd.platform, cmd.hullNumber].filter(Boolean).join(" ")}
+                                                </div>
+                                            </td>
+                                            <td className="px-4 py-3 text-xs">
+                                                <div className={(alignment as ReturnType<typeof computeAlignment>).platformMatch ? "text-emerald-700 font-medium" : "text-muted-foreground"}>
+                                                    {(alignment as ReturnType<typeof computeAlignment>).platformMatch ? "✓ " : ""}{cmd.platform ?? "—"}
+                                                </div>
+                                                {(officer.preferredPlatforms?.length ?? 0) > 0 && (
+                                                    <div className="text-[10px] text-muted-foreground mt-0.5">
+                                                        Wants: {officer.preferredPlatforms!.join(", ")}
+                                                    </div>
+                                                )}
+                                            </td>
+                                            <td className="px-4 py-3 text-xs">
+                                                <div className={(alignment as ReturnType<typeof computeAlignment>).locationMatch ? "text-emerald-700 font-medium" : "text-muted-foreground"}>
+                                                    {(alignment as ReturnType<typeof computeAlignment>).locationMatch ? "✓ " : ""}{cmd.location ?? "—"}
+                                                </div>
+                                                {(officer.preferredLocations?.length ?? 0) > 0 && (
+                                                    <div className="text-[10px] text-muted-foreground mt-0.5">
+                                                        Wants: {officer.preferredLocations!.join(", ")}
+                                                    </div>
+                                                )}
+                                            </td>
+                                            <td className="px-4 py-3 text-center">
+                                                <span className="text-xs text-muted-foreground">
+                                                    {officer.preferencePriority ?? "—"}
+                                                </span>
+                                            </td>
+                                            <td className="px-4 py-3 text-center">
+                                                {renderAlignBadge(alignment.level)}
+                                            </td>
+                                        </tr>
+                                    )
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </div>
 
-            {/* No filled requirements */}
-            {rows.length === 0 && (
-                <div className="p-10 text-center text-muted-foreground border border-dashed rounded-lg">
-                    No filled requirements on this slate yet.
+            {/* ── Legend ── */}
+            <div className="space-y-2 text-xs text-muted-foreground print:hidden border-t pt-4">
+                <div className="font-semibold text-foreground">Legend</div>
+                <div className="flex flex-wrap gap-x-6 gap-y-1">
+                    <span className="font-medium text-foreground">CDR CMD:</span>
+                    <span className="flex items-center gap-1"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> <strong>Aligned</strong> — primary #1 matches &amp; secondary top-3 matches</span>
+                    <span className="flex items-center gap-1"><MinusCircle className="h-3.5 w-3.5 text-amber-500" /> <strong>Partial</strong> — primary #1 matches, secondary top-3 does not</span>
+                    <span className="flex items-center gap-1"><XCircle className="h-3.5 w-3.5 text-red-500" /> <strong>Unaligned</strong> — primary #1 does not match</span>
                 </div>
-            )}
-
-            {/* Table */}
-            {rows.length > 0 && (
-                <div className="border rounded-lg overflow-hidden">
-                    <table className="w-full text-sm print:text-xs">
-                        <thead className="bg-[#07111f] text-white">
-                            <tr>
-                                <th className="text-left px-4 py-2.5 font-semibold text-white">Officer</th>
-                                <th className="text-left px-4 py-2.5 font-semibold text-white">Role</th>
-                                <th className="text-left px-4 py-2.5 font-semibold text-white">Command</th>
-                                <th className="text-left px-4 py-2.5 font-semibold text-white">Platform</th>
-                                <th className="text-left px-4 py-2.5 font-semibold text-white">Homeport</th>
-                                <th className="text-center px-4 py-2.5 font-semibold text-white">Priority</th>
-                                <th className="text-center px-4 py-2.5 font-semibold text-white">Alignment</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y">
-                            {rows.map(({ requirement: req, officer, cmd, alignment }) => {
-                                const cfg = LEVEL_CONFIG[alignment.level]
-                                const Icon = cfg.icon
-                                return (
-                                    <tr key={req.id} className={`transition-colors ${cfg.rowClass}`}>
-                                        <td className="px-4 py-3">
-                                            <div className="font-medium">{officer.name}</div>
-                                            <div className="text-xs text-muted-foreground">{officer.rank} · {officer.designator}</div>
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            <Badge variant="outline" className="text-xs">{req.role}</Badge>
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            <div className="font-medium text-xs">{cmd.name}</div>
-                                            <div className="text-xs text-muted-foreground">
-                                                {[cmd.platform, cmd.hullNumber].filter(Boolean).join(" ")}
-                                            </div>
-                                        </td>
-                                        <td className="px-4 py-3 text-xs">
-                                            <div className={alignment.platformMatch ? "text-emerald-700 font-medium" : "text-muted-foreground"}>
-                                                {alignment.platformMatch ? "✓ " : ""}{cmd.platform ?? "—"}
-                                            </div>
-                                            {(officer.preferredPlatforms?.length ?? 0) > 0 && (
-                                                <div className="text-[10px] text-muted-foreground mt-0.5">
-                                                    Wants: {officer.preferredPlatforms!.join(", ")}
-                                                </div>
-                                            )}
-                                        </td>
-                                        <td className="px-4 py-3 text-xs">
-                                            <div className={alignment.locationMatch ? "text-emerald-700 font-medium" : "text-muted-foreground"}>
-                                                {alignment.locationMatch ? "✓ " : ""}{cmd.location ?? "—"}
-                                            </div>
-                                            {(officer.preferredLocations?.length ?? 0) > 0 && (
-                                                <div className="text-[10px] text-muted-foreground mt-0.5">
-                                                    Wants: {officer.preferredLocations!.join(", ")}
-                                                </div>
-                                            )}
-                                        </td>
-                                        <td className="px-4 py-3 text-center">
-                                            <span className="text-xs text-muted-foreground">
-                                                {officer.preferencePriority ?? "—"}
-                                            </span>
-                                        </td>
-                                        <td className="px-4 py-3 text-center">
-                                            <span className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded font-medium ${cfg.badgeClass}`}>
-                                                <Icon className={`h-3.5 w-3.5 ${cfg.iconClass}`} />
-                                                {cfg.label}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                )
-                            })}
-                        </tbody>
-                    </table>
+                <div className="flex flex-wrap gap-x-6 gap-y-1">
+                    <span className="font-medium text-foreground">CO-SM:</span>
+                    <span className="flex items-center gap-1"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> <strong>Aligned</strong> — command in submitted preferences #1–3</span>
+                    <span className="flex items-center gap-1"><MinusCircle className="h-3.5 w-3.5 text-amber-500" /> <strong>Partial</strong> — command in submitted preferences #4–6</span>
+                    <span className="flex items-center gap-1"><XCircle className="h-3.5 w-3.5 text-red-500" /> <strong>Unaligned</strong> — command ranked #7+ or not listed</span>
                 </div>
-            )}
-
-            {/* Legend */}
-            <div className="flex flex-wrap gap-4 text-xs text-muted-foreground print:hidden">
-                <span className="flex items-center gap-1.5">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
-                    <strong>Aligned</strong> — priority preference matches (or both match)
-                </span>
-                <span className="flex items-center gap-1.5">
-                    <MinusCircle className="h-3.5 w-3.5 text-amber-500" />
-                    <strong>Partial</strong> — non-priority preference matches
-                </span>
-                <span className="flex items-center gap-1.5">
-                    <XCircle className="h-3.5 w-3.5 text-red-500" />
-                    <strong>Unaligned</strong> — neither platform nor homeport matches
-                </span>
             </div>
         </div>
     )
