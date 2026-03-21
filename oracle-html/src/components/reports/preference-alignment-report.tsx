@@ -77,39 +77,50 @@ function computeAlignment(
     officer: Officer,
     cmd: OracleCommand
 ): { level: AlignmentLevel; platformMatch: boolean; locationMatch: boolean } {
+    const priority = officer.preferencePriority ?? null
     const hasPrefs =
         (officer.preferredPlatforms?.length ?? 0) > 0 ||
         (officer.preferredLocations?.length ?? 0) > 0
 
-    if (!hasPrefs) return { level: "none", platformMatch: false, locationMatch: false }
+    // Priority must be set and at least one preference list populated
+    if (!priority || !hasPrefs) {
+        return { level: "none", platformMatch: false, locationMatch: false }
+    }
 
-    const platformMatch =
-        !!cmd.platform &&
-        (officer.preferredPlatforms ?? []).some(
-            p => !!p && flexMatch(cmd.platform!, p)
-        )
-    const locationMatch =
-        !!cmd.location &&
-        (officer.preferredLocations ?? []).some(
-            l => !!l && flexMatch(cmd.location, l)
-        )
+    const platforms = officer.preferredPlatforms ?? []
+    const locations = officer.preferredLocations ?? []
 
-    const priority = officer.preferencePriority ?? null
+    // Cell highlight booleans (any match anywhere in each list, for display)
+    const platformMatch = !!cmd.platform && platforms.some(p => !!p && flexMatch(cmd.platform!, p))
+    const locationMatch = !!cmd.location && locations.some(l => !!l && flexMatch(cmd.location, l))
+
     let level: AlignmentLevel
 
     if (priority === "Platform") {
-        level = platformMatch ? "green" : locationMatch ? "yellow" : "red"
-    } else if (priority === "Homeport") {
-        level = locationMatch ? "green" : platformMatch ? "yellow" : "red"
+        // Primary:   their #1 platform (index 0) must match → Partial minimum
+        // Secondary: any of their top-3 locations must match → upgrades to Aligned
+        const primaryMatch   = !!cmd.platform && !!platforms[0] && flexMatch(cmd.platform, platforms[0])
+        const secondaryMatch = !!cmd.location && locations.slice(0, 3).some(l => !!l && flexMatch(cmd.location, l))
+
+        if (primaryMatch && secondaryMatch) level = "green"
+        else if (primaryMatch)             level = "yellow"
+        else                               level = "red"
+
     } else {
-        // No priority — both matching = green, one = yellow, neither = red
-        if (platformMatch && locationMatch) level = "green"
-        else if (platformMatch || locationMatch) level = "yellow"
-        else level = "red"
+        // priority === "Homeport"
+        // Primary:   their #1 location (index 0) must match → Partial minimum
+        // Secondary: any of their top-3 platforms must match → upgrades to Aligned
+        const primaryMatch   = !!cmd.location && !!locations[0] && flexMatch(cmd.location, locations[0])
+        const secondaryMatch = !!cmd.platform && platforms.slice(0, 3).some(p => !!p && flexMatch(cmd.platform!, p))
+
+        if (primaryMatch && secondaryMatch) level = "green"
+        else if (primaryMatch)             level = "yellow"
+        else                               level = "red"
     }
 
     return { level, platformMatch, locationMatch }
 }
+
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
