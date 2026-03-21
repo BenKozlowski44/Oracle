@@ -24,15 +24,22 @@ function computeAlignment(
 
     if (!hasPrefs) return { level: "none", platformMatch: false, locationMatch: false }
 
+    // Flexible match: accepts if either string contains the other (case-insensitive).
+    // This handles mismatches like "DDG" vs "DDG-51" or "Pearl Harbor" vs "Pearl Harbor, HI".
+    const flexMatch = (a: string, b: string) => {
+        const al = a.toLowerCase(), bl = b.toLowerCase()
+        return al === bl || al.includes(bl) || bl.includes(al)
+    }
+
     const platformMatch =
         !!cmd.platform &&
         (officer.preferredPlatforms ?? []).some(
-            p => p.toLowerCase() === (cmd.platform ?? "").toLowerCase()
+            p => !!p && flexMatch(cmd.platform!, p)
         )
     const locationMatch =
         !!cmd.location &&
         (officer.preferredLocations ?? []).some(
-            l => l.toLowerCase() === cmd.location.toLowerCase()
+            l => !!l && flexMatch(cmd.location, l)
         )
 
     const priority = officer.preferencePriority ?? null
