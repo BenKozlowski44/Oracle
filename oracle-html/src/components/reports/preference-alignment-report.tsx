@@ -217,7 +217,9 @@ export function PreferenceAlignmentReport({ slate, officers, oracleData }: Prefe
             const cmd = oracleData.find(c => c.id === r.commandId)
             if (!officer || !cmd) continue
 
-            if (cmd.tags?.includes("CO-SM")) {
+            // Classify by the slate requirement's role — this is the authoritative source.
+            // The oracle command's tags may not always be set even for CO-SM commands.
+            if (r.role === "CO-SM" || cmd.tags?.includes("CO-SM")) {
                 cosm.push({ requirement: r, officer, cmd, alignment: computeCosmAlignment(officer, cmd, slate) })
             } else {
                 cdrcmd.push({ requirement: r, officer, cmd, alignment: computeAlignment(officer, cmd) })
