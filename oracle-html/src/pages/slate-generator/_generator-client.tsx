@@ -74,25 +74,29 @@ export function SlateGeneratorClient({ oracleData }: SlateGeneratorClientProps) 
 
             if (isCOSM) {
                 // ── CO-SM pipeline ────────────────────────────────────────────
-                // Priority 1: nextSWOFillDate (manual override set on the command)
-                if (cmd.nextSWOFillDate) {
-                    const raw = cmd.nextSWOFillDate.trim().toUpperCase();
-                    let parsed = parseISO(raw);
-                    if (!isValid(parsed) && raw.length === 5) {
-                        parsed = parse(raw, 'MMMyy', new Date());
-                    }
-                    if (isValid(parsed)) {
-                        fillDate = parsed;
-                        source = "nextSWOFillDate";
-                    }
+                // Helper: try ISO then MMMyy (CO-SM dates may be in either format)
+                const flexParse = (s?: string | null): Date | null => {
+                    if (!s) return null
+                    const r = s.trim().toUpperCase()
+                    if (['N/A','TBD','UNKNOWN','VACANT',''].includes(r)) return null
+                    let d = parseISO(r)
+                    if (isValid(d)) return d
+                    d = parse(r, 'MMMyy', new Date())
+                    if (isValid(d)) return d
+                    d = parse(r, 'MMMyyyy', new Date())
+                    return isValid(d) ? d : null
                 }
-                // Priority 2: current XO PRD
-                if (!fillDate && cmd.currentXO?.prd && cmd.currentXO.prd !== 'N/A' && cmd.currentXO.prd !== 'TBD') {
-                    const prd = parseISO(cmd.currentXO.prd);
-                    if (isValid(prd)) {
-                        fillDate = prd;
-                        source = "prd";
-                    }
+                // Try all date fields in priority order
+                const candidates: [string, string | null | undefined][] = [
+                    ['nextSWOFillDate', cmd.nextSWOFillDate],
+                    ['xo.fleetUp',     cmd.currentXO?.timelineData?.k],
+                    ['xo.prd',         cmd.currentXO?.prd],
+                    ['co.departure',   cmd.currentCO?.timelineData?.q],
+                    ['co.prd',         cmd.currentCO?.prd],
+                ]
+                for (const [src, val] of candidates) {
+                    const d = flexParse(val)
+                    if (d) { fillDate = d; source = src; break }
                 }
             } else {
                 // ── Standard fleet-up pipeline ────────────────────────────────
