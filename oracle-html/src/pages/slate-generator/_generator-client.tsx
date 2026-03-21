@@ -16,7 +16,7 @@ import {
 import { OracleCommand, SlateRequirement, Slate } from "@/lib/types"
 import { formatToMMMyy } from "@/lib/utils"
 import { addMonths, parseISO, isValid, parse, format } from "date-fns"
-import { calculateTargetBoard } from '@/lib/slate-logic'
+import { calculateTargetBoard, predictNextVacancyDate } from '@/lib/slate-logic'
 import { useNavigate } from 'react-router-dom'
 import { saveSlate } from '@/services/storage'
 import { notifySuccess, saveError } from '@/lib/notify'
@@ -131,15 +131,23 @@ export function SlateGeneratorClient({ oracleData }: SlateGeneratorClientProps) 
                 }
             }
 
-            // ── Slate match — does calculateTargetBoard(fillDate) match this slate? ──
-            // e.g. a fill date of SEP27 → targetBoard "26-3" → matches slate "FY26-3"
-            const targetBoard = fillDate ? calculateTargetBoard(format(fillDate, 'yyyy-MM-dd')) : null
-            if (fillDate && targetBoard && targetBoard === slateCode) {
+            // ── Slate match ─────────────────────────────────────────
+            // Use predictNextVacancyDate (same as command card badges) for the
+            // authoritative slate match. The flex-parsed fillDate is only used
+            // for the incumbentPrd display date.
+            const targetBoard = predictNextVacancyDate(cmd)
+            if (targetBoard !== 'TBD' && targetBoard === slateCode) {
                 const inboundName = cmd.inboundXO?.name;
                 const currentName = cmd.currentXO?.name;
                 const incumbentName = (inboundName && inboundName !== "N/A" && inboundName !== "Unknown")
                     ? inboundName
                     : (currentName && currentName !== "N/A" ? currentName : "Unknown");
+
+                // For display, use flex-parsed fillDate if available; otherwise estimate
+                // from the target board date.
+                const displayDate = fillDate
+                    ? fillDate.toISOString().split('T')[0]
+                    : new Date().toISOString().split('T')[0]
 
                 reqs.push({
                     id: `req-${cmd.id}-${isCOSM ? 'cosm' : 'xo'}`,
@@ -147,7 +155,7 @@ export function SlateGeneratorClient({ oracleData }: SlateGeneratorClientProps) 
                     commandId: cmd.id,
                     role: isCOSM ? 'CO-SM' : 'XO',
                     incumbent: incumbentName,
-                    incumbentPrd: fillDate.toISOString().split('T')[0],
+                    incumbentPrd: displayDate,
                     status: "Draft"
                 });
             }
