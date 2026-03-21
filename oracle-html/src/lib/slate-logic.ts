@@ -227,7 +227,14 @@ export function predictNextVacancyDate(command: OracleCommand): string {
 
       if (slatedIsRealPerson && isFilled(slatedFleetUp ?? undefined)) {
         baseDate = parseAnyDate(slatedFleetUp ?? undefined)
+      } else if (slatedIsRealPerson && isFilled(command.slatedXO?.reportDate)) {
+        // Fleet-up date not recorded — estimate from report date + tour length
+        // so we point to the next vacancy (when this officer fleets up) not the
+        // date they arrive (which is when they were already identified).
+        const reportDate = parseAnyDate(command.slatedXO!.reportDate)
+        if (reportDate) baseDate = addMonths(reportDate, command.tourLength ?? 18)
       } else if (isFilled(command.slatedXO?.reportDate)) {
+        // Placeholder slatedXO (e.g. "Forecast") — use the date as the anchor
         baseDate = parseAnyDate(command.slatedXO!.reportDate)
       }
 

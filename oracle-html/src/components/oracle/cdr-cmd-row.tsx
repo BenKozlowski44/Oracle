@@ -171,11 +171,18 @@ export function CdrCmdRow({ cmd, expandedRows, onToggleExpand, onEditClick, onPe
                         {health.approaching && "⚠ "}
                         {cmdLive.nextSlateParams?.requirement} via {cmdLive.nextSlateParams?.targetBoardDate}
                     </Badge>
-                    {getCdrCmdXoRptDate(cmd) && (
-                        <div className="text-xs text-muted-foreground mt-1 text-center">
-                            XO RPT: {formatToMMMyy(getCdrCmdXoRptDate(cmd)!)}
-                        </div>
-                    )}
+                    {getCdrCmdXoRptDate(cmd) && (() => {
+                        const slatedName = cmd.slatedXO?.name
+                        const isSlated = !!slatedName && !/^(forecast|tbd|vacant|n\/a|unknown)$/i.test(slatedName.trim())
+                        const dateStr = formatToMMMyy(getCdrCmdXoRptDate(cmd)!)
+                        return (
+                            <div className="text-xs text-muted-foreground mt-1 text-center">
+                                {isSlated
+                                    ? `Slated: ${slatedName} (${dateStr})`
+                                    : `XO RPT: ${dateStr}`}
+                            </div>
+                        )
+                    })()}
                 </TableCell>
 
                 <TableCell className="w-[80px]" />
