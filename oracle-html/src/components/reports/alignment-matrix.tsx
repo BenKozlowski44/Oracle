@@ -98,11 +98,7 @@ export function AlignmentMatrixReport({ slateId, slate, officers, oracleData }: 
     const directCoPrefFormats = new Set(
         directCoReqs.map(r => prefFmt(oracleData.find(c => c.id === r.commandId)))
     )
-    const directCoCandidates = regularCandidates.filter(o => {
-        const profile = slate.candidateProfiles?.find(p => p.officerId === o.id)
-        return profile?.preferences.some(p => directCoPrefFormats.has(p.key))
-    })
-    const cdrCmdCandidates = regularCandidates.filter(o => !directCoCandidates.includes(o))
+    const cdrCmdCandidates = regularCandidates
 
     // ── Build grouped prefs for a given requirement set ───────────────────────
     const buildGroupedPrefs = (reqs: SlateRequirement[]) => {
@@ -462,108 +458,7 @@ export function AlignmentMatrixReport({ slateId, slate, officers, oracleData }: 
         )
     }
 
-    // ── Direct CO section renderer ────────────────────────────────────────────
-    const renderDirectCo = () => {
-        if (directCoReqs.length === 0) return null
-        return (
-            <section className="space-y-4 print:break-before-avoid">
-                <SectionHeader
-                    title="Direct CO Input"
-                    subtitle={`${directCoReqs.length} requirement${directCoReqs.length !== 1 ? 's' : ''} — selections use initial officer preferences, no alignment matrix`}
-                />
 
-                {/* Requirements summary */}
-                <div className="border rounded-md bg-white">
-                    <Table>
-                        <TableHeader>
-                            <TableRow className="bg-[#07111f] hover:bg-[#07111f]">
-                                <TableHead className="text-white font-semibold">Command</TableHead>
-                                <TableHead className="text-white font-semibold">Location</TableHead>
-                                <TableHead className="text-white font-semibold">Incumbent</TableHead>
-                                <TableHead className="text-white font-semibold">Fill Date</TableHead>
-                                <TableHead className="text-white font-semibold">Status</TableHead>
-                                <TableHead className="text-white font-semibold">Assigned</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {directCoReqs.map(r => {
-                                const cmd = oracleData.find(c => c.id === r.commandId)
-                                const assignedOfficer = r.filledBy ? officers.find(o => o.id === r.filledBy) : null
-                                return (
-                                    <TableRow key={r.id} className={r.filledBy ? 'bg-green-50' : 'bg-white'}>
-                                        <TableCell className="font-medium">{r.commandName}</TableCell>
-                                        <TableCell className="text-sm text-gray-600">{cmd?.location ?? '—'}</TableCell>
-                                        <TableCell className="text-sm">{r.incumbent}</TableCell>
-                                        <TableCell className="text-sm">{formatToMMMyy(r.incumbentPrd)}</TableCell>
-                                        <TableCell>
-                                            <span className={`text-xs font-semibold ${r.filledBy ? 'text-green-700' : 'text-amber-600'}`}>{r.status}</span>
-                                        </TableCell>
-                                        <TableCell>
-                                            {assignedOfficer
-                                                ? <span className="text-sm font-medium text-green-800">{assignedOfficer.name}</span>
-                                                : <span className="text-gray-400 italic text-sm">—</span>}
-                                        </TableCell>
-                                    </TableRow>
-                                )
-                            })}
-                        </TableBody>
-                    </Table>
-                </div>
-
-                {/* Candidate preference cards */}
-                {directCoCandidates.length > 0 && (
-                    <div>
-                        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Candidate Initial Preferences</p>
-                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 print:grid-cols-2">
-                            {directCoCandidates.map(candidate => {
-                                const avail = getAvailDate(candidate.id)
-                                return (
-                                    <div key={candidate.id} className="border rounded-md p-3 bg-white space-y-2">
-                                        <div className="flex items-start justify-between gap-2">
-                                            <div>
-                                                <p className="font-semibold text-sm">{candidate.name}</p>
-                                                <p className="text-xs text-gray-500">{candidate.rank} • {candidate.designator}{avail ? ` • Avail ${formatToMMMyy(avail)}` : ''}</p>
-                                            </div>
-                                            {candidate.preferencePriority && (
-                                                <Badge variant="outline" className="text-[10px] shrink-0">{candidate.preferencePriority}</Badge>
-                                            )}
-                                        </div>
-                                        {(candidate.preferredLocations?.some(Boolean)) && (
-                                            <div className="space-y-0.5">
-                                                <p className="text-[10px] font-semibold text-gray-400 uppercase flex items-center gap-1">
-                                                    <MapPin className="h-3 w-3" /> Preferred Locations
-                                                </p>
-                                                <ol className="text-xs text-gray-700 list-decimal list-inside space-y-0.5">
-                                                    {candidate.preferredLocations?.filter(Boolean).map((loc, i) => (
-                                                        <li key={i}>{loc}</li>
-                                                    ))}
-                                                </ol>
-                                            </div>
-                                        )}
-                                        {(candidate.preferredPlatforms?.some(Boolean)) && (
-                                            <div className="space-y-0.5">
-                                                <p className="text-[10px] font-semibold text-gray-400 uppercase flex items-center gap-1">
-                                                    <Ship className="h-3 w-3" /> Preferred Platforms
-                                                </p>
-                                                <ol className="text-xs text-gray-700 list-decimal list-inside space-y-0.5">
-                                                    {candidate.preferredPlatforms?.filter(Boolean).map((plat, i) => (
-                                                        <li key={i}>{plat}</li>
-                                                    ))}
-                                                </ol>
-                                            </div>
-                                        )}
-                                        {candidate.notes && (
-                                            <p className="text-xs text-gray-500 italic border-t pt-1">{candidate.notes}</p>
-                                        )}
-                                    </div>
-                                )
-                            })}
-                        </div>
-                    </div>
-                )}
-            </section>
-        )
-    }
 
     // ─────────────────────────────────────────────────────────────────────────
     return (
@@ -589,9 +484,6 @@ export function AlignmentMatrixReport({ slateId, slate, officers, oracleData }: 
                     false,
                 )}
             </section>
-
-            {/* ══ SECTION 2: DIRECT CO INPUT ══════════════════════════════════════ */}
-            {renderDirectCo()}
 
             {/* ══ SECTION 3: CO-SM ════════════════════════════════════════════════ */}
             {(cosmReqs.length > 0 || cosmCandidates.length > 0) && (
