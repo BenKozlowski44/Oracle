@@ -224,7 +224,7 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                                                     x={x + width + 5}
                                                     y={y + height / 2}
                                                     dy={4}
-                                                    fill="#6b7280"
+                                                    fill="#cbd5e1"
                                                     fontSize={11}
                                                     textAnchor="start"
                                                 >
