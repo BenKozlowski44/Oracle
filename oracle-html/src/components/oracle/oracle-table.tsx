@@ -341,6 +341,7 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                                 <TableHead>CO</TableHead>
                                 <TableHead>XO</TableHead>
                                 <TableHead>P-XO</TableHead>
+                                <TableHead>Slated XO</TableHead>
                                 <TableHead className="cursor-pointer hover:bg-muted/50 text-center w-[150px]" onClick={() => requestSort('slate')}>
                                     Slate {sortConfig?.key === 'slate' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
                                 </TableHead>
@@ -350,7 +351,7 @@ export function OracleTable({ data: initialData, selectedLocation, onLocationCha
                         <TableBody>
                             {filteredData.length === 0 ? (
                                 <TableRow>
-                                    <TableCell colSpan={7} className="h-24 text-center">
+                                    <TableCell colSpan={8} className="h-24 text-center">
                                         No commands found in The Oracle.
                                     </TableCell>
                                 </TableRow>

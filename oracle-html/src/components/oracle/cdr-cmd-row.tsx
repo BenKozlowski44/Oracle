@@ -159,6 +159,23 @@ export function CdrCmdRow({ cmd, expandedRows, onToggleExpand, onEditClick, onPe
                     )}
                 </TableCell>
 
+                {/* Slated XO */}
+                <TableCell className="max-w-[140px]">
+                    {(() => {
+                        const name = cmd.slatedXO?.name
+                        const hasSlated = !!name && !/^(forecast|tbd|vacant|n\/a|unknown|)$/i.test(name.trim())
+                        if (!hasSlated) return <span className="text-muted-foreground italic text-sm">-- Open --</span>
+                        return (
+                            <>
+                                <div className="text-sm font-medium truncate text-purple-500" title={name}>{name}</div>
+                                {cmd.slatedXO?.reportDate && (
+                                    <div className="text-xs text-muted-foreground">RPT: {formatToMMMyy(cmd.slatedXO.reportDate)}</div>
+                                )}
+                            </>
+                        )
+                    })()}
+                </TableCell>
+
                 {/* Slate badge */}
                 <TableCell className="w-[150px] min-w-[150px]">
                     <Badge
