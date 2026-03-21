@@ -1,12 +1,13 @@
 import { useState } from "react"
-import { Officer, SlateCandidateProfile, TourEntry, ContactInfo, FlagContact } from "@/lib/types"
+import { Officer, SlateCandidateProfile, TourEntry, ContactInfo, FlagContact, OracleCommand } from "@/lib/types"
 import {
     Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { Mail, Phone, MapPin, Star, Award, Shield, Flag, User, BookOpen, Home, Save, X } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Mail, Phone, MapPin, Star, Award, Shield, Flag, User, BookOpen, Home, Save, X, ArrowUp, ArrowDown } from "lucide-react"
 
 // Fields considered "significant" — show red border when empty
 const SIGNIFICANT_CONTACT = ['workEmail', 'personalPhone'] as const
@@ -132,9 +133,10 @@ interface CandidateProfileViewProps {
     open: boolean
     onClose: () => void
     onSave: (updated: SlateCandidateProfile) => void
+    commands?: OracleCommand[]
 }
 
-export function CandidateProfileView({ officer, profile, open, onClose, onSave }: CandidateProfileViewProps) {
+export function CandidateProfileView({ officer, profile, open, onClose, onSave, commands = [] }: CandidateProfileViewProps) {
     // Parse notes parts from the stored string
     const notesParts = (profile.notes || '').split(' | ')
     const parsedNotes = notesParts.find(p => p.startsWith('Candidate Notes:'))?.replace('Candidate Notes:', '').trim() || ''
@@ -164,9 +166,20 @@ export function CandidateProfileView({ officer, profile, open, onClose, onSave }
     const updateTour = (i: number, updated: TourEntry) => setTours(t => t.map((tr, idx) => idx === i ? updated : tr))
     const updatePref = (i: number, key: string, rank: number) =>
         setPreferences(p => p.map((pr, idx) => idx === i ? { key, rank } : pr))
-    const addPref = () => setPreferences(p => [...p, { key: '', rank: p.length + 1 }])
+    const addPref = (key = '') => setPreferences(p => [...p, { key, rank: p.length + 1 }])
     const removePref = (i: number) => setPreferences(p => p.filter((_, idx) => idx !== i).map((pr, idx) => ({ ...pr, rank: idx + 1 })))
-
+    const movePref = (i: number, dir: 'up' | 'down') => {
+        const sorted = [...preferences].sort((a, b) => a.rank - b.rank)
+        if (dir === 'up' && i > 0) [sorted[i], sorted[i - 1]] = [sorted[i - 1], sorted[i]]
+        if (dir === 'down' && i < sorted.length - 1) [sorted[i], sorted[i + 1]] = [sorted[i + 1], sorted[i]]
+        setPreferences(sorted.map((p, idx) => ({ ...p, rank: idx + 1 })))
+    }
+    // Preference options derived from slate commands (deduped platform–location combos)
+    const preferenceOptions = Array.from(new Set(
+        commands.map(c => `${c.platform || 'Unknown'} - ${c.location}`)
+    )).sort()
+    const availableOptions = preferenceOptions.filter(opt => !preferences.some(p => p.key === opt))
+    const sortedPreferences = [...preferences].sort((a, b) => a.rank - b.rank)
     const missingPrefs = preferences.length === 0 || preferences.every(p => !p.key.trim())
 
     const handleSave = () => {
@@ -268,27 +281,60 @@ export function CandidateProfileView({ officer, profile, open, onClose, onSave }
                         title="Command Preferences"
                         badge={missingPrefs ? <Badge variant="destructive" className="text-[10px] h-5 px-1.5">Missing</Badge> : undefined}
                     >
-                        <div className="space-y-2">
-                            {preferences.map((pref, i) => (
-                                <div key={i} className="flex items-center gap-2">
-                                    <div className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold shrink-0 ${pref.rank <= 3 ? 'bg-green-100 text-green-700 border border-green-200' :
-                                        pref.rank <= 6 ? 'bg-amber-100 text-amber-700 border border-amber-200' :
-                                            'bg-rose-100 text-rose-700 border border-rose-200'
-                                        }`}>{pref.rank}</div>
-                                    <input
-                                        className={fieldClass(pref.key, true)}
-                                        value={pref.key}
-                                        onChange={e => updatePref(i, e.target.value, pref.rank)}
-                                        placeholder="Platform - Location (e.g. DDG - Norfolk)..."
-                                    />
-                                    <button onClick={() => removePref(i)} className="text-muted-foreground hover:text-destructive shrink-0">
-                                        <X className="h-4 w-4" />
-                                    </button>
-                                </div>
-                            ))}
-                            <Button type="button" variant="outline" size="sm" onClick={addPref} className="mt-1">
-                                + Add Preference
-                            </Button>
+                        <div className="space-y-3">
+                            {/* Dropdown — only shown when slate commands are available */}
+                            {availableOptions.length > 0 && (
+                                <Select onValueChange={(val) => {
+                                    if (!preferences.some(p => p.key === val)) addPref(val)
+                                }}>
+                                    <SelectTrigger className="text-sm">
+                                        <SelectValue placeholder="Add a preference from this slate..." />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {availableOptions.map(opt => (
+                                            <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            )}
+
+                            {/* Ranked preference list */}
+                            <div className="space-y-2 border rounded-md p-2 min-h-[72px] bg-muted/10">
+                                {sortedPreferences.length === 0 ? (
+                                    <div className="text-center text-sm text-muted-foreground py-4">
+                                        {preferenceOptions.length > 0 ? 'Select a preference above.' : 'No preferences added.'}
+                                    </div>
+                                ) : (
+                                    sortedPreferences.map((pref, i) => (
+                                        <div key={pref.key || i} className="flex items-center gap-2 p-2 bg-background border rounded-md">
+                                            <div className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold shrink-0 ${
+                                                pref.rank <= 3 ? 'bg-green-100 text-green-700 border border-green-200' :
+                                                pref.rank <= 6 ? 'bg-amber-100 text-amber-700 border border-amber-200' :
+                                                'bg-rose-100 text-rose-700 border border-rose-200'
+                                            }`}>{pref.rank}</div>
+                                            <div className="flex-1 text-sm font-medium">{pref.key}</div>
+                                            <div className="flex items-center gap-0.5">
+                                                <button type="button" onClick={() => movePref(i, 'up')} disabled={i === 0} className="p-1 rounded hover:bg-muted disabled:opacity-30">
+                                                    <ArrowUp className="h-3 w-3" />
+                                                </button>
+                                                <button type="button" onClick={() => movePref(i, 'down')} disabled={i === sortedPreferences.length - 1} className="p-1 rounded hover:bg-muted disabled:opacity-30">
+                                                    <ArrowDown className="h-3 w-3" />
+                                                </button>
+                                                <button type="button" onClick={() => removePref(i)} className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-destructive">
+                                                    <X className="h-3 w-3" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+
+                            {/* Fallback free-text button when no slate commands configured */}
+                            {preferenceOptions.length === 0 && (
+                                <Button type="button" variant="outline" size="sm" onClick={() => addPref()}>
+                                    + Add Preference
+                                </Button>
+                            )}
                         </div>
                     </Section>
 

@@ -1271,6 +1271,7 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
                             open={!!viewingOfficerId}
                             onClose={() => setViewingOfficerId(null)}
                             onSave={handleSaveProfile}
+                            commands={requirements.map(r => oracleData.find(od => od.id === r.commandId)).filter(Boolean) as any[]}
                         />
                     );
                 })()
