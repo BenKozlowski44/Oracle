@@ -15,7 +15,8 @@ import {
 } from "@/components/ui/table"
 import { OracleCommand, SlateRequirement, Slate } from "@/lib/types"
 import { formatToMMMyy } from "@/lib/utils"
-import { addMonths, parseISO, isValid, parse } from "date-fns"
+import { addMonths, parseISO, isValid, parse, format } from "date-fns"
+import { calculateTargetBoard } from '@/lib/slate-logic'
 import { useNavigate } from 'react-router-dom'
 import { saveSlate } from '@/services/storage'
 import { notifySuccess, saveError } from '@/lib/notify'
@@ -62,8 +63,8 @@ export function SlateGeneratorClient({ oracleData }: SlateGeneratorClientProps) 
     }
 
     const handleGenerate = () => {
-        const start = new Date(startDate)
-        const end = new Date(endDate)
+        // Extract the "YY-Q" code from the slate name (e.g. "FY26-3" → "26-3")
+        const slateCode = slateName.replace(/[^\d-]/g, '').replace(/^-/, '')
 
         const reqs: SlateRequirement[] = []
 
@@ -130,8 +131,10 @@ export function SlateGeneratorClient({ oracleData }: SlateGeneratorClientProps) 
                 }
             }
 
-            // ── Window check — same for both pipelines ────────────────────────
-            if (fillDate && fillDate >= start && fillDate <= end) {
+            // ── Slate match — does calculateTargetBoard(fillDate) match this slate? ──
+            // e.g. a fill date of SEP27 → targetBoard "26-3" → matches slate "FY26-3"
+            const targetBoard = fillDate ? calculateTargetBoard(format(fillDate, 'yyyy-MM-dd')) : null
+            if (fillDate && targetBoard && targetBoard === slateCode) {
                 const inboundName = cmd.inboundXO?.name;
                 const currentName = cmd.currentXO?.name;
                 const incumbentName = (inboundName && inboundName !== "N/A" && inboundName !== "Unknown")
