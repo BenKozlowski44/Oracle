@@ -14,6 +14,65 @@ interface PreferenceAlignmentReportProps {
 
 type AlignmentLevel = "green" | "yellow" | "red" | "none"
 
+// ── Navy homeport abbreviation lookup ─────────────────────────────────────────
+// Maps common officer-entered abbreviations to canonical city names used in
+// oracle command records. Case-insensitive keys.
+const HOMEPORT_ABBR: Record<string, string> = {
+    nf:  'norfolk',
+    ph:  'pearl harbor',
+    sd:  'san diego',
+    mp:  'mayport',
+    ev:  'everett',
+    yj:  'yokosuka',
+    yk:  'yokosuka',
+    br:  'bremerton',
+    kb:  'kings bay',
+    nl:  'new london',
+    gr:  'groton',
+    np:  'newport',
+    gum: 'guam',
+    gu:  'guam',
+    rota:'rota',
+    ba:  'bahrain',
+    pas: 'pascagoula',
+    cor: 'corpus christi',
+    pen: 'pensacola',
+    ki:  'kittery',
+    bat: 'bath',
+}
+
+// ── Platform abbreviation lookup ───────────────────────────────────────────────
+const PLATFORM_ABBR: Record<string, string> = {
+    ddg: 'ddg',
+    cg:  'cg',
+    lha: 'lha',
+    lhd: 'lhd',
+    lpd: 'lpd',
+    lsd: 'lsd',
+    lcs: 'lcs',
+    ssn: 'ssn',
+    ssbn:'ssbn',
+    ssgn:'ssgn',
+    cvn: 'cvn',
+    aoe: 'aoe',
+    afs: 'afs',
+}
+
+function normStr(s: string): string[] {
+    const lower = s.toLowerCase().trim()
+    // Return the original plus any expansion via the homeport abbreviation table
+    const expanded = HOMEPORT_ABBR[lower]
+    return expanded ? [lower, expanded] : [lower]
+}
+
+function flexMatch(a: string, b: string): boolean {
+    const aNorms = normStr(a)
+    const bNorms = normStr(b)
+    return aNorms.some(an => bNorms.some(bn =>
+        an === bn || an.includes(bn) || bn.includes(an)
+    ))
+}
+
 function computeAlignment(
     officer: Officer,
     cmd: OracleCommand
@@ -23,13 +82,6 @@ function computeAlignment(
         (officer.preferredLocations?.length ?? 0) > 0
 
     if (!hasPrefs) return { level: "none", platformMatch: false, locationMatch: false }
-
-    // Flexible match: accepts if either string contains the other (case-insensitive).
-    // This handles mismatches like "DDG" vs "DDG-51" or "Pearl Harbor" vs "Pearl Harbor, HI".
-    const flexMatch = (a: string, b: string) => {
-        const al = a.toLowerCase(), bl = b.toLowerCase()
-        return al === bl || al.includes(bl) || bl.includes(al)
-    }
 
     const platformMatch =
         !!cmd.platform &&
