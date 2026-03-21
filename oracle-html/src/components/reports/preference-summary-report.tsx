@@ -280,23 +280,24 @@ export function PreferenceSummaryReport({ officers }: PreferenceSummaryReportPro
                     <h3 className="font-semibold mb-4 text-center text-white/90">Constituent's #1 Preferred Platform</h3>
                     <div className="h-[250px]">
                         <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={data.topPlatforms}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1e3a5f" />
-                                <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#cbd5e1' }} angle={-45} textAnchor="end" height={60} />
-                                <YAxis allowDecimals={false} tick={{ fill: '#94a3b8', fontSize: 11 }} />
+                            <BarChart data={data.topPlatforms} layout="vertical" margin={{ left: 20, right: 50, top: 0, bottom: 0 }}>
+                                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#1e3a5f" />
+                                <XAxis type="number" allowDecimals={false} tick={{ fill: '#94a3b8', fontSize: 11 }} />
+                                <YAxis type="category" dataKey="name" width={60} tick={{ fontSize: 12, fill: '#cbd5e1' }} />
                                 <Tooltip />
-                                <Bar dataKey="count" fill="#ef4444" radius={[4, 4, 0, 0]} maxBarSize={60}>
+                                <Bar dataKey="count" fill="#ef4444" radius={[0, 4, 4, 0]}>
                                     <LabelList
                                         content={(props: any) => {
-                                            const { x, y, width, value, index } = props
+                                            const { x, y, width, height, value, index } = props
                                             const item = data.topPlatforms[index]
                                             return (
                                                 <text
-                                                    x={x + width / 2}
-                                                    y={y - 5}
+                                                    x={x + width + 5}
+                                                    y={y + height / 2}
+                                                    dy={4}
                                                     fill="#cbd5e1"
                                                     fontSize={11}
-                                                    textAnchor="middle"
+                                                    textAnchor="start"
                                                 >
                                                     {`${value} (${item?.pct || 0}%)`}
                                                 </text>
