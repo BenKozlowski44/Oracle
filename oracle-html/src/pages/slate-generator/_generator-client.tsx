@@ -117,10 +117,13 @@ export function SlateGeneratorClient({ oracleData }: SlateGeneratorClientProps) 
             // ── Check fill date within range ──────────────────────────────────
             if (fillDate < start || fillDate > end) return
 
-            // ── Incumbent: for CO-SM DirectCO use P-CO → CO chain;
-            // for fleet-up CDR CMD use P-XO → XO chain.
+            // ── Incumbent ─────────────────────────────────────────────────────
+            // CO-SM DirectCO: prospect-CO is the person in the seat when the new
+            // fill arrives → use P-CO first, then current CO.
+            // All other types (CO-SM fleet-up, CDR CMD): use inbound XO → current XO.
             let incumbentName: string
-            if (isCOSM) {
+            const isDirectCO = cmd.rotationStyle === 'DirectCO'
+            if (isCOSM && isDirectCO) {
                 const pCoName = cmd.prospectiveCO?.name
                 const coName  = cmd.currentCO?.name
                 const hasPCo  = !!pCoName && pCoName !== 'N/A' && pCoName !== 'Unknown'
