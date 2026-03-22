@@ -117,13 +117,23 @@ export function SlateGeneratorClient({ oracleData }: SlateGeneratorClientProps) 
             // ── Check fill date within range ──────────────────────────────────
             if (fillDate < start || fillDate > end) return
 
-            // ── Build requirement ─────────────────────────────────────────────
-            const inboundName = cmd.inboundXO?.name
-            const currentName = cmd.currentXO?.name
-            const incumbentName =
-                (inboundName && inboundName !== 'N/A' && inboundName !== 'Unknown')
+            // ── Incumbent: for CO-SM DirectCO use P-CO → CO chain;
+            // for fleet-up CDR CMD use P-XO → XO chain.
+            let incumbentName: string
+            if (isCOSM) {
+                const pCoName = cmd.prospectiveCO?.name
+                const coName  = cmd.currentCO?.name
+                const hasPCo  = !!pCoName && pCoName !== 'N/A' && pCoName !== 'Unknown'
+                incumbentName = hasPCo
+                    ? pCoName!
+                    : (coName && coName !== 'N/A' ? coName : 'Unknown')
+            } else {
+                const inboundName = cmd.inboundXO?.name
+                const currentName = cmd.currentXO?.name
+                incumbentName = (inboundName && inboundName !== 'N/A' && inboundName !== 'Unknown')
                     ? inboundName
                     : (currentName && currentName !== 'N/A' ? currentName : 'Unknown')
+            }
 
             reqs.push({
                 id: `req-${cmd.id}-${isCOSM ? 'cosm' : 'xo'}`,
