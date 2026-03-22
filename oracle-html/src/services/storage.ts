@@ -82,6 +82,9 @@ export function saveOfficer(officer: Officer): void {
       saveMetrics({ ...metrics, resolvedConflicts: metrics.resolvedConflicts + resolved })
     }
   }
+
+  // Notify any listeners (e.g. dashboard) that officers have changed
+  window.dispatchEvent(new CustomEvent('oracle-officers-updated'))
 }
 
 export function deleteOfficer(id: string): void {
@@ -198,8 +201,7 @@ export async function restoreFromFile(): Promise<boolean> {
 async function writeBackupNow(): Promise<void> {
   if (!backupFileHandle) return
   try {
-    // @ts-expect-error
-    const writable = await backupFileHandle.createWritable()
+    const writable = await (backupFileHandle as any).createWritable()
     await writable.write(exportAllData())
     await writable.close()
     localStorage.setItem('__lastBackupAt', new Date().toISOString())

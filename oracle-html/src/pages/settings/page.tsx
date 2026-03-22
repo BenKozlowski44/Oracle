@@ -10,7 +10,7 @@ import {
     AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Loader2, FileSpreadsheet, Download, Upload, RefreshCw, ShieldCheck, ShieldAlert, ShieldOff, Save } from "lucide-react"
-import { getOfficers, saveOfficers, exportAllData, restoreFromFile, chooseBackupFile, forceReseed, getBackupStatus, manualBackup } from "@/services/storage"
+import { getOfficers, saveOfficers, exportAllData, restoreFromFile, chooseBackupFile, forceReseed, getBackupStatus, manualBackup, getMetrics, saveMetrics } from "@/services/storage"
 import type { Officer } from "@/lib/types"
 import type { BackupStatus } from "@/services/storage"
 
@@ -256,6 +256,11 @@ export default function DataSettingsPage() {
         window.location.reload()
     }
 
+    const handleResetCounter = () => {
+        const metrics = getMetrics() ?? { resolvedConflicts: 0 }
+        saveMetrics({ ...metrics, resolvedConflicts: 0 })
+    }
+
     return (
         <div className="space-y-6">
             <PageHeader
@@ -353,6 +358,37 @@ export default function DataSettingsPage() {
                     <Button onClick={() => chooseBackupFile()} variant="outline">
                         Set Auto-Save Location
                     </Button>
+
+                    {/* Reset resolved issues counter */}
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button variant="outline">
+                                <RefreshCw className="mr-2 h-4 w-4" /> Reset Resolved Counter
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle className="text-rose-600">⚠ Reset Resolved Issues Counter?</AlertDialogTitle>
+                                <AlertDialogDescription className="space-y-2">
+                                    <span className="block font-semibold text-foreground">
+                                        This will reset the Resolved Issues count on the Command Center to zero.
+                                    </span>
+                                    <span className="block text-muted-foreground">
+                                        No other data will be affected. Typically only needed when handing off to a new operator.
+                                    </span>
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                    className="bg-rose-600 hover:bg-rose-700 text-white"
+                                    onClick={handleResetCounter}
+                                >
+                                    Yes, Reset to Zero
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </CardContent>
             </Card>
 
