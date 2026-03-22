@@ -4,6 +4,7 @@
  */
 export { forceReseed } from '@/services/seed'
 import type { OracleCommand, Officer, Slate, Metrics } from '@/lib/types'
+import { getAllPersonnelAlerts } from '@/lib/alerts'
 
 const KEYS = {
   oracle: 'oracle-data',
@@ -63,10 +64,24 @@ export function saveOfficers(officers: Officer[]): void {
 export function saveOfficer(officer: Officer): void {
   const officers = getOfficers()
   const exists = officers.some(o => o.id === officer.id)
+
+  // Track resolved personnel alerts before the update
+  const alertsBefore = exists ? getAllPersonnelAlerts(officers).length : 0
+
   const updated = exists
     ? officers.map(o => o.id === officer.id ? officer : o)
     : [...officers, officer]
   writeData(KEYS.officers, updated)
+
+  // If any alerts were resolved by this save, increment the metric
+  if (exists) {
+    const alertsAfter = getAllPersonnelAlerts(updated).length
+    const resolved = alertsBefore - alertsAfter
+    if (resolved > 0) {
+      const metrics = getMetrics() ?? { resolvedConflicts: 0 }
+      saveMetrics({ ...metrics, resolvedConflicts: metrics.resolvedConflicts + resolved })
+    }
+  }
 }
 
 export function deleteOfficer(id: string): void {

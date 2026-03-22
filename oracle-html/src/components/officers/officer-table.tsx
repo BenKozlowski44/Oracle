@@ -291,17 +291,24 @@ export function OfficerTable({ data, variant = "default", onSave: onSaveProp }: 
 
     const formatPrd = (dateString: string) => {
         if (!dateString || dateString === "N/A" || dateString === "Unknown") return "N/A";
-        try {
-            const date = new Date(dateString);
-            if (isNaN(date.getTime())) return dateString;
 
-            const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-            const month = monthNames[date.getMonth()];
-            const year = date.getFullYear().toString().slice(-2);
-            return `${month}${year}`;
-        } catch (e) {
-            return dateString;
+        // If it's already in MMMyy format (e.g. "JAN27"), return as-is uppercased
+        if (/^[A-Za-z]{3}\d{2}$/.test(dateString.trim())) {
+            return dateString.trim().toUpperCase()
         }
+
+        // Parse YYYY-MM-DD directly from the string to avoid UTC timezone shift.
+        // Using new Date("2027-01-01") parses as UTC midnight, which in US timezones
+        // (UTC-5/6) becomes Dec 31 2026 locally → displays as DEC26 instead of JAN27.
+        const isoMatch = dateString.match(/^(\d{4})-(\d{2})-(\d{2})/)
+        if (isoMatch) {
+            const year = isoMatch[1].slice(-2)
+            const monthIdx = parseInt(isoMatch[2], 10) - 1
+            const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
+            return `${monthNames[monthIdx]}${year}`
+        }
+
+        return dateString;
     }
 
     const formatScreened = (value: string | undefined | null) => {

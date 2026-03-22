@@ -242,7 +242,11 @@ export default function DataSettingsPage() {
         const url = URL.createObjectURL(blob)
         const a = document.createElement('a')
         a.href = url
-        a.download = `oracle-backup-${new Date().toISOString().slice(0, 10)}.json`
+        const now = new Date()
+        const day = String(now.getDate()).padStart(2, '0')
+        const mon = now.toLocaleString('en-US', { month: 'short' }).toLowerCase()
+        const yr = String(now.getFullYear()).slice(2)
+        a.download = `oracle-backup-${day}${mon}${yr}.json`
         a.click()
         URL.revokeObjectURL(url)
     }

@@ -4,8 +4,9 @@
  * Two-tier seeding strategy:
  *
  * TIER 1 — Oracle commands & Officers (inventory data, updated from Excel):
- *   Uses a content hash. When oracle.html is rebuilt with new inventory data
- *   (new build, new hash), these are refreshed automatically — including on NMCI.
+ *   Uses a content hash. When oracle.html is rebuilt with new inventory data,
+ *   performs a MERGE — existing records (matched by id) are kept as-is to
+ *   preserve user edits. Only brand-new records from the seed are added.
  *
  * TIER 2 — Slates, Boards, Metrics (user-created work product):
  *   Only seeded if the key is completely absent from localStorage.
@@ -31,13 +32,64 @@ function quickHash(str: string): string {
 const DATA_HASH = quickHash(JSON.stringify(oracleData) + JSON.stringify(officers))
 const INVENTORY_SEED_KEY = `__oracle_inventory_${DATA_HASH}`
 
+/**
+ * Merge seed records into existing localStorage records.
+ * - Existing records (matched by id) are KEPT AS-IS — user edits survive.
+ * - New records from the seed that don't exist yet are ADDED.
+ */
+function mergeById<T extends { id: string }>(existing: T[], seed: T[]): T[] {
+  const existingIds = new Set(existing.map(r => r.id))
+  const newFromSeed = seed.filter(r => !existingIds.has(r.id))
+  return [...existing, ...newFromSeed]
+}
+
 export function seedIfEmpty(): void {
   // ── TIER 1: Inventory data (oracle-data + officers) ───────────────────────
-  // Refresh these when a new build embeds updated inventory data
+  // On new hash: merge seed into existing data, adding only new records.
+  // Existing records are preserved so user edits (locations, names, etc.) survive.
   if (!localStorage.getItem(INVENTORY_SEED_KEY)) {
-    localStorage.setItem('oracle-data', JSON.stringify(oracleData))
-    localStorage.setItem('officers', JSON.stringify(officers))
-    localStorage.setItem('cosm-data', JSON.stringify(cosmData))
+    // Oracle commands — merge
+    const rawOracle = localStorage.getItem('oracle-data')
+    if (rawOracle) {
+      try {
+        const existing = JSON.parse(rawOracle) as typeof oracleData
+        const merged = mergeById(existing, oracleData as typeof oracleData)
+        localStorage.setItem('oracle-data', JSON.stringify(merged))
+      } catch {
+        localStorage.setItem('oracle-data', JSON.stringify(oracleData))
+      }
+    } else {
+      localStorage.setItem('oracle-data', JSON.stringify(oracleData))
+    }
+
+    // Officers — merge
+    const rawOfficers = localStorage.getItem('officers')
+    if (rawOfficers) {
+      try {
+        const existing = JSON.parse(rawOfficers) as typeof officers
+        const merged = mergeById(existing, officers as typeof officers)
+        localStorage.setItem('officers', JSON.stringify(merged))
+      } catch {
+        localStorage.setItem('officers', JSON.stringify(officers))
+      }
+    } else {
+      localStorage.setItem('officers', JSON.stringify(officers))
+    }
+
+    // cosm-data — merge
+    const rawCosm = localStorage.getItem('cosm-data')
+    if (rawCosm) {
+      try {
+        const existing = JSON.parse(rawCosm) as typeof cosmData
+        const merged = mergeById(existing, cosmData as typeof cosmData)
+        localStorage.setItem('cosm-data', JSON.stringify(merged))
+      } catch {
+        localStorage.setItem('cosm-data', JSON.stringify(cosmData))
+      }
+    } else {
+      localStorage.setItem('cosm-data', JSON.stringify(cosmData))
+    }
+
     localStorage.setItem(INVENTORY_SEED_KEY, new Date().toISOString())
 
     // Clean up old inventory seed keys
@@ -46,10 +98,9 @@ export function seedIfEmpty(): void {
         localStorage.removeItem(key)
       }
     }
-    // Remove legacy v1 key if present
     localStorage.removeItem('__seeded_v1')
 
-    console.log(`[Oracle] Inventory seeded (hash: ${DATA_HASH})`)
+    console.log(`[Oracle] Inventory merged (hash: ${DATA_HASH})`)
   }
 
   // ── TIER 2: User work product (slates, boards, metrics) ───────────────────

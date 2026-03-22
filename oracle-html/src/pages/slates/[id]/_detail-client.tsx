@@ -72,7 +72,7 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
     const [directCoSearchQuery, setDirectCoSearchQuery] = useState("");
     const [cosmSearchQuery, setCosmSearchQuery] = useState("");
     const [candidateSearchQuery, setCandidateSearchQuery] = useState("");
-    const [candidateTab, setCandidateTab] = useState<"firefighters" | "bank">("firefighters");
+    const [candidateTab, setCandidateTab] = useState<"firefighters" | "bank" | "cosm">("firefighters");
     const [selectedReqId, setSelectedReqId] = useState<string | null>(null);
     const [cosmFilter, setCosmFilter] = useState(false); // Toggle to show only CO-SM screened
 
@@ -253,9 +253,26 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
         .filter(c => !cosmReqs.some(r => r.commandId === c.id))
         .filter(c => c.name?.toLowerCase().includes(cosmSearchQuery.toLowerCase()) || (c.uic || "").includes(cosmSearchQuery));
 
-    // Valid candidates from global pool (Bank)
-    const firefighterOfficers = officers.filter(o => o.status === 'Ready FF')
-    const bankOfficers = officers.filter(o => o.status !== 'Ready FF' && o.status !== 'PCC')
+    // Whitelist approach — mirror the bank's exact tab classification logic.
+    // Officers are eligible ONLY if they appear in Bank, Firefighters, or CO-SM tabs.
+    const isBankDeclined = (o: Officer) =>
+        o.status === 'Declined' || o.status === 'No Opportunity' || o.status === 'De-screened' ||
+        o.listShift === 'Declined/Descreened'
+    const isBankFirefighter = (o: Officer) => {
+        if (o.status === 'Slated' || o.listShift === 'Slated') return false
+        if (o.listShift === 'CO-SM' || o.screened?.includes('CO-SM')) return false
+        const shift = o.listShift || ''
+        const slate = o.assignedSlate?.toLowerCase() || ''
+        return shift === 'Firefighters' || slate.includes('3rd look') || slate.includes('no command')
+    }
+    const firefighterOfficers = officers.filter(o => isBankFirefighter(o) && !isBankDeclined(o))
+    const cosmOfficers = officers.filter(o => o.listShift === 'CO-SM' && !isBankDeclined(o))
+    const bankOfficers = officers.filter(o => {
+        if (isBankDeclined(o)) return false
+        const shift = o.listShift || ''
+        return shift !== 'CO-SM' && shift !== 'Slated' && shift !== 'XO Screened' &&
+            o.status !== 'PCC' && !isBankFirefighter(o)
+    })
 
     const filterBySearch = (list: typeof officers) =>
         list.filter(o =>
@@ -263,9 +280,10 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
             (o.designator || "").includes(candidateSearchQuery)
         )
 
-    const displayedCandidateTab = candidateTab === 'firefighters'
-        ? filterBySearch(firefighterOfficers)
-        : filterBySearch(bankOfficers)
+    const displayedCandidateTab =
+        candidateTab === 'firefighters' ? filterBySearch(firefighterOfficers) :
+        candidateTab === 'cosm'         ? filterBySearch(cosmOfficers) :
+                                          filterBySearch(bankOfficers)
 
     // Hydrate candidates for display
     const slateCandidates = candidates
@@ -1169,6 +1187,12 @@ export function SlateDetailClient({ id, allSlates, officers, oracleData }: Slate
                                             onClick={() => setCandidateTab('bank')}
                                         >
                                             Officer Bank ({bankOfficers.length})
+                                        </button>
+                                        <button
+                                            className={`px-3 py-1 text-sm rounded-t font-medium transition-colors ${candidateTab === 'cosm' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                                            onClick={() => setCandidateTab('cosm')}
+                                        >
+                                            CO-SM ({cosmOfficers.length})
                                         </button>
                                     </div>
                                     <div className="max-h-[300px] overflow-y-auto border rounded-md">

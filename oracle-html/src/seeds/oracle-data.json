@@ -8163,5 +8163,85 @@
         "q": "JUL30"
       }
     }
+  },
+  {
+    "id": "mscokorea_0319A",
+    "name": "MSCO KOREA",
+    "uic": "0319A",
+    "location": "Pusan, SK",
+    "tags": [
+      "CO-SM"
+    ],
+    "platform": "CO-SM",
+    "rotationStyle": "DirectCO",
+    "tourLength": 24,
+    "currentCO": {
+      "name": "SHIPP HANNAH M",
+      "prd": "MAY27",
+      "timelineData": {
+        "i": "MAY25",
+        "k": "MAY25",
+        "m": "MAY25",
+        "q": "MAY27"
+      }
+    },
+    "currentXO": {
+      "name": "",
+      "prd": "",
+      "timelineData": {
+        "i": "",
+        "k": "",
+        "m": "",
+        "q": ""
+      }
+    },
+    "inboundXO": {
+      "name": "",
+      "reportDate": "",
+      "timelineData": {
+        "i": "",
+        "k": "",
+        "m": "",
+        "q": ""
+      }
+    },
+    "prospectiveCO": {
+      "name": "",
+      "prd": "MAY29",
+      "timelineData": {
+        "i": "MAY27",
+        "m": "MAY27",
+        "q": "MAY29"
+      }
+    },
+    "slatedCO": {
+      "name": "Forecast",
+      "prd": "MAY31",
+      "timelineData": {
+        "i": "MAY29",
+        "m": "MAY29",
+        "q": "MAY31"
+      }
+    },
+    "slatedXO": {
+      "name": "",
+      "reportDate": "",
+      "timelineData": {
+        "i": "",
+        "k": "",
+        "m": "",
+        "q": ""
+      }
+    },
+    "nextSlateParams": {
+      "targetBoardDate": "26-2",
+      "requirement": "CO"
+    },
+    "timeline": {
+      "xoReport": "",
+      "xoTurnover": "",
+      "coc": "2025-05-01",
+      "coTurnover": "2027-05-01"
+    }
   }
 ]

@@ -28,12 +28,6 @@ export function PersonnelAlerts({ officers }: PersonnelAlertsProps) {
 
     const handleSave = (updated: Officer) => {
         const newOfficers = localOfficers.map(o => o.id === updated.id ? updated : o)
-        // Track how many alerts this fix resolved
-        const resolvedCount = getAllPersonnelAlerts(localOfficers).length - getAllPersonnelAlerts(newOfficers).length
-        if (resolvedCount > 0) {
-            const metrics = getMetrics() ?? { resolvedConflicts: 0 }
-            saveMetrics({ ...metrics, resolvedConflicts: metrics.resolvedConflicts + resolvedCount })
-        }
         setLocalOfficers(newOfficers)
     }
 

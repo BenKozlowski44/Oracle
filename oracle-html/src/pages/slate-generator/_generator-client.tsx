@@ -16,6 +16,7 @@ import { OracleCommand, SlateRequirement, Slate } from "@/lib/types"
 import { formatToMMMyy } from "@/lib/utils"
 import { parseISO, isValid, parse } from "date-fns"
 import { getCdrCmdXoRptDate, getCoSmRptDisplay } from '@/lib/slate-logic'
+import { isPlaceholderName } from '@/lib/constants'
 import { useNavigate } from 'react-router-dom'
 import { saveSlate, getSlates } from '@/services/storage'
 import { notifySuccess, saveError } from '@/lib/notify'
@@ -118,24 +119,24 @@ export function SlateGeneratorClient({ oracleData }: SlateGeneratorClientProps) 
             if (fillDate < start || fillDate > end) return
 
             // ── Incumbent ─────────────────────────────────────────────────────
-            // CO-SM DirectCO: prospect-CO is the person in the seat when the new
-            // fill arrives → use P-CO first, then current CO.
+            // CO-SM DirectCO: the fill date is when the P-CO departs (their q date),
+            // so the P-CO is the incumbent being relieved. Fall back to current CO.
             // All other types (CO-SM fleet-up, CDR CMD): use inbound XO → current XO.
             let incumbentName: string
             const isDirectCO = cmd.rotationStyle === 'DirectCO'
             if (isCOSM && isDirectCO) {
                 const pCoName = cmd.prospectiveCO?.name
                 const coName  = cmd.currentCO?.name
-                const hasPCo  = !!pCoName && pCoName !== 'N/A' && pCoName !== 'Unknown'
+                const hasPCo  = !isPlaceholderName(pCoName)
                 incumbentName = hasPCo
                     ? pCoName!
-                    : (coName && coName !== 'N/A' ? coName : 'Unknown')
+                    : (!isPlaceholderName(coName) ? coName! : 'Unknown')
             } else {
                 const inboundName = cmd.inboundXO?.name
                 const currentName = cmd.currentXO?.name
-                incumbentName = (inboundName && inboundName !== 'N/A' && inboundName !== 'Unknown')
-                    ? inboundName
-                    : (currentName && currentName !== 'N/A' ? currentName : 'Unknown')
+                incumbentName = !isPlaceholderName(inboundName)
+                    ? inboundName!
+                    : (!isPlaceholderName(currentName) ? currentName! : 'Unknown')
             }
 
             reqs.push({
