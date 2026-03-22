@@ -168,8 +168,8 @@ export function CdrCmdRow({ cmd, expandedRows, onToggleExpand, onEditClick, onPe
                         return (
                             <>
                                 <div className="text-sm font-medium truncate text-purple-500" title={name}>{name}</div>
-                                {cmd.slatedXO?.reportDate && (
-                                    <div className="text-xs text-muted-foreground">RPT: {formatToMMMyy(cmd.slatedXO.reportDate)}</div>
+                                {(cmd.slatedXO?.reportDate || cmd.slatedXO?.timelineData?.i) && (
+                                    <div className="text-xs text-muted-foreground">RPT: {formatToMMMyy((cmd.slatedXO.reportDate || cmd.slatedXO?.timelineData?.i)!)}</div>
                                 )}
                             </>
                         )
