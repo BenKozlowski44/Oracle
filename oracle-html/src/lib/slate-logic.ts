@@ -305,6 +305,25 @@ export function getCdrCmdXoRptDate(command: OracleCommand): string | null {
   const inboundHasName = !!command.inboundXO?.name && !isPlaceholderName(command.inboundXO.name)
 
   if (inboundHasName) {
+    const slatedName = command.slatedXO?.name || ""
+    const slatedIsReal = !!slatedName && !isPlaceholderName(slatedName) && /[a-zA-Z]{2,}/.test(slatedName)
+
+    if (slatedIsReal) {
+      // Real slated XO — show when the NEXT hole opens (their fleet-up), not their arrival
+      if (command.slatedXO?.timelineData?.k) return command.slatedXO.timelineData.k
+
+      if (command.slatedXO?.reportDate) {
+        // Estimate fleet-up = report date + tour length (default 18 months)
+        let d = parseISO(command.slatedXO.reportDate)
+        if (!isValid(d) && command.slatedXO.reportDate.length === 5) {
+          d = parse(command.slatedXO.reportDate, 'MMMyy', new Date())
+        }
+        if (isValid(d)) {
+          return format(addMonths(d, command.tourLength ?? 18), 'yyyy-MM-dd')
+        }
+      }
+    }
+
     return command.slatedXO?.reportDate || command.inboundXO?.timelineData?.k || null
   }
 
