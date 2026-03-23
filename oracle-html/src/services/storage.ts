@@ -159,6 +159,9 @@ export function importAllData(json: string): void {
   if (data[KEYS.slates])   localStorage.setItem(KEYS.slates,   JSON.stringify(data[KEYS.slates]))
   if (data[KEYS.boards])   localStorage.setItem(KEYS.boards,   JSON.stringify(data[KEYS.boards]))
   if (data[KEYS.metrics])  localStorage.setItem(KEYS.metrics,  JSON.stringify(data[KEYS.metrics]))
+  // Flag that tells seedIfEmpty to skip Tier 1 on the next load so the seed
+  // doesn't merge/overwrite the data we just restored.
+  localStorage.setItem('__oracle_just_restored', 'true')
   // One backup write after all keys are set
   autoBackup()
 }

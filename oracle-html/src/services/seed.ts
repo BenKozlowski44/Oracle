@@ -44,10 +44,27 @@ function mergeById<T extends { id: string }>(existing: T[], seed: T[]): T[] {
 }
 
 export function seedIfEmpty(): void {
-  // ── TIER 1: Inventory data (oracle-data + officers) ───────────────────────
-  // On new hash: merge seed into existing data, adding only new records.
-  // Existing records are preserved so user edits (locations, names, etc.) survive.
-  if (!localStorage.getItem(INVENTORY_SEED_KEY)) {
+  // ── GUARD: skip Tier 1 if data was just restored from a backup file ────────
+  // importAllData stamps this flag before triggering a reload so the seed
+  // doesn't touch the freshly-restored data.
+  if (localStorage.getItem('__oracle_just_restored') === 'true') {
+    localStorage.removeItem('__oracle_just_restored')
+    // Stamp the inventory key so subsequent reloads don't try to merge either
+    localStorage.setItem(INVENTORY_SEED_KEY, new Date().toISOString())
+    // Clean up any old inventory seed keys from previous builds
+    for (const key of Object.keys(localStorage)) {
+      if (key.startsWith('__oracle_inventory_') && key !== INVENTORY_SEED_KEY) {
+        localStorage.removeItem(key)
+      }
+    }
+    console.log('[Oracle] Inventory preserved — data restored from backup file')
+    // Still fall through to Tier 2 (only seeds if key is absent — restored
+    // data already has slates/boards/metrics so these will all be skipped)
+  } else if (!localStorage.getItem(INVENTORY_SEED_KEY)) {
+    // ── TIER 1: Inventory data (oracle-data + officers) ─────────────────────
+    // On new hash: merge seed into existing data, adding only new records.
+    // Existing records are preserved so user edits (locations, names, etc.) survive.
+
     // Oracle commands — merge
     const rawOracle = localStorage.getItem('oracle-data')
     if (rawOracle) {
