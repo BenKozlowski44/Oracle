@@ -19,14 +19,19 @@ import { PreferenceAlignmentReport } from "@/components/reports/preference-align
 import { PreferenceSummaryReport } from "@/components/reports/preference-summary-report"
 import { SlateSummaryReport } from "@/components/reports/slate-summary-report"
 import { PipelineGapsReport } from "@/components/reports/pipeline-gaps-report"
+import { BoardReports } from "@/components/reports/board-reports"
+import type { CdrCmdBoard } from "@/lib/types"
 
 interface ReportsClientProps {
     officers: Officer[]
     slates: Slate[]
     oracleData: OracleCommand[]
+    boards: CdrCmdBoard[]
 }
 
-export function ReportsClient({ officers, slates, oracleData }: ReportsClientProps) {
+
+export function ReportsClient({ officers, slates, oracleData, boards }: ReportsClientProps) {
+
     const [selectedReport, setSelectedReport] = useState("preferences")
     const [selectedSlateId, setSelectedSlateId] = useState<string>("")
 
@@ -42,7 +47,8 @@ export function ReportsClient({ officers, slates, oracleData }: ReportsClientPro
                         Generate global reports across your slates and officers.
                     </p>
                 </div>
-                {selectedReport && (selectedReport === "missing" || selectedReport === "preferences" || selectedReport === "pipeline" || selectedReport === "pref-alignment" || selectedReport === "gaps" || slate) && (
+                {selectedReport && (selectedReport === "missing" || selectedReport === "preferences" || selectedReport === "pipeline" || selectedReport === "pref-alignment" || selectedReport === "gaps" || selectedReport === "board-reports" || slate) && (
+
                     <Button variant="outline" onClick={() => window.print()}>
                         <Printer className="mr-2 h-4 w-4" />
                         Print Report
@@ -61,6 +67,7 @@ export function ReportsClient({ officers, slates, oracleData }: ReportsClientPro
                     ['missing',        'Missing Inputs'],
                     ['pipeline',       'Candidate Pipeline'],
                     ['gaps',           'Pipeline Gaps'],
+                    ['board-reports',  'Board Reports'],
                 ] as [string, string][]).map(([value, label]) => (
                     <button
                         key={value}
@@ -147,6 +154,12 @@ export function ReportsClient({ officers, slates, oracleData }: ReportsClientPro
                 {selectedReport === "gaps" && (
                     <div className="animate-in fade-in duration-300 pt-6">
                         <PipelineGapsReport oracleData={oracleData} />
+                    </div>
+                )}
+
+                {selectedReport === "board-reports" && (
+                    <div className="animate-in fade-in duration-300 pt-6">
+                        <BoardReports boards={boards} />
                     </div>
                 )}
 
