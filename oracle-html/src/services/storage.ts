@@ -150,10 +150,9 @@ export function exportAllData(): string {
   return JSON.stringify(snapshot, null, 2)
 }
 
-export function importAllData(json: string): void {
+export async function importAllData(json: string): Promise<void> {
   const data = JSON.parse(json)
   // Write all keys directly to localStorage WITHOUT triggering autoBackup on each write.
-  // A single autoBackup call at the end ensures the backup file reflects the full restored state.
   if (data[KEYS.oracle])   localStorage.setItem(KEYS.oracle,   JSON.stringify(data[KEYS.oracle]))
   if (data[KEYS.officers]) localStorage.setItem(KEYS.officers,  JSON.stringify(data[KEYS.officers]))
   if (data[KEYS.slates])   localStorage.setItem(KEYS.slates,   JSON.stringify(data[KEYS.slates]))
@@ -162,8 +161,10 @@ export function importAllData(json: string): void {
   // Flag that tells seedIfEmpty to skip Tier 1 on the next load so the seed
   // doesn't merge/overwrite the data we just restored.
   localStorage.setItem('__oracle_just_restored', 'true')
-  // One backup write after all keys are set
-  autoBackup()
+  // AWAIT the backup file write so oracle-backup.json is fully updated BEFORE
+  // window.location.reload() fires. Without await, the page reloads and kills
+  // the async write mid-flight, leaving oracle-backup.json with stale data.
+  await writeBackupNow()
 }
 
 // ─── Auto-backup (File System Access API) ─────────────────────────────────
@@ -194,7 +195,7 @@ export async function restoreFromFile(): Promise<boolean> {
     })
     const file = await handle.getFile()
     const text = await file.text()
-    importAllData(text)
+    await importAllData(text)
     return true
   } catch {
     return false
