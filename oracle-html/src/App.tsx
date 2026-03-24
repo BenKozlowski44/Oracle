@@ -5,7 +5,7 @@ import { AppHeader } from '@/components/AppHeader'
 import { BackupReconnectModal } from '@/components/BackupReconnectModal'
 import { registerToastHandlers } from '@/lib/notify'
 import { toast } from 'sonner'
-import { chooseBackupFile, restoreFromFile, getBackupStatus } from '@/services/storage'
+import { chooseBackupFile, getBackupStatus } from '@/services/storage'
 import { getOracleData, writeData } from '@/services/storage'
 import navalBg from '@/assets/naval-bg.png'
 import { HudBar } from '@/components/HudBar'
@@ -28,7 +28,7 @@ import SettingsPage from '@/pages/settings/page'
 import ToolsPage from '@/pages/tools/page'
 
 export default function App() {
-  const [backupModal, setBackupModal] = useState<'first-time' | 'reconnect' | null>(null)
+  const [backupModal, setBackupModal] = useState<'restore' | 'first-time' | 'reconnect' | null>(null)
 
   useEffect(() => {
     // wire notify handlers to sonner toast
@@ -37,20 +37,7 @@ export default function App() {
       (msg) => toast.error(msg)
     )
 
-    // If actual data is missing from localStorage (cache cleared), offer restore
-    // NOTE: __seeded_v1 is intentionally never written by seed.ts, so we check
-    // for the presence of actual oracle data instead
-    const hasData = localStorage.getItem('oracle-data') !== null
-    if (!hasData) {
-        // No local data — automatically offer file restore via the file picker
-        restoreFromFile().then(ok => {
-            if (ok) window.location.reload()
-        })
-        return
-    }
-
     // One-time migration: sync prd fields from timelineData for all oracle commands.
-    // Gated by a localStorage flag so it only ever runs once.
     if (!localStorage.getItem('__migrated_prd_v1')) {
       const commands = getOracleData()
       const migrated = commands.map(cmd => ({
@@ -74,21 +61,40 @@ export default function App() {
       localStorage.setItem('__migrated_prd_v1', 'true')
     }
 
-    // Show backup modal after a short delay so app renders first
-    // Runs regardless of whether the restore prompt was shown
+    // ── Session Start Wizard (NMCI / fresh session detection) ──────────────
+    // sessionStorage is cleared on tab/browser close but survives page reloads,
+    // making it the correct signal for "this is a fresh session that needs setup."
+    //
+    // Priority 1: after restore + reload → show Step 2 (connect auto-save)
+    if (sessionStorage.getItem('__oracle_needs_autosave') === 'true') {
+      setTimeout(() => setBackupModal('reconnect'), 300)
+      return
+    }
+
+    // Priority 2: fresh session (no bootstrap flag) → show Step 1 (restore)
+    if (!sessionStorage.getItem('__oracle_bootstrapped')) {
+      setTimeout(() => setBackupModal('restore'), 300)
+      return
+    }
+
+    // Priority 3: bootstrapped but auto-save handle lost (shouldn't normally happen)
     setTimeout(() => {
-      const { everGranted, handleActive } = getBackupStatus()
-      if (handleActive) return // already connected — nothing to do
-      if (everGranted) {
-        setBackupModal('reconnect')  // had it before — prompt to reconnect
-      } else {
-        setBackupModal('first-time') // never set up — offer to configure
+      const { handleActive } = getBackupStatus()
+      if (!handleActive) {
+        // silently skip — session is already bootstrapped
       }
     }, 600)
   }, [])
 
   const handleConnect = async () => {
     await chooseBackupFile()
+    sessionStorage.removeItem('__oracle_needs_autosave')
+    sessionStorage.setItem('__oracle_bootstrapped', 'true')
+    setBackupModal(null)
+  }
+
+  const handleSkip = () => {
+    sessionStorage.setItem('__oracle_bootstrapped', 'true')
     setBackupModal(null)
   }
 
@@ -162,7 +168,7 @@ export default function App() {
           <BackupReconnectModal
             mode={backupModal}
             onConnect={handleConnect}
-            onSkip={() => setBackupModal(null)}
+            onSkip={handleSkip}
           />
         )}
 

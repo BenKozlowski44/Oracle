@@ -161,6 +161,8 @@ export async function importAllData(json: string): Promise<void> {
   // Flag that tells seedIfEmpty to skip Tier 1 on the next load so the seed
   // doesn't merge/overwrite the data we just restored.
   localStorage.setItem('__oracle_just_restored', 'true')
+  // After reload, signal App.tsx to prompt Step 2 (connect auto-save)
+  sessionStorage.setItem('__oracle_needs_autosave', 'true')
   // AWAIT the backup file write so oracle-backup.json is fully updated BEFORE
   // window.location.reload() fires. Without await, the page reloads and kills
   // the async write mid-flight, leaving oracle-backup.json with stale data.
