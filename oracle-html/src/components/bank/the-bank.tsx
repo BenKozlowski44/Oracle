@@ -31,7 +31,7 @@ export function TheBank({ data }: BankProps) {
             slate.includes("no command")
     }
 
-    const isDeclined = (o: Officer) => o.status === "Declined" || o.status === "No Opportunity" || o.status === "De-screened" || o.listShift === "Declined/Descreened"
+    const isDeclined = (o: Officer) => o.status === "Declined" || o.status === "De-screened" || o.listShift === "Declined/Descreened"
 
     // All filters now run from localOfficers
     const bankOfficers = localOfficers.filter(o => {
