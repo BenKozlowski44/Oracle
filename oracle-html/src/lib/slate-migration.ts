@@ -39,6 +39,14 @@ export function applySlateToOracle(
                 prospectiveCO: { name: officer.name, prd: '' }
             }
             console.log(`[slate-migration] Set prospectiveCO on ${oracleData[cmdIndex].name}: ${officer.name}`)
+
+        } else if (req.role === 'CO-SM') {
+            // CO-SM: officer becomes the Slated CO on the CO-SM oracle command
+            oracleData[cmdIndex] = {
+                ...oracleData[cmdIndex],
+                slatedCO: { name: officer.name, prd: '' }
+            }
+            console.log(`[slate-migration] Set slatedCO on ${oracleData[cmdIndex].name}: ${officer.name}`)
         }
     }
 

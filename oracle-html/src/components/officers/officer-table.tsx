@@ -378,7 +378,7 @@ export function OfficerTable({ data, variant = "default", onSave: onSaveProp }: 
                 </Select>
                 <Button className="bg-[#c9a227] text-[#07111f] text-xs font-semibold tracking-widest uppercase hover:bg-[#f0c040] border-transparent transition-all duration-150" onClick={() => {
                     setEditingOfficer({
-                        id: "",
+                        id: crypto.randomUUID(),
                         name: "",
                         rank: "LCDR",
                         designator: "1110",
