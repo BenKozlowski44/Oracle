@@ -49,11 +49,13 @@ export function saveOracleCommand(command: OracleCommand): void {
     ? data.map(c => c.id === command.id ? command : c)
     : [...data, command]
   writeData(KEYS.oracle, updated)
+  window.dispatchEvent(new CustomEvent('oracle-data-updated'))
 }
 
 export function deleteOracleCommand(id: string): void {
   const updated = getOracleData().filter(c => c.id !== id)
   writeData(KEYS.oracle, updated)
+  window.dispatchEvent(new CustomEvent('oracle-data-updated'))
 }
 
 // ─── Officers ──────────────────────────────────────────────────────────────
