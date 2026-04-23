@@ -29,7 +29,13 @@ export default function DashboardPage() {
     window.addEventListener('oracle-officers-updated', refresh)
     return () => window.removeEventListener('oracle-officers-updated', refresh)
   }, [])
-  const oracleData = getOracleData()
+
+  const [oracleData, setOracleData] = useState(() => getOracleData())
+  useEffect(() => {
+    const refresh = () => setOracleData(getOracleData())
+    window.addEventListener('oracle-data-updated', refresh)
+    return () => window.removeEventListener('oracle-data-updated', refresh)
+  }, [])
 
   // Measure left column height and apply to right column's alerts section
   const leftColRef = useRef<HTMLDivElement>(null)

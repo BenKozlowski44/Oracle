@@ -37,6 +37,11 @@ export function getOracleData(): OracleCommand[] {
   return readData<OracleCommand[]>(KEYS.oracle)
 }
 
+export function saveOracleData(data: OracleCommand[]): void {
+  writeData(KEYS.oracle, data)
+  window.dispatchEvent(new CustomEvent('oracle-data-updated'))
+}
+
 export function saveOracleCommand(command: OracleCommand): void {
   const data = getOracleData()
   const exists = data.some(c => c.id === command.id)

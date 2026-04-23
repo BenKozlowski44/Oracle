@@ -6,9 +6,8 @@ import { Button } from "@/components/ui/button"
 import { Plus, Trash2, Archive } from "lucide-react"
 import { formatToMMMyy } from "@/lib/utils"
 import type { Slate } from "@/lib/types"
-import { getSlates, saveSlate, deleteSlate, getOracleData, saveOfficers, getOfficers } from "@/services/storage"
+import { getSlates, saveSlate, deleteSlate, getOracleData, saveOfficers, getOfficers, saveOracleData } from "@/services/storage"
 import { applySlateToOracle } from "@/lib/slate-migration"
-import { writeData } from "@/services/storage"
 import {
     AlertDialog,
     AlertDialogAction,
@@ -94,7 +93,7 @@ export function SlatesPageClient({ allSlates }: SlatesPageClientProps) {
             const officers = getOfficers()
             const oracleData = getOracleData()
             const updatedOracle = applySlateToOracle(updatedSlate, officers, oracleData)
-            writeData('oracle-data', updatedOracle)
+            saveOracleData(updatedOracle)
         }
 
         setPending(null)
