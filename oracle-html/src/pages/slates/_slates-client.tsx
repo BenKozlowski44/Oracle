@@ -89,11 +89,25 @@ export function SlatesPageClient({ allSlates }: SlatesPageClientProps) {
             const updatedSlate = { ...slate, approvals: { ...slate.approvals, swoboss: true } }
             setLocalSlates(prev => prev.map(s => s.id === pending.slateId ? updatedSlate : s))
             saveSlate(updatedSlate)
+
             // Apply slate to Oracle pipeline
             const officers = getOfficers()
             const oracleData = getOracleData()
             const updatedOracle = applySlateToOracle(updatedSlate, officers, oracleData)
             saveOracleData(updatedOracle)
+
+            // Move filled officers to the Slated tab in the bank
+            const filledOfficerIds = new Set(
+                updatedSlate.requirements
+                    .filter(r => r.status === 'Filled' && r.filledBy)
+                    .map(r => r.filledBy!)
+            )
+            const updatedOfficers = officers.map(o =>
+                filledOfficerIds.has(o.id)
+                    ? { ...o, listShift: 'Slated', status: 'Slated' as const }
+                    : o
+            )
+            saveOfficers(updatedOfficers)
         }
 
         setPending(null)
